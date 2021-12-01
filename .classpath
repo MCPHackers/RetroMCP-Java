@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="fernflower.jar"/>
+	<classpathentry kind="lib" path="mcinjector.jar"/>
+	<classpathentry kind="lib" path="retroguard.jar"/>
+	<classpathentry kind="lib" path="jansi-2.0.1.jar" sourcepath="C:/Users/User/AppData/Local/Temp/.org.sf.feeling.decompiler1638365683620/source/jansi-2.0.1-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
