@@ -8,4 +8,6 @@ public enum EnumMode {
 	updatemd5,
 	updatemcp,
 	setup,
+	help,
+	exit,
 }

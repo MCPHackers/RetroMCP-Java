@@ -1,0 +1,20 @@
+diff -r -U 3 minecraft/net/minecraft/src/CodecMus.java minecraft_patched/net/minecraft/src/CodecMus.java
+--- minecraft/net/minecraft/src/CodecMus.java	2021-11-27 13:52:23.175520500 +0200
++++ minecraft_patched/net/minecraft/src/CodecMus.java	2021-11-27 13:51:41.653145600 +0200
+@@ -1,10 +1,15 @@
+ package net.minecraft.src;
+ 
++import java.io.IOException;
+ import java.io.InputStream;
+ import paulscode.sound.codecs.CodecJOrbis;
+ 
+ public class CodecMus extends CodecJOrbis {
+ 	protected InputStream openInputStream() {
+-		return new MusInputStream(this, this.url, this.urlConnection.getInputStream());
++		try {
++			return new MusInputStream(this, this.url, this.urlConnection.getInputStream());
++		} catch (IOException e) {
++			return null;
++		}
+ 	}
+ }

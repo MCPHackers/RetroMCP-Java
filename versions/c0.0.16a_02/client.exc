@@ -1,0 +1,3 @@
+com/mojang/comm/SocketConnection.<init>(Ljava/lang/String;I)V=java/io/IOException
+com/mojang/comm/SocketConnection.processData()V=java/io/IOException
+com/mojang/minecraft/net/ConnectionManager.<init>(Lcom/mojang/minecraft/Minecraft;Ljava/lang/String;ILjava/lang/String;)V=java/io/IOException

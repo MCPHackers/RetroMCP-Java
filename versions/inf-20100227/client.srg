@@ -1,0 +1,1618 @@
+CL: a/a util/MathHelper
+CL: a/b util/IProgressUpdate
+CL: com/a/a/a com/mojang/nbt/NBTTagCompound
+CL: com/a/a/b com/mojang/nbt/NBTBase
+CL: net/minecraft/a/a net/minecraft/game/InventoryLargeChest
+CL: net/minecraft/a/a/a net/minecraft/game/world/LevelLoader
+CL: net/minecraft/a/a/a/a net/minecraft/game/world/path/PathPoint
+CL: net/minecraft/a/a/a/b net/minecraft/game/world/path/PathEntity
+CL: net/minecraft/a/a/a/c net/minecraft/game/world/path/Pathfinder
+CL: net/minecraft/a/a/a/d net/minecraft/game/world/path/Path
+CL: net/minecraft/a/a/b net/minecraft/game/world/IWorldAccess
+CL: net/minecraft/a/a/b/a net/minecraft/game/world/block/BlockChest
+CL: net/minecraft/a/a/b/a/a net/minecraft/game/world/block/tileentity/TileEntity
+CL: net/minecraft/a/a/b/a/b net/minecraft/game/world/block/tileentity/TileEntityFurnace
+CL: net/minecraft/a/a/b/aa net/minecraft/game/world/block/BlockLog
+CL: net/minecraft/a/a/b/ab net/minecraft/game/world/block/BlockFarmland
+CL: net/minecraft/a/a/b/ac net/minecraft/game/world/block/BlockTorch
+CL: net/minecraft/a/a/b/ad net/minecraft/game/world/block/BlockFlower
+CL: net/minecraft/a/a/b/ae net/minecraft/game/world/block/BlockBreakable
+CL: net/minecraft/a/a/b/af net/minecraft/game/world/block/BlockGrass
+CL: net/minecraft/a/a/b/ag net/minecraft/game/world/block/BlockFire
+CL: net/minecraft/a/a/b/ah net/minecraft/game/world/block/BlockSource
+CL: net/minecraft/a/a/b/ai net/minecraft/game/world/block/BlockStep
+CL: net/minecraft/a/a/b/b net/minecraft/game/world/block/BlockStationary
+CL: net/minecraft/a/a/b/c net/minecraft/game/world/block/BlockOre
+CL: net/minecraft/a/a/b/d net/minecraft/game/world/block/BlockOreBlock
+CL: net/minecraft/a/a/b/e net/minecraft/game/world/block/BlockGravel
+CL: net/minecraft/a/a/b/f net/minecraft/game/world/block/BlockCrops
+CL: net/minecraft/a/a/b/g net/minecraft/game/world/block/BlockLeavesBase
+CL: net/minecraft/a/a/b/h net/minecraft/game/world/block/BlockTNT
+CL: net/minecraft/a/a/b/i net/minecraft/game/world/block/StepSoundSand
+CL: net/minecraft/a/a/b/j net/minecraft/game/world/block/StepSoundGlass
+CL: net/minecraft/a/a/b/k net/minecraft/game/world/block/BlockGears
+CL: net/minecraft/a/a/b/l net/minecraft/game/world/block/BlockDirt
+CL: net/minecraft/a/a/b/m net/minecraft/game/world/block/BlockFlowing
+CL: net/minecraft/a/a/b/n net/minecraft/game/world/block/StepSound
+CL: net/minecraft/a/a/b/o net/minecraft/game/world/block/BlockLeaves
+CL: net/minecraft/a/a/b/p net/minecraft/game/world/block/BlockFluid
+CL: net/minecraft/a/a/b/q net/minecraft/game/world/block/BlockContainer
+CL: net/minecraft/a/a/b/r net/minecraft/game/world/block/BlockStone
+CL: net/minecraft/a/a/b/s net/minecraft/game/world/block/BlockFurnace
+CL: net/minecraft/a/a/b/t net/minecraft/game/world/block/BlockWorkbench
+CL: net/minecraft/a/a/b/u net/minecraft/game/world/block/BlockGlass
+CL: net/minecraft/a/a/b/v net/minecraft/game/world/block/BlockMushroom
+CL: net/minecraft/a/a/b/w net/minecraft/game/world/block/BlockSand
+CL: net/minecraft/a/a/b/x net/minecraft/game/world/block/Block
+CL: net/minecraft/a/a/b/y net/minecraft/game/world/block/BlockBookshelf
+CL: net/minecraft/a/a/b/z net/minecraft/game/world/block/BlockSapling
+CL: net/minecraft/a/a/c net/minecraft/game/world/Chunk
+CL: net/minecraft/a/a/c/a net/minecraft/game/world/terrain/LevelGenerator
+CL: net/minecraft/a/a/c/a/a net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin
+CL: net/minecraft/a/a/c/a/b net/minecraft/game/world/terrain/noise/NoiseGenerator
+CL: net/minecraft/a/a/c/a/c net/minecraft/game/world/terrain/noise/NoiseGeneratorOctaves
+CL: net/minecraft/a/a/d net/minecraft/game/world/EntityMapSlot
+CL: net/minecraft/a/a/d/a net/minecraft/game/world/material/MaterialLogic
+CL: net/minecraft/a/a/d/b net/minecraft/game/world/material/MaterialLiquid
+CL: net/minecraft/a/a/d/c net/minecraft/game/world/material/Material
+CL: net/minecraft/a/a/d/d net/minecraft/game/world/material/MaterialTransparent
+CL: net/minecraft/a/a/e net/minecraft/game/world/World
+CL: net/minecraft/a/a/f net/minecraft/game/world/ChunkProviderGenerate
+CL: net/minecraft/a/a/g net/minecraft/game/world/ChunkPosition
+CL: net/minecraft/a/a/h net/minecraft/game/world/EntityMap
+CL: net/minecraft/a/b net/minecraft/game/IInventory
+CL: net/minecraft/a/b/a net/minecraft/game/item/ItemPickaxe
+CL: net/minecraft/a/b/a/a net/minecraft/game/item/recipe/RecipesArmor
+CL: net/minecraft/a/b/a/b net/minecraft/game/item/recipe/RecipesFood
+CL: net/minecraft/a/b/a/c net/minecraft/game/item/recipe/CraftingRecipe
+CL: net/minecraft/a/b/a/d net/minecraft/game/item/recipe/RecipesIngots
+CL: net/minecraft/a/b/a/e net/minecraft/game/item/recipe/RecipesTools
+CL: net/minecraft/a/b/a/f net/minecraft/game/item/recipe/CraftingManager
+CL: net/minecraft/a/b/a/g net/minecraft/game/item/recipe/RecipesCrafting
+CL: net/minecraft/a/b/a/h net/minecraft/game/item/recipe/RecipesWeapons
+CL: net/minecraft/a/b/a/i net/minecraft/game/item/recipe/RecipeSorter
+CL: net/minecraft/a/b/b net/minecraft/game/item/ItemSoup
+CL: net/minecraft/a/b/c net/minecraft/game/item/ItemSword
+CL: net/minecraft/a/b/d net/minecraft/game/item/ItemBlock
+CL: net/minecraft/a/b/e net/minecraft/game/item/ItemBow
+CL: net/minecraft/a/b/f net/minecraft/game/item/ItemSeeds
+CL: net/minecraft/a/b/g net/minecraft/game/item/ItemTool
+CL: net/minecraft/a/b/h net/minecraft/game/item/ItemAxe
+CL: net/minecraft/a/b/i net/minecraft/game/item/Item
+CL: net/minecraft/a/b/j net/minecraft/game/item/ItemArmor
+CL: net/minecraft/a/b/k net/minecraft/game/item/ItemStack
+CL: net/minecraft/a/b/l net/minecraft/game/item/ItemSpade
+CL: net/minecraft/a/b/m net/minecraft/game/item/ItemFlintAndSteel
+CL: net/minecraft/a/b/n net/minecraft/game/item/ItemHoe
+CL: net/minecraft/a/b/o net/minecraft/game/item/ItemPainting
+CL: net/minecraft/a/b/p net/minecraft/game/item/ItemFood
+CL: net/minecraft/a/c/a net/minecraft/game/entity/EntityPainting
+CL: net/minecraft/a/c/a/a net/minecraft/game/entity/monster/EntityGiantZombie
+CL: net/minecraft/a/c/a/b net/minecraft/game/entity/monster/EntitySpider
+CL: net/minecraft/a/c/a/c net/minecraft/game/entity/monster/EntitySkeleton
+CL: net/minecraft/a/c/a/d net/minecraft/game/entity/monster/EntityCreeper
+CL: net/minecraft/a/c/a/e net/minecraft/game/entity/monster/EntityMob
+CL: net/minecraft/a/c/a/f net/minecraft/game/entity/monster/EntityZombie
+CL: net/minecraft/a/c/b net/minecraft/game/entity/Entity
+CL: net/minecraft/a/c/b/a net/minecraft/game/entity/animal/EntityAnimal
+CL: net/minecraft/a/c/b/b net/minecraft/game/entity/animal/EntitySheep
+CL: net/minecraft/a/c/b/c net/minecraft/game/entity/animal/EntityPig
+CL: net/minecraft/a/c/c net/minecraft/game/entity/EntityCreature
+CL: net/minecraft/a/c/c/a net/minecraft/game/entity/misc/EntityTNTPrimed
+CL: net/minecraft/a/c/c/b net/minecraft/game/entity/misc/EntityItem
+CL: net/minecraft/a/c/d net/minecraft/game/entity/EnumArt
+CL: net/minecraft/a/c/d/a net/minecraft/game/entity/projectile/EntityArrow
+CL: net/minecraft/a/c/e net/minecraft/game/entity/EntityLiving
+CL: net/minecraft/a/c/e/a net/minecraft/game/entity/player/EntityPlayer
+CL: net/minecraft/a/c/e/b net/minecraft/game/entity/player/InventoryPlayer
+CL: net/minecraft/a/d/a net/minecraft/game/physics/Vec3D
+CL: net/minecraft/a/d/b net/minecraft/game/physics/AxisAlignedBB
+CL: net/minecraft/a/d/c net/minecraft/game/physics/MovingObjectPosition
+CL: net/minecraft/client/MinecraftApplet net/minecraft/client/MinecraftApplet
+CL: net/minecraft/client/a net/minecraft/client/LoadingScreenRenderer
+CL: net/minecraft/client/a/a net/minecraft/client/render/RenderSorter
+CL: net/minecraft/client/a/a/a net/minecraft/client/render/entity/RenderEntity
+CL: net/minecraft/client/a/a/b net/minecraft/client/render/entity/RenderArrow
+CL: net/minecraft/client/a/a/c net/minecraft/client/render/entity/RenderCreeper
+CL: net/minecraft/client/a/a/d net/minecraft/client/render/entity/RenderTNTPrimed
+CL: net/minecraft/client/a/a/e net/minecraft/client/render/entity/RenderItem
+CL: net/minecraft/client/a/a/f net/minecraft/client/render/entity/Render
+CL: net/minecraft/client/a/a/g net/minecraft/client/render/entity/RenderPlayer
+CL: net/minecraft/client/a/a/h net/minecraft/client/render/entity/RenderPainting
+CL: net/minecraft/client/a/a/i net/minecraft/client/render/entity/RenderManager
+CL: net/minecraft/client/a/a/j net/minecraft/client/render/entity/RenderLiving
+CL: net/minecraft/client/a/a/k net/minecraft/client/render/entity/RenderSheep
+CL: net/minecraft/client/a/a/l net/minecraft/client/render/entity/RenderGiantZombie
+CL: net/minecraft/client/a/a/m net/minecraft/client/render/entity/RenderSpider
+CL: net/minecraft/client/a/b net/minecraft/client/render/RenderGlobal
+CL: net/minecraft/client/a/b/a net/minecraft/client/render/camera/ClippingHelperImplementation
+CL: net/minecraft/client/a/b/b net/minecraft/client/render/camera/ClippingHelper
+CL: net/minecraft/client/a/b/c net/minecraft/client/render/camera/Frustrum
+CL: net/minecraft/client/a/c net/minecraft/client/render/Tessellator
+CL: net/minecraft/client/a/c/a net/minecraft/client/render/texture/TextureWaterFlowFX
+CL: net/minecraft/client/a/c/b net/minecraft/client/render/texture/TextureFX
+CL: net/minecraft/client/a/c/c net/minecraft/client/render/texture/TextureGearsFX
+CL: net/minecraft/client/a/c/d net/minecraft/client/render/texture/TextureLavaFX
+CL: net/minecraft/client/a/c/e net/minecraft/client/render/texture/TextureFlamesFX
+CL: net/minecraft/client/a/c/f net/minecraft/client/render/texture/TextureWaterFX
+CL: net/minecraft/client/a/d net/minecraft/client/render/EntityRenderer
+CL: net/minecraft/client/a/e net/minecraft/client/render/RenderBlocks
+CL: net/minecraft/client/a/f net/minecraft/client/render/ItemRenderer
+CL: net/minecraft/client/a/g net/minecraft/client/render/WorldRenderer
+CL: net/minecraft/client/a/h net/minecraft/client/render/ThreadDownloadImageData
+CL: net/minecraft/client/a/i net/minecraft/client/render/RenderEngine
+CL: net/minecraft/client/a/j net/minecraft/client/render/EntitySorter
+CL: net/minecraft/client/b net/minecraft/client/CanvasMinecraftApplet
+CL: net/minecraft/client/b/a net/minecraft/client/model/ModelSheep
+CL: net/minecraft/client/b/b net/minecraft/client/model/ModelQuadruped
+CL: net/minecraft/client/b/c net/minecraft/client/model/ModelRenderer
+CL: net/minecraft/client/b/d net/minecraft/client/model/ModelSheepFur
+CL: net/minecraft/client/b/e net/minecraft/client/model/ModelSpider
+CL: net/minecraft/client/b/f net/minecraft/client/model/ModelPig
+CL: net/minecraft/client/b/g net/minecraft/client/model/ModelZombie
+CL: net/minecraft/client/b/h net/minecraft/client/model/ModelBiped
+CL: net/minecraft/client/b/i net/minecraft/client/model/TexturedQuad
+CL: net/minecraft/client/b/j net/minecraft/client/model/PositionTextureVertex
+CL: net/minecraft/client/b/k net/minecraft/client/model/ModelCreeper
+CL: net/minecraft/client/b/l net/minecraft/client/model/ModelBase
+CL: net/minecraft/client/b/m net/minecraft/client/model/ModelSkeleton
+CL: net/minecraft/client/c net/minecraft/client/RenderHelper
+CL: net/minecraft/client/c/a net/minecraft/client/gui/GuiSmallButton
+CL: net/minecraft/client/c/a/a net/minecraft/client/gui/container/InventoryCrafting
+CL: net/minecraft/client/c/a/b net/minecraft/client/gui/container/GuiCrafting
+CL: net/minecraft/client/c/a/c net/minecraft/client/gui/container/GuiFurnace
+CL: net/minecraft/client/c/a/d net/minecraft/client/gui/container/SlotCrafting
+CL: net/minecraft/client/c/a/e net/minecraft/client/gui/container/SlotArmor
+CL: net/minecraft/client/c/a/f net/minecraft/client/gui/container/GuiInventory
+CL: net/minecraft/client/c/a/g net/minecraft/client/gui/container/Slot
+CL: net/minecraft/client/c/a/h net/minecraft/client/gui/container/InventoryCraftResult
+CL: net/minecraft/client/c/a/i net/minecraft/client/gui/container/GuiChest
+CL: net/minecraft/client/c/a/j net/minecraft/client/gui/container/GuiContainer
+CL: net/minecraft/client/c/b net/minecraft/client/gui/GuiIngameMenu
+CL: net/minecraft/client/c/c net/minecraft/client/gui/GuiErrorScreen
+CL: net/minecraft/client/c/d net/minecraft/client/gui/GuiGameOver
+CL: net/minecraft/client/c/e net/minecraft/client/gui/GuiLoadLevel
+CL: net/minecraft/client/c/f net/minecraft/client/gui/GuiLevelDialog
+CL: net/minecraft/client/c/g net/minecraft/client/gui/GuiOptions
+CL: net/minecraft/client/c/h net/minecraft/client/gui/ScaledResolution
+CL: net/minecraft/client/c/i net/minecraft/client/gui/GuiScreen
+CL: net/minecraft/client/c/j net/minecraft/client/gui/FontRenderer
+CL: net/minecraft/client/c/k net/minecraft/client/gui/Gui
+CL: net/minecraft/client/c/l net/minecraft/client/gui/GuiIngame
+CL: net/minecraft/client/c/m net/minecraft/client/gui/GuiControls
+CL: net/minecraft/client/c/n net/minecraft/client/gui/GuiNewLevel
+CL: net/minecraft/client/c/o net/minecraft/client/gui/GuiSaveLevel
+CL: net/minecraft/client/c/p net/minecraft/client/gui/GuiNameLevel
+CL: net/minecraft/client/c/q net/minecraft/client/gui/FilenameFilterLevel
+CL: net/minecraft/client/c/r net/minecraft/client/gui/GuiButton
+CL: net/minecraft/client/d net/minecraft/client/Minecraft
+CL: net/minecraft/client/d/a net/minecraft/client/controller/PlayerController
+CL: net/minecraft/client/d/b net/minecraft/client/controller/PlayerControllerSP
+CL: net/minecraft/client/d/c net/minecraft/client/controller/PlayerControllerCreative
+CL: net/minecraft/client/e net/minecraft/client/EnumOS
+CL: net/minecraft/client/e/a net/minecraft/client/sound/SoundPoolEntry
+CL: net/minecraft/client/e/b net/minecraft/client/sound/SoundPool
+CL: net/minecraft/client/e/c net/minecraft/client/sound/SoundManager
+CL: net/minecraft/client/f net/minecraft/client/PlayerLoader
+CL: net/minecraft/client/f/a net/minecraft/client/effect/EntityBubbleFX
+CL: net/minecraft/client/f/b net/minecraft/client/effect/EntityDiggingFX
+CL: net/minecraft/client/f/c net/minecraft/client/effect/EntityFlameFX
+CL: net/minecraft/client/f/d net/minecraft/client/effect/EffectRenderer
+CL: net/minecraft/client/f/e net/minecraft/client/effect/EntitySplashFX
+CL: net/minecraft/client/f/f net/minecraft/client/effect/EntityLavaFX
+CL: net/minecraft/client/f/g net/minecraft/client/effect/EntityExplodeFX
+CL: net/minecraft/client/f/h net/minecraft/client/effect/EntityRainFX
+CL: net/minecraft/client/f/i net/minecraft/client/effect/EntitySmokeFX
+CL: net/minecraft/client/f/j net/minecraft/client/effect/EntityFX
+CL: net/minecraft/client/g net/minecraft/client/Timer
+CL: net/minecraft/client/g/a net/minecraft/client/player/EntityPlayerSP
+CL: net/minecraft/client/g/b net/minecraft/client/player/MovementInput
+CL: net/minecraft/client/g/c net/minecraft/client/player/MovementInputFromOptions
+CL: net/minecraft/client/h net/minecraft/client/KeyBinding
+CL: net/minecraft/client/i net/minecraft/client/OpenGlCapsChecker
+CL: net/minecraft/client/j net/minecraft/client/ThreadDownloadResources
+CL: net/minecraft/client/k net/minecraft/client/Session
+CL: net/minecraft/client/l net/minecraft/client/MouseHelper
+CL: net/minecraft/client/m net/minecraft/client/ThreadSleepForever
+CL: net/minecraft/client/n net/minecraft/client/EnumOSMappingHelper
+CL: net/minecraft/client/o net/minecraft/client/MinecraftError
+CL: net/minecraft/client/p net/minecraft/client/GameSettings
+CL: net/minecraft/client/q net/minecraft/client/GuiMainMenu
+FD: net/minecraft/client/p/A net/minecraft/client/GameSettings/optionsFile
+FD: net/minecraft/client/d/A net/minecraft/client/Minecraft/running
+FD: net/minecraft/client/a/b/A net/minecraft/client/render/RenderGlobal/countEntitiesHidden
+FD: net/minecraft/a/a/b/x/A net/minecraft/game/world/block/Block/clothRed
+FD: net/minecraft/a/c/b/A net/minecraft/game/entity/Entity/lastTickPosX
+FD: net/minecraft/a/b/i/A net/minecraft/game/item/Item/stick
+FD: net/minecraft/client/d/B net/minecraft/client/Minecraft/debug
+FD: net/minecraft/client/a/b/B net/minecraft/client/render/RenderGlobal/dummyBuf50k
+FD: net/minecraft/a/a/b/x/B net/minecraft/game/world/block/Block/clothOrange
+FD: net/minecraft/a/c/b/B net/minecraft/game/entity/Entity/lastTickPosY
+FD: net/minecraft/a/b/i/B net/minecraft/game/item/Item/bowlEmpty
+FD: net/minecraft/client/d/C net/minecraft/client/Minecraft/inventoryScreen
+FD: net/minecraft/client/a/b/C net/minecraft/client/render/RenderGlobal/occlusionResult
+FD: net/minecraft/a/a/b/x/C net/minecraft/game/world/block/Block/clothYellow
+FD: net/minecraft/a/c/b/C net/minecraft/game/entity/Entity/lastTickPosZ
+FD: net/minecraft/a/b/i/C net/minecraft/game/item/Item/bowlSoup
+FD: net/minecraft/client/d/D net/minecraft/client/Minecraft/inGameHasFocus
+FD: net/minecraft/client/a/b/D net/minecraft/client/render/RenderGlobal/renderersLoaded
+FD: net/minecraft/a/a/b/x/D net/minecraft/game/world/block/Block/clothChartreuse
+FD: net/minecraft/a/c/b/D net/minecraft/game/entity/Entity/stepHeight
+FD: net/minecraft/a/b/i/D net/minecraft/game/item/Item/swordGold
+FD: net/minecraft/client/d/E net/minecraft/client/Minecraft/fullscreen
+FD: net/minecraft/client/a/b/E net/minecraft/client/render/RenderGlobal/renderersBeingClipped
+FD: net/minecraft/a/a/b/x/E net/minecraft/game/world/block/Block/clothGreen
+FD: net/minecraft/a/c/b/E net/minecraft/game/entity/Entity/noClip
+FD: net/minecraft/a/b/i/E net/minecraft/game/item/Item/shovelGold
+FD: net/minecraft/client/d/F net/minecraft/client/Minecraft/glCapabilities
+FD: net/minecraft/client/a/b/F net/minecraft/client/render/RenderGlobal/renderersBeingOccluded
+FD: net/minecraft/a/a/b/x/F net/minecraft/game/world/block/Block/clothSpringGreen
+FD: net/minecraft/a/c/b/F net/minecraft/game/entity/Entity/rand
+FD: net/minecraft/a/b/i/F net/minecraft/game/item/Item/pickaxeGold
+FD: net/minecraft/client/d/G net/minecraft/client/Minecraft/timer
+FD: net/minecraft/client/a/b/G net/minecraft/client/render/RenderGlobal/renderersBeingRendered
+FD: net/minecraft/a/a/b/x/G net/minecraft/game/world/block/Block/clothCyan
+FD: net/minecraft/a/c/b/G net/minecraft/game/entity/Entity/ticksExisted
+FD: net/minecraft/a/b/i/G net/minecraft/game/item/Item/axeGold
+FD: net/minecraft/client/d/H net/minecraft/client/Minecraft/downloadResourcesThread
+FD: net/minecraft/client/a/b/H net/minecraft/client/render/RenderGlobal/prevSortX
+FD: net/minecraft/a/a/b/x/H net/minecraft/game/world/block/Block/clothCapri
+FD: net/minecraft/a/c/b/H net/minecraft/game/entity/Entity/fireResistance
+FD: net/minecraft/a/b/i/H net/minecraft/game/item/Item/silk
+FD: net/minecraft/client/d/I net/minecraft/client/Minecraft/ticksRan
+FD: net/minecraft/client/a/b/I net/minecraft/client/render/RenderGlobal/prevSortY
+FD: net/minecraft/a/a/b/x/I net/minecraft/game/world/block/Block/clothUltramarine
+FD: net/minecraft/a/c/b/I net/minecraft/game/entity/Entity/fire
+FD: net/minecraft/a/b/i/I net/minecraft/game/item/Item/feather
+FD: net/minecraft/client/d/J net/minecraft/client/Minecraft/leftClickCounter
+FD: net/minecraft/client/a/b/J net/minecraft/client/render/RenderGlobal/prevSortZ
+FD: net/minecraft/a/a/b/x/J net/minecraft/game/world/block/Block/clothViolet
+FD: net/minecraft/a/c/b/J net/minecraft/game/entity/Entity/maxAir
+FD: net/minecraft/a/b/i/J net/minecraft/game/item/Item/gunpowder
+FD: net/minecraft/client/d/K net/minecraft/client/Minecraft/tempDisplayWidth
+FD: net/minecraft/a/a/b/x/K net/minecraft/game/world/block/Block/clothPurple
+FD: net/minecraft/a/c/b/K net/minecraft/game/entity/Entity/heartsLife
+FD: net/minecraft/a/b/i/K net/minecraft/game/item/Item/hoeWood
+FD: net/minecraft/client/d/L net/minecraft/client/Minecraft/tempDisplayHeight
+FD: net/minecraft/a/a/b/x/L net/minecraft/game/world/block/Block/clothMagenta
+FD: net/minecraft/a/c/b/L net/minecraft/game/entity/Entity/air
+FD: net/minecraft/a/b/i/L net/minecraft/game/item/Item/hoeStone
+FD: net/minecraft/client/d/M net/minecraft/client/Minecraft/mcApplet
+FD: net/minecraft/a/a/b/x/M net/minecraft/game/world/block/Block/clothRose
+FD: net/minecraft/a/c/b/M net/minecraft/game/entity/Entity/skinUrl
+FD: net/minecraft/a/b/i/M net/minecraft/game/item/Item/hoeSteel
+FD: net/minecraft/a/c/c/b/N net/minecraft/game/entity/misc/EntityItem/delayBeforeCanPickup
+FD: net/minecraft/client/f/j/N net/minecraft/client/effect/EntityFX/particleTextureJitterY
+FD: net/minecraft/a/c/e/a/N net/minecraft/game/entity/player/EntityPlayer/unusedMiningCooldown
+FD: net/minecraft/a/c/d/a/N net/minecraft/game/entity/projectile/EntityArrow/yTile
+FD: net/minecraft/client/d/N net/minecraft/client/Minecraft/server
+FD: net/minecraft/a/a/b/x/N net/minecraft/game/world/block/Block/clothDarkGray
+FD: net/minecraft/a/c/a/N net/minecraft/game/entity/EntityPainting/tickCounter
+FD: net/minecraft/a/c/e/N net/minecraft/game/entity/EntityLiving/scoreValue
+FD: net/minecraft/a/c/c/N net/minecraft/game/entity/EntityCreature/hasAttacked
+FD: net/minecraft/a/c/b/N net/minecraft/game/entity/Entity/nextStepDistance
+FD: net/minecraft/a/b/i/N net/minecraft/game/item/Item/hoeDiamond
+FD: net/minecraft/a/c/c/b/O net/minecraft/game/entity/misc/EntityItem/hoverStart
+FD: net/minecraft/client/f/j/O net/minecraft/client/effect/EntityFX/particleAge
+FD: net/minecraft/a/c/e/a/O net/minecraft/game/entity/player/EntityPlayer/score
+FD: net/minecraft/a/c/d/a/O net/minecraft/game/entity/projectile/EntityArrow/zTile
+FD: net/minecraft/client/d/O net/minecraft/client/Minecraft/textureWaterFX
+FD: net/minecraft/a/c/a/d/O net/minecraft/game/entity/monster/EntityCreeper/timeSinceIgnited
+FD: net/minecraft/a/a/b/x/O net/minecraft/game/world/block/Block/clothGray
+FD: net/minecraft/a/c/a/O net/minecraft/game/entity/EntityPainting/xPosition
+FD: net/minecraft/a/c/e/O net/minecraft/game/entity/EntityLiving/livingSoundTime
+FD: net/minecraft/a/c/b/O net/minecraft/game/entity/Entity/ySize
+FD: net/minecraft/a/b/i/O net/minecraft/game/item/Item/hoeGold
+FD: net/minecraft/a/c/c/b/P net/minecraft/game/entity/misc/EntityItem/age2
+FD: net/minecraft/client/f/j/P net/minecraft/client/effect/EntityFX/particleMaxAge
+FD: net/minecraft/a/c/e/a/P net/minecraft/game/entity/player/EntityPlayer/prevCameraYaw
+FD: net/minecraft/a/c/d/a/P net/minecraft/game/entity/projectile/EntityArrow/inTile
+FD: net/minecraft/client/d/P net/minecraft/client/Minecraft/textureLavaFX
+FD: net/minecraft/a/c/a/d/P net/minecraft/game/entity/monster/EntityCreeper/lastActiveTime
+FD: net/minecraft/a/a/b/x/P net/minecraft/game/world/block/Block/clothWhite
+FD: net/minecraft/a/c/a/P net/minecraft/game/entity/EntityPainting/yPosition
+FD: net/minecraft/a/c/e/P net/minecraft/game/entity/EntityLiving/randomYawVelocity
+FD: net/minecraft/a/c/b/P net/minecraft/game/entity/Entity/entityCollisionReduction
+FD: net/minecraft/a/b/i/P net/minecraft/game/item/Item/seeds
+FD: net/minecraft/a/c/c/b/Q net/minecraft/game/entity/misc/EntityItem/health
+FD: net/minecraft/client/f/j/Q net/minecraft/client/effect/EntityFX/particleScale
+FD: net/minecraft/a/c/e/a/Q net/minecraft/game/entity/player/EntityPlayer/cameraYaw
+FD: net/minecraft/a/c/d/a/Q net/minecraft/game/entity/projectile/EntityArrow/inData
+FD: net/minecraft/client/d/Q net/minecraft/client/Minecraft/prevFrameTime
+FD: net/minecraft/a/c/a/d/Q net/minecraft/game/entity/monster/EntityCreeper/fuseDuration
+FD: net/minecraft/a/a/b/x/Q net/minecraft/game/world/block/Block/plantYellow
+FD: net/minecraft/a/c/a/Q net/minecraft/game/entity/EntityPainting/zPosition
+FD: net/minecraft/a/c/e/Q net/minecraft/game/entity/EntityLiving/defaultPitch
+FD: net/minecraft/a/c/b/Q net/minecraft/game/entity/Entity/inWater
+FD: net/minecraft/a/b/i/Q net/minecraft/game/item/Item/wheat
+FD: net/minecraft/client/f/j/R net/minecraft/client/effect/EntityFX/particleGravity
+FD: net/minecraft/a/c/e/a/R net/minecraft/game/entity/player/EntityPlayer/username
+FD: net/minecraft/a/c/d/a/R net/minecraft/game/entity/projectile/EntityArrow/shootingEntity
+FD: net/minecraft/a/c/a/d/R net/minecraft/game/entity/monster/EntityCreeper/creeperState
+FD: net/minecraft/a/a/b/x/R net/minecraft/game/world/block/Block/plantRed
+FD: net/minecraft/a/c/b/R net/minecraft/game/entity/Entity/firstUpdate
+FD: net/minecraft/a/b/i/R net/minecraft/game/item/Item/bread
+FD: net/minecraft/client/f/j/S net/minecraft/client/effect/EntityFX/particleRed
+FD: net/minecraft/a/c/d/a/S net/minecraft/game/entity/projectile/EntityArrow/ticksInGround
+FD: net/minecraft/a/a/b/x/S net/minecraft/game/world/block/Block/mushroomBrown
+FD: net/minecraft/a/c/e/S net/minecraft/game/entity/EntityLiving/heartsHalvesLife
+FD: net/minecraft/a/b/i/S net/minecraft/game/item/Item/helmetLeather
+FD: net/minecraft/client/f/j/T net/minecraft/client/effect/EntityFX/particleGreen
+FD: net/minecraft/a/c/d/a/T net/minecraft/game/entity/projectile/EntityArrow/ticksInAir
+FD: net/minecraft/a/a/b/x/T net/minecraft/game/world/block/Block/mushroomRed
+FD: net/minecraft/a/c/e/T net/minecraft/game/entity/EntityLiving/renderYawOffset
+FD: net/minecraft/a/b/i/T net/minecraft/game/item/Item/plateLeather
+FD: net/minecraft/client/f/j/U net/minecraft/client/effect/EntityFX/particleBlue
+FD: net/minecraft/a/a/b/x/U net/minecraft/game/world/block/Block/blockGold
+FD: net/minecraft/a/c/e/U net/minecraft/game/entity/EntityLiving/prevRenderYawOffset
+FD: net/minecraft/a/b/i/U net/minecraft/game/item/Item/legsLeather
+FD: net/minecraft/client/f/f/V net/minecraft/client/effect/EntityLavaFX/lavaParticleScale
+FD: net/minecraft/client/f/c/V net/minecraft/client/effect/EntityFlameFX/flameScale
+FD: net/minecraft/client/f/i/V net/minecraft/client/effect/EntitySmokeFX/smokeParticleScale
+FD: net/minecraft/a/a/b/x/V net/minecraft/game/world/block/Block/blockSteel
+FD: net/minecraft/a/c/e/V net/minecraft/game/entity/EntityLiving/texture
+FD: net/minecraft/a/b/i/V net/minecraft/game/item/Item/bootsLeather
+FD: net/minecraft/a/a/b/x/W net/minecraft/game/world/block/Block/stairDouble
+FD: net/minecraft/a/c/e/W net/minecraft/game/entity/EntityLiving/health
+FD: net/minecraft/a/b/i/W net/minecraft/game/item/Item/helmetChain
+FD: net/minecraft/a/a/b/x/X net/minecraft/game/world/block/Block/stairSingle
+FD: net/minecraft/a/c/e/X net/minecraft/game/entity/EntityLiving/prevHealth
+FD: net/minecraft/a/b/i/X net/minecraft/game/item/Item/plateChain
+FD: net/minecraft/a/a/b/x/Y net/minecraft/game/world/block/Block/brick
+FD: net/minecraft/a/c/e/Y net/minecraft/game/entity/EntityLiving/hurtTime
+FD: net/minecraft/a/b/i/Y net/minecraft/game/item/Item/legsChain
+FD: net/minecraft/a/a/b/x/Z net/minecraft/game/world/block/Block/tnt
+FD: net/minecraft/a/c/e/Z net/minecraft/game/entity/EntityLiving/maxHurtTime
+FD: net/minecraft/a/b/i/Z net/minecraft/game/item/Item/bootsChain
+FD: net/minecraft/a/c/c/a/a net/minecraft/game/entity/misc/EntityTNTPrimed/fuse
+FD: net/minecraft/a/c/c/b/a net/minecraft/game/entity/misc/EntityItem/item
+FD: net/minecraft/client/a/a/f/a net/minecraft/client/render/entity/Render/renderManager
+FD: net/minecraft/client/a/a/i/a net/minecraft/client/render/entity/RenderManager/instance
+FD: net/minecraft/client/e/a/a net/minecraft/client/sound/SoundPoolEntry/soundName
+FD: net/minecraft/client/e/c/a net/minecraft/client/sound/SoundManager/sndSystem
+FD: net/minecraft/client/e/b/a net/minecraft/client/sound/SoundPool/rand
+FD: a/a/a util/MathHelper/SIN_TABLE
+FD: net/minecraft/a/a/h/a net/minecraft/game/world/EntityMap/width
+FD: net/minecraft/a/a/c/a/c/a net/minecraft/game/world/terrain/noise/NoiseGeneratorOctaves/generatorCollection
+FD: net/minecraft/a/a/c/a net/minecraft/game/world/Chunk/blocks
+FD: net/minecraft/a/a/a/a net/minecraft/game/world/LevelLoader/guiLoading
+FD: net/minecraft/a/a/g/a net/minecraft/game/world/ChunkPosition/xPosition
+FD: net/minecraft/a/a/f/a net/minecraft/game/world/ChunkProviderGenerate/rand
+FD: net/minecraft/a/a/c/a/a/a net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/permutations
+FD: net/minecraft/a/a/e/a net/minecraft/game/world/World/entityMap
+FD: net/minecraft/a/a/d/a net/minecraft/game/world/EntityMapSlot/xSlot
+FD: net/minecraft/a/c/b/b/a net/minecraft/game/entity/animal/EntitySheep/sheared
+FD: net/minecraft/a/a/a/a/a net/minecraft/game/world/path/PathPoint/xCoord
+FD: net/minecraft/a/a/a/c/a net/minecraft/game/world/path/Pathfinder/worldMap
+FD: net/minecraft/a/a/a/b/a net/minecraft/game/world/path/PathEntity/points
+FD: net/minecraft/client/f/d/a net/minecraft/client/effect/EffectRenderer/worldObj
+FD: net/minecraft/a/a/a/d/a net/minecraft/game/world/path/Path/pathPoints
+FD: net/minecraft/client/f/j/a net/minecraft/client/effect/EntityFX/particleTextureIndex
+FD: net/minecraft/a/a/b/a/b/a net/minecraft/game/world/block/tileentity/TileEntityFurnace/furnaceItemStacks
+FD: net/minecraft/a/c/e/a/a net/minecraft/game/entity/player/EntityPlayer/damageRemainder
+FD: net/minecraft/a/c/e/b/a net/minecraft/game/entity/player/InventoryPlayer/mainInventory
+FD: net/minecraft/client/g/a/a net/minecraft/client/player/EntityPlayerSP/movementInput
+FD: net/minecraft/client/g/b/a net/minecraft/client/player/MovementInput/moveStrafe
+FD: net/minecraft/a/c/d/a/a net/minecraft/game/entity/projectile/EntityArrow/arrowShake
+FD: net/minecraft/client/q/a net/minecraft/client/GuiMainMenu/updateCounter
+FD: net/minecraft/client/p/a net/minecraft/client/GameSettings/music
+FD: net/minecraft/client/c/a/g/a net/minecraft/client/gui/container/Slot/slotIndex
+FD: net/minecraft/client/l/a net/minecraft/client/MouseHelper/deltaX
+FD: net/minecraft/client/c/a/h/a net/minecraft/client/gui/container/InventoryCraftResult/stackResult
+FD: net/minecraft/client/n/a net/minecraft/client/EnumOSMappingHelper/osValues
+FD: net/minecraft/client/h/a net/minecraft/client/KeyBinding/keyDescription
+FD: net/minecraft/client/k/a net/minecraft/client/Session/registeredBlocksList
+FD: net/minecraft/client/j/a net/minecraft/client/ThreadDownloadResources/resourcesFolder
+FD: net/minecraft/client/e/a net/minecraft/client/EnumOS/linux
+FD: net/minecraft/client/d/a net/minecraft/client/Minecraft/playerController
+FD: net/minecraft/client/g/a net/minecraft/client/Timer/ticksPerSecond
+FD: net/minecraft/client/c/a/a/a net/minecraft/client/gui/container/InventoryCrafting/stackList
+FD: net/minecraft/client/a/a net/minecraft/client/LoadingScreenRenderer/text
+FD: net/minecraft/client/c/a net/minecraft/client/RenderHelper/colorBuffer
+FD: net/minecraft/client/b/a net/minecraft/client/CanvasMinecraftApplet/mcApplet
+FD: net/minecraft/client/MinecraftApplet/a net/minecraft/client/MinecraftApplet/mcCanvas
+FD: net/minecraft/client/a/c/a net/minecraft/client/render/Tessellator/instance
+FD: net/minecraft/a/a/d/c/a net/minecraft/game/world/material/Material/air
+FD: net/minecraft/client/a/b/a net/minecraft/client/render/RenderGlobal/damagePartialTime
+FD: net/minecraft/client/a/e/a net/minecraft/client/render/RenderBlocks/posX
+FD: net/minecraft/client/a/d/a net/minecraft/client/render/EntityRenderer/itemRenderer
+FD: net/minecraft/client/a/a/a net/minecraft/client/render/RenderSorter/baseEntity
+FD: net/minecraft/client/a/j/a net/minecraft/client/render/EntitySorter/player
+FD: net/minecraft/client/a/g/a net/minecraft/client/render/WorldRenderer/chunksUpdated
+FD: net/minecraft/client/a/f/a net/minecraft/client/render/ItemRenderer/mc
+FD: net/minecraft/client/a/i/a net/minecraft/client/render/RenderEngine/textureMap
+FD: net/minecraft/client/a/h/a net/minecraft/client/render/ThreadDownloadImageData/chunksUpdated
+FD: net/minecraft/client/c/a/j/a net/minecraft/client/gui/container/GuiContainer/xSize
+FD: net/minecraft/client/b/b/a net/minecraft/client/model/ModelQuadruped/head
+FD: net/minecraft/client/b/c/a net/minecraft/client/model/ModelRenderer/rotateAngleX
+FD: net/minecraft/client/b/j/a net/minecraft/client/model/PositionTextureVertex/vector3D
+FD: net/minecraft/client/b/i/a net/minecraft/client/model/TexturedQuad/vertexPositions
+FD: net/minecraft/client/b/k/a net/minecraft/client/model/ModelCreeper/head
+FD: net/minecraft/client/b/e/a net/minecraft/client/model/ModelSpider/spiderHead
+FD: net/minecraft/client/b/h/a net/minecraft/client/model/ModelBiped/bipedHead
+FD: net/minecraft/a/d/c/a net/minecraft/game/physics/MovingObjectPosition/typeOfHit
+FD: net/minecraft/a/d/b/a net/minecraft/game/physics/AxisAlignedBB/minX
+FD: net/minecraft/a/d/a/a net/minecraft/game/physics/Vec3D/xCoord
+FD: net/minecraft/a/c/a/e/a net/minecraft/game/entity/monster/EntityMob/attackStrength
+FD: net/minecraft/a/a/b/ae/a net/minecraft/game/world/block/BlockBreakable/localFlag
+FD: net/minecraft/client/a/c/b/a net/minecraft/client/render/texture/TextureFX/imageData
+FD: net/minecraft/a/a/b/ag/a net/minecraft/game/world/block/BlockFire/chanceToEncourageFire
+FD: net/minecraft/a/a/b/ai/a net/minecraft/game/world/block/BlockStep/blockType
+FD: net/minecraft/client/c/c/a net/minecraft/client/gui/GuiErrorScreen/title
+FD: net/minecraft/a/a/b/g/a net/minecraft/game/world/block/BlockLeavesBase/graphicsLevel
+FD: net/minecraft/client/c/h/a net/minecraft/client/gui/ScaledResolution/scaledWidth
+FD: net/minecraft/client/c/j/a net/minecraft/client/gui/FontRenderer/charWidth
+FD: net/minecraft/client/c/e/a net/minecraft/client/gui/GuiLoadLevel/title
+FD: net/minecraft/client/c/g/a net/minecraft/client/gui/GuiOptions/parentScreen
+FD: net/minecraft/client/c/f/a net/minecraft/client/gui/GuiLevelDialog/screen
+FD: net/minecraft/client/c/p/a net/minecraft/client/gui/GuiNameLevel/parent
+FD: net/minecraft/a/a/b/x/a net/minecraft/game/world/block/Block/soundPowderFootstep
+FD: net/minecraft/client/c/r/a net/minecraft/client/gui/GuiButton/displayString
+FD: net/minecraft/client/c/m/a net/minecraft/client/gui/GuiControls/parentScreen
+FD: net/minecraft/client/c/l/a net/minecraft/client/gui/GuiIngame/itemRenderer
+FD: com/a/a/a/a com/mojang/nbt/NBTTagCompound/tagMap
+FD: net/minecraft/client/c/n/a net/minecraft/client/gui/GuiNewLevel/prevGui
+FD: net/minecraft/a/a/b/n/a net/minecraft/game/world/block/StepSound/stepSoundVolume
+FD: net/minecraft/a/c/a/a net/minecraft/game/entity/EntityPainting/direction
+FD: net/minecraft/a/a/b/p/a net/minecraft/game/world/block/BlockFluid/stillId
+FD: net/minecraft/a/c/e/a net/minecraft/game/entity/EntityLiving/rotationYawHead
+FD: net/minecraft/a/c/d/a net/minecraft/game/entity/EnumArt/sizeX
+FD: net/minecraft/a/c/c/a net/minecraft/game/entity/EntityCreature/pathToEntity
+FD: net/minecraft/a/a/b/s/a net/minecraft/game/world/block/BlockFurnace/isActive
+FD: net/minecraft/a/c/b/a net/minecraft/game/entity/Entity/surfaceCollision
+FD: net/minecraft/a/a/a net/minecraft/game/InventoryLargeChest/name
+FD: net/minecraft/client/a/b/b/a net/minecraft/client/render/camera/ClippingHelper/frustrum
+FD: net/minecraft/client/a/b/c/a net/minecraft/client/render/camera/Frustrum/clippingHelper
+FD: net/minecraft/client/d/a/a net/minecraft/client/controller/PlayerController/mc
+FD: net/minecraft/a/b/a/d/a net/minecraft/game/item/recipe/RecipesIngots/recipeItems
+FD: net/minecraft/a/b/a/c/a net/minecraft/game/item/recipe/CraftingRecipe/width
+FD: net/minecraft/a/b/i/a net/minecraft/game/item/Item/rand
+FD: net/minecraft/a/b/a/a/a net/minecraft/game/item/recipe/RecipesArmor/recipePatterns
+FD: net/minecraft/a/b/k/a net/minecraft/game/item/ItemStack/stackSize
+FD: net/minecraft/a/b/a/h/a net/minecraft/game/item/recipe/RecipesWeapons/recipePatterns
+FD: net/minecraft/a/b/a/f/a net/minecraft/game/item/recipe/CraftingManager/instance
+FD: net/minecraft/a/b/a/e/a net/minecraft/game/item/recipe/RecipesTools/recipePatterns
+FD: net/minecraft/a/a/b/x/aA net/minecraft/game/world/block/Block/soundStoneFootstep
+FD: net/minecraft/a/a/b/x/aB net/minecraft/game/world/block/Block/soundMetalFootstep
+FD: net/minecraft/a/a/b/x/aC net/minecraft/game/world/block/Block/soundGlassFootstep
+FD: net/minecraft/a/a/b/x/aD net/minecraft/game/world/block/Block/soundClothFootstep
+FD: net/minecraft/a/a/b/x/aE net/minecraft/game/world/block/Block/soundSandFootstep
+FD: net/minecraft/a/a/b/x/aF net/minecraft/game/world/block/Block/tickOnLoad
+FD: net/minecraft/a/a/b/x/aG net/minecraft/game/world/block/Block/lightOpacity
+FD: net/minecraft/a/a/b/x/aH net/minecraft/game/world/block/Block/canBlockGrass
+FD: net/minecraft/a/a/b/x/aI net/minecraft/game/world/block/Block/hardness
+FD: net/minecraft/a/a/b/x/aJ net/minecraft/game/world/block/Block/resistance
+FD: net/minecraft/a/a/b/x/aa net/minecraft/game/world/block/Block/bookShelf
+FD: net/minecraft/a/c/e/aa net/minecraft/game/entity/EntityLiving/attackedAtYaw
+FD: net/minecraft/a/b/i/aa net/minecraft/game/item/Item/helmetSteel
+FD: net/minecraft/a/a/b/x/ab net/minecraft/game/world/block/Block/cobblestoneMossy
+FD: net/minecraft/a/c/e/ab net/minecraft/game/entity/EntityLiving/deathTime
+FD: net/minecraft/a/b/i/ab net/minecraft/game/item/Item/plateSteel
+FD: net/minecraft/a/a/b/x/ac net/minecraft/game/world/block/Block/obsidian
+FD: net/minecraft/a/c/e/ac net/minecraft/game/entity/EntityLiving/attackTime
+FD: net/minecraft/a/b/i/ac net/minecraft/game/item/Item/legsSteel
+FD: net/minecraft/a/a/b/x/ad net/minecraft/game/world/block/Block/torch
+FD: net/minecraft/a/c/e/ad net/minecraft/game/entity/EntityLiving/prevCameraPitch
+FD: net/minecraft/a/b/i/ad net/minecraft/game/item/Item/bootsSteel
+FD: net/minecraft/a/a/b/x/ae net/minecraft/game/world/block/Block/fire
+FD: net/minecraft/a/c/e/ae net/minecraft/game/entity/EntityLiving/cameraPitch
+FD: net/minecraft/a/b/i/ae net/minecraft/game/item/Item/helmetDiamond
+FD: net/minecraft/a/a/b/x/af net/minecraft/game/world/block/Block/waterSource
+FD: net/minecraft/a/c/e/af net/minecraft/game/entity/EntityLiving/prevLimbYaw
+FD: net/minecraft/a/b/i/af net/minecraft/game/item/Item/plateDiamond
+FD: net/minecraft/a/a/b/x/ag net/minecraft/game/world/block/Block/lavaSource
+FD: net/minecraft/a/c/e/ag net/minecraft/game/entity/EntityLiving/limbYaw
+FD: net/minecraft/a/b/i/ag net/minecraft/game/item/Item/legsDiamond
+FD: net/minecraft/a/a/b/x/ah net/minecraft/game/world/block/Block/crate
+FD: net/minecraft/a/c/e/ah net/minecraft/game/entity/EntityLiving/limbSwing
+FD: net/minecraft/a/b/i/ah net/minecraft/game/item/Item/bootsDiamond
+FD: net/minecraft/a/a/b/x/ai net/minecraft/game/world/block/Block/cog
+FD: net/minecraft/a/c/e/ai net/minecraft/game/entity/EntityLiving/entityAge
+FD: net/minecraft/a/b/i/ai net/minecraft/game/item/Item/helmetGold
+FD: net/minecraft/a/a/b/x/aj net/minecraft/game/world/block/Block/oreDiamond
+FD: net/minecraft/a/c/e/aj net/minecraft/game/entity/EntityLiving/moveStrafing
+FD: net/minecraft/a/b/i/aj net/minecraft/game/item/Item/plateGold
+FD: net/minecraft/a/a/b/x/ak net/minecraft/game/world/block/Block/blockDiamond
+FD: net/minecraft/a/c/e/ak net/minecraft/game/entity/EntityLiving/moveForward
+FD: net/minecraft/a/b/i/ak net/minecraft/game/item/Item/legsGold
+FD: net/minecraft/a/a/b/x/al net/minecraft/game/world/block/Block/workbench
+FD: net/minecraft/a/c/e/al net/minecraft/game/entity/EntityLiving/isJumping
+FD: net/minecraft/a/b/i/al net/minecraft/game/item/Item/bootsGold
+FD: net/minecraft/a/a/b/x/am net/minecraft/game/world/block/Block/stoneOvenIdle
+FD: net/minecraft/a/c/e/am net/minecraft/game/entity/EntityLiving/moveSpeed
+FD: net/minecraft/a/b/i/am net/minecraft/game/item/Item/flint
+FD: net/minecraft/client/g/a/an net/minecraft/client/player/EntityPlayerSP/mc
+FD: net/minecraft/a/a/b/x/an net/minecraft/game/world/block/Block/blockIndexInTexture
+FD: net/minecraft/a/b/i/an net/minecraft/game/item/Item/porkRaw
+FD: net/minecraft/a/a/b/x/ao net/minecraft/game/world/block/Block/blockID
+FD: net/minecraft/a/b/i/ao net/minecraft/game/item/Item/painting
+FD: net/minecraft/a/a/b/x/ap net/minecraft/game/world/block/Block/minX
+FD: net/minecraft/a/b/i/ap net/minecraft/game/item/Item/appleGold
+FD: net/minecraft/a/a/b/x/aq net/minecraft/game/world/block/Block/minY
+FD: net/minecraft/a/b/i/aq net/minecraft/game/item/Item/shiftedIndex
+FD: net/minecraft/a/a/b/x/ar net/minecraft/game/world/block/Block/minZ
+FD: net/minecraft/a/b/i/ar net/minecraft/game/item/Item/maxStackSize
+FD: net/minecraft/a/a/b/x/as net/minecraft/game/world/block/Block/maxX
+FD: net/minecraft/a/b/i/as net/minecraft/game/item/Item/maxDamage
+FD: net/minecraft/a/b/p/at net/minecraft/game/item/ItemFood/healAmount
+FD: net/minecraft/a/a/b/x/at net/minecraft/game/world/block/Block/maxY
+FD: net/minecraft/a/b/j/at net/minecraft/game/item/ItemArmor/armorType
+FD: net/minecraft/a/b/i/at net/minecraft/game/item/Item/iconIndex
+FD: net/minecraft/a/b/h/at net/minecraft/game/item/ItemAxe/blocksEffectiveAgainst
+FD: net/minecraft/a/b/g/at net/minecraft/game/item/ItemTool/blocksEffectiveAgainst
+FD: net/minecraft/a/b/l/at net/minecraft/game/item/ItemSpade/blocksEffectiveAgainst
+FD: net/minecraft/a/b/a/at net/minecraft/game/item/ItemPickaxe/blocksEffectiveAgainst
+FD: net/minecraft/a/b/f/at net/minecraft/game/item/ItemSeeds/blockType
+FD: net/minecraft/a/b/d/at net/minecraft/game/item/ItemBlock/blockID
+FD: net/minecraft/a/b/c/at net/minecraft/game/item/ItemSword/weaponDamage
+FD: net/minecraft/a/a/b/x/au net/minecraft/game/world/block/Block/maxZ
+FD: net/minecraft/a/b/j/au net/minecraft/game/item/ItemArmor/damageReduceAmount
+FD: net/minecraft/a/b/g/au net/minecraft/game/item/ItemTool/efficiencyOnProperMaterial
+FD: net/minecraft/a/b/a/au net/minecraft/game/item/ItemPickaxe/harvestLevel
+FD: net/minecraft/a/a/b/x/av net/minecraft/game/world/block/Block/stepSound
+FD: net/minecraft/a/b/j/av net/minecraft/game/item/ItemArmor/renderIndex
+FD: net/minecraft/a/b/g/av net/minecraft/game/item/ItemTool/damageVsEntity
+FD: net/minecraft/a/a/b/x/aw net/minecraft/game/world/block/Block/blockParticleGravity
+FD: net/minecraft/a/b/j/aw net/minecraft/game/item/ItemArmor/damageReduceAmountArray
+FD: net/minecraft/a/a/b/x/ax net/minecraft/game/world/block/Block/material
+FD: net/minecraft/a/b/j/ax net/minecraft/game/item/ItemArmor/maxDamageArray
+FD: net/minecraft/a/a/b/x/ay net/minecraft/game/world/block/Block/soundGravelFootstep
+FD: net/minecraft/a/a/b/m/ay net/minecraft/game/world/block/BlockFlowing/stillId1
+FD: net/minecraft/a/a/b/x/az net/minecraft/game/world/block/Block/soundGrassFootstep
+FD: net/minecraft/a/a/b/m/az net/minecraft/game/world/block/BlockFlowing/movingId1
+FD: net/minecraft/a/c/c/b/b net/minecraft/game/entity/misc/EntityItem/age
+FD: net/minecraft/client/a/a/f/b net/minecraft/client/render/entity/Render/shadowSize
+FD: net/minecraft/client/a/a/i/b net/minecraft/client/render/entity/RenderManager/renderEngine
+FD: net/minecraft/client/e/a/b net/minecraft/client/sound/SoundPoolEntry/soundUrl
+FD: net/minecraft/client/e/c/b net/minecraft/client/sound/SoundManager/soundPoolSounds
+FD: net/minecraft/client/e/b/b net/minecraft/client/sound/SoundPool/nameToSoundPoolEntriesMapping
+FD: net/minecraft/a/a/h/b net/minecraft/game/world/EntityMap/depth
+FD: net/minecraft/a/a/c/a/c/b net/minecraft/game/world/terrain/noise/NoiseGeneratorOctaves/octaves
+FD: net/minecraft/a/a/g/b net/minecraft/game/world/ChunkPosition/zPosition
+FD: net/minecraft/a/a/f/b net/minecraft/game/world/ChunkProviderGenerate/noiseGen1
+FD: net/minecraft/a/a/c/a/a/b net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/xCoord
+FD: net/minecraft/a/a/e/b net/minecraft/game/world/World/playerEntity
+FD: net/minecraft/a/a/d/b net/minecraft/game/world/EntityMapSlot/ySlot
+FD: net/minecraft/a/a/a/a/b net/minecraft/game/world/path/PathPoint/yCoord
+FD: net/minecraft/a/a/a/c/b net/minecraft/game/world/path/Pathfinder/path
+FD: net/minecraft/a/a/a/b/b net/minecraft/game/world/path/PathEntity/pathIndex
+FD: net/minecraft/client/f/d/b net/minecraft/client/effect/EffectRenderer/fxLayers
+FD: net/minecraft/a/a/a/d/b net/minecraft/game/world/path/Path/count
+FD: net/minecraft/client/f/j/b net/minecraft/client/effect/EntityFX/particleTextureJitterX
+FD: net/minecraft/a/a/b/a/b/b net/minecraft/game/world/block/tileentity/TileEntityFurnace/furnaceBurnTime
+FD: net/minecraft/a/c/e/a/b net/minecraft/game/entity/player/EntityPlayer/inventory
+FD: net/minecraft/a/c/e/b/b net/minecraft/game/entity/player/InventoryPlayer/armorInventory
+FD: net/minecraft/client/g/b/b net/minecraft/client/player/MovementInput/moveForward
+FD: net/minecraft/a/c/d/a/b net/minecraft/game/entity/projectile/EntityArrow/xTile
+FD: net/minecraft/client/p/b net/minecraft/client/GameSettings/sound
+FD: net/minecraft/client/c/a/g/b net/minecraft/client/gui/container/Slot/xPos
+FD: net/minecraft/client/l/b net/minecraft/client/MouseHelper/deltaY
+FD: net/minecraft/client/h/b net/minecraft/client/KeyBinding/keyCode
+FD: net/minecraft/client/k/b net/minecraft/client/Session/username
+FD: net/minecraft/client/j/b net/minecraft/client/ThreadDownloadResources/mc
+FD: net/minecraft/client/e/b net/minecraft/client/EnumOS/solaris
+FD: net/minecraft/client/d/b net/minecraft/client/Minecraft/displayWidth
+FD: net/minecraft/client/g/b net/minecraft/client/Timer/elapsedTicks
+FD: net/minecraft/client/c/a/a/b net/minecraft/client/gui/container/InventoryCrafting/inventoryWidth
+FD: net/minecraft/client/a/b net/minecraft/client/LoadingScreenRenderer/mc
+FD: net/minecraft/client/MinecraftApplet/b net/minecraft/client/MinecraftApplet/mc
+FD: net/minecraft/client/a/c/b net/minecraft/client/render/Tessellator/convertQuadsToTriangles
+FD: net/minecraft/a/a/d/c/b net/minecraft/game/world/material/Material/ground
+FD: net/minecraft/client/a/b/b net/minecraft/client/render/RenderGlobal/worldObj
+FD: net/minecraft/client/a/e/b net/minecraft/client/render/RenderBlocks/posY
+FD: net/minecraft/client/a/d/b net/minecraft/client/render/EntityRenderer/mc
+FD: net/minecraft/client/a/g/b net/minecraft/client/render/WorldRenderer/isInFrustrum
+FD: net/minecraft/client/a/f/b net/minecraft/client/render/ItemRenderer/itemToRender
+FD: net/minecraft/client/a/i/b net/minecraft/client/render/RenderEngine/textureContentsMap
+FD: net/minecraft/client/a/h/b net/minecraft/client/render/ThreadDownloadImageData/textureSetupComplete
+FD: net/minecraft/client/b/b/b net/minecraft/client/model/ModelQuadruped/body
+FD: net/minecraft/client/b/c/b net/minecraft/client/model/ModelRenderer/rotateAngleY
+FD: net/minecraft/client/b/j/b net/minecraft/client/model/PositionTextureVertex/texturePositionX
+FD: net/minecraft/client/b/k/b net/minecraft/client/model/ModelCreeper/headwear
+FD: net/minecraft/client/b/e/b net/minecraft/client/model/ModelSpider/spiderNeck
+FD: net/minecraft/client/b/h/b net/minecraft/client/model/ModelBiped/bipedHeadwear
+FD: net/minecraft/a/d/c/b net/minecraft/game/physics/MovingObjectPosition/blockX
+FD: net/minecraft/a/d/b/b net/minecraft/game/physics/AxisAlignedBB/minY
+FD: net/minecraft/a/d/a/b net/minecraft/game/physics/Vec3D/yCoord
+FD: net/minecraft/client/a/c/b/b net/minecraft/client/render/texture/TextureFX/iconIndex
+FD: net/minecraft/a/a/b/ag/b net/minecraft/game/world/block/BlockFire/abilityToCatchFire
+FD: net/minecraft/client/c/i/b net/minecraft/client/gui/GuiScreen/mc
+FD: net/minecraft/client/c/h/b net/minecraft/client/gui/ScaledResolution/scaledHeight
+FD: net/minecraft/client/c/j/b net/minecraft/client/gui/FontRenderer/fontTextureName
+FD: net/minecraft/a/a/b/x/b net/minecraft/game/world/block/Block/soundWoodFootstep
+FD: net/minecraft/client/c/r/b net/minecraft/client/gui/GuiButton/id
+FD: net/minecraft/client/c/l/b net/minecraft/client/gui/GuiIngame/chatMessageList
+FD: net/minecraft/a/a/b/n/b net/minecraft/game/world/block/StepSound/stepSoundPitch
+FD: net/minecraft/a/c/a/b net/minecraft/game/entity/EntityPainting/art
+FD: net/minecraft/a/a/b/p/b net/minecraft/game/world/block/BlockFluid/movingId
+FD: net/minecraft/a/c/e/b net/minecraft/game/entity/EntityLiving/prevRotationYawHead
+FD: net/minecraft/a/c/d/b net/minecraft/game/entity/EnumArt/sizeY
+FD: net/minecraft/a/c/c/b net/minecraft/game/entity/EntityCreature/playerToAttack
+FD: net/minecraft/a/c/b/b net/minecraft/game/entity/Entity/fallDistance
+FD: net/minecraft/a/a/b net/minecraft/game/InventoryLargeChest/upperChest
+FD: net/minecraft/client/a/b/b/b net/minecraft/client/render/camera/ClippingHelper/projectionMatrix
+FD: net/minecraft/client/d/a/b net/minecraft/client/controller/PlayerController/isInTestMode
+FD: net/minecraft/a/b/a/c/b net/minecraft/game/item/recipe/CraftingRecipe/height
+FD: net/minecraft/a/b/i/b net/minecraft/game/item/Item/itemsList
+FD: net/minecraft/a/b/a/a/b net/minecraft/game/item/recipe/RecipesArmor/recipeItems
+FD: net/minecraft/a/b/k/b net/minecraft/game/item/ItemStack/animationsToGo
+FD: net/minecraft/a/b/a/h/b net/minecraft/game/item/recipe/RecipesWeapons/recipeItems
+FD: net/minecraft/a/b/a/f/b net/minecraft/game/item/recipe/CraftingManager/recipes
+FD: net/minecraft/a/b/a/e/b net/minecraft/game/item/recipe/RecipesTools/recipeItems
+FD: net/minecraft/client/a/a/f/c net/minecraft/client/render/entity/Render/shadowOpaque
+FD: net/minecraft/client/a/a/i/c net/minecraft/client/render/entity/RenderManager/worldObj
+FD: net/minecraft/client/e/c/c net/minecraft/client/sound/SoundManager/soundPoolMusic
+FD: net/minecraft/client/e/b/c net/minecraft/client/sound/SoundPool/numberOfSoundPoolEntries
+FD: net/minecraft/a/a/h/c net/minecraft/game/world/EntityMap/height
+FD: net/minecraft/a/a/f/c net/minecraft/game/world/ChunkProviderGenerate/noiseGen2
+FD: net/minecraft/a/a/c/a/a/c net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/yCoord
+FD: net/minecraft/a/a/e/c net/minecraft/game/world/World/difficultySetting
+FD: net/minecraft/a/a/d/c net/minecraft/game/world/EntityMapSlot/zSlot
+FD: net/minecraft/a/a/a/a/c net/minecraft/game/world/path/PathPoint/zCoord
+FD: net/minecraft/a/a/a/c/c net/minecraft/game/world/path/Pathfinder/pointMap
+FD: net/minecraft/client/f/d/c net/minecraft/client/effect/EffectRenderer/renderEngine
+FD: net/minecraft/a/a/b/a/b/c net/minecraft/game/world/block/tileentity/TileEntityFurnace/currentItemBurnTime
+FD: net/minecraft/a/c/e/b/c net/minecraft/game/entity/player/InventoryPlayer/currentItem
+FD: net/minecraft/client/g/b/c net/minecraft/client/player/MovementInput/jump
+FD: net/minecraft/client/p/c net/minecraft/client/GameSettings/invertMouse
+FD: net/minecraft/client/c/a/g/c net/minecraft/client/gui/container/Slot/yPos
+FD: net/minecraft/client/l/c net/minecraft/client/MouseHelper/windowComponent
+FD: net/minecraft/client/k/c net/minecraft/client/Session/sessionId
+FD: net/minecraft/client/j/c net/minecraft/client/ThreadDownloadResources/closing
+FD: net/minecraft/client/e/c net/minecraft/client/EnumOS/windows
+FD: net/minecraft/client/d/c net/minecraft/client/Minecraft/displayHeight
+FD: net/minecraft/client/g/c net/minecraft/client/Timer/renderPartialTicks
+FD: net/minecraft/client/c/a/a/c net/minecraft/client/gui/container/InventoryCrafting/eventHandler
+FD: net/minecraft/client/a/c net/minecraft/client/LoadingScreenRenderer/title
+FD: net/minecraft/client/MinecraftApplet/c net/minecraft/client/MinecraftApplet/mcThread
+FD: net/minecraft/client/a/c/c net/minecraft/client/render/Tessellator/tryVBO
+FD: net/minecraft/a/a/d/c/c net/minecraft/game/world/material/Material/wood
+FD: net/minecraft/client/a/b/c net/minecraft/client/render/RenderGlobal/renderEngine
+FD: net/minecraft/client/a/e/c net/minecraft/client/render/RenderBlocks/posZ
+FD: net/minecraft/client/a/d/c net/minecraft/client/render/EntityRenderer/anaglyphEnable
+FD: net/minecraft/client/a/g/c net/minecraft/client/render/WorldRenderer/needsUpdate
+FD: net/minecraft/client/a/f/c net/minecraft/client/render/ItemRenderer/equippedProgress
+FD: net/minecraft/client/a/i/c net/minecraft/client/render/RenderEngine/singleIntBuffer
+FD: net/minecraft/client/a/h/c net/minecraft/client/render/ThreadDownloadImageData/updateCounter
+FD: net/minecraft/client/b/b/c net/minecraft/client/model/ModelQuadruped/leg1
+FD: net/minecraft/client/b/c/c net/minecraft/client/model/ModelRenderer/rotateAngleZ
+FD: net/minecraft/client/b/j/c net/minecraft/client/model/PositionTextureVertex/texturePositionY
+FD: net/minecraft/client/b/k/c net/minecraft/client/model/ModelCreeper/body
+FD: net/minecraft/client/b/e/c net/minecraft/client/model/ModelSpider/spiderBody
+FD: net/minecraft/client/b/h/c net/minecraft/client/model/ModelBiped/bipedBody
+FD: net/minecraft/a/d/c/c net/minecraft/game/physics/MovingObjectPosition/blockY
+FD: net/minecraft/a/d/b/c net/minecraft/game/physics/AxisAlignedBB/minZ
+FD: net/minecraft/a/d/a/c net/minecraft/game/physics/Vec3D/zCoord
+FD: net/minecraft/client/a/c/b/c net/minecraft/client/render/texture/TextureFX/anaglyphEnabled
+FD: net/minecraft/client/c/i/c net/minecraft/client/gui/GuiScreen/width
+FD: net/minecraft/client/c/j/c net/minecraft/client/gui/FontRenderer/fontDisplayLists
+FD: net/minecraft/a/a/b/x/c net/minecraft/game/world/block/Block/blocksList
+FD: net/minecraft/client/c/r/c net/minecraft/client/gui/GuiButton/enabled
+FD: net/minecraft/client/c/l/c net/minecraft/client/gui/GuiIngame/rand
+FD: net/minecraft/a/a/b/n/c net/minecraft/game/world/block/StepSound/stepSoundName
+FD: net/minecraft/a/c/d/c net/minecraft/game/entity/EnumArt/offsetX
+FD: net/minecraft/a/c/b/c net/minecraft/game/entity/Entity/worldObj
+FD: net/minecraft/a/a/c net/minecraft/game/InventoryLargeChest/lowerChest
+FD: net/minecraft/client/a/b/b/c net/minecraft/client/render/camera/ClippingHelper/modelviewMatrix
+FD: net/minecraft/client/d/b/c net/minecraft/client/controller/PlayerControllerSP/curBlockX
+FD: net/minecraft/a/b/a/c/c net/minecraft/game/item/recipe/CraftingRecipe/ingredientMap
+FD: net/minecraft/a/b/i/c net/minecraft/game/item/Item/shovel
+FD: net/minecraft/a/b/k/c net/minecraft/game/item/ItemStack/itemID
+FD: net/minecraft/client/a/a/e/d net/minecraft/client/render/entity/RenderItem/itemRenderBlocks
+FD: net/minecraft/client/a/a/d/d net/minecraft/client/render/entity/RenderTNTPrimed/blockRenderer
+FD: net/minecraft/client/a/a/i/d net/minecraft/client/render/entity/RenderManager/playerViewY
+FD: net/minecraft/client/a/a/h/d net/minecraft/client/render/entity/RenderPainting/rand
+FD: net/minecraft/client/a/a/j/d net/minecraft/client/render/entity/RenderLiving/mainModel
+FD: net/minecraft/client/e/c/d net/minecraft/client/sound/SoundManager/latestSoundID
+FD: net/minecraft/a/a/h/d net/minecraft/game/world/EntityMap/entityGrid
+FD: net/minecraft/a/a/f/d net/minecraft/game/world/ChunkProviderGenerate/noiseGen3
+FD: net/minecraft/a/a/c/a/a/d net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/zCoord
+FD: net/minecraft/a/a/e/d net/minecraft/game/world/World/pathFinder
+FD: net/minecraft/a/a/d/d net/minecraft/game/world/EntityMapSlot/entityMap
+FD: net/minecraft/a/a/a/a/d net/minecraft/game/world/path/PathPoint/hash
+FD: net/minecraft/a/a/a/c/d net/minecraft/game/world/path/Pathfinder/pathOptions
+FD: net/minecraft/client/f/d/d net/minecraft/client/effect/EffectRenderer/rand
+FD: net/minecraft/a/a/b/a/b/d net/minecraft/game/world/block/tileentity/TileEntityFurnace/furnaceCookTime
+FD: net/minecraft/a/c/e/b/d net/minecraft/game/entity/player/InventoryPlayer/player
+FD: net/minecraft/client/g/c/d net/minecraft/client/player/MovementInputFromOptions/movementKeyStates
+FD: net/minecraft/client/p/d net/minecraft/client/GameSettings/showFPS
+FD: net/minecraft/client/c/a/g/d net/minecraft/client/gui/container/Slot/inventory
+FD: net/minecraft/client/l/d net/minecraft/client/MouseHelper/robot
+FD: net/minecraft/client/e/d net/minecraft/client/EnumOS/macos
+FD: net/minecraft/client/d/d net/minecraft/client/Minecraft/theWorld
+FD: net/minecraft/client/g/d net/minecraft/client/Timer/lastHRTime
+FD: net/minecraft/client/a/d net/minecraft/client/LoadingScreenRenderer/start
+FD: net/minecraft/client/a/c/d net/minecraft/client/render/Tessellator/byteBuffer
+FD: net/minecraft/a/a/d/c/d net/minecraft/game/world/material/Material/rock
+FD: net/minecraft/client/a/b/d net/minecraft/client/render/RenderGlobal/glGenList
+FD: net/minecraft/client/a/e/d net/minecraft/client/render/RenderBlocks/blockAccess
+FD: net/minecraft/client/a/d/d net/minecraft/client/render/EntityRenderer/farPlaneDistance
+FD: net/minecraft/client/a/g/d net/minecraft/client/render/WorldRenderer/isVisible
+FD: net/minecraft/client/a/f/d net/minecraft/client/render/ItemRenderer/prevEquippedProgress
+FD: net/minecraft/client/a/i/d net/minecraft/client/render/RenderEngine/imageData
+FD: net/minecraft/client/b/b/d net/minecraft/client/model/ModelQuadruped/leg2
+FD: net/minecraft/client/b/c/d net/minecraft/client/model/ModelRenderer/mirror
+FD: net/minecraft/client/b/k/d net/minecraft/client/model/ModelCreeper/leg1
+FD: net/minecraft/client/b/e/d net/minecraft/client/model/ModelSpider/spiderLeg1
+FD: net/minecraft/client/b/h/d net/minecraft/client/model/ModelBiped/bipedRightArm
+FD: net/minecraft/a/d/c/d net/minecraft/game/physics/MovingObjectPosition/blockZ
+FD: net/minecraft/a/d/b/d net/minecraft/game/physics/AxisAlignedBB/maxX
+FD: net/minecraft/client/a/c/b/d net/minecraft/client/render/texture/TextureFX/textureId
+FD: net/minecraft/client/c/i/d net/minecraft/client/gui/GuiScreen/height
+FD: net/minecraft/client/c/j/d net/minecraft/client/gui/FontRenderer/buffer
+FD: net/minecraft/a/a/b/x/d net/minecraft/game/world/block/Block/opaqueCubeLookup
+FD: net/minecraft/client/c/r/d net/minecraft/client/gui/GuiButton/visible
+FD: net/minecraft/client/c/l/d net/minecraft/client/gui/GuiIngame/mc
+FD: net/minecraft/a/c/d/d net/minecraft/game/entity/EnumArt/offsetY
+FD: net/minecraft/a/c/b/d net/minecraft/game/entity/Entity/prevPosX
+FD: net/minecraft/client/a/b/b/d net/minecraft/client/render/camera/ClippingHelper/clippingMatrix
+FD: net/minecraft/client/d/b/d net/minecraft/client/controller/PlayerControllerSP/curBlockY
+FD: net/minecraft/a/b/a/c/d net/minecraft/game/item/recipe/CraftingRecipe/recipeOutput
+FD: net/minecraft/a/b/i/d net/minecraft/game/item/Item/pickaxeSteel
+FD: net/minecraft/a/b/k/d net/minecraft/game/item/ItemStack/itemDamage
+FD: net/minecraft/client/a/a/e/e net/minecraft/client/render/entity/RenderItem/random
+FD: net/minecraft/client/a/a/g/e net/minecraft/client/render/entity/RenderPlayer/modelBipedMain
+FD: net/minecraft/client/a/a/i/e net/minecraft/client/render/entity/RenderManager/entityRenderMap
+FD: net/minecraft/client/a/a/j/e net/minecraft/client/render/entity/RenderLiving/renderPassModel
+FD: net/minecraft/client/a/a/l/e net/minecraft/client/render/entity/RenderGiantZombie/scale
+FD: net/minecraft/client/e/c/e net/minecraft/client/sound/SoundManager/options
+FD: net/minecraft/a/a/h/e net/minecraft/game/world/EntityMap/slot
+FD: net/minecraft/a/a/f/e net/minecraft/game/world/ChunkProviderGenerate/noiseGen4
+FD: net/minecraft/a/a/e/e net/minecraft/game/world/World/rand
+FD: net/minecraft/a/a/a/a/e net/minecraft/game/world/path/PathPoint/index
+FD: net/minecraft/client/g/c/e net/minecraft/client/player/MovementInputFromOptions/gameSettings
+FD: net/minecraft/client/p/e net/minecraft/client/GameSettings/renderDistance
+FD: net/minecraft/client/c/a/g/e net/minecraft/client/gui/container/Slot/guiHandler
+FD: net/minecraft/client/l/e net/minecraft/client/MouseHelper/mouseX
+FD: net/minecraft/client/c/a/e/e net/minecraft/client/gui/container/SlotArmor/armorType
+FD: net/minecraft/client/c/a/d/e net/minecraft/client/gui/container/SlotCrafting/craftMatrix
+FD: net/minecraft/client/e/e net/minecraft/client/EnumOS/unknown
+FD: net/minecraft/client/d/e net/minecraft/client/Minecraft/renderGlobal
+FD: net/minecraft/client/g/e net/minecraft/client/Timer/timerSpeed
+FD: net/minecraft/client/a/c/e net/minecraft/client/render/Tessellator/rawBuffer
+FD: net/minecraft/a/a/d/c/e net/minecraft/game/world/material/Material/iron
+FD: net/minecraft/client/a/b/e net/minecraft/client/render/RenderGlobal/renderIntBuffer
+FD: net/minecraft/client/a/e/e net/minecraft/client/render/RenderBlocks/overrideBlockTexture
+FD: net/minecraft/client/a/d/e net/minecraft/client/render/EntityRenderer/rendererUpdateCount
+FD: net/minecraft/client/a/g/e net/minecraft/client/render/WorldRenderer/isWaitingOnOcclusionQuery
+FD: net/minecraft/client/a/f/e net/minecraft/client/render/ItemRenderer/swingProgress
+FD: net/minecraft/client/a/i/e net/minecraft/client/render/RenderEngine/textureList
+FD: net/minecraft/client/b/b/e net/minecraft/client/model/ModelQuadruped/leg3
+FD: net/minecraft/client/b/c/e net/minecraft/client/model/ModelRenderer/showModel
+FD: net/minecraft/client/b/k/e net/minecraft/client/model/ModelCreeper/leg2
+FD: net/minecraft/client/b/e/e net/minecraft/client/model/ModelSpider/spiderLeg2
+FD: net/minecraft/client/b/h/e net/minecraft/client/model/ModelBiped/bipedLeftArm
+FD: net/minecraft/a/d/c/e net/minecraft/game/physics/MovingObjectPosition/sideHit
+FD: net/minecraft/a/d/b/e net/minecraft/game/physics/AxisAlignedBB/maxY
+FD: net/minecraft/client/a/c/a/e net/minecraft/client/render/texture/TextureWaterFlowFX/red
+FD: net/minecraft/client/a/c/c/e net/minecraft/client/render/texture/TextureGearsFX/gearRotation
+FD: net/minecraft/client/a/c/e/e net/minecraft/client/render/texture/TextureFlamesFX/currentFireFrame
+FD: net/minecraft/client/a/c/d/e net/minecraft/client/render/texture/TextureLavaFX/red
+FD: net/minecraft/client/a/c/f/e net/minecraft/client/render/texture/TextureWaterFX/red
+FD: net/minecraft/client/c/i/e net/minecraft/client/gui/GuiScreen/controlList
+FD: net/minecraft/a/a/b/x/e net/minecraft/game/world/block/Block/isBlockContainer
+FD: net/minecraft/client/c/r/e net/minecraft/client/gui/GuiButton/width
+FD: net/minecraft/client/c/l/e net/minecraft/client/gui/GuiIngame/updateCounter
+FD: net/minecraft/a/c/d/e net/minecraft/game/entity/EnumArt/Kebab
+FD: net/minecraft/a/c/b/e net/minecraft/game/entity/Entity/prevPosY
+FD: net/minecraft/client/a/b/a/e net/minecraft/client/render/camera/ClippingHelperImplementation/instance
+FD: net/minecraft/client/d/b/e net/minecraft/client/controller/PlayerControllerSP/curBlockZ
+FD: net/minecraft/a/b/i/e net/minecraft/game/item/Item/axeSteel
+FD: net/minecraft/client/a/a/g/f net/minecraft/client/render/entity/RenderPlayer/modelArmorChestplate
+FD: net/minecraft/client/a/a/i/f net/minecraft/client/render/entity/RenderManager/viewerPosX
+FD: net/minecraft/client/e/c/f net/minecraft/client/sound/SoundManager/loaded
+FD: net/minecraft/a/a/h/f net/minecraft/game/world/EntityMap/slot2
+FD: net/minecraft/a/a/f/f net/minecraft/game/world/ChunkProviderGenerate/noiseGen5
+FD: net/minecraft/a/a/e/f net/minecraft/game/world/World/spawnX
+FD: net/minecraft/a/a/a/a/f net/minecraft/game/world/path/PathPoint/totalPathDistance
+FD: net/minecraft/client/p/f net/minecraft/client/GameSettings/fancyGraphics
+FD: net/minecraft/client/l/f net/minecraft/client/MouseHelper/mouseY
+FD: net/minecraft/client/d/f net/minecraft/client/Minecraft/thePlayer
+FD: net/minecraft/client/g/f net/minecraft/client/Timer/elapsedPartialTicks
+FD: net/minecraft/client/a/c/f net/minecraft/client/render/Tessellator/vertexCount
+FD: net/minecraft/a/a/d/c/f net/minecraft/game/world/material/Material/water
+FD: net/minecraft/client/a/b/f net/minecraft/client/render/RenderGlobal/worldRenderersToUpdate
+FD: net/minecraft/client/a/e/f net/minecraft/client/render/RenderBlocks/renderAllFaces
+FD: net/minecraft/client/a/d/f net/minecraft/client/render/EntityRenderer/pointedEntity
+FD: net/minecraft/client/a/g/f net/minecraft/client/render/WorldRenderer/glOcclusionQuery
+FD: net/minecraft/client/a/f/f net/minecraft/client/render/ItemRenderer/itemSwingState
+FD: net/minecraft/client/a/i/f net/minecraft/client/render/RenderEngine/urlToImageDataMap
+FD: net/minecraft/client/b/b/f net/minecraft/client/model/ModelQuadruped/leg4
+FD: net/minecraft/client/b/c/f net/minecraft/client/model/ModelRenderer/corners
+FD: net/minecraft/client/b/k/f net/minecraft/client/model/ModelCreeper/leg3
+FD: net/minecraft/client/b/e/f net/minecraft/client/model/ModelSpider/spiderLeg3
+FD: net/minecraft/client/b/h/f net/minecraft/client/model/ModelBiped/bipedRightLeg
+FD: net/minecraft/a/d/c/f net/minecraft/game/physics/MovingObjectPosition/hitVec
+FD: net/minecraft/a/d/b/f net/minecraft/game/physics/AxisAlignedBB/maxZ
+FD: net/minecraft/client/a/c/a/f net/minecraft/client/render/texture/TextureWaterFlowFX/green
+FD: net/minecraft/client/a/c/c/f net/minecraft/client/render/texture/TextureGearsFX/gearColor
+FD: net/minecraft/client/a/c/e/f net/minecraft/client/render/texture/TextureFlamesFX/lastFireFrame
+FD: net/minecraft/client/a/c/d/f net/minecraft/client/render/texture/TextureLavaFX/green
+FD: net/minecraft/client/a/c/f/f net/minecraft/client/render/texture/TextureWaterFX/green
+FD: net/minecraft/client/c/i/f net/minecraft/client/gui/GuiScreen/allowUserInput
+FD: net/minecraft/a/a/b/x/f net/minecraft/game/world/block/Block/lightValue
+FD: net/minecraft/client/c/r/f net/minecraft/client/gui/GuiButton/height
+FD: net/minecraft/a/c/d/f net/minecraft/game/entity/EnumArt/Aztec
+FD: net/minecraft/a/c/b/f net/minecraft/game/entity/Entity/prevPosZ
+FD: net/minecraft/client/a/b/a/f net/minecraft/client/render/camera/ClippingHelperImplementation/projectionMatrixBuffer
+FD: net/minecraft/client/d/b/f net/minecraft/client/controller/PlayerControllerSP/curBlockDamage
+FD: net/minecraft/a/b/i/f net/minecraft/game/item/Item/striker
+FD: net/minecraft/client/a/a/g/g net/minecraft/client/render/entity/RenderPlayer/modelArmor
+FD: net/minecraft/client/a/a/i/g net/minecraft/client/render/entity/RenderManager/viewerPosY
+FD: net/minecraft/a/a/h/g net/minecraft/game/world/EntityMap/entities
+FD: net/minecraft/a/a/f/g net/minecraft/game/world/ChunkProviderGenerate/noiseGen6
+FD: net/minecraft/a/a/e/g net/minecraft/game/world/World/spawnY
+FD: net/minecraft/a/a/a/a/g net/minecraft/game/world/path/PathPoint/distanceToNext
+FD: net/minecraft/client/p/g net/minecraft/client/GameSettings/anaglyph
+FD: net/minecraft/client/l/g net/minecraft/client/MouseHelper/cursor
+FD: net/minecraft/client/d/g net/minecraft/client/Minecraft/effectRenderer
+FD: net/minecraft/client/g/g net/minecraft/client/Timer/lastSyncSysClock
+FD: net/minecraft/client/a/c/g net/minecraft/client/render/Tessellator/textureU
+FD: net/minecraft/a/a/d/c/g net/minecraft/game/world/material/Material/lava
+FD: net/minecraft/client/a/b/g net/minecraft/client/render/RenderGlobal/sortedWorldRenderers
+FD: net/minecraft/client/a/d/g net/minecraft/client/render/EntityRenderer/entityRendererInt1
+FD: net/minecraft/client/a/g/g net/minecraft/client/render/WorldRenderer/worldObj
+FD: net/minecraft/client/a/f/g net/minecraft/client/render/ItemRenderer/renderBlocksInstance
+FD: net/minecraft/client/a/i/g net/minecraft/client/render/RenderEngine/options
+FD: net/minecraft/client/b/c/g net/minecraft/client/model/ModelRenderer/faces
+FD: net/minecraft/client/b/k/g net/minecraft/client/model/ModelCreeper/leg4
+FD: net/minecraft/client/b/e/g net/minecraft/client/model/ModelSpider/spiderLeg4
+FD: net/minecraft/client/b/h/g net/minecraft/client/model/ModelBiped/bipedLeftLeg
+FD: net/minecraft/a/d/c/g net/minecraft/game/physics/MovingObjectPosition/entityHit
+FD: net/minecraft/a/d/b/g net/minecraft/game/physics/AxisAlignedBB/epsilon
+FD: net/minecraft/client/a/c/a/g net/minecraft/client/render/texture/TextureWaterFlowFX/blue
+FD: net/minecraft/client/a/c/c/g net/minecraft/client/render/texture/TextureGearsFX/gearMiddleColor
+FD: net/minecraft/client/a/c/d/g net/minecraft/client/render/texture/TextureLavaFX/blue
+FD: net/minecraft/client/a/c/f/g net/minecraft/client/render/texture/TextureWaterFX/blue
+FD: net/minecraft/client/c/i/g net/minecraft/client/gui/GuiScreen/fontRenderer
+FD: net/minecraft/a/a/b/x/g net/minecraft/game/world/block/Block/stone
+FD: net/minecraft/client/c/r/g net/minecraft/client/gui/GuiButton/xPosition
+FD: net/minecraft/a/c/d/g net/minecraft/game/entity/EnumArt/Alban
+FD: net/minecraft/a/c/b/g net/minecraft/game/entity/Entity/posX
+FD: net/minecraft/client/a/b/a/g net/minecraft/client/render/camera/ClippingHelperImplementation/modelviewMatrixBuffer
+FD: net/minecraft/client/d/b/g net/minecraft/client/controller/PlayerControllerSP/prevBlockDamage
+FD: net/minecraft/a/b/i/g net/minecraft/game/item/Item/appleRed
+FD: net/minecraft/client/a/a/g/h net/minecraft/client/render/entity/RenderPlayer/armorFilenamePrefix
+FD: net/minecraft/client/a/a/i/h net/minecraft/client/render/entity/RenderManager/viewerPosZ
+FD: net/minecraft/a/a/f/h net/minecraft/game/world/ChunkProviderGenerate/chunks
+FD: net/minecraft/a/a/e/h net/minecraft/game/world/World/spawnZ
+FD: net/minecraft/a/a/a/a/h net/minecraft/game/world/path/PathPoint/distanceToTarget
+FD: net/minecraft/client/p/h net/minecraft/client/GameSettings/limitFramerate
+FD: net/minecraft/client/l/h net/minecraft/client/MouseHelper/mouseInt
+FD: net/minecraft/client/d/h net/minecraft/client/Minecraft/session
+FD: net/minecraft/client/g/h net/minecraft/client/Timer/lastSyncHRClock
+FD: net/minecraft/client/a/c/h net/minecraft/client/render/Tessellator/textureV
+FD: net/minecraft/a/a/d/c/h net/minecraft/game/world/material/Material/leaves
+FD: net/minecraft/client/a/b/h net/minecraft/client/render/RenderGlobal/worldRenderers
+FD: net/minecraft/client/a/d/h net/minecraft/client/render/EntityRenderer/entityRendererInt2
+FD: net/minecraft/client/a/g/h net/minecraft/client/render/WorldRenderer/glRenderList
+FD: net/minecraft/client/a/i/h net/minecraft/client/render/RenderEngine/clampTexture
+FD: net/minecraft/client/b/c/h net/minecraft/client/model/ModelRenderer/textureOffsetX
+FD: net/minecraft/client/b/e/h net/minecraft/client/model/ModelSpider/spiderLeg5
+FD: net/minecraft/client/a/c/a/h net/minecraft/client/render/texture/TextureWaterFlowFX/alpha
+FD: net/minecraft/client/a/c/c/h net/minecraft/client/render/texture/TextureGearsFX/gearRotationDir
+FD: net/minecraft/client/a/c/d/h net/minecraft/client/render/texture/TextureLavaFX/alpha
+FD: net/minecraft/client/a/c/f/h net/minecraft/client/render/texture/TextureWaterFX/alpha
+FD: net/minecraft/client/c/k/h net/minecraft/client/gui/Gui/zLevel
+FD: net/minecraft/a/a/b/x/h net/minecraft/game/world/block/Block/grass
+FD: net/minecraft/a/c/d/h net/minecraft/game/entity/EnumArt/Aztec2
+FD: net/minecraft/a/c/b/h net/minecraft/game/entity/Entity/posY
+FD: net/minecraft/client/a/b/a/h net/minecraft/client/render/camera/ClippingHelperImplementation/ICamera
+FD: net/minecraft/client/d/b/h net/minecraft/client/controller/PlayerControllerSP/blockDestroySoundCounter
+FD: net/minecraft/a/b/i/h net/minecraft/game/item/Item/bow
+FD: net/minecraft/a/a/e/i net/minecraft/game/world/World/lightBrightnessTable
+FD: net/minecraft/a/a/a/a/i net/minecraft/game/world/path/PathPoint/previous
+FD: net/minecraft/client/q/i net/minecraft/client/GuiMainMenu/splashes
+FD: net/minecraft/client/p/i net/minecraft/client/GameSettings/keyBindForward
+FD: net/minecraft/client/d/i net/minecraft/client/Minecraft/minecraftUri
+FD: net/minecraft/client/g/i net/minecraft/client/Timer/timeSyncAdjustment
+FD: net/minecraft/client/a/c/i net/minecraft/client/render/Tessellator/color
+FD: net/minecraft/a/a/d/c/i net/minecraft/game/world/material/Material/plants
+FD: net/minecraft/client/a/b/i net/minecraft/client/render/RenderGlobal/renderChunksWide
+FD: net/minecraft/client/a/d/i net/minecraft/client/render/EntityRenderer/random
+FD: net/minecraft/client/a/g/i net/minecraft/client/render/WorldRenderer/tessellator
+FD: net/minecraft/client/c/a/j/i net/minecraft/client/gui/container/GuiContainer/ySize
+FD: net/minecraft/client/b/c/i net/minecraft/client/model/ModelRenderer/textureOffsetY
+FD: net/minecraft/client/b/e/i net/minecraft/client/model/ModelSpider/spiderLeg6
+FD: net/minecraft/client/a/c/a/i net/minecraft/client/render/texture/TextureWaterFlowFX/tickCounter
+FD: net/minecraft/client/a/c/f/i net/minecraft/client/render/texture/TextureWaterFX/tickCounter
+FD: net/minecraft/client/c/c/i net/minecraft/client/gui/GuiErrorScreen/text
+FD: net/minecraft/client/c/e/i net/minecraft/client/gui/GuiLoadLevel/parent
+FD: net/minecraft/client/c/g/i net/minecraft/client/gui/GuiOptions/screenTitle
+FD: net/minecraft/client/c/p/i net/minecraft/client/gui/GuiNameLevel/title
+FD: net/minecraft/a/a/b/x/i net/minecraft/game/world/block/Block/dirt
+FD: net/minecraft/client/c/r/i net/minecraft/client/gui/GuiButton/yPosition
+FD: net/minecraft/client/c/m/i net/minecraft/client/gui/GuiControls/screenTitle
+FD: net/minecraft/client/c/n/i net/minecraft/client/gui/GuiNewLevel/worldType
+FD: net/minecraft/a/c/d/i net/minecraft/game/entity/EnumArt/Bomb
+FD: net/minecraft/a/c/b/i net/minecraft/game/entity/Entity/posZ
+FD: net/minecraft/client/d/b/i net/minecraft/client/controller/PlayerControllerSP/blockHitWait
+FD: net/minecraft/a/b/i/i net/minecraft/game/item/Item/arrow
+FD: net/minecraft/a/a/e/j net/minecraft/game/world/World/worldAccesses
+FD: net/minecraft/a/a/a/a/j net/minecraft/game/world/path/PathPoint/isFirst
+FD: net/minecraft/client/q/j net/minecraft/client/GuiMainMenu/currentSplash
+FD: net/minecraft/client/p/j net/minecraft/client/GameSettings/keyBindLeft
+FD: net/minecraft/client/d/j net/minecraft/client/Minecraft/mcCanvas
+FD: net/minecraft/client/a/c/j net/minecraft/client/render/Tessellator/hasColor
+FD: net/minecraft/a/a/d/c/j net/minecraft/game/world/material/Material/sponge
+FD: net/minecraft/client/a/b/j net/minecraft/client/render/RenderGlobal/renderChunksTall
+FD: net/minecraft/client/a/d/j net/minecraft/client/render/EntityRenderer/unusedInt1
+FD: net/minecraft/client/a/g/j net/minecraft/client/render/WorldRenderer/posX
+FD: net/minecraft/client/c/a/j/j net/minecraft/client/gui/container/GuiContainer/inventorySlots
+FD: net/minecraft/client/b/c/j net/minecraft/client/model/ModelRenderer/rotationPointX
+FD: net/minecraft/client/b/e/j net/minecraft/client/model/ModelSpider/spiderLeg7
+FD: net/minecraft/client/c/e/j net/minecraft/client/gui/GuiLoadLevel/finished
+FD: net/minecraft/client/c/g/j net/minecraft/client/gui/GuiOptions/options
+FD: net/minecraft/client/c/p/j net/minecraft/client/gui/GuiNameLevel/id
+FD: net/minecraft/a/a/b/x/j net/minecraft/game/world/block/Block/cobblestone
+FD: net/minecraft/client/c/m/j net/minecraft/client/gui/GuiControls/options
+FD: net/minecraft/client/c/n/j net/minecraft/client/gui/GuiNewLevel/worldShape
+FD: net/minecraft/a/c/d/j net/minecraft/game/entity/EnumArt/Plant
+FD: net/minecraft/a/c/b/j net/minecraft/game/entity/Entity/motionX
+FD: net/minecraft/a/b/i/j net/minecraft/game/item/Item/coal
+FD: net/minecraft/a/a/e/k net/minecraft/game/world/World/chunkProvider
+FD: net/minecraft/client/p/k net/minecraft/client/GameSettings/keyBindBack
+FD: net/minecraft/client/c/a/f/k net/minecraft/client/gui/container/GuiInventory/inventoryCrafting
+FD: net/minecraft/client/c/a/i/k net/minecraft/client/gui/container/GuiChest/upperChestInventory
+FD: net/minecraft/client/c/a/c/k net/minecraft/client/gui/container/GuiFurnace/furnaceInventory
+FD: net/minecraft/client/c/a/b/k net/minecraft/client/gui/container/GuiCrafting/inventoryCrafting
+FD: net/minecraft/client/d/k net/minecraft/client/Minecraft/appletMode
+FD: net/minecraft/client/a/c/k net/minecraft/client/render/Tessellator/hasTexture
+FD: net/minecraft/a/a/d/c/k net/minecraft/game/world/material/Material/cloth
+FD: net/minecraft/client/a/b/k net/minecraft/client/render/RenderGlobal/renderChunksDeep
+FD: net/minecraft/client/a/d/k net/minecraft/client/render/EntityRenderer/unusedInt2
+FD: net/minecraft/client/a/g/k net/minecraft/client/render/WorldRenderer/posY
+FD: net/minecraft/client/c/a/j/k net/minecraft/client/gui/container/GuiContainer/itemRenderer
+FD: net/minecraft/client/b/c/k net/minecraft/client/model/ModelRenderer/rotationPointY
+FD: net/minecraft/client/b/e/k net/minecraft/client/model/ModelSpider/spiderLeg8
+FD: net/minecraft/client/c/e/k net/minecraft/client/gui/GuiLoadLevel/loaded
+FD: net/minecraft/client/c/p/k net/minecraft/client/gui/GuiNameLevel/name
+FD: net/minecraft/a/a/b/x/k net/minecraft/game/world/block/Block/planks
+FD: net/minecraft/client/c/m/k net/minecraft/client/gui/GuiControls/buttonId
+FD: net/minecraft/client/c/n/k net/minecraft/client/gui/GuiNewLevel/worldSize
+FD: net/minecraft/a/c/d/k net/minecraft/game/entity/EnumArt/Wasteland
+FD: net/minecraft/a/c/b/k net/minecraft/game/entity/Entity/motionY
+FD: net/minecraft/a/b/i/k net/minecraft/game/item/Item/diamond
+FD: net/minecraft/client/p/l net/minecraft/client/GameSettings/keyBindRight
+FD: net/minecraft/client/c/a/f/l net/minecraft/client/gui/container/GuiInventory/iInventory
+FD: net/minecraft/client/c/a/i/l net/minecraft/client/gui/container/GuiChest/lowerChestInventory
+FD: net/minecraft/client/c/a/b/l net/minecraft/client/gui/container/GuiCrafting/iInventory
+FD: net/minecraft/client/d/l net/minecraft/client/Minecraft/isGamePaused
+FD: net/minecraft/client/a/c/l net/minecraft/client/render/Tessellator/rawBufferIndex
+FD: net/minecraft/a/a/d/c/l net/minecraft/game/world/material/Material/fire
+FD: net/minecraft/client/a/b/l net/minecraft/client/render/RenderGlobal/glRenderListBase
+FD: net/minecraft/client/a/d/l net/minecraft/client/render/EntityRenderer/fogColorBuffer
+FD: net/minecraft/client/a/g/l net/minecraft/client/render/WorldRenderer/posZ
+FD: net/minecraft/client/c/a/j/l net/minecraft/client/gui/container/GuiContainer/itemStack
+FD: net/minecraft/client/b/c/l net/minecraft/client/model/ModelRenderer/rotationPointZ
+FD: net/minecraft/client/c/e/l net/minecraft/client/gui/GuiLoadLevel/levels
+FD: net/minecraft/client/c/p/l net/minecraft/client/gui/GuiNameLevel/counter
+FD: net/minecraft/a/a/b/x/l net/minecraft/game/world/block/Block/sapling
+FD: net/minecraft/client/c/n/l net/minecraft/client/gui/GuiNewLevel/worldTheme
+FD: net/minecraft/a/c/d/l net/minecraft/game/entity/EnumArt/Pool
+FD: net/minecraft/a/c/b/l net/minecraft/game/entity/Entity/motionZ
+FD: net/minecraft/a/b/i/l net/minecraft/game/item/Item/ingotIron
+FD: net/minecraft/client/p/m net/minecraft/client/GameSettings/keyBindJump
+FD: net/minecraft/client/c/a/f/m net/minecraft/client/gui/container/GuiInventory/xSize_lo
+FD: net/minecraft/client/c/a/i/m net/minecraft/client/gui/container/GuiChest/inventoryRows
+FD: net/minecraft/client/d/m net/minecraft/client/Minecraft/renderEngine
+FD: net/minecraft/client/a/c/m net/minecraft/client/render/Tessellator/addedVertices
+FD: net/minecraft/a/a/d/c/m net/minecraft/game/world/material/Material/sand
+FD: net/minecraft/client/a/b/m net/minecraft/client/render/RenderGlobal/mc
+FD: net/minecraft/client/a/d/m net/minecraft/client/render/EntityRenderer/fogColorRed
+FD: net/minecraft/client/a/g/m net/minecraft/client/render/WorldRenderer/sizeWidth
+FD: net/minecraft/client/b/c/m net/minecraft/client/model/ModelRenderer/compiled
+FD: net/minecraft/client/c/e/m net/minecraft/client/gui/GuiLoadLevel/status
+FD: net/minecraft/a/a/b/x/m net/minecraft/game/world/block/Block/bedrock
+FD: net/minecraft/client/c/n/m net/minecraft/client/gui/GuiNewLevel/selectedWorldType
+FD: net/minecraft/a/c/d/m net/minecraft/game/entity/EnumArt/Courbet
+FD: net/minecraft/a/c/b/m net/minecraft/game/entity/Entity/rotationYaw
+FD: net/minecraft/a/b/i/m net/minecraft/game/item/Item/ingotGold
+FD: net/minecraft/client/p/n net/minecraft/client/GameSettings/keyBindInventory
+FD: net/minecraft/client/c/a/f/n net/minecraft/client/gui/container/GuiInventory/ySize_lo
+FD: net/minecraft/client/d/n net/minecraft/client/Minecraft/fontRenderer
+FD: net/minecraft/client/a/c/n net/minecraft/client/render/Tessellator/isColorDisabled
+FD: net/minecraft/a/a/d/c/n net/minecraft/game/world/material/Material/circuits
+FD: net/minecraft/client/a/b/n net/minecraft/client/render/RenderGlobal/globalRenderBlocks
+FD: net/minecraft/client/a/d/n net/minecraft/client/render/EntityRenderer/fogColorGreen
+FD: net/minecraft/client/a/g/n net/minecraft/client/render/WorldRenderer/sizeHeight
+FD: net/minecraft/client/b/c/n net/minecraft/client/model/ModelRenderer/displayList
+FD: net/minecraft/client/c/e/n net/minecraft/client/gui/GuiLoadLevel/frozen
+FD: net/minecraft/a/a/b/x/n net/minecraft/game/world/block/Block/waterMoving
+FD: net/minecraft/client/c/n/n net/minecraft/client/gui/GuiNewLevel/selectedWorldShape
+FD: net/minecraft/a/c/d/n net/minecraft/game/entity/EnumArt/Sea
+FD: net/minecraft/a/c/b/n net/minecraft/game/entity/Entity/rotationPitch
+FD: net/minecraft/a/b/i/n net/minecraft/game/item/Item/swordSteel
+FD: net/minecraft/client/p/o net/minecraft/client/GameSettings/keyBindDrop
+FD: net/minecraft/client/d/o net/minecraft/client/Minecraft/currentScreen
+FD: net/minecraft/client/a/c/o net/minecraft/client/render/Tessellator/drawMode
+FD: net/minecraft/a/a/d/c/o net/minecraft/game/world/material/Material/glass
+FD: net/minecraft/client/a/b/o net/minecraft/client/render/RenderGlobal/glOcclusionQueryBase
+FD: net/minecraft/client/a/d/o net/minecraft/client/render/EntityRenderer/fogColorBlue
+FD: net/minecraft/client/a/g/o net/minecraft/client/render/WorldRenderer/sizeDepth
+FD: net/minecraft/client/b/c/o net/minecraft/client/model/ModelRenderer/isHidden
+FD: net/minecraft/client/c/e/o net/minecraft/client/gui/GuiLoadLevel/selectedFile
+FD: net/minecraft/a/a/b/x/o net/minecraft/game/world/block/Block/waterStill
+FD: net/minecraft/client/c/n/o net/minecraft/client/gui/GuiNewLevel/selectedWorldSize
+FD: net/minecraft/a/c/d/o net/minecraft/game/entity/EnumArt/Sunset
+FD: net/minecraft/a/c/b/o net/minecraft/game/entity/Entity/prevRotationYaw
+FD: net/minecraft/a/b/i/o net/minecraft/game/item/Item/swordWood
+FD: net/minecraft/client/p/p net/minecraft/client/GameSettings/keyBindToggleFog
+FD: net/minecraft/client/d/p net/minecraft/client/Minecraft/loadingScreen
+FD: net/minecraft/client/a/c/p net/minecraft/client/render/Tessellator/isDrawing
+FD: net/minecraft/a/a/d/c/p net/minecraft/game/world/material/Material/tnt
+FD: net/minecraft/client/a/b/p net/minecraft/client/render/RenderGlobal/occlusionEnabled
+FD: net/minecraft/client/a/d/p net/minecraft/client/render/EntityRenderer/prevFogColor
+FD: net/minecraft/client/a/g/p net/minecraft/client/render/WorldRenderer/skipRenderPass
+FD: net/minecraft/a/a/b/x/p net/minecraft/game/world/block/Block/lavaMoving
+FD: net/minecraft/client/c/n/p net/minecraft/client/gui/GuiNewLevel/selectedWorldTheme
+FD: net/minecraft/a/c/d/p net/minecraft/game/entity/EnumArt/Wanderer
+FD: net/minecraft/a/c/b/p net/minecraft/game/entity/Entity/prevRotationPitch
+FD: net/minecraft/a/b/i/p net/minecraft/game/item/Item/shovelWood
+FD: net/minecraft/client/p/q net/minecraft/client/GameSettings/keyBindSave
+FD: net/minecraft/client/d/q net/minecraft/client/Minecraft/entityRenderer
+FD: net/minecraft/client/a/c/q net/minecraft/client/render/Tessellator/useVBO
+FD: net/minecraft/client/a/b/q net/minecraft/client/render/RenderGlobal/cloudOffsetX
+FD: net/minecraft/client/a/d/q net/minecraft/client/render/EntityRenderer/fogColor
+FD: net/minecraft/client/a/g/q net/minecraft/client/render/WorldRenderer/posXPlus
+FD: net/minecraft/a/a/b/x/q net/minecraft/game/world/block/Block/lavaStill
+FD: net/minecraft/a/c/d/q net/minecraft/game/entity/EnumArt/Match
+FD: net/minecraft/a/c/b/q net/minecraft/game/entity/Entity/boundingBox
+FD: net/minecraft/a/b/i/q net/minecraft/game/item/Item/pickaxeWood
+FD: net/minecraft/client/p/r net/minecraft/client/GameSettings/keyBindLoad
+FD: net/minecraft/client/d/r net/minecraft/client/Minecraft/loadMapUser
+FD: net/minecraft/client/a/c/r net/minecraft/client/render/Tessellator/vertexBuffers
+FD: net/minecraft/client/a/b/r net/minecraft/client/render/RenderGlobal/glSkyList
+FD: net/minecraft/client/a/g/r net/minecraft/client/render/WorldRenderer/posYPlus
+FD: net/minecraft/a/a/b/x/r net/minecraft/game/world/block/Block/sand
+FD: net/minecraft/a/c/d/r net/minecraft/game/entity/EnumArt/Bust
+FD: net/minecraft/a/c/b/r net/minecraft/game/entity/Entity/onGround
+FD: net/minecraft/a/b/i/r net/minecraft/game/item/Item/axeWood
+FD: net/minecraft/client/p/s net/minecraft/client/GameSettings/keyBindings
+FD: net/minecraft/client/d/s net/minecraft/client/Minecraft/loadMapID
+FD: net/minecraft/client/a/c/s net/minecraft/client/render/Tessellator/vboIndex
+FD: net/minecraft/client/a/b/s net/minecraft/client/render/RenderGlobal/minBlockX
+FD: net/minecraft/client/a/g/s net/minecraft/client/render/WorldRenderer/posZPlus
+FD: net/minecraft/a/a/b/x/s net/minecraft/game/world/block/Block/gravel
+FD: net/minecraft/a/c/d/s net/minecraft/game/entity/EnumArt/Stage
+FD: net/minecraft/a/c/b/s net/minecraft/game/entity/Entity/isCollided
+FD: net/minecraft/a/b/i/s net/minecraft/game/item/Item/swordStone
+FD: net/minecraft/client/p/t net/minecraft/client/GameSettings/numberOfOptions
+FD: net/minecraft/client/d/t net/minecraft/client/Minecraft/ingameGUI
+FD: net/minecraft/client/a/c/t net/minecraft/client/render/Tessellator/vboCount
+FD: net/minecraft/client/a/b/t net/minecraft/client/render/RenderGlobal/minBlockY
+FD: net/minecraft/client/a/g/t net/minecraft/client/render/WorldRenderer/rendererBoundingBox
+FD: net/minecraft/a/a/b/x/t net/minecraft/game/world/block/Block/oreGold
+FD: net/minecraft/a/c/d/t net/minecraft/game/entity/EnumArt/Void
+FD: net/minecraft/a/c/b/t net/minecraft/game/entity/Entity/isDead
+FD: net/minecraft/a/b/i/t net/minecraft/game/item/Item/shovelStone
+FD: net/minecraft/client/p/u net/minecraft/client/GameSettings/difficulty
+FD: net/minecraft/client/d/u net/minecraft/client/Minecraft/skipRenderWorld
+FD: net/minecraft/client/a/b/u net/minecraft/client/render/RenderGlobal/minBlockZ
+FD: net/minecraft/client/a/g/u net/minecraft/client/render/WorldRenderer/renderBlocks
+FD: net/minecraft/a/a/b/x/u net/minecraft/game/world/block/Block/oreIron
+FD: net/minecraft/a/c/d/u net/minecraft/game/entity/EnumArt/SkullAndRoses
+FD: net/minecraft/a/c/b/u net/minecraft/game/entity/Entity/yOffset
+FD: net/minecraft/a/b/i/u net/minecraft/game/item/Item/pickaxeStone
+FD: net/minecraft/client/p/v net/minecraft/client/GameSettings/thirdPersonView
+FD: net/minecraft/client/d/v net/minecraft/client/Minecraft/objectMouseOver
+FD: net/minecraft/client/a/b/v net/minecraft/client/render/RenderGlobal/maxBlockX
+FD: net/minecraft/a/a/b/x/v net/minecraft/game/world/block/Block/oreCoal
+FD: net/minecraft/a/c/d/v net/minecraft/game/entity/EnumArt/Fighters
+FD: net/minecraft/a/c/b/v net/minecraft/game/entity/Entity/width
+FD: net/minecraft/a/b/i/v net/minecraft/game/item/Item/axeStone
+FD: net/minecraft/client/p/w net/minecraft/client/GameSettings/RENDER_DISTANCES
+FD: net/minecraft/client/d/w net/minecraft/client/Minecraft/options
+FD: net/minecraft/client/a/b/w net/minecraft/client/render/RenderGlobal/maxBlockY
+FD: net/minecraft/a/a/b/x/w net/minecraft/game/world/block/Block/wood
+FD: net/minecraft/a/c/d/w net/minecraft/game/entity/EnumArt/Pointer
+FD: net/minecraft/a/c/b/w net/minecraft/game/entity/Entity/height
+FD: net/minecraft/a/b/i/w net/minecraft/game/item/Item/swordDiamond
+FD: net/minecraft/client/p/x net/minecraft/client/GameSettings/DIFFICULTIES
+FD: net/minecraft/client/d/x net/minecraft/client/Minecraft/sndManager
+FD: net/minecraft/client/a/b/x net/minecraft/client/render/RenderGlobal/maxBlockZ
+FD: net/minecraft/a/a/b/x/x net/minecraft/game/world/block/Block/leaves
+FD: net/minecraft/a/c/b/x net/minecraft/game/entity/Entity/prevDistanceWalkedModified
+FD: net/minecraft/a/b/i/x net/minecraft/game/item/Item/shovelDiamond
+FD: net/minecraft/client/p/y net/minecraft/client/GameSettings/keyBindChat
+FD: net/minecraft/client/d/y net/minecraft/client/Minecraft/mouseHelper
+FD: net/minecraft/client/a/b/y net/minecraft/client/render/RenderGlobal/countEntitiesTotal
+FD: net/minecraft/a/a/b/x/y net/minecraft/game/world/block/Block/sponge
+FD: net/minecraft/a/c/b/y net/minecraft/game/entity/Entity/distanceWalkedModified
+FD: net/minecraft/a/b/i/y net/minecraft/game/item/Item/pickaxeDiamond
+FD: net/minecraft/client/p/z net/minecraft/client/GameSettings/mc
+FD: net/minecraft/client/d/z net/minecraft/client/Minecraft/mcDataDir
+FD: net/minecraft/client/a/b/z net/minecraft/client/render/RenderGlobal/countEntitiesRendered
+FD: net/minecraft/a/a/b/x/z net/minecraft/game/world/block/Block/glass
+FD: net/minecraft/a/c/b/z net/minecraft/game/entity/Entity/canTriggerWalking
+FD: net/minecraft/a/b/i/z net/minecraft/game/item/Item/axeDiamond
+MD: net/minecraft/a/b/p/<init> (II)V net/minecraft/game/item/ItemFood/<init> (II)V
+MD: net/minecraft/client/a/a/k/<init> (Lnet/minecraft/client/b/l;Lnet/minecraft/client/b/l;F)V net/minecraft/client/render/entity/RenderSheep/<init> (Lnet/minecraft/client/model/ModelBase;Lnet/minecraft/client/model/ModelBase;F)V
+MD: net/minecraft/client/a/a/j/<init> (Lnet/minecraft/client/b/l;F)V net/minecraft/client/render/entity/RenderLiving/<init> (Lnet/minecraft/client/model/ModelBase;F)V
+MD: net/minecraft/client/a/a/l/<init> (Lnet/minecraft/client/b/l;FF)V net/minecraft/client/render/entity/RenderGiantZombie/<init> (Lnet/minecraft/client/model/ModelBase;FF)V
+MD: net/minecraft/client/e/a/<init> (Ljava/lang/String;Ljava/net/URL;)V net/minecraft/client/sound/SoundPoolEntry/<init> (Ljava/lang/String;Ljava/net/URL;)V
+MD: net/minecraft/a/a/c/a/c/<init> (Ljava/util/Random;I)V net/minecraft/game/world/terrain/noise/NoiseGeneratorOctaves/<init> (Ljava/util/Random;I)V
+MD: net/minecraft/a/a/a/<init> (La/b;)V net/minecraft/game/world/LevelLoader/<init> (Lutil/IProgressUpdate;)V
+MD: net/minecraft/a/a/a/a/<init> (III)V net/minecraft/game/world/path/PathPoint/<init> (III)V
+MD: net/minecraft/a/a/a/b/<init> ([Lnet/minecraft/a/a/a/a;)V net/minecraft/game/world/path/PathEntity/<init> ([Lnet/minecraft/game/world/path/PathPoint;)V
+MD: net/minecraft/a/c/e/b/<init> (Lnet/minecraft/a/c/e/a;)V net/minecraft/game/entity/player/InventoryPlayer/<init> (Lnet/minecraft/game/entity/player/EntityPlayer;)V
+MD: net/minecraft/client/c/a/g/<init> (Lnet/minecraft/client/c/a/j;Lnet/minecraft/a/b;III)V net/minecraft/client/gui/container/Slot/<init> (Lnet/minecraft/client/gui/container/GuiContainer;Lnet/minecraft/game/IInventory;III)V
+MD: net/minecraft/client/c/a/i/<init> (Lnet/minecraft/a/b;Lnet/minecraft/a/b;)V net/minecraft/client/gui/container/GuiChest/<init> (Lnet/minecraft/game/IInventory;Lnet/minecraft/game/IInventory;)V
+MD: net/minecraft/client/c/a/c/<init> (Lnet/minecraft/a/c/e/b;Lnet/minecraft/a/a/b/a/b;)V net/minecraft/client/gui/container/GuiFurnace/<init> (Lnet/minecraft/game/entity/player/InventoryPlayer;Lnet/minecraft/game/world/block/tileentity/TileEntityFurnace;)V
+MD: net/minecraft/client/h/<init> (Ljava/lang/String;I)V net/minecraft/client/KeyBinding/<init> (Ljava/lang/String;I)V
+MD: net/minecraft/client/c/a/e/<init> (Lnet/minecraft/client/c/a/f;Lnet/minecraft/client/c/a/j;Lnet/minecraft/a/b;IIII)V net/minecraft/client/gui/container/SlotArmor/<init> (Lnet/minecraft/client/gui/container/GuiInventory;Lnet/minecraft/client/gui/container/GuiContainer;Lnet/minecraft/game/IInventory;IIII)V
+MD: net/minecraft/client/j/<init> (Ljava/io/File;Lnet/minecraft/client/d;)V net/minecraft/client/ThreadDownloadResources/<init> (Ljava/io/File;Lnet/minecraft/client/Minecraft;)V
+MD: net/minecraft/client/c/a/d/<init> (Lnet/minecraft/client/c/a/j;Lnet/minecraft/a/b;Lnet/minecraft/a/b;III)V net/minecraft/client/gui/container/SlotCrafting/<init> (Lnet/minecraft/client/gui/container/GuiContainer;Lnet/minecraft/game/IInventory;Lnet/minecraft/game/IInventory;III)V
+MD: net/minecraft/client/d/<init> (Ljava/awt/Canvas;Lnet/minecraft/client/MinecraftApplet;IIZ)V net/minecraft/client/Minecraft/<init> (Ljava/awt/Canvas;Lnet/minecraft/client/MinecraftApplet;IIZ)V
+MD: net/minecraft/client/c/a/a/<init> (Lnet/minecraft/client/c/a/j;II)V net/minecraft/client/gui/container/InventoryCrafting/<init> (Lnet/minecraft/client/gui/container/GuiContainer;II)V
+MD: net/minecraft/client/f/<init> (Lnet/minecraft/client/d;La/b;)V net/minecraft/client/PlayerLoader/<init> (Lnet/minecraft/client/Minecraft;Lutil/IProgressUpdate;)V
+MD: net/minecraft/client/b/<init> (Lnet/minecraft/client/MinecraftApplet;)V net/minecraft/client/CanvasMinecraftApplet/<init> (Lnet/minecraft/client/MinecraftApplet;)V
+MD: net/minecraft/client/a/a/<init> (Lnet/minecraft/a/c/e/a;)V net/minecraft/client/render/RenderSorter/<init> (Lnet/minecraft/game/entity/player/EntityPlayer;)V
+MD: net/minecraft/client/b/j/<init> (Lnet/minecraft/a/d/a;FF)V net/minecraft/client/model/PositionTextureVertex/<init> (Lnet/minecraft/game/physics/Vec3D;FF)V
+MD: net/minecraft/client/b/j/<init> (Lnet/minecraft/client/b/j;FF)V net/minecraft/client/model/PositionTextureVertex/<init> (Lnet/minecraft/client/model/PositionTextureVertex;FF)V
+MD: net/minecraft/client/b/h/<init> (F)V net/minecraft/client/model/ModelBiped/<init> (F)V
+MD: net/minecraft/client/b/h/<init> (FF)V net/minecraft/client/model/ModelBiped/<init> (FF)V
+MD: net/minecraft/a/d/c/<init> (IIIILnet/minecraft/a/d/a;)V net/minecraft/game/physics/MovingObjectPosition/<init> (IIIILnet/minecraft/game/physics/Vec3D;)V
+MD: net/minecraft/a/d/c/<init> (Lnet/minecraft/a/c/b;)V net/minecraft/game/physics/MovingObjectPosition/<init> (Lnet/minecraft/game/entity/Entity;)V
+MD: net/minecraft/a/a/b/ad/<init> (II)V net/minecraft/game/world/block/BlockFlower/<init> (II)V
+MD: net/minecraft/a/a/b/ae/<init> (IILnet/minecraft/a/a/d/c;Z)V net/minecraft/game/world/block/BlockBreakable/<init> (IILnet/minecraft/game/world/material/Material;Z)V
+MD: net/minecraft/client/a/c/b/<init> (I)V net/minecraft/client/render/texture/TextureFX/<init> (I)V
+MD: net/minecraft/a/a/b/af/<init> (I)V net/minecraft/game/world/block/BlockGrass/<init> (I)V
+MD: net/minecraft/a/a/b/ah/<init> (II)V net/minecraft/game/world/block/BlockSource/<init> (II)V
+MD: net/minecraft/a/a/b/h/<init> (II)V net/minecraft/game/world/block/BlockTNT/<init> (II)V
+MD: net/minecraft/client/c/c/<init> (Ljava/lang/String;Ljava/lang/String;)V net/minecraft/client/gui/GuiErrorScreen/<init> (Ljava/lang/String;Ljava/lang/String;)V
+MD: net/minecraft/a/a/b/g/<init> (IILnet/minecraft/a/a/d/c;Z)V net/minecraft/game/world/block/BlockLeavesBase/<init> (IILnet/minecraft/game/world/material/Material;Z)V
+MD: net/minecraft/a/a/b/aa/<init> (I)V net/minecraft/game/world/block/BlockLog/<init> (I)V
+MD: net/minecraft/a/a/b/ab/<init> (I)V net/minecraft/game/world/block/BlockFarmland/<init> (I)V
+MD: net/minecraft/a/a/b/l/<init> (II)V net/minecraft/game/world/block/BlockDirt/<init> (II)V
+MD: net/minecraft/a/a/b/ac/<init> (II)V net/minecraft/game/world/block/BlockTorch/<init> (II)V
+MD: net/minecraft/a/a/b/k/<init> (II)V net/minecraft/game/world/block/BlockGears/<init> (II)V
+MD: net/minecraft/client/c/h/<init> (II)V net/minecraft/client/gui/ScaledResolution/<init> (II)V
+MD: net/minecraft/a/a/b/a/<init> (I)V net/minecraft/game/world/block/BlockChest/<init> (I)V
+MD: net/minecraft/a/a/b/d/<init> (II)V net/minecraft/game/world/block/BlockOreBlock/<init> (II)V
+MD: net/minecraft/a/a/b/c/<init> (II)V net/minecraft/game/world/block/BlockOre/<init> (II)V
+MD: net/minecraft/client/c/p/<init> (Lnet/minecraft/client/c/i;Ljava/lang/String;I)V net/minecraft/client/gui/GuiNameLevel/<init> (Lnet/minecraft/client/gui/GuiScreen;Ljava/lang/String;I)V
+MD: net/minecraft/a/a/b/x/<init> (IILnet/minecraft/a/a/d/c;)V net/minecraft/game/world/block/Block/<init> (IILnet/minecraft/game/world/material/Material;)V
+MD: net/minecraft/a/a/b/x/<init> (ILnet/minecraft/a/a/d/c;)V net/minecraft/game/world/block/Block/<init> (ILnet/minecraft/game/world/material/Material;)V
+MD: net/minecraft/a/a/b/w/<init> (II)V net/minecraft/game/world/block/BlockSand/<init> (II)V
+MD: net/minecraft/client/c/r/<init> (IIIIILjava/lang/String;)V net/minecraft/client/gui/GuiButton/<init> (IIIIILjava/lang/String;)V
+MD: net/minecraft/a/a/b/y/<init> (II)V net/minecraft/game/world/block/BlockBookshelf/<init> (II)V
+MD: net/minecraft/a/a/b/n/<init> (Ljava/lang/String;FF)V net/minecraft/game/world/block/StepSound/<init> (Ljava/lang/String;FF)V
+MD: net/minecraft/a/a/b/o/<init> (II)V net/minecraft/game/world/block/BlockLeaves/<init> (II)V
+MD: net/minecraft/a/a/b/r/<init> (II)V net/minecraft/game/world/block/BlockStone/<init> (II)V
+MD: net/minecraft/a/c/d/<init> (Ljava/lang/String;ILjava/lang/String;IIII)V net/minecraft/game/entity/EnumArt/<init> (Ljava/lang/String;ILjava/lang/String;IIII)V
+MD: net/minecraft/a/a/b/t/<init> (I)V net/minecraft/game/world/block/BlockWorkbench/<init> (I)V
+MD: net/minecraft/a/a/b/s/<init> (IZ)V net/minecraft/game/world/block/BlockFurnace/<init> (IZ)V
+MD: net/minecraft/a/a/<init> (Ljava/lang/String;Lnet/minecraft/a/b;Lnet/minecraft/a/b;)V net/minecraft/game/InventoryLargeChest/<init> (Ljava/lang/String;Lnet/minecraft/game/IInventory;Lnet/minecraft/game/IInventory;)V
+MD: net/minecraft/client/d/a/<init> (Lnet/minecraft/client/d;)V net/minecraft/client/controller/PlayerController/<init> (Lnet/minecraft/client/Minecraft;)V
+MD: net/minecraft/a/b/j/<init> (IIII)V net/minecraft/game/item/ItemArmor/<init> (IIII)V
+MD: net/minecraft/a/b/a/c/<init> (II[ILnet/minecraft/a/b/k;)V net/minecraft/game/item/recipe/CraftingRecipe/<init> (II[ILnet/minecraft/game/item/ItemStack;)V
+MD: net/minecraft/a/b/i/<init> (I)V net/minecraft/game/item/Item/<init> (I)V
+MD: net/minecraft/a/b/h/<init> (II)V net/minecraft/game/item/ItemAxe/<init> (II)V
+MD: net/minecraft/a/b/g/<init> (III[Lnet/minecraft/a/a/b/x;)V net/minecraft/game/item/ItemTool/<init> (III[Lnet/minecraft/game/world/block/Block;)V
+MD: net/minecraft/a/b/n/<init> (II)V net/minecraft/game/item/ItemHoe/<init> (II)V
+MD: net/minecraft/a/b/l/<init> (II)V net/minecraft/game/item/ItemSpade/<init> (II)V
+MD: net/minecraft/a/b/k/<init> (Lnet/minecraft/a/b/i;)V net/minecraft/game/item/ItemStack/<init> (Lnet/minecraft/game/item/Item;)V
+MD: net/minecraft/a/b/k/<init> (Lnet/minecraft/a/b/i;I)V net/minecraft/game/item/ItemStack/<init> (Lnet/minecraft/game/item/Item;I)V
+MD: net/minecraft/a/b/k/<init> (Lnet/minecraft/a/a/b/x;I)V net/minecraft/game/item/ItemStack/<init> (Lnet/minecraft/game/world/block/Block;I)V
+MD: net/minecraft/a/b/k/<init> (Lnet/minecraft/a/a/b/x;)V net/minecraft/game/item/ItemStack/<init> (Lnet/minecraft/game/world/block/Block;)V
+MD: net/minecraft/a/b/a/<init> (II)V net/minecraft/game/item/ItemPickaxe/<init> (II)V
+MD: net/minecraft/a/b/a/i/<init> (Lnet/minecraft/a/b/a/f;)V net/minecraft/game/item/recipe/RecipeSorter/<init> (Lnet/minecraft/game/item/recipe/CraftingManager;)V
+MD: net/minecraft/a/b/f/<init> (II)V net/minecraft/game/item/ItemSeeds/<init> (II)V
+MD: net/minecraft/a/b/c/<init> (II)V net/minecraft/game/item/ItemSword/<init> (II)V
+MD: net/minecraft/client/a/a/e/a (Lnet/minecraft/client/c/j;Lnet/minecraft/a/b/k;II)V net/minecraft/client/render/entity/RenderItem/renderItemOverlayIntoGUI (Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/game/item/ItemStack;II)V
+MD: net/minecraft/client/a/a/e/a (Lnet/minecraft/client/a/c;IIIII)V net/minecraft/client/render/entity/RenderItem/renderQuad (Lnet/minecraft/client/render/Tessellator;IIIII)V
+MD: net/minecraft/client/a/a/e/a (Lnet/minecraft/client/a/i;Lnet/minecraft/a/b/k;II)V net/minecraft/client/render/entity/RenderItem/doRender (Lnet/minecraft/client/render/RenderEngine;Lnet/minecraft/game/item/ItemStack;II)V
+MD: net/minecraft/client/a/a/g/a ()V net/minecraft/client/render/entity/RenderPlayer/drawFirstPersonHand ()V
+MD: net/minecraft/client/a/a/g/a (Lnet/minecraft/a/c/e/a;DDDFF)V net/minecraft/client/render/entity/RenderPlayer/renderPlayer (Lnet/minecraft/game/entity/player/EntityPlayer;DDDFF)V
+MD: net/minecraft/client/a/a/f/a (Lnet/minecraft/client/a/a/i;)V net/minecraft/client/render/entity/Render/setRenderManager (Lnet/minecraft/client/render/entity/RenderManager;)V
+MD: net/minecraft/client/a/a/f/a (Lnet/minecraft/a/c/b;DDDFF)V net/minecraft/client/render/entity/Render/doRender (Lnet/minecraft/game/entity/Entity;DDDFF)V
+MD: net/minecraft/client/a/a/f/a (Ljava/lang/String;Ljava/lang/String;)V net/minecraft/client/render/entity/Render/loadDownloadableImageTexture (Ljava/lang/String;Ljava/lang/String;)V
+MD: net/minecraft/client/a/a/f/a (Ljava/lang/String;)V net/minecraft/client/render/entity/Render/loadTexture (Ljava/lang/String;)V
+MD: net/minecraft/client/a/a/f/a (Lnet/minecraft/a/c/b;DDDF)V net/minecraft/client/render/entity/Render/doRenderShadowAndFire (Lnet/minecraft/game/entity/Entity;DDDF)V
+MD: net/minecraft/client/a/a/f/a (Lnet/minecraft/a/d/b;)V net/minecraft/client/render/entity/Render/renderOffsetAABB (Lnet/minecraft/game/physics/AxisAlignedBB;)V
+MD: net/minecraft/client/a/a/i/a (Lnet/minecraft/a/a/e;Lnet/minecraft/client/a/i;Lnet/minecraft/a/c/e/a;F)V net/minecraft/client/render/entity/RenderManager/cacheActiveRenderInfo (Lnet/minecraft/game/world/World;Lnet/minecraft/client/render/RenderEngine;Lnet/minecraft/game/entity/player/EntityPlayer;F)V
+MD: net/minecraft/client/a/a/i/a (DDD)D net/minecraft/client/render/entity/RenderManager/getDistanceToCamera (DDD)D
+MD: net/minecraft/client/a/a/i/a (Lnet/minecraft/a/a/e;)V net/minecraft/client/render/entity/RenderManager/set (Lnet/minecraft/game/world/World;)V
+MD: net/minecraft/client/a/a/i/a (Lnet/minecraft/a/c/b;)Lnet/minecraft/client/a/a/f; net/minecraft/client/render/entity/RenderManager/getEntityRenderObject (Lnet/minecraft/game/entity/Entity;)Lnet/minecraft/client/render/entity/Render;
+MD: net/minecraft/client/a/a/i/a (Lnet/minecraft/a/c/b;DDDFF)V net/minecraft/client/render/entity/RenderManager/renderEntityWithPosYaw (Lnet/minecraft/game/entity/Entity;DDDFF)V
+MD: net/minecraft/client/a/a/i/a (Lnet/minecraft/a/c/b;F)V net/minecraft/client/render/entity/RenderManager/renderEntity (Lnet/minecraft/game/entity/Entity;F)V
+MD: net/minecraft/client/a/a/j/a (Lnet/minecraft/a/c/e;FF)I net/minecraft/client/render/entity/RenderLiving/getColorMultiplier (Lnet/minecraft/game/entity/EntityLiving;FF)I
+MD: net/minecraft/client/a/a/j/a (Lnet/minecraft/a/c/e;F)V net/minecraft/client/render/entity/RenderLiving/preRenderCallback (Lnet/minecraft/game/entity/EntityLiving;F)V
+MD: net/minecraft/client/a/a/j/a (Lnet/minecraft/a/c/e;I)Z net/minecraft/client/render/entity/RenderLiving/shouldRenderPass (Lnet/minecraft/game/entity/EntityLiving;I)Z
+MD: net/minecraft/client/a/a/j/a (Lnet/minecraft/a/c/e;)F net/minecraft/client/render/entity/RenderLiving/getDeathMaxRotation (Lnet/minecraft/game/entity/EntityLiving;)F
+MD: net/minecraft/client/a/a/j/a (Lnet/minecraft/client/b/l;)V net/minecraft/client/render/entity/RenderLiving/setRenderPassModel (Lnet/minecraft/client/model/ModelBase;)V
+MD: net/minecraft/client/e/c/a (Ljava/lang/String;Ljava/io/File;)V net/minecraft/client/sound/SoundManager/addSound (Ljava/lang/String;Ljava/io/File;)V
+MD: net/minecraft/client/e/c/a (Lnet/minecraft/client/p;)V net/minecraft/client/sound/SoundManager/loadSoundSettings (Lnet/minecraft/client/GameSettings;)V
+MD: net/minecraft/client/e/c/a (Ljava/lang/String;FFFFF)V net/minecraft/client/sound/SoundManager/playSound (Ljava/lang/String;FFFFF)V
+MD: net/minecraft/client/e/c/a ()V net/minecraft/client/sound/SoundManager/onSoundOptionsChanged ()V
+MD: net/minecraft/client/e/c/a (Lnet/minecraft/a/c/e;F)V net/minecraft/client/sound/SoundManager/setListener (Lnet/minecraft/game/entity/EntityLiving;F)V
+MD: net/minecraft/client/e/c/a (Ljava/lang/String;FF)V net/minecraft/client/sound/SoundManager/playSoundFX (Ljava/lang/String;FF)V
+MD: net/minecraft/client/e/b/a (Ljava/lang/String;Ljava/io/File;)Lnet/minecraft/client/e/a; net/minecraft/client/sound/SoundPool/addSound (Ljava/lang/String;Ljava/io/File;)Lnet/minecraft/client/sound/SoundPoolEntry;
+MD: net/minecraft/client/e/b/a (Ljava/lang/String;)Lnet/minecraft/client/e/a; net/minecraft/client/sound/SoundPool/getRandomSoundFromSoundPool (Ljava/lang/String;)Lnet/minecraft/client/sound/SoundPoolEntry;
+MD: a/a/a (D)F util/MathHelper/sqrt_double (D)F
+MD: a/a/a (F)F util/MathHelper/sin (F)F
+MD: net/minecraft/a/a/h/a (Lnet/minecraft/a/c/b;Lnet/minecraft/a/d/b;)Ljava/util/List; net/minecraft/game/world/EntityMap/getEntitiesWithinAABB (Lnet/minecraft/game/entity/Entity;Lnet/minecraft/game/physics/AxisAlignedBB;)Ljava/util/List;
+MD: net/minecraft/a/a/c/a/c/a (DD)D net/minecraft/game/world/terrain/noise/NoiseGeneratorOctaves/generateNoise (DD)D
+MD: net/minecraft/a/a/c/a/c/a (DDD)D net/minecraft/game/world/terrain/noise/NoiseGeneratorOctaves/generateNoise (DDD)D
+MD: a/b/a (Ljava/lang/String;)V util/IProgressUpdate/displayProgressMessage (Ljava/lang/String;)V
+MD: net/minecraft/a/a/c/a (IIII)V net/minecraft/game/world/Chunk/setBlockId (IIII)V
+MD: net/minecraft/a/a/c/a (III)I net/minecraft/game/world/Chunk/getBlockId (III)I
+MD: net/minecraft/a/a/b/a (Ljava/lang/String;DDDDDD)V net/minecraft/game/world/IWorldAccess/spawnParticle (Ljava/lang/String;DDDDDD)V
+MD: net/minecraft/a/a/b/a (III)V net/minecraft/game/world/IWorldAccess/markBlockAndNeighborsNeedsUpdate (III)V
+MD: net/minecraft/a/a/b/a (Ljava/lang/String;DDDFF)V net/minecraft/game/world/IWorldAccess/playSound (Ljava/lang/String;DDDFF)V
+MD: net/minecraft/a/a/a/a ()V net/minecraft/game/world/LevelLoader/load ()V
+MD: net/minecraft/a/a/f/a (II)Lnet/minecraft/a/a/c; net/minecraft/game/world/ChunkProviderGenerate/getBlockAtXZ (II)Lnet/minecraft/game/world/Chunk;
+MD: net/minecraft/a/a/f/a (IIII)Z net/minecraft/game/world/ChunkProviderGenerate/setBlockAt (IIII)Z
+MD: net/minecraft/a/a/f/a (Lnet/minecraft/a/a/g;)[B net/minecraft/game/world/ChunkProviderGenerate/provideChunk (Lnet/minecraft/game/world/ChunkPosition;)[B
+MD: net/minecraft/a/a/f/a (III)I net/minecraft/game/world/ChunkProviderGenerate/getBlockAt (III)I
+MD: net/minecraft/a/a/c/a/a/a (IDDD)D net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/grad (IDDD)D
+MD: net/minecraft/a/a/c/a/a/a (D)D net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/generateNoise (D)D
+MD: net/minecraft/a/a/c/a/a/a (DDD)D net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/generateNoiseD (DDD)D
+MD: net/minecraft/a/a/c/a/a/a (DD)D net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/generateNoise (DD)D
+MD: net/minecraft/a/a/e/a (IIII)Z net/minecraft/game/world/World/setBlockWithNotify (IIII)Z
+MD: net/minecraft/a/a/e/a (Lnet/minecraft/a/d/b;Lnet/minecraft/a/a/d/c;)Z net/minecraft/game/world/World/isMaterialInBB (Lnet/minecraft/game/physics/AxisAlignedBB;Lnet/minecraft/game/world/material/Material;)Z
+MD: net/minecraft/a/a/e/a (III)I net/minecraft/game/world/World/getBlockId (III)I
+MD: net/minecraft/a/a/e/a (Lnet/minecraft/a/d/b;)Ljava/util/List; net/minecraft/game/world/World/getCollidingBoundingBoxes (Lnet/minecraft/game/physics/AxisAlignedBB;)Ljava/util/List;
+MD: net/minecraft/a/a/e/a (Lnet/minecraft/a/d/a;Lnet/minecraft/a/d/a;)Lnet/minecraft/a/d/c; net/minecraft/game/world/World/rayTraceBlocks (Lnet/minecraft/game/physics/Vec3D;Lnet/minecraft/game/physics/Vec3D;)Lnet/minecraft/game/physics/MovingObjectPosition;
+MD: net/minecraft/a/a/e/a (Lnet/minecraft/a/a/b;)V net/minecraft/game/world/World/addWorldAccess (Lnet/minecraft/game/world/IWorldAccess;)V
+MD: net/minecraft/a/a/e/a ()Lnet/minecraft/a/d/a; net/minecraft/game/world/World/getSkyColor ()Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/a/e/a (Lnet/minecraft/a/c/b;Ljava/lang/String;FF)V net/minecraft/game/world/World/playSoundAtEntity (Lnet/minecraft/game/entity/Entity;Ljava/lang/String;FF)V
+MD: net/minecraft/a/a/e/a (Ljava/lang/String;DDDDDD)V net/minecraft/game/world/World/spawnParticle (Ljava/lang/String;DDDDDD)V
+MD: net/minecraft/a/a/d/a (DDD)Lnet/minecraft/a/a/d; net/minecraft/game/world/EntityMapSlot/init (DDD)Lnet/minecraft/game/world/EntityMapSlot;
+MD: net/minecraft/a/a/a/a/a (Lnet/minecraft/a/a/a/a;)F net/minecraft/game/world/path/PathPoint/distanceTo (Lnet/minecraft/game/world/path/PathPoint;)F
+MD: net/minecraft/a/a/a/a/a ()Z net/minecraft/game/world/path/PathPoint/isAssigned ()Z
+MD: net/minecraft/a/a/a/c/a (Lnet/minecraft/a/a/a/a;)Lnet/minecraft/a/a/a/b; net/minecraft/game/world/path/Pathfinder/createEntityPath (Lnet/minecraft/game/world/path/PathPoint;)Lnet/minecraft/game/world/path/PathEntity;
+MD: net/minecraft/a/a/a/c/a (III)Lnet/minecraft/a/a/a/a; net/minecraft/game/world/path/Pathfinder/openPoint (III)Lnet/minecraft/game/world/path/PathPoint;
+MD: net/minecraft/a/a/a/c/a (Lnet/minecraft/a/c/b;IIILnet/minecraft/a/a/a/a;I)Lnet/minecraft/a/a/a/a; net/minecraft/game/world/path/Pathfinder/getSafePoint (Lnet/minecraft/game/entity/Entity;IIILnet/minecraft/game/world/path/PathPoint;I)Lnet/minecraft/game/world/path/PathPoint;
+MD: net/minecraft/a/a/a/c/a (Lnet/minecraft/a/c/b;DDDF)Lnet/minecraft/a/a/a/b; net/minecraft/game/world/path/Pathfinder/addToPath (Lnet/minecraft/game/entity/Entity;DDDF)Lnet/minecraft/game/world/path/PathEntity;
+MD: net/minecraft/a/a/a/c/a (Lnet/minecraft/a/c/b;IIIF)Lnet/minecraft/a/a/a/b; net/minecraft/game/world/path/Pathfinder/createEntityPathTo (Lnet/minecraft/game/entity/Entity;IIIF)Lnet/minecraft/game/world/path/PathEntity;
+MD: net/minecraft/a/a/a/c/a (Lnet/minecraft/a/c/b;Lnet/minecraft/a/c/b;F)Lnet/minecraft/a/a/a/b; net/minecraft/game/world/path/Pathfinder/createEntityPathTo (Lnet/minecraft/game/entity/Entity;Lnet/minecraft/game/entity/Entity;F)Lnet/minecraft/game/world/path/PathEntity;
+MD: net/minecraft/a/a/a/c/a (IIILnet/minecraft/a/a/a/a;)I net/minecraft/game/world/path/Pathfinder/getVerticalOffset (IIILnet/minecraft/game/world/path/PathPoint;)I
+MD: net/minecraft/a/a/a/b/a (Lnet/minecraft/a/c/b;)Lnet/minecraft/a/d/a; net/minecraft/game/world/path/PathEntity/getPosition (Lnet/minecraft/game/entity/Entity;)Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/a/a/b/a ()V net/minecraft/game/world/path/PathEntity/incrementPathIndex ()V
+MD: net/minecraft/client/f/d/a (III)V net/minecraft/client/effect/EffectRenderer/addBlockDestroyEffects (III)V
+MD: net/minecraft/client/f/d/a (Lnet/minecraft/client/f/j;)V net/minecraft/client/effect/EffectRenderer/addEffect (Lnet/minecraft/client/effect/EntityFX;)V
+MD: net/minecraft/client/f/d/a (F)V net/minecraft/client/effect/EffectRenderer/renderLitParticles (F)V
+MD: net/minecraft/client/f/d/a ()V net/minecraft/client/effect/EffectRenderer/updateEffects ()V
+MD: net/minecraft/client/f/d/a (Lnet/minecraft/a/c/b;F)V net/minecraft/client/effect/EffectRenderer/renderParticles (Lnet/minecraft/game/entity/Entity;F)V
+MD: net/minecraft/client/f/d/a (Lnet/minecraft/a/a/e;)V net/minecraft/client/effect/EffectRenderer/clearEffects (Lnet/minecraft/game/world/World;)V
+MD: net/minecraft/client/f/d/a (IIII)V net/minecraft/client/effect/EffectRenderer/addBlockHitEffects (IIII)V
+MD: net/minecraft/a/a/a/d/a (Lnet/minecraft/a/a/a/a;F)V net/minecraft/game/world/path/Path/changeDistance (Lnet/minecraft/game/world/path/PathPoint;F)V
+MD: net/minecraft/a/a/a/d/a (Lnet/minecraft/a/a/a/a;)Lnet/minecraft/a/a/a/a; net/minecraft/game/world/path/Path/addPoint (Lnet/minecraft/game/world/path/PathPoint;)Lnet/minecraft/game/world/path/PathPoint;
+MD: net/minecraft/a/a/a/d/a ()V net/minecraft/game/world/path/Path/clearPath ()V
+MD: net/minecraft/a/a/a/d/a (I)V net/minecraft/game/world/path/Path/sortBack (I)V
+MD: net/minecraft/client/f/j/a (Lnet/minecraft/client/a/c;FFFFFF)V net/minecraft/client/effect/EntityFX/renderParticle (Lnet/minecraft/client/render/Tessellator;FFFFFF)V
+MD: net/minecraft/a/c/e/a/a (Lnet/minecraft/a/a/b/x;)Z net/minecraft/game/entity/player/EntityPlayer/canHarvestBlock (Lnet/minecraft/game/world/block/Block;)Z
+MD: net/minecraft/a/c/e/a/a (Lnet/minecraft/a/b/k;Z)V net/minecraft/game/entity/player/EntityPlayer/dropPlayerItemWithRandomChoice (Lnet/minecraft/game/item/ItemStack;Z)V
+MD: net/minecraft/a/c/e/a/a (Lnet/minecraft/a/b;)V net/minecraft/game/entity/player/EntityPlayer/displayGUIChest (Lnet/minecraft/game/IInventory;)V
+MD: net/minecraft/a/c/e/a/a (Lnet/minecraft/a/b/k;)V net/minecraft/game/entity/player/EntityPlayer/dropPlayerItem (Lnet/minecraft/game/item/ItemStack;)V
+MD: net/minecraft/a/c/e/a/a (Lnet/minecraft/a/a/b/a/b;)V net/minecraft/game/entity/player/EntityPlayer/displayGUIFurnace (Lnet/minecraft/game/world/block/tileentity/TileEntityFurnace;)V
+MD: net/minecraft/client/g/b/a ()V net/minecraft/client/player/MovementInput/updatePlayerMoveState ()V
+MD: net/minecraft/client/g/b/a (IZ)V net/minecraft/client/player/MovementInput/checkKeyForMovementInput (IZ)V
+MD: net/minecraft/a/c/d/a/a (DDDFF)V net/minecraft/game/entity/projectile/EntityArrow/setArrowHeading (DDDFF)V
+MD: net/minecraft/client/p/a (II)V net/minecraft/client/GameSettings/setKeyBinding (II)V
+MD: net/minecraft/client/p/a (I)Ljava/lang/String; net/minecraft/client/GameSettings/getOptionDisplayString (I)Ljava/lang/String;
+MD: net/minecraft/client/p/a ()V net/minecraft/client/GameSettings/saveOptions ()V
+MD: net/minecraft/client/c/a/g/a ()V net/minecraft/client/gui/container/Slot/onPickupFromSlot ()V
+MD: net/minecraft/client/c/a/g/a (Lnet/minecraft/a/b/k;)Z net/minecraft/client/gui/container/Slot/isItemValid (Lnet/minecraft/game/item/ItemStack;)Z
+MD: net/minecraft/client/c/a/g/a (II)Z net/minecraft/client/gui/container/Slot/isAtCursorPos (II)Z
+MD: net/minecraft/client/l/a ()V net/minecraft/client/MouseHelper/grabMouseCursor ()V
+MD: net/minecraft/client/j/a (Ljava/net/URL;Ljava/io/File;)V net/minecraft/client/ThreadDownloadResources/downloadResource (Ljava/net/URL;Ljava/io/File;)V
+MD: net/minecraft/client/j/a ()V net/minecraft/client/ThreadDownloadResources/closeMinecraft ()V
+MD: net/minecraft/client/d/a (II)V net/minecraft/client/Minecraft/resize (II)V
+MD: net/minecraft/client/d/a (I)V net/minecraft/client/Minecraft/clickMouse (I)V
+MD: net/minecraft/client/d/a ()V net/minecraft/client/Minecraft/shutdownMinecraftApplet ()V
+MD: net/minecraft/client/d/a (Lnet/minecraft/a/a/e;)V net/minecraft/client/Minecraft/setLevel (Lnet/minecraft/game/world/World;)V
+MD: net/minecraft/client/d/a (Ljava/lang/String;I)V net/minecraft/client/Minecraft/setServer (Ljava/lang/String;I)V
+MD: net/minecraft/client/d/a (IIII)V net/minecraft/client/Minecraft/generateLevel (IIII)V
+MD: net/minecraft/client/d/a (Lnet/minecraft/client/c/i;)V net/minecraft/client/Minecraft/displayGuiScreen (Lnet/minecraft/client/gui/GuiScreen;)V
+MD: net/minecraft/client/g/a ()V net/minecraft/client/Timer/updateTimer ()V
+MD: net/minecraft/client/c/a ()V net/minecraft/client/RenderHelper/disableStandardItemLighting ()V
+MD: net/minecraft/client/c/a (DDDD)Ljava/nio/FloatBuffer; net/minecraft/client/RenderHelper/setColorBuffer (DDDD)Ljava/nio/FloatBuffer;
+MD: net/minecraft/client/c/a (FFFF)Ljava/nio/FloatBuffer; net/minecraft/client/RenderHelper/setColorBuffer (FFFF)Ljava/nio/FloatBuffer;
+MD: net/minecraft/client/MinecraftApplet/a ()V net/minecraft/client/MinecraftApplet/startMainThread ()V
+MD: net/minecraft/client/a/c/a (III)V net/minecraft/client/render/Tessellator/setColorOpaque (III)V
+MD: net/minecraft/client/a/c/a (IIII)V net/minecraft/client/render/Tessellator/setAreaTransparent (IIII)V
+MD: net/minecraft/client/a/c/a (FFF)V net/minecraft/client/render/Tessellator/setColorOpaque_F (FFF)V
+MD: net/minecraft/client/a/c/a (I)V net/minecraft/client/render/Tessellator/startDrawing (I)V
+MD: net/minecraft/client/a/c/a (DDD)V net/minecraft/client/render/Tessellator/addVertex (DDD)V
+MD: net/minecraft/client/a/c/a ()V net/minecraft/client/render/Tessellator/draw ()V
+MD: net/minecraft/client/a/c/a (FFFFF)V net/minecraft/client/render/Tessellator/addVertexWithUV (FFFFF)V
+MD: net/minecraft/client/a/c/a (FFFF)V net/minecraft/client/render/Tessellator/setColorRGBA_F (FFFF)V
+MD: net/minecraft/a/a/d/c/a ()Z net/minecraft/game/world/material/Material/isSolid ()Z
+MD: net/minecraft/client/a/b/a (Lnet/minecraft/a/a/e;)V net/minecraft/client/render/RenderGlobal/changeWorld (Lnet/minecraft/game/world/World;)V
+MD: net/minecraft/client/a/b/a (Lnet/minecraft/a/c/e/a;)V net/minecraft/client/render/RenderGlobal/updateRenderers (Lnet/minecraft/game/entity/player/EntityPlayer;)V
+MD: net/minecraft/client/a/b/a (Lnet/minecraft/a/c/e/a;I)I net/minecraft/client/render/RenderGlobal/sortAndRender (Lnet/minecraft/game/entity/player/EntityPlayer;I)I
+MD: net/minecraft/client/a/b/a (Lnet/minecraft/a/d/c;ILnet/minecraft/a/b/k;)V net/minecraft/client/render/RenderGlobal/drawBlockBreaking (Lnet/minecraft/game/physics/MovingObjectPosition;ILnet/minecraft/game/item/ItemStack;)V
+MD: net/minecraft/client/a/b/a (F)V net/minecraft/client/render/RenderGlobal/renderSky (F)V
+MD: net/minecraft/client/a/b/a (IIIIII)V net/minecraft/client/render/RenderGlobal/markBlocksForUpdate (IIIIII)V
+MD: net/minecraft/client/a/b/a (II)V net/minecraft/client/render/RenderGlobal/checkOcclusionQueryResult (II)V
+MD: net/minecraft/client/a/b/a (Lnet/minecraft/a/d/a;Lnet/minecraft/client/a/b/c;F)V net/minecraft/client/render/RenderGlobal/renderEntities (Lnet/minecraft/game/physics/Vec3D;Lnet/minecraft/client/render/camera/Frustrum;F)V
+MD: net/minecraft/client/a/b/a (Lnet/minecraft/a/d/c;I)V net/minecraft/client/render/RenderGlobal/drawSelectionBox (Lnet/minecraft/game/physics/MovingObjectPosition;I)V
+MD: net/minecraft/client/a/b/a ()Ljava/lang/String; net/minecraft/client/render/RenderGlobal/getDebugInfoRenders ()Ljava/lang/String;
+MD: net/minecraft/client/a/b/a (Lnet/minecraft/client/a/b/c;)V net/minecraft/client/render/RenderGlobal/clipRenderersByFrustum (Lnet/minecraft/client/render/camera/Frustrum;)V
+MD: net/minecraft/client/a/e/a (Lnet/minecraft/a/a/b/x;)V net/minecraft/client/render/RenderBlocks/renderBlockOnInventory (Lnet/minecraft/game/world/block/Block;)V
+MD: net/minecraft/client/a/e/a (Lnet/minecraft/a/a/b/x;III)V net/minecraft/client/render/RenderBlocks/renderBlockAllFaces (Lnet/minecraft/game/world/block/Block;III)V
+MD: net/minecraft/client/a/e/a (Lnet/minecraft/a/a/b/x;FFFI)V net/minecraft/client/render/RenderBlocks/renderBottomFace (Lnet/minecraft/game/world/block/Block;FFFI)V
+MD: net/minecraft/client/a/e/a (III)F net/minecraft/client/render/RenderBlocks/materialNotWater (III)F
+MD: net/minecraft/client/a/e/a (Lnet/minecraft/a/a/b/x;FFFFF)V net/minecraft/client/render/RenderBlocks/renderTorchAtAngle (Lnet/minecraft/game/world/block/Block;FFFFF)V
+MD: net/minecraft/client/a/e/a (Lnet/minecraft/a/a/b/x;IIII)V net/minecraft/client/render/RenderBlocks/renderBlockUsingTexture (Lnet/minecraft/game/world/block/Block;IIII)V
+MD: net/minecraft/client/a/e/a (Lnet/minecraft/a/a/b/x;IFFF)V net/minecraft/client/render/RenderBlocks/renderCrossedSquares (Lnet/minecraft/game/world/block/Block;IFFF)V
+MD: net/minecraft/client/a/d/a (F)V net/minecraft/client/render/EntityRenderer/updateCameraAndRender (F)V
+MD: net/minecraft/client/a/d/a ()V net/minecraft/client/render/EntityRenderer/updateRenderer ()V
+MD: net/minecraft/client/a/g/a (III)V net/minecraft/client/render/WorldRenderer/setPosition (III)V
+MD: net/minecraft/client/a/g/a ()V net/minecraft/client/render/WorldRenderer/updateRenderer ()V
+MD: net/minecraft/client/a/g/a ([III)I net/minecraft/client/render/WorldRenderer/getGLCallListForPass ([III)I
+MD: net/minecraft/client/a/g/a (Lnet/minecraft/client/a/b/c;)V net/minecraft/client/render/WorldRenderer/updateInFrustrum (Lnet/minecraft/client/render/camera/Frustrum;)V
+MD: net/minecraft/client/a/f/a (F)V net/minecraft/client/render/ItemRenderer/renderItemInFirstPerson (F)V
+MD: net/minecraft/client/a/f/a ()V net/minecraft/client/render/ItemRenderer/updateEquippedItem ()V
+MD: net/minecraft/client/a/i/a (Ljava/lang/String;Ljava/lang/String;)I net/minecraft/client/render/RenderEngine/getTextureForDownloadableImage (Ljava/lang/String;Ljava/lang/String;)I
+MD: net/minecraft/client/a/i/a (Ljava/awt/image/BufferedImage;I)V net/minecraft/client/render/RenderEngine/setupTexture (Ljava/awt/image/BufferedImage;I)V
+MD: net/minecraft/client/a/i/a (Ljava/lang/String;)I net/minecraft/client/render/RenderEngine/getTexture (Ljava/lang/String;)I
+MD: net/minecraft/client/a/i/a (Ljava/awt/image/BufferedImage;)Ljava/awt/image/BufferedImage; net/minecraft/client/render/RenderEngine/unwrapImageByColumns (Ljava/awt/image/BufferedImage;)Ljava/awt/image/BufferedImage;
+MD: net/minecraft/client/a/i/a (Lnet/minecraft/client/a/c/b;)V net/minecraft/client/render/RenderEngine/registerTextureFX (Lnet/minecraft/client/render/texture/TextureFX;)V
+MD: net/minecraft/client/a/i/a (I)V net/minecraft/client/render/RenderEngine/bindTexture (I)V
+MD: net/minecraft/client/a/i/a ()V net/minecraft/client/render/RenderEngine/updateDynamicTextures ()V
+MD: net/minecraft/client/b/c/a (FFF)V net/minecraft/client/model/ModelRenderer/setRotationPoint (FFF)V
+MD: net/minecraft/client/b/c/a (FFFIIIF)V net/minecraft/client/model/ModelRenderer/addBox (FFFIIIF)V
+MD: net/minecraft/client/b/c/a (F)V net/minecraft/client/model/ModelRenderer/render (F)V
+MD: net/minecraft/client/b/j/a (FF)Lnet/minecraft/client/b/j; net/minecraft/client/model/PositionTextureVertex/setTexturePosition (FF)Lnet/minecraft/client/model/PositionTextureVertex;
+MD: net/minecraft/client/b/l/a (FFFFFF)V net/minecraft/client/model/ModelBase/render (FFFFFF)V
+MD: net/minecraft/a/d/b/a (Lnet/minecraft/a/d/b;D)D net/minecraft/game/physics/AxisAlignedBB/calculateXOffset (Lnet/minecraft/game/physics/AxisAlignedBB;D)D
+MD: net/minecraft/a/d/b/a (Lnet/minecraft/a/d/a;)Z net/minecraft/game/physics/AxisAlignedBB/isVecInYZ (Lnet/minecraft/game/physics/Vec3D;)Z
+MD: net/minecraft/a/d/b/a (DDD)Lnet/minecraft/a/d/b; net/minecraft/game/physics/AxisAlignedBB/addCoord (DDD)Lnet/minecraft/game/physics/AxisAlignedBB;
+MD: net/minecraft/a/d/b/a (Lnet/minecraft/a/d/a;Lnet/minecraft/a/d/a;)Lnet/minecraft/a/d/c; net/minecraft/game/physics/AxisAlignedBB/calculateIntercept (Lnet/minecraft/game/physics/Vec3D;Lnet/minecraft/game/physics/Vec3D;)Lnet/minecraft/game/physics/MovingObjectPosition;
+MD: net/minecraft/a/d/b/a ()Lnet/minecraft/a/d/b; net/minecraft/game/physics/AxisAlignedBB/copy ()Lnet/minecraft/game/physics/AxisAlignedBB;
+MD: net/minecraft/a/d/a/a (Lnet/minecraft/a/d/a;)Lnet/minecraft/a/d/a; net/minecraft/game/physics/Vec3D/subtract (Lnet/minecraft/game/physics/Vec3D;)Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/d/a/a (Lnet/minecraft/a/d/a;D)Lnet/minecraft/a/d/a; net/minecraft/game/physics/Vec3D/getIntermediateWithXValue (Lnet/minecraft/game/physics/Vec3D;D)Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/d/a/a (DDD)Lnet/minecraft/a/d/a; net/minecraft/game/physics/Vec3D/addVector (DDD)Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/d/a/a ()Lnet/minecraft/a/d/a; net/minecraft/game/physics/Vec3D/normalize ()Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/client/a/c/b/a ()V net/minecraft/client/render/texture/TextureFX/onTick ()V
+MD: net/minecraft/client/c/i/a (CI)V net/minecraft/client/gui/GuiScreen/keyTyped (CI)V
+MD: net/minecraft/client/c/i/a (Lnet/minecraft/client/d;II)V net/minecraft/client/gui/GuiScreen/setWorldAndResolution (Lnet/minecraft/client/Minecraft;II)V
+MD: net/minecraft/client/c/i/a (Lnet/minecraft/client/c/r;)V net/minecraft/client/gui/GuiScreen/actionPerformed (Lnet/minecraft/client/gui/GuiButton;)V
+MD: net/minecraft/client/c/i/a (IIF)V net/minecraft/client/gui/GuiScreen/drawScreen (IIF)V
+MD: net/minecraft/client/c/i/a (III)V net/minecraft/client/gui/GuiScreen/drawSlotInventory (III)V
+MD: net/minecraft/client/c/i/a ()V net/minecraft/client/gui/GuiScreen/onGuiClosed ()V
+MD: net/minecraft/client/c/h/a ()I net/minecraft/client/gui/ScaledResolution/getScaledWidth ()I
+MD: net/minecraft/client/c/k/a (IIIII)V net/minecraft/client/gui/Gui/drawRect (IIIII)V
+MD: net/minecraft/client/c/k/a (IIIIII)V net/minecraft/client/gui/Gui/drawGradientRect (IIIIII)V
+MD: net/minecraft/client/c/k/a (Lnet/minecraft/client/c/j;Ljava/lang/String;III)V net/minecraft/client/gui/Gui/drawCenteredString (Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;III)V
+MD: net/minecraft/client/c/j/a (Ljava/lang/String;)I net/minecraft/client/gui/FontRenderer/getStringWidth (Ljava/lang/String;)I
+MD: net/minecraft/client/c/j/a (Ljava/lang/String;IIIZ)V net/minecraft/client/gui/FontRenderer/renderString (Ljava/lang/String;IIIZ)V
+MD: net/minecraft/client/c/j/a (Ljava/lang/String;III)V net/minecraft/client/gui/FontRenderer/drawStringWithShadow (Ljava/lang/String;III)V
+MD: net/minecraft/client/c/e/a (Ljava/io/File;)V net/minecraft/client/gui/GuiLoadLevel/openLevel (Ljava/io/File;)V
+MD: net/minecraft/client/c/e/a (Lnet/minecraft/client/c/e;Z)Z net/minecraft/client/gui/GuiLoadLevel/unknown (Lnet/minecraft/client/gui/GuiLoadLevel;Z)Z
+MD: net/minecraft/client/c/e/a (I)V net/minecraft/client/gui/GuiLoadLevel/openLevel (I)V
+MD: net/minecraft/client/c/e/a ([Ljava/lang/String;)V net/minecraft/client/gui/GuiLoadLevel/setLevels ([Ljava/lang/String;)V
+MD: net/minecraft/a/a/b/x/a (Lnet/minecraft/a/c/e/a;)F net/minecraft/game/world/block/Block/blockStrength (Lnet/minecraft/game/entity/player/EntityPlayer;)F
+MD: net/minecraft/a/a/b/x/a (ILjava/util/Random;)I net/minecraft/game/world/block/Block/idDropped (ILjava/util/Random;)I
+MD: net/minecraft/a/a/b/x/a (Lnet/minecraft/a/a/e;IIII)I net/minecraft/game/world/block/Block/getBlockTexture (Lnet/minecraft/game/world/World;IIII)I
+MD: net/minecraft/a/a/b/x/a ()I net/minecraft/game/world/block/Block/getRenderType ()I
+MD: net/minecraft/a/a/b/x/a (Lnet/minecraft/a/d/a;)Z net/minecraft/game/world/block/Block/isVecInsideYZBounds (Lnet/minecraft/game/physics/Vec3D;)Z
+MD: net/minecraft/a/a/b/x/a (FFFFFF)V net/minecraft/game/world/block/Block/setBlockBounds (FFFFFF)V
+MD: net/minecraft/a/a/b/x/a (III)Lnet/minecraft/a/d/b; net/minecraft/game/world/block/Block/getCollisionBoundingBoxFromPool (III)Lnet/minecraft/game/physics/AxisAlignedBB;
+MD: net/minecraft/a/a/b/x/a (Lnet/minecraft/a/a/e;III)Z net/minecraft/game/world/block/Block/canPlaceBlockAt (Lnet/minecraft/game/world/World;III)Z
+MD: net/minecraft/a/a/b/x/a (I)I net/minecraft/game/world/block/Block/getBlockTextureFromSide (I)I
+MD: net/minecraft/a/a/b/x/a (Ljava/util/Random;)I net/minecraft/game/world/block/Block/quantityDropped (Ljava/util/Random;)I
+MD: net/minecraft/a/a/b/x/a (F)Lnet/minecraft/a/a/b/x; net/minecraft/game/world/block/Block/setResistance (F)Lnet/minecraft/game/world/block/Block;
+MD: net/minecraft/a/a/b/x/a (Lnet/minecraft/a/a/e;IIILnet/minecraft/a/c/e/a;)Z net/minecraft/game/world/block/Block/blockActivated (Lnet/minecraft/game/world/World;IIILnet/minecraft/game/entity/player/EntityPlayer;)Z
+MD: net/minecraft/a/a/b/x/a (Z)V net/minecraft/game/world/block/Block/setTickOnLoad (Z)V
+MD: net/minecraft/a/a/b/x/a (Lnet/minecraft/a/a/e;IIILnet/minecraft/a/d/a;Lnet/minecraft/a/d/a;)Lnet/minecraft/a/d/c; net/minecraft/game/world/block/Block/collisionRayTrace (Lnet/minecraft/game/world/World;IIILnet/minecraft/game/physics/Vec3D;Lnet/minecraft/game/physics/Vec3D;)Lnet/minecraft/game/physics/MovingObjectPosition;
+MD: net/minecraft/a/a/b/x/a (II)I net/minecraft/game/world/block/Block/getBlockTextureFromSideAndMetadata (II)I
+MD: net/minecraft/client/c/r/a (II)Z net/minecraft/client/gui/GuiButton/mousePressed (II)Z
+MD: net/minecraft/client/c/r/a (Lnet/minecraft/client/d;II)V net/minecraft/client/gui/GuiButton/drawButton (Lnet/minecraft/client/Minecraft;II)V
+MD: net/minecraft/client/c/l/a ()V net/minecraft/client/gui/GuiIngame/addChatMessage ()V
+MD: net/minecraft/client/c/l/a (F)V net/minecraft/client/gui/GuiIngame/renderGameOverlay (F)V
+MD: net/minecraft/a/a/b/n/a ()Ljava/lang/String; net/minecraft/game/world/block/StepSound/getBreakSound ()Ljava/lang/String;
+MD: net/minecraft/a/c/c/a (Lnet/minecraft/a/c/b;F)V net/minecraft/game/entity/EntityCreature/attackEntity (Lnet/minecraft/game/entity/Entity;F)V
+MD: net/minecraft/a/c/c/a (III)F net/minecraft/game/entity/EntityCreature/getBlockPathWeight (III)F
+MD: net/minecraft/a/c/c/a ()Lnet/minecraft/a/c/b; net/minecraft/game/entity/EntityCreature/findPlayerToAttack ()Lnet/minecraft/game/entity/Entity;
+MD: net/minecraft/a/c/b/a (I)V net/minecraft/game/entity/Entity/dealFireDamage (I)V
+MD: net/minecraft/a/c/b/a (FF)V net/minecraft/game/entity/Entity/setSize (FF)V
+MD: net/minecraft/a/c/b/a (FFF)V net/minecraft/game/entity/Entity/addVelocity (FFF)V
+MD: net/minecraft/a/c/b/a (F)F net/minecraft/game/entity/Entity/getBrightness (F)F
+MD: net/minecraft/a/c/b/a (DDD)V net/minecraft/game/entity/Entity/setPosition (DDD)V
+MD: net/minecraft/a/c/b/a (Lnet/minecraft/a/c/b;)D net/minecraft/game/entity/Entity/getDistanceToEntity (Lnet/minecraft/game/entity/Entity;)D
+MD: net/minecraft/a/c/b/a (II)Lnet/minecraft/a/c/c/b; net/minecraft/game/entity/Entity/dropItemWithOffset (II)Lnet/minecraft/game/entity/misc/EntityItem;
+MD: net/minecraft/a/c/b/a (IIF)Lnet/minecraft/a/c/c/b; net/minecraft/game/entity/Entity/entityDropItem (IIF)Lnet/minecraft/game/entity/misc/EntityItem;
+MD: net/minecraft/a/c/b/a (Lnet/minecraft/a/c/b;I)Z net/minecraft/game/entity/Entity/attackEntityFrom (Lnet/minecraft/game/entity/Entity;I)Z
+MD: net/minecraft/client/a/b/a/a ()Lnet/minecraft/client/a/b/b; net/minecraft/client/render/camera/ClippingHelperImplementation/init ()Lnet/minecraft/client/render/camera/ClippingHelper;
+MD: net/minecraft/client/a/b/a/a ([[FI)V net/minecraft/client/render/camera/ClippingHelperImplementation/normalize ([[FI)V
+MD: net/minecraft/client/a/b/c/a (Lnet/minecraft/a/d/b;)Z net/minecraft/client/render/camera/Frustrum/isBoundingBoxInFrustrum (Lnet/minecraft/game/physics/AxisAlignedBB;)Z
+MD: net/minecraft/client/d/a/a (Lnet/minecraft/a/c/e/a;)V net/minecraft/client/controller/PlayerController/onRespawn (Lnet/minecraft/game/entity/player/EntityPlayer;)V
+MD: net/minecraft/client/d/a/a (III)V net/minecraft/client/controller/PlayerController/clickBlock (III)V
+MD: net/minecraft/client/d/a/a ()V net/minecraft/client/controller/PlayerController/resetBlockRemoving ()V
+MD: net/minecraft/client/d/a/a (F)V net/minecraft/client/controller/PlayerController/setPartialTime (F)V
+MD: net/minecraft/client/d/a/a (IIII)V net/minecraft/client/controller/PlayerController/sendBlockRemoving (IIII)V
+MD: net/minecraft/a/b/a/d/a (Lnet/minecraft/a/b/a/f;)V net/minecraft/game/item/recipe/RecipesIngots/addRecipes (Lnet/minecraft/game/item/recipe/CraftingManager;)V
+MD: net/minecraft/a/b/a/c/a ()Lnet/minecraft/a/b/k; net/minecraft/game/item/recipe/CraftingRecipe/createResult ()Lnet/minecraft/game/item/ItemStack;
+MD: net/minecraft/a/b/a/c/a ([I)Z net/minecraft/game/item/recipe/CraftingRecipe/matchRecipe ([I)Z
+MD: net/minecraft/a/b/a/c/a ([IIIZ)Z net/minecraft/game/item/recipe/CraftingRecipe/matches ([IIIZ)Z
+MD: net/minecraft/a/b/i/a (I)Lnet/minecraft/a/b/i; net/minecraft/game/item/Item/setIconIndex (I)Lnet/minecraft/game/item/Item;
+MD: net/minecraft/a/b/i/a (Lnet/minecraft/a/b/k;Lnet/minecraft/a/a/e;IIII)Z net/minecraft/game/item/Item/onItemUse (Lnet/minecraft/game/item/ItemStack;Lnet/minecraft/game/world/World;IIII)Z
+MD: net/minecraft/a/b/i/a (Lnet/minecraft/a/a/b/x;)Z net/minecraft/game/item/Item/canHarvestBlock (Lnet/minecraft/game/world/block/Block;)Z
+MD: net/minecraft/a/b/i/a ()I net/minecraft/game/item/Item/getDamageVsEntity ()I
+MD: net/minecraft/a/b/i/a (Lnet/minecraft/a/b/k;Lnet/minecraft/a/a/e;Lnet/minecraft/a/c/e/a;)Lnet/minecraft/a/b/k; net/minecraft/game/item/Item/onItemRightClick (Lnet/minecraft/game/item/ItemStack;Lnet/minecraft/game/world/World;Lnet/minecraft/game/entity/player/EntityPlayer;)Lnet/minecraft/game/item/ItemStack;
+MD: net/minecraft/a/b/i/a (Lnet/minecraft/a/b/k;)V net/minecraft/game/item/Item/hitEntity (Lnet/minecraft/game/item/ItemStack;)V
+MD: net/minecraft/a/b/a/a/a (Lnet/minecraft/a/b/a/f;)V net/minecraft/game/item/recipe/RecipesArmor/addRecipes (Lnet/minecraft/game/item/recipe/CraftingManager;)V
+MD: net/minecraft/a/b/a (I)Lnet/minecraft/a/b/k; net/minecraft/game/IInventory/getStackInSlot (I)Lnet/minecraft/game/item/ItemStack;
+MD: net/minecraft/a/b/a (ILnet/minecraft/a/b/k;)V net/minecraft/game/IInventory/setInventorySlotContents (ILnet/minecraft/game/item/ItemStack;)V
+MD: net/minecraft/a/b/a ()I net/minecraft/game/IInventory/getSizeInventory ()I
+MD: net/minecraft/a/b/a (II)Lnet/minecraft/a/b/k; net/minecraft/game/IInventory/decrStackSize (II)Lnet/minecraft/game/item/ItemStack;
+MD: net/minecraft/a/b/k/a (I)Lnet/minecraft/a/b/k; net/minecraft/game/item/ItemStack/splitStack (I)Lnet/minecraft/game/item/ItemStack;
+MD: net/minecraft/a/b/k/a ()Lnet/minecraft/a/b/i; net/minecraft/game/item/ItemStack/getItem ()Lnet/minecraft/game/item/Item;
+MD: net/minecraft/a/b/a/h/a (Lnet/minecraft/a/b/a/f;)V net/minecraft/game/item/recipe/RecipesWeapons/addRecipes (Lnet/minecraft/game/item/recipe/CraftingManager;)V
+MD: net/minecraft/a/b/a/f/a (Lnet/minecraft/a/b/k;[Ljava/lang/Object;)V net/minecraft/game/item/recipe/CraftingManager/addRecipe (Lnet/minecraft/game/item/ItemStack;[Ljava/lang/Object;)V
+MD: net/minecraft/a/b/a/f/a ([I)Lnet/minecraft/a/b/k; net/minecraft/game/item/recipe/CraftingManager/findMatchingRecipe ([I)Lnet/minecraft/game/item/ItemStack;
+MD: net/minecraft/a/b/a/f/a ()Lnet/minecraft/a/b/a/f; net/minecraft/game/item/recipe/CraftingManager/getInstance ()Lnet/minecraft/game/item/recipe/CraftingManager;
+MD: net/minecraft/a/b/a/e/a (Lnet/minecraft/a/b/a/f;)V net/minecraft/game/item/recipe/RecipesTools/addRecipes (Lnet/minecraft/game/item/recipe/CraftingManager;)V
+MD: net/minecraft/a/c/b/a_ ()V net/minecraft/game/entity/Entity/onUpdate ()V
+MD: net/minecraft/client/c/q/accept (Ljava/io/File;Ljava/lang/String;)Z net/minecraft/client/gui/FilenameFilterLevel/accept (Ljava/io/File;Ljava/lang/String;)Z
+MD: net/minecraft/client/e/c/b ()V net/minecraft/client/sound/SoundManager/closeMinecraft ()V
+MD: net/minecraft/client/e/c/b (Ljava/lang/String;Ljava/io/File;)V net/minecraft/client/sound/SoundManager/addMusic (Ljava/lang/String;Ljava/io/File;)V
+MD: a/a/b (D)I util/MathHelper/floor_double (D)I
+MD: a/a/b (F)F util/MathHelper/cos (F)F
+MD: a/b/b (Ljava/lang/String;)V util/IProgressUpdate/displayLoadingString (Ljava/lang/String;)V
+MD: net/minecraft/a/a/c/a/a/b (DDD)D net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/generateNoise (DDD)D
+MD: net/minecraft/a/a/e/b (Lnet/minecraft/a/a/b;)V net/minecraft/game/world/World/removeWorldAccess (Lnet/minecraft/game/world/IWorldAccess;)V
+MD: net/minecraft/a/a/e/b ()Lnet/minecraft/a/d/a; net/minecraft/game/world/World/getCloudColor ()Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/a/e/b (III)Lnet/minecraft/a/a/d/c; net/minecraft/game/world/World/getBlockMaterial (III)Lnet/minecraft/game/world/material/Material;
+MD: net/minecraft/a/a/e/b (Lnet/minecraft/a/d/b;)Z net/minecraft/game/world/World/getIsAnyLiquid (Lnet/minecraft/game/physics/AxisAlignedBB;)Z
+MD: net/minecraft/a/a/a/b/b ()Z net/minecraft/game/world/path/PathEntity/isFinished ()Z
+MD: net/minecraft/client/f/d/b ()Ljava/lang/String; net/minecraft/client/effect/EffectRenderer/getStatistics ()Ljava/lang/String;
+MD: net/minecraft/a/a/a/d/b ()Lnet/minecraft/a/a/a/a; net/minecraft/game/world/path/Path/dequeue ()Lnet/minecraft/game/world/path/PathPoint;
+MD: net/minecraft/a/a/a/d/b (I)V net/minecraft/game/world/path/Path/sortForward (I)V
+MD: net/minecraft/client/f/j/b ()I net/minecraft/client/effect/EntityFX/getFXLayer ()I
+MD: net/minecraft/a/c/e/b/b (I)V net/minecraft/game/entity/player/InventoryPlayer/getFirstEmptyStack (I)V
+MD: net/minecraft/client/g/b/b ()V net/minecraft/client/player/MovementInput/resetKeyState ()V
+MD: net/minecraft/client/p/b (I)Ljava/lang/String; net/minecraft/client/GameSettings/getOptionString (I)Ljava/lang/String;
+MD: net/minecraft/client/p/b ()V net/minecraft/client/GameSettings/loadOptions ()V
+MD: net/minecraft/client/p/b (II)V net/minecraft/client/GameSettings/setOptionValue (II)V
+MD: net/minecraft/client/c/a/g/b ()I net/minecraft/client/gui/container/Slot/getBackgroundIconIndex ()I
+MD: net/minecraft/client/c/a/g/b (Lnet/minecraft/a/b/k;)V net/minecraft/client/gui/container/Slot/putStack (Lnet/minecraft/game/item/ItemStack;)V
+MD: net/minecraft/client/l/b ()V net/minecraft/client/MouseHelper/ungrabMouseCursor ()V
+MD: net/minecraft/client/d/b ()V net/minecraft/client/Minecraft/setIngameFocus ()V
+MD: net/minecraft/client/c/b ()V net/minecraft/client/RenderHelper/enableStandardItemLighting ()V
+MD: net/minecraft/client/MinecraftApplet/b ()V net/minecraft/client/MinecraftApplet/shutdown ()V
+MD: net/minecraft/client/a/c/b (FFF)V net/minecraft/client/render/Tessellator/addVertex (FFF)V
+MD: net/minecraft/client/a/c/b (I)V net/minecraft/client/render/Tessellator/setColorOpaque_I (I)V
+MD: net/minecraft/client/a/c/b ()V net/minecraft/client/render/Tessellator/startDrawingQuads ()V
+MD: net/minecraft/a/a/d/c/b ()Z net/minecraft/game/world/material/Material/getCanBlockGrass ()Z
+MD: net/minecraft/client/a/b/b (III)I net/minecraft/client/render/RenderGlobal/renderSortedRenderers (III)I
+MD: net/minecraft/client/a/b/b ()Ljava/lang/String; net/minecraft/client/render/RenderGlobal/getDebugInfoEntities ()Ljava/lang/String;
+MD: net/minecraft/client/a/e/b (Lnet/minecraft/a/a/b/x;FFFI)V net/minecraft/client/render/RenderBlocks/renderTopFace (Lnet/minecraft/game/world/block/Block;FFFI)V
+MD: net/minecraft/client/a/e/b (Lnet/minecraft/a/a/b/x;III)Z net/minecraft/client/render/RenderBlocks/renderBlockByRenderType (Lnet/minecraft/game/world/block/Block;III)Z
+MD: net/minecraft/client/a/e/b (Lnet/minecraft/a/a/b/x;IFFF)V net/minecraft/client/render/RenderBlocks/renderBlockCropsImpl (Lnet/minecraft/game/world/block/Block;IFFF)V
+MD: net/minecraft/client/a/e/b (Lnet/minecraft/a/a/b/x;IIII)V net/minecraft/client/render/RenderBlocks/renderEastFace (Lnet/minecraft/game/world/block/Block;IIII)V
+MD: net/minecraft/client/a/d/b (F)Lnet/minecraft/a/d/a; net/minecraft/client/render/EntityRenderer/getPlayerPosition (F)Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/client/a/d/b ()V net/minecraft/client/render/EntityRenderer/startDrawingQuads ()V
+MD: net/minecraft/client/a/g/b ()V net/minecraft/client/render/WorldRenderer/stopRendering ()V
+MD: net/minecraft/client/a/f/b (F)V net/minecraft/client/render/ItemRenderer/renderOverlays (F)V
+MD: net/minecraft/client/a/f/b ()V net/minecraft/client/render/ItemRenderer/resetEquippedProgress ()V
+MD: net/minecraft/client/a/i/b ()V net/minecraft/client/render/RenderEngine/refreshTextures ()V
+MD: net/minecraft/client/b/l/b (FFFFFF)V net/minecraft/client/model/ModelBase/setRotationAngles (FFFFFF)V
+MD: net/minecraft/a/d/b/b (Lnet/minecraft/a/d/b;D)D net/minecraft/game/physics/AxisAlignedBB/calculateYOffset (Lnet/minecraft/game/physics/AxisAlignedBB;D)D
+MD: net/minecraft/a/d/b/b (Lnet/minecraft/a/d/a;)Z net/minecraft/game/physics/AxisAlignedBB/isVecInXZ (Lnet/minecraft/game/physics/Vec3D;)Z
+MD: net/minecraft/a/d/b/b (DDD)Lnet/minecraft/a/d/b; net/minecraft/game/physics/AxisAlignedBB/expand (DDD)Lnet/minecraft/game/physics/AxisAlignedBB;
+MD: net/minecraft/a/d/a/b (Lnet/minecraft/a/d/a;D)Lnet/minecraft/a/d/a; net/minecraft/game/physics/Vec3D/getIntermediateWithYValue (Lnet/minecraft/game/physics/Vec3D;D)Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/d/a/b (Lnet/minecraft/a/d/a;)D net/minecraft/game/physics/Vec3D/distance (Lnet/minecraft/game/physics/Vec3D;)D
+MD: net/minecraft/a/a/b/ad/b (I)Z net/minecraft/game/world/block/BlockFlower/canThisPlantGrowOnThisBlockID (I)Z
+MD: net/minecraft/client/c/i/b ()V net/minecraft/client/gui/GuiScreen/initGui ()V
+MD: net/minecraft/client/c/h/b ()I net/minecraft/client/gui/ScaledResolution/getScaledHeight ()I
+MD: net/minecraft/client/c/k/b (IIIIII)V net/minecraft/client/gui/Gui/drawTexturedModalRect (IIIIII)V
+MD: net/minecraft/client/c/k/b (Lnet/minecraft/client/c/j;Ljava/lang/String;III)V net/minecraft/client/gui/Gui/drawString (Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;III)V
+MD: net/minecraft/client/c/j/b (Ljava/lang/String;III)V net/minecraft/client/gui/FontRenderer/drawString (Ljava/lang/String;III)V
+MD: net/minecraft/a/a/b/x/b (III)Lnet/minecraft/a/d/b; net/minecraft/game/world/block/Block/getSelectedBoundingBoxFromPool (III)Lnet/minecraft/game/physics/AxisAlignedBB;
+MD: net/minecraft/a/a/b/x/b (Lnet/minecraft/a/a/e;IIII)V net/minecraft/game/world/block/Block/onBlockDestroyedByPlayer (Lnet/minecraft/game/world/World;IIII)V
+MD: net/minecraft/a/a/b/x/b (Lnet/minecraft/a/d/a;)Z net/minecraft/game/world/block/Block/isVecInsideXZBounds (Lnet/minecraft/game/physics/Vec3D;)Z
+MD: net/minecraft/a/a/b/x/b (F)Lnet/minecraft/a/a/b/x; net/minecraft/game/world/block/Block/setHardness (F)Lnet/minecraft/game/world/block/Block;
+MD: net/minecraft/a/a/b/x/b (Lnet/minecraft/a/a/e;III)F net/minecraft/game/world/block/Block/getBlockBrightness (Lnet/minecraft/game/world/World;III)F
+MD: net/minecraft/a/a/b/x/b ()Z net/minecraft/game/world/block/Block/isOpaqueCube ()Z
+MD: net/minecraft/a/a/b/n/b ()Ljava/lang/String; net/minecraft/game/world/block/StepSound/getStepSound ()Ljava/lang/String;
+MD: net/minecraft/a/c/a/b (I)V net/minecraft/game/entity/EntityPainting/setDirection (I)V
+MD: net/minecraft/a/c/e/b ()I net/minecraft/game/entity/EntityLiving/getDropItemId ()I
+MD: net/minecraft/a/c/e/b (I)V net/minecraft/game/entity/EntityLiving/heal (I)V
+MD: net/minecraft/a/c/e/b (Lnet/minecraft/a/c/b;)V net/minecraft/game/entity/EntityLiving/onDeath (Lnet/minecraft/game/entity/Entity;)V
+MD: net/minecraft/a/c/b/b (DDDFF)V net/minecraft/game/entity/Entity/setLocationAndAngles (DDDFF)V
+MD: net/minecraft/a/c/b/b (F)V net/minecraft/game/entity/Entity/fall (F)V
+MD: net/minecraft/a/c/b/b (DDD)Z net/minecraft/game/entity/Entity/isOffsetPositionInLiquid (DDD)Z
+MD: net/minecraft/client/d/a/b ()F net/minecraft/client/controller/PlayerController/getBlockReachDistance ()F
+MD: net/minecraft/client/d/a/b (III)Z net/minecraft/client/controller/PlayerController/sendBlockRemoved (III)Z
+MD: net/minecraft/a/b/i/b ()I net/minecraft/game/item/Item/getIconIndex ()I
+MD: net/minecraft/a/b/i/b (Lnet/minecraft/a/a/b/x;)F net/minecraft/game/item/Item/getStrVsBlock (Lnet/minecraft/game/world/block/Block;)F
+MD: net/minecraft/a/b/i/b (Lnet/minecraft/a/b/k;)V net/minecraft/game/item/Item/onBlockDestroyed (Lnet/minecraft/game/item/ItemStack;)V
+MD: net/minecraft/a/b/b ()Ljava/lang/String; net/minecraft/game/IInventory/getInvName ()Ljava/lang/String;
+MD: net/minecraft/a/b/k/b ()I net/minecraft/game/item/ItemStack/isItemStackDamageable ()I
+MD: net/minecraft/a/b/k/b (I)V net/minecraft/game/item/ItemStack/damageItem (I)V
+MD: net/minecraft/a/c/b/b_ ()F net/minecraft/game/entity/Entity/getShadowSize ()F
+MD: net/minecraft/client/e/c/c ()V net/minecraft/client/sound/SoundManager/tryToSetLibraryAndCodecs ()V
+MD: a/a/c (F)F util/MathHelper/sqrt_float (F)F
+MD: net/minecraft/a/a/c/a/a/c (DDD)D net/minecraft/game/world/terrain/noise/NoiseGeneratorPerlin/lerp (DDD)D
+MD: net/minecraft/a/a/e/c (III)F net/minecraft/game/world/World/getBrightness (III)F
+MD: net/minecraft/a/a/e/c ()Lnet/minecraft/a/d/a; net/minecraft/game/world/World/getFogColor ()Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/a/a/d/c ()Z net/minecraft/game/world/path/Path/isPathEmpty ()Z
+MD: net/minecraft/client/f/j/c (F)Lnet/minecraft/client/f/j; net/minecraft/client/effect/EntityFX/multipleParticleScaleBy (F)Lnet/minecraft/client/effect/EntityFX;
+MD: net/minecraft/a/c/e/b/c (I)Z net/minecraft/game/entity/player/InventoryPlayer/consumeInventoryItem (I)Z
+MD: net/minecraft/client/d/c ()V net/minecraft/client/Minecraft/displayInGameMenu ()V
+MD: net/minecraft/client/a/c/c (FFF)V net/minecraft/client/render/Tessellator/setNormal (FFF)V
+MD: net/minecraft/client/a/c/c ()V net/minecraft/client/render/Tessellator/disableColor ()V
+MD: net/minecraft/a/a/d/c/c ()Z net/minecraft/game/world/material/Material/getIsSolid ()Z
+MD: net/minecraft/client/a/b/c ()V net/minecraft/client/render/RenderGlobal/bindTerrainTexture ()V
+MD: net/minecraft/client/a/e/c (Lnet/minecraft/a/a/b/x;IIII)V net/minecraft/client/render/RenderBlocks/renderWestFace (Lnet/minecraft/game/world/block/Block;IIII)V
+MD: net/minecraft/client/a/d/c (F)V net/minecraft/client/render/EntityRenderer/hurtCameraEffect (F)V
+MD: net/minecraft/client/a/d/c ()V net/minecraft/client/render/EntityRenderer/disableColor ()V
+MD: net/minecraft/client/a/g/c ()V net/minecraft/client/render/WorldRenderer/callOcclusionQueryList ()V
+MD: net/minecraft/client/a/f/c ()V net/minecraft/client/render/ItemRenderer/swing ()V
+MD: net/minecraft/a/d/b/c (Lnet/minecraft/a/d/a;)Z net/minecraft/game/physics/AxisAlignedBB/isVecInXY (Lnet/minecraft/game/physics/Vec3D;)Z
+MD: net/minecraft/a/d/b/c (DDD)V net/minecraft/game/physics/AxisAlignedBB/offset (DDD)V
+MD: net/minecraft/a/d/b/c (Lnet/minecraft/a/d/b;D)D net/minecraft/game/physics/AxisAlignedBB/calculateZOffset (Lnet/minecraft/game/physics/AxisAlignedBB;D)D
+MD: net/minecraft/a/d/a/c (Lnet/minecraft/a/d/a;)D net/minecraft/game/physics/Vec3D/squareDistanceTo (Lnet/minecraft/game/physics/Vec3D;)D
+MD: net/minecraft/a/d/a/c (Lnet/minecraft/a/d/a;D)Lnet/minecraft/a/d/a; net/minecraft/game/physics/Vec3D/getIntermediateWithZValue (Lnet/minecraft/game/physics/Vec3D;D)Lnet/minecraft/game/physics/Vec3D;
+MD: net/minecraft/a/a/b/ag/c (III)V net/minecraft/game/world/block/BlockFire/initializeBlock (III)V
+MD: net/minecraft/client/c/i/c ()Z net/minecraft/client/gui/GuiScreen/doesGuiPauseGame ()Z
+MD: net/minecraft/a/a/b/x/c (I)Lnet/minecraft/a/a/b/x; net/minecraft/game/world/block/Block/setLightOpacity (I)Lnet/minecraft/game/world/block/Block;
+MD: net/minecraft/a/a/b/x/c (Lnet/minecraft/a/a/e;IIII)Z net/minecraft/game/world/block/Block/shouldSideBeRendered (Lnet/minecraft/game/world/World;IIII)Z
+MD: net/minecraft/a/a/b/x/c (Lnet/minecraft/a/a/e;III)V net/minecraft/game/world/block/Block/onEntityWalking (Lnet/minecraft/game/world/World;III)V
+MD: net/minecraft/a/a/b/x/c (Lnet/minecraft/a/d/a;)Z net/minecraft/game/world/block/Block/isVecInsideXYBounds (Lnet/minecraft/game/physics/Vec3D;)Z
+MD: net/minecraft/a/a/b/x/c (F)Lnet/minecraft/a/a/b/x; net/minecraft/game/world/block/Block/setLightValue (F)Lnet/minecraft/game/world/block/Block;
+MD: net/minecraft/a/a/b/x/c ()Z net/minecraft/game/world/block/Block/renderAsNormalBlock ()Z
+MD: net/minecraft/a/c/a/c (I)F net/minecraft/game/entity/EntityPainting/getArtSize (I)F
+MD: net/minecraft/a/c/c/c (Lnet/minecraft/a/c/b;)Z net/minecraft/game/entity/EntityCreature/updateEntityActionState (Lnet/minecraft/game/entity/Entity;)Z
+MD: net/minecraft/a/c/b/c ()Z net/minecraft/game/entity/Entity/canBeCollidedWith ()Z
+MD: net/minecraft/a/c/b/c (DDD)V net/minecraft/game/entity/Entity/moveEntity (DDD)V
+MD: net/minecraft/client/d/a/c ()V net/minecraft/client/controller/PlayerController/onRespawn ()V
+MD: net/minecraft/a/b/i/c ()I net/minecraft/game/item/Item/getItemStackLimit ()I
+MD: net/minecraft/a/b/c ()I net/minecraft/game/IInventory/getInventoryStackLimit ()I
+MD: net/minecraft/client/c/a/j/c_ ()V net/minecraft/client/gui/container/GuiContainer/onCraftMatrixChanged ()V
+MD: a/a/d (F)I util/MathHelper/floor_float (F)I
+MD: net/minecraft/a/a/e/d (III)Z net/minecraft/game/world/World/isSolid (III)Z
+MD: net/minecraft/a/c/e/b/d (I)I net/minecraft/game/entity/player/InventoryPlayer/getInventorySlotContainItem (I)I
+MD: net/minecraft/a/c/e/b/d ()Lnet/minecraft/a/b/k; net/minecraft/game/entity/player/InventoryPlayer/getCurrentItem ()Lnet/minecraft/game/item/ItemStack;
+MD: net/minecraft/client/d/d ()V net/minecraft/client/Minecraft/toggleFullscreen ()V
+MD: net/minecraft/client/a/c/d ()V net/minecraft/client/render/Tessellator/reset ()V
+MD: net/minecraft/client/a/b/d ()V net/minecraft/client/render/RenderGlobal/renderAllRenderLists ()V
+MD: net/minecraft/client/a/e/d (Lnet/minecraft/a/a/b/x;IIII)V net/minecraft/client/render/RenderBlocks/renderNorthFace (Lnet/minecraft/game/world/block/Block;IIII)V
+MD: net/minecraft/client/a/d/d (F)V net/minecraft/client/render/EntityRenderer/setupViewBobbing (F)V
+MD: net/minecraft/client/a/g/d ()Z net/minecraft/client/render/WorldRenderer/skipAllRenderPasses ()Z
+MD: net/minecraft/client/a/f/d ()V net/minecraft/client/render/ItemRenderer/resetEquippedProgress2 ()V
+MD: net/minecraft/client/c/a/j/d ()V net/minecraft/client/gui/container/GuiContainer/drawGuiContainerBackgroundLayer ()V
+MD: net/minecraft/a/a/b/ag/d (Lnet/minecraft/a/a/e;III)Z net/minecraft/game/world/block/BlockFire/canBlockCatchFire (Lnet/minecraft/game/world/World;III)Z
+MD: net/minecraft/a/a/b/a/d (Lnet/minecraft/a/a/e;III)Z net/minecraft/game/world/block/BlockChest/isThereANeighborChest (Lnet/minecraft/game/world/World;III)Z
+MD: net/minecraft/a/a/b/x/d (Lnet/minecraft/a/a/e;IIII)V net/minecraft/game/world/block/Block/dropBlockAsItem (Lnet/minecraft/game/world/World;IIII)V
+MD: net/minecraft/a/a/b/x/d ()Z net/minecraft/game/world/block/Block/isCollidable ()Z
+MD: net/minecraft/a/c/e/d ()V net/minecraft/game/entity/EntityLiving/updateEntityActionState ()V
+MD: net/minecraft/client/d/a/d ()V net/minecraft/client/controller/PlayerController/onUpdate ()V
+MD: net/minecraft/a/b/i/d ()I net/minecraft/game/item/Item/getMaxDamage ()I
+MD: net/minecraft/client/c/a/j/d_ ()V net/minecraft/client/gui/container/GuiContainer/guiCraftingItemsCheck ()V
+MD: a/a/e (F)F util/MathHelper/abs (F)F
+MD: net/minecraft/a/c/e/b/e ()I net/minecraft/game/entity/player/InventoryPlayer/getPlayerArmorValue ()I
+MD: net/minecraft/client/d/e ()V net/minecraft/client/Minecraft/inputLock ()V
+MD: net/minecraft/client/a/e/e (Lnet/minecraft/a/a/b/x;IIII)V net/minecraft/client/render/RenderBlocks/renderSouthFace (Lnet/minecraft/game/world/block/Block;IIII)V
+MD: net/minecraft/client/a/d/e (F)V net/minecraft/client/render/EntityRenderer/getMouseOver (F)V
+MD: net/minecraft/client/a/g/e ()V net/minecraft/client/render/WorldRenderer/setDontDraw ()V
+MD: net/minecraft/client/c/e/e ()Ljava/awt/FileDialog; net/minecraft/client/gui/GuiLoadLevel/saveFileDialog ()Ljava/awt/FileDialog;
+MD: net/minecraft/a/a/b/x/e ()I net/minecraft/game/world/block/Block/getRenderBlockPass ()I
+MD: net/minecraft/a/a/b/x/e (Lnet/minecraft/a/a/e;IIII)V net/minecraft/game/world/block/Block/onBlockPlaced (Lnet/minecraft/game/world/World;IIII)V
+MD: net/minecraft/client/c/n/e ()V net/minecraft/client/gui/GuiNewLevel/worldOptions ()V
+MD: net/minecraft/a/c/e/e ()V net/minecraft/game/entity/EntityLiving/updatePlayerActionState ()V
+MD: net/minecraft/client/d/a/e ()Z net/minecraft/client/controller/PlayerController/shouldDrawHUD ()Z
+MD: net/minecraft/client/c/i/e_ ()V net/minecraft/client/gui/GuiScreen/updateScreen ()V
+MD: net/minecraft/client/d/f ()V net/minecraft/client/Minecraft/runTick ()V
+MD: net/minecraft/client/c/i/f ()V net/minecraft/client/gui/GuiScreen/handleMouseInput ()V
+MD: net/minecraft/a/c/e/f ()Ljava/lang/String; net/minecraft/game/entity/EntityLiving/getLivingSound ()Ljava/lang/String;
+MD: net/minecraft/a/c/e/a/f_ ()V net/minecraft/game/entity/player/EntityPlayer/displayWorkbenchGUI ()V
+MD: net/minecraft/client/c/i/g ()V net/minecraft/client/gui/GuiScreen/handleKeyboardInput ()V
+MD: net/minecraft/a/c/e/g ()Ljava/lang/String; net/minecraft/game/entity/EntityLiving/getHurtSound ()Ljava/lang/String;
+MD: net/minecraft/client/g/a/g_ ()V net/minecraft/client/player/EntityPlayerSP/destroyCurrentEquippedItem ()V
+MD: net/minecraft/client/c/i/h ()V net/minecraft/client/gui/GuiScreen/drawDefaultBackground ()V
+MD: net/minecraft/a/c/e/h ()Ljava/lang/String; net/minecraft/game/entity/EntityLiving/getDeathSound ()Ljava/lang/String;
+MD: net/minecraft/a/c/b/i ()V net/minecraft/game/entity/Entity/preparePlayerToSpawn ()V
+MD: net/minecraft/a/c/b/j ()V net/minecraft/game/entity/Entity/setEntityDead ()V
+MD: net/minecraft/a/c/b/k ()Z net/minecraft/game/entity/Entity/handleWaterMovement ()Z
+MD: net/minecraft/a/c/b/l ()Z net/minecraft/game/entity/Entity/isInsideOfWater ()Z
+MD: net/minecraft/a/c/b/m ()F net/minecraft/game/entity/Entity/getEyeHeight ()F
+MD: net/minecraft/a/c/b/n ()Z net/minecraft/game/entity/Entity/handleLavaMovement ()Z
+MD: net/minecraft/a/c/b/o ()Ljava/lang/String; net/minecraft/game/entity/Entity/getTexture ()Ljava/lang/String;
+MD: net/minecraft/a/c/b/p ()Z net/minecraft/game/entity/Entity/canBePushed ()Z

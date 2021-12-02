@@ -1,0 +1,3 @@
+com/mojang/comm/ConnectionList.<init>(ILcom/mojang/minecraft/server/MinecraftServer;)V=java/io/IOException
+com/mojang/comm/SocketConnection.<init>(Ljava/nio/channels/SocketChannel;)V=java/io/IOException
+com/mojang/minecraft/server/MinecraftServer.<init>()V=java/io/IOException

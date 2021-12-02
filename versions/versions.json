@@ -1,0 +1,631 @@
+{
+    "client": {
+        "1.2.5": {
+            "url": "https://launcher.mojang.com/v1/objects/4a2fac7504182a97dcbcd7560c6392d7c8139928/client.jar",
+            "time": "2012-04-04",
+            "workspace_version": 6
+        },
+        "1.2.4": {
+            "url": "https://launcher.mojang.com/v1/objects/ad6d1fe7455857269d4185cb8f24e62cc0241aaf/client.jar",
+            "time": "2012-03-22",
+            "workspace_version": 6
+        },
+        "1.2.3": {
+            "url": "https://launcher.mojang.com/v1/objects/5134e433afeba375c00bbdcd8aead1d3222813ee/client.jar",
+            "time": "2012-03-02",
+            "workspace_version": 6
+        },
+        "1.1": {
+            "url": "https://launcher.mojang.com/v1/objects/f690d4136b0026d452163538495b9b0e8513d718/client.jar",
+            "time": "2012-01-12",
+            "workspace_version": 6
+        },
+        "1.0.0": {
+            "url": "https://launcher.mojang.com/v1/objects/b679fea27f2284836202e9365e13a82552092e5d/client.jar",
+            "time": "2011-11-18",
+            "server": "1.0.1",
+            "workspace_version": 6
+        },
+        "b1.9-pre5": {
+            "url": "https://assets.minecraft.net/1_9-pre5/minecraft.jar",
+            "time": "2011-10-27",
+            "workspace_version": 5
+        },
+        "b1.8.1": {
+            "url": "https://launcher.mojang.com/v1/objects/6b562463ccc2c7ff12ff350a2b04a67b3adcd37b/client.jar",
+            "time": "2011-09-15",
+            "workspace_version": 5
+        },
+        "b1.8": {
+            "url": "https://launcher.mojang.com/v1/objects/3139e9c29b2c74f59ea04de760ac2af5bc21b410/client.jar",
+            "time": "2011-09-14",
+            "workspace_version": 5
+        },
+        "b1.7.3": {
+            "url": "https://launcher.mojang.com/v1/objects/43db9b498cb67058d2e12d394e6507722e71bb45/client.jar",
+            "time": "2011-07-08",
+            "workspace_version": 5
+        },
+        "b1.7.2": {
+            "url": "https://launcher.mojang.com/v1/objects/7dc50cc5e2ff204a7283f0c7d38cd0370b49875b/client.jar",
+            "time": "2011-07-01",
+            "workspace_version": 5
+        },
+        "b1.7_01": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/b1.7_01.jar",
+            "time": "2011-06-30",
+            "workspace_version": 5
+        },
+        "b1.7": {
+            "url": "https://launcher.mojang.com/v1/objects/ad7960853437bcab86bd72c4a1b95f6fe19f4258/client.jar",
+            "time": "2011-06-30",
+            "workspace_version": 5
+        },
+        "b1.6.6": {
+            "url": "https://launcher.mojang.com/v1/objects/f95fe05711d09553ca2a9089f981741c13d6b8c4/client.jar",
+            "time": "2011-05-31",
+            "workspace_version": 5
+        },
+        "b1.6.5": {
+            "url": "https://launcher.mojang.com/v1/objects/90ed9854b43c4d031ed07381ea3ae3071a8bba6f/client.jar",
+            "time": "2011-05-28",
+            "workspace_version": 5
+        },
+        "b1.6.4": {
+            "url": "https://launcher.mojang.com/v1/objects/b5d3bdb8a7b12d163651f4787ac6ca14689aab9e/client.jar",
+            "time": "2011-05-26",
+            "workspace_version": 5
+        },
+        "b1.6.3": {
+            "url": "https://launcher.mojang.com/v1/objects/924e36dbb7c64abb30a95fe35f5affb5176f6cbc/client.jar",
+            "time": "2011-05-26",
+            "workspace_version": 5
+        },
+        "b1.6.2": {
+            "url": "https://launcher.mojang.com/v1/objects/e8aa50949b077b672be2e651ea3f7b1bbd9020e1/client.jar",
+            "time": "2011-05-26",
+            "workspace_version": 5
+        },
+        "b1.6.1": {
+            "url": "https://launcher.mojang.com/v1/objects/63a66d6d145696296bdaaeaba0a42f738b87a362/client.jar",
+            "time": "2011-05-26",
+            "workspace_version": 5
+        },
+        "b1.6": {
+            "url": "https://launcher.mojang.com/v1/objects/ecc0288d218fd7479027a17c150cbf283fa950a1/client.jar",
+            "time": "2011-05-26",
+            "workspace_version": 5
+        },
+        "b1.6-tb3": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/b1.6-test_build_3.jar",
+            "time": "2011-05-25",
+            "workspace_version": 5
+        },
+        "b1.5_01": {
+            "url": "https://launcher.mojang.com/v1/objects/e2a692e5e8160c84b29c834ecbf398618db9749c/client.jar",
+            "time": "2011-04-20",
+            "server": "b1.5_02",
+            "workspace_version": 5
+        },
+        "b1.5": {
+            "url": "https://launcher.mojang.com/v1/objects/f5ce1699cd728213c21054fa2f1490d162b002b4/client.jar",
+            "time": "2011-04-19",
+            "workspace_version": 5
+        },
+        "b1.4_01": {
+            "url": "https://launcher.mojang.com/v1/objects/6f157f26955c35006c1afa8b0479e0ce785fb864/client.jar",
+            "time": "2011-04-05",
+            "workspace_version": 5
+        },
+        "b1.4": {
+            "url": "https://launcher.mojang.com/v1/objects/f6dbca5223ea2a7e89806e93d0b18162b2d58c20/client.jar",
+            "time": "2011-03-31",
+            "workspace_version": 5
+        },
+        "b1.3_01": {
+            "url": "https://launcher.mojang.com/v1/objects/add3809d2c075e985d4b583632dac3d9c3872945/client.jar",
+            "time": "2011-02-23",
+            "server": "b1.3-2",
+            "workspace_version": 5
+        },
+        "b1.3": {
+            "url": "https://launcher.mojang.com/v1/objects/e19cfb3a2043f185c44237ef05eac80e8ad2d8e7/client.jar",
+            "time": "2011-02-22",
+            "workspace_version": 5
+        },
+        "b1.2_02": {
+            "url": "https://launcher.mojang.com/v1/objects/093f371e1a05d89664cfb8068d607953687d5d94/client.jar",
+            "time": "2011-01-21",
+            "server": "b1.2_01",
+            "workspace_version": 5
+        },
+        "b1.2_01": {
+            "url": "https://launcher.mojang.com/v1/objects/f71a5b58c9bd0e458878d78a34c9fb35e97d5222/client.jar",
+            "time": "2011-01-14",
+            "workspace_version": 5
+        },
+        "b1.2": {
+            "url": "https://launcher.mojang.com/v1/objects/ba05d7a97926c61c03cf956f7ae92f3bede9474e/client.jar",
+            "time": "2011-01-13",
+            "workspace_version": 5
+        },
+        "b1.1_02": {
+            "url": "https://launcher.mojang.com/v1/objects/e1c682219df45ebda589a557aadadd6ed093c86c/client.jar",
+            "time": "2010-12-22",
+            "workspace_version": 5
+        },
+        "b1.1_01": {
+            "url": "https://launcher.mojang.com/v1/objects/6d778940f48389a2741f03c9f17f3c57476fb208/client.jar",
+            "time": "2010-12-22",
+            "workspace_version": 5
+        },
+        "b1.1-2": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/b1.1-2.jar",
+            "time": "2010-12-22",
+            "server": "b1.1",
+            "workspace_version": 5
+        },
+        "b1.1-1": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/b1.1-1.jar",
+            "time": "2010-12-22",
+            "server": "b1.1",
+            "workspace_version": 5
+        },
+        "b1.0.2": {
+            "url": "https://launcher.mojang.com/v1/objects/76d35cb452e739bd4780e835d17faf0785d755f9/client.jar",
+            "time": "2010-12-21",
+            "workspace_version": 5
+        },
+        "b1.0_01": {
+            "url": "https://launcher.mojang.com/v1/objects/4caf69885b64132e42d3ce49996dbdb1691d7111/client.jar",
+            "time": "2010-12-20",
+            "workspace_version": 5
+        },
+        "b1.0": {
+            "url": "https://launcher.mojang.com/v1/objects/93faf3398ebf8008d59852dc3c2b22b909ca8a49/client.jar",
+            "time": "2010-12-20",
+            "workspace_version": 5
+        },
+        "a1.2.6": {
+            "url": "https://launcher.mojang.com/v1/objects/a68c817afd6c05c253ba5462287c2c19bbb57935/client.jar",
+            "time": "2010-12-03",
+            "server": "a0.2.8",
+            "workspace_version": 5
+        },
+        "a1.2.5": {
+            "url": "https://launcher.mojang.com/v1/objects/f48c7b6442ad8d01099ecee1c7c7332f1b1a80da/client.jar",
+            "time": "2010-12-01",
+            "server": "a0.2.7",
+            "workspace_version": 4
+        },
+        "a1.2.4_01": {
+            "url": "https://launcher.mojang.com/v1/objects/7be6298b05d1b0832ab45467a87a425640bc6bf0/client.jar",
+            "time": "2010-11-30",
+            "server": "a0.2.6_02",
+            "workspace_version": 5
+        },
+        "a1.2.3_05": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/a1.2.3_05.jar",
+            "time": "2010-11-30",
+            "server": "a0.2.6_01",
+            "workspace_version": 5
+        },
+        "a1.2.3_04": {
+            "url": "https://launcher.mojang.com/v1/objects/7f60cb9d0d40af20001d15287b78aa26a217a910/client.jar",
+            "time": "2010-11-26",
+            "server": "a0.2.5_02",
+            "workspace_version": 5
+        },
+        "a1.2.3_02": {
+            "url": "https://launcher.mojang.com/v1/objects/dc61158e1df763f87483abb6ab540dc1c42e63c4/client.jar",
+            "time": "2010-11-25",
+            "server": "a0.2.5_01",
+            "workspace_version": 5
+        },
+        "a1.2.3_01": {
+            "url": "https://launcher.mojang.com/v1/objects/1d46e65022f3a7cf4b8ad30ee5a8d52b3b2b9486/client.jar",
+            "time": "2010-11-24",
+            "server": "a0.2.5-2",
+            "workspace_version": 5
+        },
+        "a1.2.3": {
+            "url": "https://launcher.mojang.com/v1/objects/f4be258122cb62208b350cd2068685ad859bb447/client.jar",
+            "time": "2010-11-24",
+            "server": "a0.2.5-1",
+            "workspace_version": 5
+        },
+        "a1.2.2b": {
+            "url": "https://launcher.mojang.com/v1/objects/1c28c8431392641045b59e98a81877d7c94ff0ca/client.jar",
+            "time": "2010-11-10",
+            "workspace_version": 5
+        },
+        "a1.2.2a": {
+            "url": "https://launcher.mojang.com/v1/objects/7d9d85eaca9627d3a40e6d122182f2d22d39dbf9/client.jar",
+            "time": "2010-11-10",
+            "workspace_version": 5
+        },
+        "a1.2.1_01": {
+            "url": "https://launcher.mojang.com/v1/objects/e4226f9ba622634e3101681bc641eec7ee9e72fd/client.jar",
+            "time": "2010-11-05",
+            "workspace_version": 5
+        },
+        "a1.2.1": {
+            "url": "https://launcher.mojang.com/v1/objects/e4226f9ba622634e3101681bc641eec7ee9e72fd/client.jar",
+            "time": "2010-11-05",
+            "workspace_version": 5
+        },
+        "a1.2.0_02": {
+            "url": "https://launcher.mojang.com/v1/objects/b99da0a683e6dc1ade4df1bf159e021ad07d4fca/client.jar",
+            "time": "2010-10-31",
+            "workspace_version": 5
+        },
+        "a1.2.0_01": {
+            "url": "https://launcher.mojang.com/v1/objects/332bfe7bf26f6a5cc93ee85e6759ce33784409d0/client.jar",
+            "time": "2010-10-31",
+            "workspace_version": 5
+        },
+        "a1.2.0": {
+            "url": "https://launcher.mojang.com/v1/objects/8632ea716fd083c2975f16d612306fd80bee46db/client.jar",
+            "time": "2010-10-30",
+            "workspace_version": 5
+        },
+        "a1.1.2_01": {
+            "url": "https://launcher.mojang.com/v1/objects/daa4b9f192d2c260837d3b98c39432324da28e86/client.jar",
+            "time": "2010-09-23",
+            "server": "a0.2.1",
+            "workspace_version": 4
+        },
+        "a1.1.2": {
+            "url": "https://launcher.mojang.com/v1/objects/f9b4b66f9c18bf4800d80f1c8865a837f92c6105/client.jar",
+            "time": "2010-09-18",
+            "server": "a0.2.1",
+            "workspace_version": 4
+        },
+        "a1.1.1": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/a1.1.1.jar",
+            "time": "2010-09-18",
+            "server": "a0.2.1",
+            "workspace_version": 4
+        },
+        "a1.1.0-1": {
+            "url": "https://launcher.mojang.com/v1/objects/d58d1db929994ff383bdbe6fed31887e04b965c3/client.jar",
+            "time": "2010-09-10",
+            "server": "a0.2.0_01",
+            "workspace_version": 4
+        },
+        "a1.0.17_04": {
+            "url": "https://launcher.mojang.com/v1/objects/61cb4c717981f34bf90e8502d2eb8cf2aa6db0cd/client.jar",
+            "time": "2010-08-23",
+            "workspace_version": 4
+        },
+        "a1.0.17_02": {
+            "url": "https://launcher.mojang.com/v1/objects/39f20ee472a40322e034643a8d1668836f5052bd/client.jar",
+            "time": "2010-08-20",
+            "workspace_version": 4
+        },
+        "a1.0.16": {
+            "url": "https://launcher.mojang.com/v1/objects/98ce80c7630ccb3bb38687ff98bfd18935d49a57/client.jar",
+            "time": "2010-08-12",
+            "workspace_version": 4
+        },
+        "a1.0.15": {
+            "url": "https://launcher.mojang.com/v1/objects/03edaff812bedd4157a90877e779d7b7ecf78e97/client.jar",
+            "time": "2010-08-03",
+            "workspace_version": 4
+        },
+        "a1.0.14": {
+            "url": "https://launcher.mojang.com/v1/objects/9b4b90d8def2a680b7c9eca40dd03e2266c8977a/client.jar",
+            "time": "2010-07-30",
+            "workspace_version": 3
+        },
+        "a1.0.11": {
+            "url": "https://launcher.mojang.com/v1/objects/d7ceb02909d0e1031a99ff4d8053d3f4abfbb2da/client.jar",
+            "time": "2010-07-23",
+            "workspace_version": 3
+        },
+        "a1.0.5_01": {
+            "url": "https://launcher.mojang.com/v1/objects/73f569bf5556580979606049204835ae1a54f04d/client.jar",
+            "time": "2010-07-14",
+            "workspace_version": 3
+        },
+        "a1.0.4": {
+            "url": "https://launcher.mojang.com/v1/objects/e5838277b3bb193e58408713f1fc6e005c5f3c0c/client.jar",
+            "time": "2010-07-09",
+            "workspace_version": 3
+        },
+        "a1.0.1_01": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/a1.0.1_01.jar",
+            "time": "2010-07-02",
+            "workspace_version": 3
+        },
+        "inf-20100630-2": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/inf-20100630-2.jar",
+            "time": "2010-06-30",
+            "workspace_version": 3
+        },
+        "inf-20100630-1": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/inf-20100630-1.jar",
+            "time": "2010-06-30",
+            "workspace_version": 3
+        },
+        "inf-20100625-1": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/inf-20100625-1.jar",
+            "time": "2010-06-25",
+            "workspace_version": 3
+        },
+        "inf-20100624": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/inf-20100624.jar",
+            "time": "2010-06-24",
+            "workspace_version": 3
+        },
+        "inf-20100618": {
+            "url": "https://launcher.mojang.com/v1/objects/89eab2c1a353707cc00f074dffba9cb7a4f5e304/client.jar",
+            "time": "2010-06-18",
+            "workspace_version": 3
+        },
+        "inf-20100420": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/inf-20100420.jar",
+            "time": "2010-04-20",
+            "workspace_version": 3
+        },
+        "inf-20100415": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/inf-20100415.jar",
+            "time": "2010-04-15",
+            "workspace_version": 3
+        },
+        "inf-20100414": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/inf-20100414.jar",
+            "time": "2010-04-14",
+            "workspace_version": 3
+        },
+        "inf-20100227": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/inf-20100227.jar",
+            "time": "2010-02-27",
+            "workspace_version": 3
+        },
+        "in-20100223": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/in-20100223.jar",
+            "time": "2010-02-23",
+            "workspace_version": 3
+        },
+        "in-20100219": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/in-20100219.jar",
+            "time": "2010-02-19",
+            "workspace_version": 3
+        },
+        "c0.30_01c": {
+            "url": "https://launcher.mojang.com/v1/objects/54622801f5ef1bcc1549a842c5b04cb5d5583005/client.jar",
+            "time": "2011-07-31",
+            "workspace_version": 2
+        },
+        "c0.0.19a_06": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/c0.0.19a_06-0137.jar",
+            "time": "2009-06-20",
+            "server": "c1.6",
+            "workspace_version": 2
+        },
+        "c0.0.19a_04": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/c0.0.19a_04.jar",
+            "time": "2009-06-20",
+            "server": "c1.6",
+            "workspace_version": 2
+        },
+        "c0.0.18a_02": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/c0.0.18a_02.jar",
+            "time": "2009-06-14",
+            "server": "c1.4.1",
+            "workspace_version": 2
+        },
+        "c0.0.17a": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/c0.0.17a.jar",
+            "time": "2009-06-10",
+            "server": "c1.3",
+            "workspace_version": 2
+        },
+        "c0.0.16a_02": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/c0.0.16a_02-2.jar",
+            "time": "2009-06-08",
+            "server": "c1.2",
+            "workspace_version": 2
+        },
+        "c0.0.15a": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/c0.0.15a-1a.jar",
+            "time": "2009-05-31",
+            "workspace_version": 1
+        },
+        "c0.0.14a_08": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/c0.0.14a_08.jar",
+            "time": "2009-05-28",
+            "workspace_version": 1
+        },
+        "c0.0.13a_03": {
+            "url": "https://launcher.mojang.com/v1/objects/7ba9e63aec8a15a99ecd47900c848cdce8a51a03/client.jar",
+            "time": "2009-05-22",
+            "workspace_version": 1
+        },
+        "c0.0.13a": {
+            "url": "https://launcher.mojang.com/v1/objects/936d575b1ab1a04a341ad43d76e441e88d2cd987/client.jar",
+            "time": "2009-05-22",
+            "workspace_version": 1
+        },
+        "c0.0.12a_03": {
+            "url": "http://files.betacraft.uk/launcher/assets/versions/c0.0.12a_03-200018.jar",
+            "time": "2009-05-20",
+            "workspace_version": 1
+        },
+        "c0.0.11a": {
+            "url": "https://launcher.mojang.com/v1/objects/3a799f179b6dcac5f3a46846d687ebbd95856984/client.jar",
+            "time": "2009-05-17",
+            "workspace_version": 1
+        },
+        "rd-161348": {
+            "url": "https://launcher.mojang.com/v1/objects/6323bd14ed7f83852e17ebc8ec418e55c97ddfe4/client.jar",
+            "time": "2009-05-16",
+            "workspace_version": 1
+        },
+        "rd-160052": {
+            "url": "https://launcher.mojang.com/v1/objects/b100be8097195b6c9112046dc6a80d326c8df839/client.jar",
+            "time": "2009-05-15",
+            "workspace_version": 1
+        },
+        "rd-132328": {
+            "url": "https://launcher.mojang.com/v1/objects/12dace5a458617d3f90337a7ebde86c0593a6899/client.jar",
+            "time": "2009-05-13",
+            "workspace_version": 1
+        },
+        "rd-132211": {
+            "url": "https://launcher.mojang.com/v1/objects/393e8d4b4d708587e2accd7c5221db65365e1075/client.jar",
+            "time": "2009-05-13",
+            "workspace_version": 1
+        }
+    },
+    "server": {
+        "c1.6": {
+            "url": "http://files.betacraft.uk/server-archive/classic/c1.6.zip"
+        },
+        "c1.4.1": {
+            "url": "http://files.betacraft.uk/server-archive/classic/c1.4.1.zip"
+        },
+        "c1.4": {
+            "url": "http://files.betacraft.uk/server-archive/classic/c1.4-1327.zip"
+        },
+        "c1.3": {
+            "url": "http://files.betacraft.uk/server-archive/classic/c1.3.zip"
+        },
+        "c1.2": {
+            "url": "http://files.betacraft.uk/server-archive/classic/c1.2.zip"
+        },
+        "a0.2.0_01": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.0_01.jar"
+        },
+        "a0.2.1": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.1.jar"
+        },
+        "a0.2.5-1": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.5-0923.jar"
+        },
+        "a0.2.5-2": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.5-1004.jar"
+        },
+        "a0.2.5_01": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.5_01.jar"
+        },
+        "a0.2.5_02": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.5_02.jar"
+        },
+        "a0.2.6": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.6.jar"
+        },
+        "a0.2.6_01": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.6_01.jar"
+        },
+        "a0.2.6_02": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.6_02.jar"
+        },
+        "a0.2.7": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.7.jar"
+        },
+        "a0.2.8": {
+            "url": "http://files.betacraft.uk/server-archive/alpha/a0.2.8.jar"
+        },
+        "b1.1": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.1.jar"
+        },
+        "b1.1_01": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.1_01.jar"
+        },
+        "b1.1_02": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.1_02.jar"
+        },
+        "b1.2_01": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.2_01.jar"
+        },
+        "b1.3-1": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.3-1647.jar"
+        },
+        "b1.3-2": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.3-1731.jar"
+        },
+        "b1.4": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.4.jar"
+        },
+        "b1.4_01": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.4_01.jar"
+        },
+        "b1.5": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.5.jar"
+        },
+        "b1.5_01": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.5_01.jar"
+        },
+        "b1.5_02": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.5_02.jar"
+        },
+        "b1.6-tb3": {
+            "url": "http://files.betacraft.uk/server-archive/beta/prerelease/b1.6-tb3.jar"
+        },
+        "b1.6": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.6.jar"
+        },
+        "b1.6.1": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.6.1.jar"
+        },
+        "b1.6.2": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.6.2.jar"
+        },
+        "b1.6.3": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.6.3.jar"
+        },
+        "b1.6.4": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.6.4.jar"
+        },
+        "b1.6.5": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.6.5.jar"
+        },
+        "b1.6.6": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.6.6.jar"
+        },
+        "b1.7": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.7.jar"
+        },
+        "b1.7_01": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.7_01.jar"
+        },
+        "b1.7.2": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.7.2.jar"
+        },
+        "b1.7.3": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.7.3.jar"
+        },
+        "b1.8.1": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.8.1.jar"
+        },
+        "b1.8": {
+            "url": "http://files.betacraft.uk/server-archive/beta/b1.8.jar"
+        },
+        "b1.8-pre": {
+            "url": "https://assets.minecraft.net/1_8-pre/minecraft_server.jar"
+        },
+        "b1.8-pre2": {
+            "url": "https://assets.minecraft.net/1_8-pre2/minecraft_server.jar"
+        },
+        "b1.9-pre5": {
+            "url": "https://assets.minecraft.net/1_9-pre5/minecraft_server.jar"
+        },
+        "1.0.1": {
+            "url": "http://files.betacraft.uk/server-archive/release/1.0.0/1.0.1.jar"
+        },
+        "1.1": {
+            "url": "http://files.betacraft.uk/server-archive/release/1.1/1.1.jar"
+        },
+        "1.2.3": {
+            "url": "http://files.betacraft.uk/server-archive/release/1.2/1.2.3.jar"
+        },
+        "1.2.4": {
+            "url": "http://files.betacraft.uk/server-archive/release/1.2/1.2.4.jar"
+        },
+        "1.2.5": {
+            "url": "https://assets.minecraft.net/1_2_5/minecraft_server.jar"
+        }
+    }
+}

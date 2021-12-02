@@ -1,0 +1,593 @@
+diff -r -U 3 minecraft/net/minecraft/client/render/entity/RenderPlayer.java minecraft_patched/net/minecraft/client/render/entity/RenderPlayer.java
+--- minecraft/net/minecraft/client/render/entity/RenderPlayer.java	2021-11-26 21:52:37.300216900 +0200
++++ minecraft_patched/net/minecraft/client/render/entity/RenderPlayer.java	2021-11-26 21:56:14.569644000 +0200
+@@ -41,8 +41,8 @@
+ 		if((var6 = var5.inventory.armorInventory[var4]) != null && (var7 = var6.getItem()) instanceof ItemArmor) {
+ 			ItemArmor var8 = (ItemArmor)var7;
+ 			this.loadTexture("/armor/" + armorFilenamePrefix[var8.renderIndex] + "_" + (var3 == 2 ? 2 : 1) + ".png");
+-			ModelBiped var9;
+-			(var9 = var3 == 2 ? this.modelArmor : this.modelArmorChestplate).bipedHead.showModel = var3 == 0;
++			ModelBiped var9 = var3 == 2 ? this.modelArmor : this.modelArmorChestplate;
++			var9.bipedHead.showModel = var3 == 0;
+ 			var9.bipedHeadwear.showModel = var3 == 0;
+ 			var9.bipedBody.showModel = var3 == 1 || var3 == 2;
+ 			var9.bipedRightArm.showModel = var3 == 1;
+diff -r -U 3 minecraft/net/minecraft/client/gui/GuiIngame.java minecraft_patched/net/minecraft/client/gui/GuiIngame.java
+--- minecraft/net/minecraft/client/gui/GuiIngame.java	2021-11-27 12:22:37.234462300 +0200
++++ minecraft_patched/net/minecraft/client/gui/GuiIngame.java	2021-11-27 12:28:02.981093900 +0200
+@@ -126,26 +126,25 @@
+ 		GL11.glPopMatrix();
+ 
+ 		for(var10 = 0; var10 < 9; ++var10) {
+-			float var25 = (float)(var3 / 2 - 90 + var10 * 20 + 2);
+-			var12 = var19 - 16 - 3;
+-			float var21 = var25;
++			int var25 = var3 / 2 - 90 + var10 * 20 + 2;
++			int var21 = var19 - 16 - 3;
+ 			ItemStack var22;
+ 			if((var22 = this.mc.thePlayer.inventory.mainInventory[var10]) != null) {
+ 				float var9;
+ 				if((var9 = (float)var22.animationsToGo - var1) > 0.0F) {
+ 					GL11.glPushMatrix();
+-					var25 = 1.0F + var9 / 5.0F;
+-					GL11.glTranslatef((float)(var21 + 8), (float)(var12 + 12), 0.0F);
+-					GL11.glScalef(1.0F / var25, (var25 + 1.0F) / 2.0F, 1.0F);
+-					GL11.glTranslatef((float)(-(var21 + 8)), (float)(-(var12 + 12)), 0.0F);
++					float var24 = 1.0F + var9 / 5.0F;
++					GL11.glTranslatef((float)(var25 + 8), (float)(var21 + 12), 0.0F);
++					GL11.glScalef(1.0F / var24, (var24 + 1.0F) / 2.0F, 1.0F);
++					GL11.glTranslatef((float)(-(var25 + 8)), (float)(-(var21 + 12)), 0.0F);
+ 				}
+ 
+-				itemRenderer.renderItemIntoGUI(this.mc.renderEngine, var22, (int)var25, var12);
++				itemRenderer.renderItemIntoGUI(this.mc.renderEngine, var22, var25, var21);
+ 				if(var9 > 0.0F) {
+ 					GL11.glPopMatrix();
+ 				}
+ 
+-				itemRenderer.renderItemOverlayIntoGUI(this.mc.fontRenderer, var22, (int)var25, var12);
++				itemRenderer.renderItemOverlayIntoGUI(this.mc.fontRenderer, var22, var25, var21);
+ 			}
+ 		}
+ 
+diff -r -U 3 minecraft/net/minecraft/client/ThreadDownloadResources.java minecraft_patched/net/minecraft/client/ThreadDownloadResources.java
+--- minecraft/net/minecraft/client/ThreadDownloadResources.java	2021-11-26 19:31:50.992590200 +0200
++++ minecraft_patched/net/minecraft/client/ThreadDownloadResources.java	2021-11-26 20:24:37.068679400 +0200
+@@ -1,11 +1,14 @@
+ package net.minecraft.client;
+ 
++import java.io.BufferedReader;
+ import java.io.DataInputStream;
+ import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.io.InputStreamReader;
+ import java.net.URL;
++import java.util.ArrayList;
+ 
+ public final class ThreadDownloadResources extends Thread {
+ 	private File resourcesFolder;
+@@ -23,7 +26,63 @@
+ 	}
+ 
+ 	public final void run() {
+-		// $FF: Couldn't be decompiled
++		try {
++			final ArrayList<String> list = new ArrayList<String>();
++			final URL url = new URL("http://www.minecraft.net/resources/");
++			final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
++			String line;
++			while ((line = bufferedReader.readLine()) != null) {
++				list.add(line);
++			}
++			bufferedReader.close();
++			for (int i = 0; i < list.size(); ++i) {
++				final URL url2 = url;
++				final String s = list.get(i);
++				final URL context = url2;
++				Label_0334: {
++					try {
++						final String[] split;
++						final String child = (split = s.split(","))[0];
++						final int int1 = Integer.parseInt(split[1]);
++						Long.parseLong(split[2]);
++						final File file;
++						if (!(file = new File(this.resourcesFolder, child)).exists() || file.length() != int1) {
++							file.getParentFile().mkdirs();
++							this.downloadResource(new URL(context, child.replaceAll(" ", "%20")), file);
++							if (this.closing) {
++								break Label_0334;
++							}
++						}
++						final Minecraft mc = this.mc;
++						final String s2 = child;
++						final File file2 = file;
++						final String s3 = s2;
++						final Minecraft minecraft = mc;
++						final int index = s3.indexOf("/");
++						final String substring = s3.substring(0, index);
++						final String substring2 = s3.substring(index + 1);
++						if (substring.equalsIgnoreCase("sound")) {
++							minecraft.sndManager.addSound(substring2, file2);
++						}
++						else if (substring.equalsIgnoreCase("newsound")) {
++							minecraft.sndManager.addSound(substring2, file2);
++						}
++						else if (substring.equalsIgnoreCase("music")) {
++							minecraft.sndManager.addMusic(substring2, file2);
++						}
++					}
++					catch (Exception ex) {
++						ex.printStackTrace();
++					}
++				}
++				if (this.closing) {
++					return;
++				}
++			}
++		}
++		catch (IOException ex2) {
++			ex2.printStackTrace();
++		}
+ 	}
+ 
+ 	private void downloadResource(URL var1, File var2) throws IOException {
+diff -r -U 3 minecraft/net/minecraft/client/render/EntityRenderer.java minecraft_patched/net/minecraft/client/render/EntityRenderer.java
+--- minecraft/net/minecraft/client/render/EntityRenderer.java	2021-11-26 21:52:37.491227800 +0200
++++ minecraft_patched/net/minecraft/client/render/EntityRenderer.java	2021-11-26 21:55:53.769454300 +0200
+@@ -367,10 +367,10 @@
+ 				double var39 = (double)(MathHelper.cos(var64.rotationYaw / 180.0F * 3.1415927F) * MathHelper.cos(var64.rotationPitch / 180.0F * 3.1415927F)) * 4.0D;
+ 				var41 = (double)(-MathHelper.sin(var64.rotationPitch / 180.0F * 3.1415927F)) * 4.0D;
+ 
+-				for(var52 = (float)false; var52 < 8; ++var52) {
+-					float var55 = (float)(((var52 & 1) << 1) - 1);
+-					float var50 = (float)(((var52 >> 1 & 1) << 1) - 1);
+-					var16 = (float)(((var52 >> 2 & 1) << 1) - 1);
++				for(int var53 = 0; var53 < 8; ++var53) {
++					float var55 = (float)(((var53 & 1) << 1) - 1);
++					float var50 = (float)(((var53 >> 1 & 1) << 1) - 1);
++					var16 = (float)(((var53 >> 2 & 1) << 1) - 1);
+ 					var55 *= 0.1F;
+ 					var50 *= 0.1F;
+ 					var16 *= 0.1F;
+diff -r -U 3 minecraft/net/minecraft/game/item/Item.java minecraft_patched/net/minecraft/game/item/Item.java
+--- minecraft/net/minecraft/game/item/Item.java	2021-11-26 21:52:37.395222300 +0200
++++ minecraft_patched/net/minecraft/game/item/Item.java	2021-11-26 21:57:27.466813500 +0200
+@@ -136,337 +136,337 @@
+ 		ItemSpade var10000 = new ItemSpade(0, 2);
+ 		byte var1 = 82;
+ 		ItemSpade var0 = var10000;
+-		var10000.iconIndex = var1;
++		var10000.setIconIndex(var1);
+ 		shovel = var0;
+ 		ItemPickaxe var15 = new ItemPickaxe(1, 2);
+ 		var1 = 98;
+ 		ItemPickaxe var2 = var15;
+-		var15.iconIndex = var1;
++		var15.setIconIndex(var1);
+ 		pickaxeSteel = var2;
+ 		ItemAxe var16 = new ItemAxe(2, 2);
+ 		var1 = 114;
+ 		ItemAxe var3 = var16;
+-		var16.iconIndex = var1;
++		var16.setIconIndex(var1);
+ 		axeSteel = var3;
+ 		ItemFlintAndSteel var17 = new ItemFlintAndSteel(3);
+ 		var1 = 5;
+ 		ItemFlintAndSteel var4 = var17;
+-		var17.iconIndex = var1;
++		var17.setIconIndex(var1);
+ 		flintAndSteel = var4;
+ 		ItemFood var18 = new ItemFood(4, 4);
+ 		var1 = 10;
+ 		ItemFood var5 = var18;
+-		var18.iconIndex = var1;
++		var18.setIconIndex(var1);
+ 		apple = var5;
+ 		ItemBow var19 = new ItemBow(5);
+ 		var1 = 21;
+ 		ItemBow var6 = var19;
+-		var19.iconIndex = var1;
++		var19.setIconIndex(var1);
+ 		bow = var6;
+ 		Item var20 = new Item(6);
+ 		var1 = 37;
+ 		Item var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		arrow = var7;
+ 		var20 = new Item(7);
+ 		var1 = 7;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		coal = var7;
+ 		var20 = new Item(8);
+ 		var1 = 55;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		diamod = var7;
+ 		var20 = new Item(9);
+ 		var1 = 23;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		ingotIron = var7;
+ 		var20 = new Item(10);
+ 		var1 = 39;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		ingotGold = var7;
+ 		ItemSword var21 = new ItemSword(11, 2);
+ 		var1 = 66;
+ 		ItemSword var8 = var21;
+-		var21.iconIndex = var1;
++		var21.setIconIndex(var1);
+ 		swordSteel = var8;
+ 		var21 = new ItemSword(12, 0);
+ 		var1 = 64;
+ 		var8 = var21;
+-		var21.iconIndex = var1;
++		var21.setIconIndex(var1);
+ 		swordWood = var8;
+ 		var10000 = new ItemSpade(13, 0);
+ 		var1 = 80;
+ 		var0 = var10000;
+-		var10000.iconIndex = var1;
++		var10000.setIconIndex(var1);
+ 		shovelWood = var0;
+ 		var15 = new ItemPickaxe(14, 0);
+ 		var1 = 96;
+ 		var2 = var15;
+-		var15.iconIndex = var1;
++		var15.setIconIndex(var1);
+ 		pickaxeWood = var2;
+ 		var16 = new ItemAxe(15, 0);
+ 		var1 = 112;
+ 		var3 = var16;
+-		var16.iconIndex = var1;
++		var16.setIconIndex(var1);
+ 		axeWood = var3;
+ 		var21 = new ItemSword(16, 1);
+ 		var1 = 65;
+ 		var8 = var21;
+-		var21.iconIndex = var1;
++		var21.setIconIndex(var1);
+ 		swordStone = var8;
+ 		var10000 = new ItemSpade(17, 1);
+ 		var1 = 81;
+ 		var0 = var10000;
+-		var10000.iconIndex = var1;
++		var10000.setIconIndex(var1);
+ 		shovelStone = var0;
+ 		var15 = new ItemPickaxe(18, 1);
+ 		var1 = 97;
+ 		var2 = var15;
+-		var15.iconIndex = var1;
++		var15.setIconIndex(var1);
+ 		pickaxeStone = var2;
+ 		var16 = new ItemAxe(19, 1);
+ 		var1 = 113;
+ 		var3 = var16;
+-		var16.iconIndex = var1;
++		var16.setIconIndex(var1);
+ 		axeStone = var3;
+ 		var21 = new ItemSword(20, 3);
+ 		var1 = 67;
+ 		var8 = var21;
+-		var21.iconIndex = var1;
++		var21.setIconIndex(var1);
+ 		swordDiamond = var8;
+ 		var10000 = new ItemSpade(21, 3);
+ 		var1 = 83;
+ 		var0 = var10000;
+-		var10000.iconIndex = var1;
++		var10000.setIconIndex(var1);
+ 		shovelDiamond = var0;
+ 		var15 = new ItemPickaxe(22, 3);
+ 		var1 = 99;
+ 		var2 = var15;
+-		var15.iconIndex = var1;
++		var15.setIconIndex(var1);
+ 		pickaxeDiamond = var2;
+ 		var16 = new ItemAxe(23, 3);
+ 		var1 = 115;
+ 		var3 = var16;
+-		var16.iconIndex = var1;
++		var16.setIconIndex(var1);
+ 		axeDiamond = var3;
+ 		var20 = new Item(24);
+ 		var1 = 53;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		stick = var7;
+ 		var20 = new Item(25);
+ 		var1 = 71;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		bowlEmpty = var7;
+ 		ItemSoup var22 = new ItemSoup(26, 10);
+ 		var1 = 72;
+ 		ItemSoup var9 = var22;
+-		var22.iconIndex = var1;
++		var22.setIconIndex(var1);
+ 		bowlSoup = var9;
+ 		var21 = new ItemSword(27, 0);
+ 		var1 = 68;
+ 		var8 = var21;
+-		var21.iconIndex = var1;
++		var21.setIconIndex(var1);
+ 		swordGold = var8;
+ 		var10000 = new ItemSpade(28, 0);
+ 		var1 = 84;
+ 		var0 = var10000;
+-		var10000.iconIndex = var1;
++		var10000.setIconIndex(var1);
+ 		shovelGold = var0;
+ 		var15 = new ItemPickaxe(29, 0);
+ 		var1 = 100;
+ 		var2 = var15;
+-		var15.iconIndex = var1;
++		var15.setIconIndex(var1);
+ 		pickaxeGold = var2;
+ 		var16 = new ItemAxe(30, 0);
+ 		var1 = 116;
+ 		var3 = var16;
+-		var16.iconIndex = var1;
++		var16.setIconIndex(var1);
+ 		axeGold = var3;
+ 		var20 = new Item(31);
+ 		var1 = 8;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		silk = var7;
+ 		var20 = new Item(32);
+ 		var1 = 24;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		feather = var7;
+ 		var20 = new Item(33);
+ 		var1 = 40;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		gunpowder = var7;
+ 		ItemHoe var23 = new ItemHoe(34, 0);
+ 		short var11 = 128;
+ 		ItemHoe var10 = var23;
+-		var23.iconIndex = var11;
++		var23.setIconIndex(var11);
+ 		hoeWood = var10;
+ 		var23 = new ItemHoe(35, 1);
+ 		var11 = 129;
+ 		var10 = var23;
+-		var23.iconIndex = var11;
++		var23.setIconIndex(var11);
+ 		hoeStone = var10;
+ 		var23 = new ItemHoe(36, 2);
+ 		var11 = 130;
+ 		var10 = var23;
+-		var23.iconIndex = var11;
++		var23.setIconIndex(var11);
+ 		hoeSteel = var10;
+ 		var23 = new ItemHoe(37, 3);
+ 		var11 = 131;
+ 		var10 = var23;
+-		var23.iconIndex = var11;
++		var23.setIconIndex(var11);
+ 		hoeDiamond = var10;
+ 		var23 = new ItemHoe(38, 4);
+ 		var11 = 132;
+ 		var10 = var23;
+-		var23.iconIndex = var11;
++		var23.setIconIndex(var11);
+ 		hoeGold = var10;
+ 		ItemSeeds var24 = new ItemSeeds(39, Block.crops.blockID);
+ 		var1 = 9;
+ 		ItemSeeds var12 = var24;
+-		var24.iconIndex = var1;
++		var24.setIconIndex(var1);
+ 		seeds = var12;
+ 		var20 = new Item(40);
+ 		var1 = 25;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		wheat = var7;
+ 		var18 = new ItemFood(41, 5);
+ 		var1 = 41;
+ 		var5 = var18;
+-		var18.iconIndex = var1;
++		var18.setIconIndex(var1);
+ 		bread = var5;
+ 		ItemArmor var25 = new ItemArmor(42, 0, 0, 0);
+ 		var1 = 0;
+ 		ItemArmor var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		helmetLeather = var13;
+ 		var25 = new ItemArmor(43, 0, 0, 1);
+ 		var1 = 16;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		plateLeather = var13;
+ 		var25 = new ItemArmor(44, 0, 0, 2);
+ 		var1 = 32;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		legsLeather = var13;
+ 		var25 = new ItemArmor(45, 0, 0, 3);
+ 		var1 = 48;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		bootsLeather = var13;
+ 		var25 = new ItemArmor(46, 1, 1, 0);
+ 		var1 = 1;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		helmetChain = var13;
+ 		var25 = new ItemArmor(47, 1, 1, 1);
+ 		var1 = 17;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		plateChain = var13;
+ 		var25 = new ItemArmor(48, 1, 1, 2);
+ 		var1 = 33;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		legsChain = var13;
+ 		var25 = new ItemArmor(49, 1, 1, 3);
+ 		var1 = 49;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		bootsChain = var13;
+ 		var25 = new ItemArmor(50, 2, 2, 0);
+ 		var1 = 2;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		helmetSteel = var13;
+ 		var25 = new ItemArmor(51, 2, 2, 1);
+ 		var1 = 18;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		plateSteel = var13;
+ 		var25 = new ItemArmor(52, 2, 2, 2);
+ 		var1 = 34;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		legsSteel = var13;
+ 		var25 = new ItemArmor(53, 2, 2, 3);
+ 		var1 = 50;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		bootsSteel = var13;
+ 		var25 = new ItemArmor(54, 3, 3, 0);
+ 		var1 = 3;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		helmetDiamond = var13;
+ 		var25 = new ItemArmor(55, 3, 3, 1);
+ 		var1 = 19;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		plateDiamond = var13;
+ 		var25 = new ItemArmor(56, 3, 3, 2);
+ 		var1 = 35;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		legsDiamond = var13;
+ 		var25 = new ItemArmor(57, 3, 3, 3);
+ 		var1 = 51;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		bootsDiamond = var13;
+ 		var25 = new ItemArmor(58, 1, 4, 0);
+ 		var1 = 4;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		helmetGold = var13;
+ 		var25 = new ItemArmor(59, 1, 4, 1);
+ 		var1 = 20;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		plateGold = var13;
+ 		var25 = new ItemArmor(60, 1, 4, 2);
+ 		var1 = 36;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		legsGold = var13;
+ 		var25 = new ItemArmor(61, 1, 4, 3);
+ 		var1 = 52;
+ 		var13 = var25;
+-		var25.iconIndex = var1;
++		var25.setIconIndex(var1);
+ 		bootsGold = var13;
+ 		var20 = new Item(62);
+ 		var1 = 6;
+ 		var7 = var20;
+-		var20.iconIndex = var1;
++		var20.setIconIndex(var1);
+ 		flint = var7;
+ 		var18 = new ItemFood(63, 3);
+ 		var1 = 87;
+ 		var5 = var18;
+-		var18.iconIndex = var1;
++		var18.setIconIndex(var1);
+ 		porkRaw = var5;
+ 		var18 = new ItemFood(64, 8);
+ 		var1 = 88;
+ 		var5 = var18;
+-		var18.iconIndex = var1;
++		var18.setIconIndex(var1);
+ 		porkCooked = var5;
+ 		ItemPainting var26 = new ItemPainting(65);
+ 		var1 = 26;
+ 		ItemPainting var14 = var26;
+-		var26.iconIndex = var1;
++		var26.setIconIndex(var1);
+ 		painting = var14;
+ 		var18 = new ItemFood(66, 42);
+ 		var1 = 11;
+ 		var5 = var18;
+-		var18.iconIndex = var1;
++		var18.setIconIndex(var1);
+ 		appleGold = var5;
+ 	}
+ }
+diff -r -U 3 minecraft/net/minecraft/game/world/path/Pathfinder.java minecraft_patched/net/minecraft/game/world/path/Pathfinder.java
+--- minecraft/net/minecraft/game/world/path/Pathfinder.java	2021-11-26 21:52:37.444225100 +0200
++++ minecraft_patched/net/minecraft/game/world/path/Pathfinder.java	2021-11-26 21:56:46.330460600 +0200
+@@ -28,7 +28,7 @@
+ 	private PathEntity addToPath(Entity var1, double var2, double var4, double var6, float var8) {
+ 		this.path.clearPath();
+ 		this.pointMap.clear();
+-		Object var9 = this.openPoint(MathHelper.floor_double(var1.boundingBox.minX), MathHelper.floor_double(var1.boundingBox.minY), MathHelper.floor_double(var1.boundingBox.minZ));
++		PathPoint var9 = this.openPoint(MathHelper.floor_double(var1.boundingBox.minX), MathHelper.floor_double(var1.boundingBox.minY), MathHelper.floor_double(var1.boundingBox.minZ));
+ 		PathPoint var21 = this.openPoint(MathHelper.floor_double(var2 - (double)(var1.width / 2.0F)), MathHelper.floor_double(var4), MathHelper.floor_double(var6 - (double)(var1.width / 2.0F)));
+ 		PathPoint var3 = new PathPoint(MathHelper.floor_float(var1.width + 1.0F), MathHelper.floor_float(var1.height + 1.0F), MathHelper.floor_float(var1.width + 1.0F));
+ 		float var24 = var8;
+@@ -61,7 +61,7 @@
+ 			}
+ 
+ 			var25.isFirst = true;
+-			Object var15 = 0;
++			int var15 = 0;
+ 			byte var16 = 0;
+ 			if(var20.getVerticalOffset(var25.xCoord, var25.yCoord + 1, var25.zCoord, var5) > 0) {
+ 				var16 = 1;
+@@ -88,9 +88,7 @@
+ 				var20.pathOptions[var15++] = var10;
+ 			}
+ 
+-			var9 = var15;
+-
+-			for(int var26 = 0; var26 < var9; ++var26) {
++			for(int var26 = 0; var26 < var15; ++var26) {
+ 				PathPoint var11 = var20.pathOptions[var26];
+ 				float var12 = var25.totalPathDistance + var25.distanceTo(var11);
+ 				if(!var11.isAssigned() || var12 < var11.totalPathDistance) {

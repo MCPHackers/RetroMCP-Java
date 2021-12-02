@@ -1,3 +1,2 @@
 @echo off
-java -jar retromcp.jar -decompile
-pause
+java -jar retromcp.jar

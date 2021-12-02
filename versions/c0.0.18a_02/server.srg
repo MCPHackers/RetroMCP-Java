@@ -1,0 +1,282 @@
+CL: com/mojang/minecraft/level/Level com/mojang/minecraft/level/Level
+CL: com/mojang/minecraft/server/MinecraftServer com/mojang/minecraft/server/MinecraftServer
+CL: com/mojang/a/a com/mojang/comm/ConnectionList
+CL: com/mojang/a/b com/mojang/comm/SocketConnection
+CL: com/mojang/minecraft/level/b/a/d com/mojang/minecraft/level/levelgen/synth/ImprovedNoise
+CL: com/mojang/minecraft/level/b/a/c com/mojang/minecraft/level/levelgen/synth/PerlinNoise
+CL: com/mojang/minecraft/phys/AABB com/mojang/minecraft/phys/AABB
+CL: com/mojang/minecraft/level/b/a/b com/mojang/minecraft/level/levelgen/synth/Synth
+CL: com/mojang/minecraft/level/b/a/a com/mojang/minecraft/level/levelgen/synth/Distort
+CL: com/mojang/minecraft/level/a/b com/mojang/minecraft/level/tile/Tile
+CL: com/mojang/minecraft/level/b/a com/mojang/minecraft/level/levelgen/LevelGen
+CL: com/mojang/minecraft/level/b com/mojang/minecraft/level/Coord
+CL: com/mojang/minecraft/level/a/c com/mojang/minecraft/level/tile/LeafTile
+CL: com/mojang/minecraft/level/c/a com/mojang/minecraft/level/liquid/Liquid
+CL: com/mojang/minecraft/a/b com/mojang/minecraft/net/Empty
+CL: com/mojang/minecraft/level/a/d com/mojang/minecraft/level/tile/DirtTile
+CL: com/mojang/minecraft/b/a com/mojang/minecraft/gui/Interface
+CL: com/mojang/minecraft/a/a com/mojang/minecraft/net/Packet
+CL: com/mojang/minecraft/level/a/e com/mojang/minecraft/level/tile/FallingTile
+CL: com/mojang/minecraft/level/a com/mojang/minecraft/level/LevelIO
+CL: com/mojang/minecraft/server/a com/mojang/minecraft/server/MonitorBlocksThread
+CL: com/mojang/minecraft/level/a/f com/mojang/minecraft/level/tile/CalmLiquidTile
+CL: com/mojang/minecraft/server/b com/mojang/minecraft/server/PlayerList
+CL: com/mojang/minecraft/level/a/g com/mojang/minecraft/level/tile/LogTile
+CL: com/mojang/minecraft/level/a/h com/mojang/minecraft/level/tile/LiquidTile
+CL: com/mojang/minecraft/level/a/i com/mojang/minecraft/level/tile/GrassTile
+CL: com/mojang/minecraft/Entity com/mojang/minecraft/Entity
+CL: com/mojang/minecraft/server/e com/mojang/minecraft/server/HeartbeatThread
+CL: com/mojang/minecraft/server/f com/mojang/minecraft/server/LogFormatter
+CL: com/mojang/minecraft/server/c com/mojang/minecraft/server/SendTimer
+CL: com/mojang/minecraft/server/d com/mojang/minecraft/server/PlayerInstance
+CL: com/mojang/minecraft/server/g com/mojang/minecraft/server/MPPassCalculator
+CL: com/mojang/minecraft/a com/mojang/minecraft/User
+CL: com/mojang/minecraft/level/a/a com/mojang/minecraft/level/tile/Bush
+FD: com/mojang/minecraft/level/Level/rotSpawn com/mojang/minecraft/level/com/mojang/minecraft/level/Level/rotSpawn
+FD: com/mojang/minecraft/level/Level/width com/mojang/minecraft/level/com/mojang/minecraft/level/Level/width
+FD: com/mojang/minecraft/level/Level/ySpawn com/mojang/minecraft/level/com/mojang/minecraft/level/Level/ySpawn
+FD: com/mojang/minecraft/level/Level/depth com/mojang/minecraft/level/com/mojang/minecraft/level/Level/depth
+FD: com/mojang/minecraft/level/Level/xSpawn com/mojang/minecraft/level/com/mojang/minecraft/level/Level/xSpawn
+FD: com/mojang/minecraft/level/Level/d com/mojang/minecraft/level/com/mojang/minecraft/level/Level/randValue
+FD: com/mojang/minecraft/level/Level/tickCount com/mojang/minecraft/level/com/mojang/minecraft/level/Level/tickCount
+FD: com/mojang/minecraft/level/Level/blocks com/mojang/minecraft/level/com/mojang/minecraft/level/Level/blocks
+FD: com/mojang/minecraft/level/Level/height com/mojang/minecraft/level/com/mojang/minecraft/level/Level/height
+FD: com/mojang/minecraft/level/Level/b com/mojang/minecraft/level/com/mojang/minecraft/level/Level/heightMap
+FD: com/mojang/minecraft/level/Level/entities com/mojang/minecraft/level/com/mojang/minecraft/level/Level/entities
+FD: com/mojang/minecraft/level/Level/a com/mojang/minecraft/level/com/mojang/minecraft/level/Level/levelListeners
+FD: com/mojang/minecraft/level/Level/serialVersionUID com/mojang/minecraft/level/com/mojang/minecraft/level/Level/serialVersionUID
+FD: com/mojang/minecraft/level/Level/unprocessed com/mojang/minecraft/level/com/mojang/minecraft/level/Level/unprocessed
+FD: com/mojang/minecraft/level/Level/creator com/mojang/minecraft/level/com/mojang/minecraft/level/Level/creator
+FD: com/mojang/minecraft/level/Level/zSpawn com/mojang/minecraft/level/com/mojang/minecraft/level/Level/zSpawn
+FD: com/mojang/minecraft/level/Level/e com/mojang/minecraft/level/com/mojang/minecraft/level/Level/tickList
+FD: com/mojang/minecraft/level/Level/createTime com/mojang/minecraft/level/com/mojang/minecraft/level/Level/createTime
+FD: com/mojang/minecraft/level/Level/name com/mojang/minecraft/level/com/mojang/minecraft/level/Level/name
+FD: com/mojang/minecraft/level/Level/c com/mojang/minecraft/level/com/mojang/minecraft/level/Level/random
+FD: com/mojang/minecraft/server/MinecraftServer/l com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/playerInstancesMap
+FD: com/mojang/minecraft/server/MinecraftServer/b com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/dateFormat
+FD: com/mojang/minecraft/server/MinecraftServer/p com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/properties
+FD: com/mojang/minecraft/server/MinecraftServer/o com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/maxPlayers
+FD: com/mojang/minecraft/server/MinecraftServer/u com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/salt
+FD: com/mojang/minecraft/server/MinecraftServer/j com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/verifyNames
+FD: com/mojang/minecraft/server/MinecraftServer/g com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/banned
+FD: com/mojang/minecraft/server/MinecraftServer/q com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/isPublic
+FD: com/mojang/minecraft/server/MinecraftServer/c com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/level
+FD: com/mojang/minecraft/server/MinecraftServer/n com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/sendTimers
+FD: com/mojang/minecraft/server/MinecraftServer/e com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/motd
+FD: com/mojang/minecraft/server/MinecraftServer/a com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/logger
+FD: com/mojang/minecraft/server/MinecraftServer/t com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/bannedIP
+FD: com/mojang/minecraft/server/MinecraftServer/r com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/port
+FD: com/mojang/minecraft/server/MinecraftServer/k com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/connectionList
+FD: com/mojang/minecraft/server/MinecraftServer/s com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/playerInstances
+FD: com/mojang/minecraft/server/MinecraftServer/i com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/mpPassCalculator
+FD: com/mojang/minecraft/server/MinecraftServer/h com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/players
+FD: com/mojang/minecraft/server/MinecraftServer/v com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/serverURL
+FD: com/mojang/minecraft/server/MinecraftServer/f com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/admins
+FD: com/mojang/minecraft/server/MinecraftServer/m com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/playerList
+FD: com/mojang/minecraft/server/MinecraftServer/d com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/serverName
+FD: com/mojang/a/a/b com/mojang/comm/com/mojang/comm/ConnectionList/minecraft
+FD: com/mojang/a/a/c com/mojang/comm/com/mojang/comm/ConnectionList/connectionList
+FD: com/mojang/a/a/a com/mojang/comm/com/mojang/comm/ConnectionList/serverSocketChannel
+FD: com/mojang/a/b/g com/mojang/comm/com/mojang/comm/SocketConnection/socket
+FD: com/mojang/a/b/i com/mojang/comm/com/mojang/comm/SocketConnection/stringPacket
+FD: com/mojang/a/b/e com/mojang/comm/com/mojang/comm/SocketConnection/player
+FD: com/mojang/a/b/f com/mojang/comm/com/mojang/comm/SocketConnection/ip
+FD: com/mojang/a/b/d com/mojang/comm/com/mojang/comm/SocketConnection/writeBuffer
+FD: com/mojang/a/b/b com/mojang/comm/com/mojang/comm/SocketConnection/socketChannel
+FD: com/mojang/a/b/h com/mojang/comm/com/mojang/comm/SocketConnection/initialized
+FD: com/mojang/a/b/c com/mojang/comm/com/mojang/comm/SocketConnection/readBuffer
+FD: com/mojang/a/b/a com/mojang/comm/com/mojang/comm/SocketConnection/connected
+FD: com/mojang/minecraft/level/b/a/d/a com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/ImprovedNoise/p
+FD: com/mojang/minecraft/level/b/a/c/b com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/PerlinNoise/levels
+FD: com/mojang/minecraft/level/b/a/c/a com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/PerlinNoise/noiseLevels
+FD: com/mojang/minecraft/phys/AABB/serialVersionUID com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/serialVersionUID
+FD: com/mojang/minecraft/phys/AABB/epsilon com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/epsilon
+FD: com/mojang/minecraft/phys/AABB/z1 com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/z1
+FD: com/mojang/minecraft/phys/AABB/y0 com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/y0
+FD: com/mojang/minecraft/phys/AABB/z0 com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/z0
+FD: com/mojang/minecraft/phys/AABB/x1 com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/x1
+FD: com/mojang/minecraft/phys/AABB/y1 com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/y1
+FD: com/mojang/minecraft/phys/AABB/x0 com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/x0
+FD: com/mojang/minecraft/level/b/a/a/a com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/Distort/source
+FD: com/mojang/minecraft/level/b/a/a/b com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/Distort/distort
+FD: com/mojang/minecraft/level/a/b/e com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/dirt
+FD: com/mojang/minecraft/level/a/b/c com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/rock
+FD: com/mojang/minecraft/level/a/b/i com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/unbreakable
+FD: com/mojang/minecraft/level/a/b/g com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/wood
+FD: com/mojang/minecraft/level/a/b/u com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/id
+FD: com/mojang/minecraft/level/a/b/m com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/calmLava
+FD: com/mojang/minecraft/level/a/b/k com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/calmWater
+FD: com/mojang/minecraft/level/a/b/r com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/oreCoal
+FD: com/mojang/minecraft/level/a/b/p com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/oreGold
+FD: com/mojang/minecraft/level/a/b/a com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/tiles
+FD: com/mojang/minecraft/level/a/b/t com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/leaf
+FD: com/mojang/minecraft/level/a/b/b com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/shouldTick
+FD: com/mojang/minecraft/level/a/b/f com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/stoneBrick
+FD: com/mojang/minecraft/level/a/b/d com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/grass
+FD: com/mojang/minecraft/level/a/b/v com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/tickSpeed
+FD: com/mojang/minecraft/level/a/b/j com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/water
+FD: com/mojang/minecraft/level/a/b/h com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/bush
+FD: com/mojang/minecraft/level/a/b/n com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/sand
+FD: com/mojang/minecraft/level/a/b/l com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/lava
+FD: com/mojang/minecraft/level/a/b/q com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/oreIron
+FD: com/mojang/minecraft/level/a/b/o com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/gravel
+FD: com/mojang/minecraft/level/a/b/s com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/log
+FD: com/mojang/minecraft/level/b/a/a com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/minecraft
+FD: com/mojang/minecraft/level/b/a/g com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/coords
+FD: com/mojang/minecraft/level/b/a/b com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/width
+FD: com/mojang/minecraft/level/b/a/e com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/random
+FD: com/mojang/minecraft/level/b/a/d com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/depth
+FD: com/mojang/minecraft/level/b/a/c com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/height
+FD: com/mojang/minecraft/level/b/a/f com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/blocks
+FD: com/mojang/minecraft/level/b/e com/mojang/minecraft/level/com/mojang/minecraft/level/Coord/scheduledTime
+FD: com/mojang/minecraft/level/b/d com/mojang/minecraft/level/com/mojang/minecraft/level/Coord/id
+FD: com/mojang/minecraft/level/b/c com/mojang/minecraft/level/com/mojang/minecraft/level/Coord/z
+FD: com/mojang/minecraft/level/b/b com/mojang/minecraft/level/com/mojang/minecraft/level/Coord/y
+FD: com/mojang/minecraft/level/b/a com/mojang/minecraft/level/com/mojang/minecraft/level/Coord/x
+FD: com/mojang/minecraft/level/c/a/c com/mojang/minecraft/level/liquid/com/mojang/minecraft/level/liquid/Liquid/lava
+FD: com/mojang/minecraft/level/c/a/a com/mojang/minecraft/level/liquid/com/mojang/minecraft/level/liquid/Liquid/none
+FD: com/mojang/minecraft/level/c/a/b com/mojang/minecraft/level/liquid/com/mojang/minecraft/level/liquid/Liquid/water
+FD: com/mojang/minecraft/level/c/a/d com/mojang/minecraft/level/liquid/com/mojang/minecraft/level/liquid/Liquid/liquids
+FD: com/mojang/minecraft/a/a/b com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/LOGIN
+FD: com/mojang/minecraft/a/a/f com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/LEVEL_FINALIZE
+FD: com/mojang/minecraft/a/a/e com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/LEVEL_DATA_CHUNK
+FD: com/mojang/minecraft/a/a/d com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/LEVEL_INITIALIZE
+FD: com/mojang/minecraft/a/a/c com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/TIMED_OUT
+FD: com/mojang/minecraft/a/a/j com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/PLAYER_TELEPORT
+FD: com/mojang/minecraft/a/a/i com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/PLAYER_JOIN
+FD: com/mojang/minecraft/a/a/h com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/SET_TILE
+FD: com/mojang/minecraft/a/a/g com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/PLACE_OR_REMOVE_TILE
+FD: com/mojang/minecraft/a/a/n com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/PLAYER_DISCONNECT
+FD: com/mojang/minecraft/a/a/m com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/PLAYER_ROTATE
+FD: com/mojang/minecraft/a/a/l com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/PLAYER_MOVE
+FD: com/mojang/minecraft/a/a/k com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/PLAYER_MOVE_AND_ROTATE
+FD: com/mojang/minecraft/a/a/s com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/fields
+FD: com/mojang/minecraft/a/a/p com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/KICK_PLAYER
+FD: com/mojang/minecraft/a/a/o com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/CHAT_MESSAGE
+FD: com/mojang/minecraft/a/a/q com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/size
+FD: com/mojang/minecraft/a/a/a com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/PACKETS
+FD: com/mojang/minecraft/a/a/t com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/nextId
+FD: com/mojang/minecraft/a/a/r com/mojang/minecraft/net/com/mojang/minecraft/net/Packet/id
+FD: com/mojang/minecraft/level/a/a com/mojang/minecraft/level/com/mojang/minecraft/level/LevelIO/minecraft
+FD: com/mojang/minecraft/server/a/b com/mojang/minecraft/server/com/mojang/minecraft/server/MonitorBlocksThread/playerInstance
+FD: com/mojang/minecraft/server/a/a com/mojang/minecraft/server/com/mojang/minecraft/server/MonitorBlocksThread/blocks
+FD: com/mojang/minecraft/server/b/a com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/logger
+FD: com/mojang/minecraft/server/b/b com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/filename
+FD: com/mojang/minecraft/server/b/d com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/players
+FD: com/mojang/minecraft/server/b/c com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/file
+FD: com/mojang/minecraft/level/a/h/v com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/liquid
+FD: com/mojang/minecraft/level/a/h/x com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/tileId
+FD: com/mojang/minecraft/level/a/h/w com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/calmTileId
+FD: com/mojang/minecraft/Entity/removed com/mojang/minecraft/com/mojang/minecraft/Entity/removed
+FD: com/mojang/minecraft/Entity/z com/mojang/minecraft/com/mojang/minecraft/Entity/z
+FD: com/mojang/minecraft/Entity/xo com/mojang/minecraft/com/mojang/minecraft/Entity/xo
+FD: com/mojang/minecraft/Entity/level com/mojang/minecraft/com/mojang/minecraft/Entity/level
+FD: com/mojang/minecraft/Entity/yo com/mojang/minecraft/com/mojang/minecraft/Entity/yo
+FD: com/mojang/minecraft/Entity/zo com/mojang/minecraft/com/mojang/minecraft/Entity/zo
+FD: com/mojang/minecraft/Entity/bbHeight com/mojang/minecraft/com/mojang/minecraft/Entity/bbHeight
+FD: com/mojang/minecraft/Entity/onGround com/mojang/minecraft/com/mojang/minecraft/Entity/onGround
+FD: com/mojang/minecraft/Entity/horizontalCollision com/mojang/minecraft/com/mojang/minecraft/Entity/horizontalCollision
+FD: com/mojang/minecraft/Entity/serialVersionUID com/mojang/minecraft/com/mojang/minecraft/Entity/serialVersionUID
+FD: com/mojang/minecraft/Entity/xd com/mojang/minecraft/com/mojang/minecraft/Entity/xd
+FD: com/mojang/minecraft/Entity/yd com/mojang/minecraft/com/mojang/minecraft/Entity/yd
+FD: com/mojang/minecraft/Entity/zd com/mojang/minecraft/com/mojang/minecraft/Entity/zd
+FD: com/mojang/minecraft/Entity/bbWidth com/mojang/minecraft/com/mojang/minecraft/Entity/bbWidth
+FD: com/mojang/minecraft/Entity/heightOffset com/mojang/minecraft/com/mojang/minecraft/Entity/heightOffset
+FD: com/mojang/minecraft/Entity/yRot com/mojang/minecraft/com/mojang/minecraft/Entity/yRot
+FD: com/mojang/minecraft/Entity/xRotO com/mojang/minecraft/com/mojang/minecraft/Entity/xRotO
+FD: com/mojang/minecraft/Entity/yRotO com/mojang/minecraft/com/mojang/minecraft/Entity/yRotO
+FD: com/mojang/minecraft/Entity/xRot com/mojang/minecraft/com/mojang/minecraft/Entity/xRot
+FD: com/mojang/minecraft/Entity/bb com/mojang/minecraft/com/mojang/minecraft/Entity/bb
+FD: com/mojang/minecraft/Entity/y com/mojang/minecraft/com/mojang/minecraft/Entity/y
+FD: com/mojang/minecraft/Entity/x com/mojang/minecraft/com/mojang/minecraft/Entity/x
+FD: com/mojang/minecraft/server/e/b com/mojang/minecraft/server/com/mojang/minecraft/server/HeartbeatThread/minecraft
+FD: com/mojang/minecraft/server/e/a com/mojang/minecraft/server/com/mojang/minecraft/server/HeartbeatThread/content
+FD: com/mojang/minecraft/server/c/b com/mojang/minecraft/server/com/mojang/minecraft/server/SendTimer/timer
+FD: com/mojang/minecraft/server/c/a com/mojang/minecraft/server/com/mojang/minecraft/server/SendTimer/netHandler
+FD: com/mojang/minecraft/server/d/n com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/yaw
+FD: com/mojang/minecraft/server/d/l com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/z
+FD: com/mojang/minecraft/server/d/j com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/x
+FD: com/mojang/minecraft/server/d/f com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/onlyIP
+FD: com/mojang/minecraft/server/d/e com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/minecraft
+FD: com/mojang/minecraft/server/d/o com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/ticks
+FD: com/mojang/minecraft/server/d/m com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/pitch
+FD: com/mojang/minecraft/server/d/k com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/y
+FD: com/mojang/minecraft/server/d/d com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/logger
+FD: com/mojang/minecraft/server/d/i com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/currentTime
+FD: com/mojang/minecraft/server/d/b com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/name
+FD: com/mojang/minecraft/server/d/c com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/playerID
+FD: com/mojang/minecraft/server/d/g com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/sendingPackets
+FD: com/mojang/minecraft/server/d/p com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/blocks
+FD: com/mojang/minecraft/server/d/a com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/connection
+FD: com/mojang/minecraft/server/d/h com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/packets
+FD: com/mojang/minecraft/server/g/a com/mojang/minecraft/server/com/mojang/minecraft/server/MPPassCalculator/salt
+FD: com/mojang/minecraft/a/a com/mojang/minecraft/com/mojang/minecraft/User/creativeTiles
+MD: com/mojang/minecraft/level/Level/a (IIII)V com/mojang/minecraft/level/com/mojang/minecraft/level/Level/notifyBlocksOfNeighborChange (IIII)V
+MD: com/mojang/minecraft/level/Level/b (IIII)V com/mojang/minecraft/level/com/mojang/minecraft/level/Level/neighborChanged (IIII)V
+MD: com/mojang/minecraft/level/Level/a (III)Z com/mojang/minecraft/level/com/mojang/minecraft/level/Level/isInLevelBounds (III)Z
+MD: com/mojang/minecraft/level/Level/a (FFF)Z com/mojang/minecraft/level/com/mojang/minecraft/level/Level/isSolidTile (FFF)Z
+MD: com/mojang/minecraft/level/Level/addListener$74652038 (Lcom/mojang/minecraft/server/MinecraftServer;)V com/mojang/minecraft/level/com/mojang/minecraft/level/Level/addListener (Lcom/mojang/minecraft/server/MinecraftServer;)V
+MD: com/mojang/minecraft/server/MinecraftServer/i (Ljava/lang/String;)Lcom/mojang/minecraft/server/d; com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/getPlayerByName (Ljava/lang/String;)Lcom/mojang/minecraft/server/PlayerInstance;
+MD: com/mojang/minecraft/server/MinecraftServer/a (Lcom/mojang/minecraft/server/d;Lcom/mojang/minecraft/a/a;[Ljava/lang/Object;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/sendPlayerPacket (Lcom/mojang/minecraft/server/PlayerInstance;Lcom/mojang/minecraft/net/Packet;[Ljava/lang/Object;)V
+MD: com/mojang/minecraft/server/MinecraftServer/a (Lcom/mojang/a/b;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/disconnect (Lcom/mojang/comm/SocketConnection;)V
+MD: com/mojang/minecraft/server/MinecraftServer/b (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/levelLoadUpdate (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/MinecraftServer/c ()V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/socketServer ()V
+MD: com/mojang/minecraft/server/MinecraftServer/g (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/unban (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/MinecraftServer/d ()I com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/freePlayerSlots ()I
+MD: com/mojang/minecraft/server/MinecraftServer/a (Lcom/mojang/minecraft/server/d;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/addTimer (Lcom/mojang/minecraft/server/PlayerInstance;)V
+MD: com/mojang/minecraft/server/MinecraftServer/c (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/kick (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/MinecraftServer/e (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/op (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/MinecraftServer/a (III)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/setTile (III)V
+MD: com/mojang/minecraft/server/MinecraftServer/a (Lcom/mojang/minecraft/a/a;[Ljava/lang/Object;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/sendPacket (Lcom/mojang/minecraft/net/Packet;[Ljava/lang/Object;)V
+MD: com/mojang/minecraft/server/MinecraftServer/b ()V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/tickLevel ()V
+MD: com/mojang/minecraft/server/MinecraftServer/a (Ljava/util/Map;)Ljava/lang/String; com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/assembleHeartbeat (Ljava/util/Map;)Ljava/lang/String;
+MD: com/mojang/minecraft/server/MinecraftServer/b (Lcom/mojang/a/b;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/addTimer (Lcom/mojang/comm/SocketConnection;)V
+MD: com/mojang/minecraft/server/MinecraftServer/a (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/beginLevelLoading (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/MinecraftServer/a ()Ljava/util/List; com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/getPlayerList ()Ljava/util/List;
+MD: com/mojang/minecraft/server/MinecraftServer/h (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/banip (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/MinecraftServer/b (Lcom/mojang/minecraft/server/d;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/shutdown (Lcom/mojang/minecraft/server/PlayerInstance;)V
+MD: com/mojang/minecraft/server/MinecraftServer/d (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/ban (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/MinecraftServer/f (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/MinecraftServer/deop (Ljava/lang/String;)V
+MD: com/mojang/a/b/a (Lcom/mojang/minecraft/a/a;[Ljava/lang/Object;)V com/mojang/comm/com/mojang/comm/SocketConnection/sendPacket (Lcom/mojang/minecraft/net/Packet;[Ljava/lang/Object;)V
+MD: com/mojang/a/b/a ()V com/mojang/comm/com/mojang/comm/SocketConnection/disconnect ()V
+MD: com/mojang/a/b/a (Ljava/lang/Class;)Ljava/lang/Object; com/mojang/comm/com/mojang/comm/SocketConnection/read (Ljava/lang/Class;)Ljava/lang/Object;
+MD: com/mojang/minecraft/level/b/a/d/a (IDDD)D com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/ImprovedNoise/grad (IDDD)D
+MD: com/mojang/minecraft/level/b/a/d/a (DDD)D com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/ImprovedNoise/lerp (DDD)D
+MD: com/mojang/minecraft/level/b/a/d/a (D)D com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/ImprovedNoise/fade (D)D
+MD: com/mojang/minecraft/level/b/a/b/a (DD)D com/mojang/minecraft/level/levelgen/synth/com/mojang/minecraft/level/levelgen/synth/Synth/getValue (DD)D
+MD: com/mojang/minecraft/level/a/b/c ()Lcom/mojang/minecraft/level/c/a; com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/getLiquidType ()Lcom/mojang/minecraft/level/liquid/Liquid;
+MD: com/mojang/minecraft/level/a/b/a (I)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/setTickSpeed (I)V
+MD: com/mojang/minecraft/level/a/b/a (Lcom/mojang/minecraft/level/Level;IIILjava/util/Random;)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/tick (Lcom/mojang/minecraft/level/Level;IIILjava/util/Random;)V
+MD: com/mojang/minecraft/level/a/b/a ()Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/blocksLight ()Z
+MD: com/mojang/minecraft/level/a/b/a (Lcom/mojang/minecraft/level/Level;IIII)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/neighborChanged (Lcom/mojang/minecraft/level/Level;IIII)V
+MD: com/mojang/minecraft/level/a/b/d ()I com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/getTickDelay ()I
+MD: com/mojang/minecraft/level/a/b/a (Z)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/setTicking (Z)V
+MD: com/mojang/minecraft/level/a/b/b ()Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/isSolid ()Z
+MD: com/mojang/minecraft/level/a/b/a (III)Lcom/mojang/minecraft/phys/AABB; com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/getAABB (III)Lcom/mojang/minecraft/phys/AABB;
+MD: com/mojang/minecraft/level/a/b/a (Lcom/mojang/minecraft/level/Level;III)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/onBlockAdded (Lcom/mojang/minecraft/level/Level;III)V
+MD: com/mojang/minecraft/level/b/a/a (Ljava/lang/String;III)Lcom/mojang/minecraft/level/Level; com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/generateLevel (Ljava/lang/String;III)Lcom/mojang/minecraft/level/Level;
+MD: com/mojang/minecraft/level/b/a/a ([I)V com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/addBeaches ([I)V
+MD: com/mojang/minecraft/level/b/a/b ([I)V com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/plantTrees ([I)V
+MD: com/mojang/minecraft/level/b/a/a ()V com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/addLava ()V
+MD: com/mojang/minecraft/level/b/a/a (IIIII)J com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/floodFillLiquid (IIIII)J
+MD: com/mojang/minecraft/level/b/a/a (IIII)V com/mojang/minecraft/level/levelgen/com/mojang/minecraft/level/levelgen/LevelGen/carveTunnels (IIII)V
+MD: com/mojang/minecraft/level/a/e/b (Lcom/mojang/minecraft/level/Level;III)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/FallingTile/tryToFall (Lcom/mojang/minecraft/level/Level;III)V
+MD: com/mojang/minecraft/level/a/a (Ljava/io/InputStream;)Lcom/mojang/minecraft/level/Level; com/mojang/minecraft/level/com/mojang/minecraft/level/LevelIO/load (Ljava/io/InputStream;)Lcom/mojang/minecraft/level/Level;
+MD: com/mojang/minecraft/level/a/a (Lcom/mojang/minecraft/level/Level;Ljava/io/OutputStream;)V com/mojang/minecraft/level/com/mojang/minecraft/level/LevelIO/save (Lcom/mojang/minecraft/level/Level;Ljava/io/OutputStream;)V
+MD: com/mojang/minecraft/server/b/a (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/addPlayer (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/b/b (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/removePlayer (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/b/c (Ljava/lang/String;)Z com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/containsPlayer (Ljava/lang/String;)Z
+MD: com/mojang/minecraft/server/b/a ()V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/load ()V
+MD: com/mojang/minecraft/server/b/b ()V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerList/save ()V
+MD: com/mojang/minecraft/level/a/h/b (Lcom/mojang/minecraft/level/Level;III)Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/checkWater (Lcom/mojang/minecraft/level/Level;III)Z
+MD: com/mojang/minecraft/server/d/a (Ljava/lang/Exception;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/handleException (Ljava/lang/Exception;)V
+MD: com/mojang/minecraft/server/d/a (Lcom/mojang/minecraft/a/a;[Ljava/lang/Object;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/handlePackets (Lcom/mojang/minecraft/net/Packet;[Ljava/lang/Object;)V
+MD: com/mojang/minecraft/server/d/d (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/kickCheat (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/d/b (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/sendChatMessage (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/d/a ([B)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/setBlocks ([B)V
+MD: com/mojang/minecraft/server/d/a ()V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/handlePackets ()V
+MD: com/mojang/minecraft/server/d/b (Lcom/mojang/minecraft/a/a;[Ljava/lang/Object;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/sendPacket (Lcom/mojang/minecraft/net/Packet;[Ljava/lang/Object;)V
+MD: com/mojang/minecraft/server/d/c (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/chatMessage (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/d/a (Ljava/lang/String;)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/kick (Ljava/lang/String;)V
+MD: com/mojang/minecraft/server/d/a (IIIII)V com/mojang/minecraft/server/com/mojang/minecraft/server/PlayerInstance/changeTile (IIIII)V
+MD: com/mojang/minecraft/server/g/a (Ljava/lang/String;)Ljava/lang/String; com/mojang/minecraft/server/com/mojang/minecraft/server/MPPassCalculator/calcMPass (Ljava/lang/String;)Ljava/lang/String;

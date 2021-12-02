@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="jar://$MCP_LOC$/jars/minecraft_server.jar!/" />
+    <varelement var="file://$MCP_LOC$/src/minecraft_server" kind="linksrc:" value="src" />
+    <varelement var="file://$MCP_LOC$/conf/patches_server" kind="linksrc:" value="start" />
+    <varelement var="jar://$MCP_LOC$/jars/minecraft_server.jar!/" kind="link:" value="jars/minecraft_server.jar" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MCP_LOC$/src/minecraft_server" expected_position="0" />
+      <src_folder value="file://$MCP_LOC$/conf/patches_server" expected_position="1" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/bin" />
+    <exclude-output />
+    <content url="file://$MCP_LOC$/conf/patches_server">
+      <sourceFolder url="file://$MCP_LOC$/conf/patches_server" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MCP_LOC$/src/minecraft_server">
+      <sourceFolder url="file://$MCP_LOC$/src/minecraft_server" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="jdk" jdkName="JavaSE-1.6" jdkType="JavaSDK" />
+    <orderEntry type="module-library">
+      <library name="minecraft_server.jar">
+        <CLASSES>
+          <root url="jar://$MCP_LOC$/jars/minecraft_server.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

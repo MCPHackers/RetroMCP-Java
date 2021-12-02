@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="jar://$MCP_LOC$/jars/bin/jinput.jar!/" />
+    <libelement value="jar://$MCP_LOC$/jars/bin/lwjgl_util.jar!/" />
+    <libelement value="jar://$MCP_LOC$/jars/bin/lwjgl.jar!/" />
+    <libelement value="jar://$MCP_LOC$/jars/bin/minecraft.jar!/" />
+    <varelement var="file://$MCP_LOC$/src/minecraft" value="linksrc:src" />
+    <varelement var="file://$MCP_LOC$/conf/patches_client" value="linksrc:start" />
+    <varelement var="jar://$MCP_LOC$/jars/bin/jinput.jar!/" value="link:jars/bin/jinput.jar" />
+    <varelement var="jar://$MCP_LOC$/jars/bin/lwjgl_util.jar!/" value="link:jars/bin/lwjgl_util.jar" />
+    <varelement var="jar://$MCP_LOC$/jars/bin/lwjgl.jar!/" value="link:jars/bin/lwjgl.jar" />
+    <varelement var="jar://$MCP_LOC$/jars/bin/minecraft.jar!/" value="link:jars/bin/minecraft.jar" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MCP_LOC$/src/minecraft" expected_position="0" />
+      <src_folder value="file://$MCP_LOC$/conf/patches_client" expected_position="1" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/bin" />
+    <exclude-output />
+    <content url="file://$MCP_LOC$/conf/patches_client">
+      <sourceFolder url="file://$MCP_LOC$/conf/patches_client" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MCP_LOC$/src/minecraft">
+      <sourceFolder url="file://$MCP_LOC$/src/minecraft" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="JavaSE-1.6" jdkType="JavaSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="jinput.jar">
+        <CLASSES>
+          <root url="jar://$MCP_LOC$/jars/bin/jinput.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://Client/jars/bin/natives" />
+        </NATIVE>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lwjgl_util.jar">
+        <CLASSES>
+          <root url="jar://$MCP_LOC$/jars/bin/lwjgl_util.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://Client/jars/bin/natives" />
+        </NATIVE>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="lwjgl.jar">
+        <CLASSES>
+          <root url="jar://$MCP_LOC$/jars/bin/lwjgl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://Client/jars/bin/natives" />
+        </NATIVE>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="minecraft.jar">
+        <CLASSES>
+          <root url="jar://$MCP_LOC$/jars/bin/minecraft.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="natives" level="project" />
+  </component>
+</module>

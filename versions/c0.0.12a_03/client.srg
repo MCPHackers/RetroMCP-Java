@@ -1,0 +1,329 @@
+CL: com/mojang/minecraft/a/a/e com/mojang/minecraft/level/tile/LiquidTile
+CL: com/mojang/minecraft/a/a/f com/mojang/minecraft/level/tile/GrassTile
+CL: com/mojang/minecraft/a/a/a com/mojang/minecraft/level/tile/Bush
+CL: com/mojang/minecraft/a/a/b com/mojang/minecraft/level/tile/Tile
+CL: com/mojang/minecraft/a/a/c com/mojang/minecraft/level/tile/DirtTile
+CL: com/mojang/minecraft/a/a/d com/mojang/minecraft/level/tile/CalmLiquidTile
+CL: com/mojang/minecraft/b/a com/mojang/minecraft/renderer/Textures
+CL: com/mojang/minecraft/MinecraftApplet com/mojang/minecraft/MinecraftApplet
+CL: com/mojang/minecraft/a/b com/mojang/minecraft/level/DirtyChunkSorter
+CL: com/mojang/minecraft/a/a com/mojang/minecraft/level/NoiseMap
+CL: com/mojang/minecraft/b/c com/mojang/minecraft/renderer/Frustum
+CL: com/mojang/minecraft/c/b com/mojang/minecraft/particle/Particle
+CL: com/mojang/minecraft/a/d com/mojang/minecraft/level/LevelGen
+CL: com/mojang/minecraft/d/a com/mojang/minecraft/character/Zombie
+CL: com/mojang/minecraft/b/b com/mojang/minecraft/renderer/Tesselator
+CL: com/mojang/minecraft/c/a com/mojang/minecraft/particle/ParticleEngine
+CL: com/mojang/minecraft/a/c com/mojang/minecraft/level/Chunk
+CL: com/mojang/minecraft/f/a com/mojang/minecraft/phys/AABB
+CL: com/mojang/minecraft/a/f com/mojang/minecraft/level/LevelRenderer
+CL: com/mojang/minecraft/d/c com/mojang/minecraft/character/ZombieModel
+CL: com/mojang/minecraft/a/e com/mojang/minecraft/level/DistanceSorter
+CL: com/mojang/minecraft/e/a com/mojang/minecraft/gui/Font
+CL: com/mojang/minecraft/d/b com/mojang/minecraft/character/Cube
+CL: com/mojang/minecraft/d/e com/mojang/minecraft/character/Vertex
+CL: com/mojang/minecraft/a/g com/mojang/minecraft/level/Level
+CL: com/mojang/minecraft/d/d com/mojang/minecraft/character/Polygon
+CL: com/mojang/minecraft/f com/mojang/minecraft/Entity
+CL: com/mojang/minecraft/e com/mojang/minecraft/HitResult
+CL: com/mojang/minecraft/d/f com/mojang/minecraft/character/Vec3
+CL: com/mojang/minecraft/d com/mojang/minecraft/Player
+CL: com/mojang/minecraft/c com/mojang/minecraft/Minecraft
+CL: com/mojang/minecraft/b com/mojang/minecraft/CanvasMinecraftApplet
+CL: com/mojang/minecraft/a com/mojang/minecraft/Timer
+FD: com/mojang/minecraft/a/a/e/m com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/liquidType
+FD: com/mojang/minecraft/a/a/e/n com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/calmTileId
+FD: com/mojang/minecraft/a/a/e/o com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/tileId
+FD: com/mojang/minecraft/a/a/e/p com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/spreadSpeed
+FD: com/mojang/minecraft/a/a/b/h com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/calmWater
+FD: com/mojang/minecraft/a/a/b/j com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/calmLava
+FD: com/mojang/minecraft/a/a/b/k com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/textureIndex
+FD: com/mojang/minecraft/a/a/b/d com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/grass
+FD: com/mojang/minecraft/a/a/b/b com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/shouldTick
+FD: com/mojang/minecraft/a/a/b/f com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/bedrock
+FD: com/mojang/minecraft/a/a/b/o com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/z0
+FD: com/mojang/minecraft/a/a/b/q com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/y1
+FD: com/mojang/minecraft/a/a/b/m com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/x0
+FD: com/mojang/minecraft/a/a/b/a com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/tiles
+FD: com/mojang/minecraft/a/a/b/g com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/water
+FD: com/mojang/minecraft/a/a/b/i com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/lava
+FD: com/mojang/minecraft/a/a/b/c com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/rock
+FD: com/mojang/minecraft/a/a/b/l com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/id
+FD: com/mojang/minecraft/a/a/b/e com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/dirt
+FD: com/mojang/minecraft/a/a/b/p com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/x1
+FD: com/mojang/minecraft/a/a/b/r com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/z1
+FD: com/mojang/minecraft/a/a/b/n com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/y0
+FD: com/mojang/minecraft/b/a/a com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Textures/idMap
+FD: com/mojang/minecraft/MinecraftApplet/b com/mojang/minecraft/com/mojang/minecraft/MinecraftApplet/thread
+FD: com/mojang/minecraft/MinecraftApplet/c com/mojang/minecraft/com/mojang/minecraft/MinecraftApplet/canvas
+FD: com/mojang/minecraft/MinecraftApplet/a com/mojang/minecraft/com/mojang/minecraft/MinecraftApplet/minecraft
+FD: com/mojang/minecraft/a/b/a com/mojang/minecraft/level/com/mojang/minecraft/level/DirtyChunkSorter/thePlayer
+FD: com/mojang/minecraft/a/a/b com/mojang/minecraft/level/com/mojang/minecraft/level/NoiseMap/levels
+FD: com/mojang/minecraft/a/a/a com/mojang/minecraft/level/com/mojang/minecraft/level/NoiseMap/random
+FD: com/mojang/minecraft/a/a/d com/mojang/minecraft/level/com/mojang/minecraft/level/NoiseMap/flag
+FD: com/mojang/minecraft/a/a/c com/mojang/minecraft/level/com/mojang/minecraft/level/NoiseMap/fuzz
+FD: com/mojang/minecraft/b/c/g com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/model
+FD: com/mojang/minecraft/b/c/f com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/projection
+FD: com/mojang/minecraft/b/c/a com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/m_Frustum
+FD: com/mojang/minecraft/b/c/b com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/frustum
+FD: com/mojang/minecraft/b/c/c com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/projectionBuffer
+FD: com/mojang/minecraft/b/c/e com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/clipBuffer
+FD: com/mojang/minecraft/b/c/h com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/clip
+FD: com/mojang/minecraft/b/c/d com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/modelBuffer
+FD: com/mojang/minecraft/c/b/b com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/u
+FD: com/mojang/minecraft/c/b/a com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/tex
+FD: com/mojang/minecraft/c/b/w com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/zzd
+FD: com/mojang/minecraft/c/b/y com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/lifetime
+FD: com/mojang/minecraft/c/b/v com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/yyd
+FD: com/mojang/minecraft/c/b/x com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/age
+FD: com/mojang/minecraft/c/b/u com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/xxd
+FD: com/mojang/minecraft/c/b/d com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/size
+FD: com/mojang/minecraft/c/b/c com/mojang/minecraft/particle/com/mojang/minecraft/particle/Particle/v
+FD: com/mojang/minecraft/a/d/a com/mojang/minecraft/level/com/mojang/minecraft/level/LevelGen/width
+FD: com/mojang/minecraft/a/d/d com/mojang/minecraft/level/com/mojang/minecraft/level/LevelGen/random
+FD: com/mojang/minecraft/a/d/c com/mojang/minecraft/level/com/mojang/minecraft/level/LevelGen/depth
+FD: com/mojang/minecraft/a/d/b com/mojang/minecraft/level/com/mojang/minecraft/level/LevelGen/height
+FD: com/mojang/minecraft/d/a/d com/mojang/minecraft/character/com/mojang/minecraft/character/Zombie/rotA
+FD: com/mojang/minecraft/d/a/c com/mojang/minecraft/character/com/mojang/minecraft/character/Zombie/speed
+FD: com/mojang/minecraft/d/a/v com/mojang/minecraft/character/com/mojang/minecraft/character/Zombie/textureManager
+FD: com/mojang/minecraft/d/a/b com/mojang/minecraft/character/com/mojang/minecraft/character/Zombie/timeOffset
+FD: com/mojang/minecraft/d/a/u com/mojang/minecraft/character/com/mojang/minecraft/character/Zombie/zombieModel
+FD: com/mojang/minecraft/d/a/a com/mojang/minecraft/character/com/mojang/minecraft/character/Zombie/rot
+FD: com/mojang/minecraft/b/b/m com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/p
+FD: com/mojang/minecraft/b/b/k com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/hasTexture
+FD: com/mojang/minecraft/b/b/j com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/hasColor
+FD: com/mojang/minecraft/b/b/c com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/array
+FD: com/mojang/minecraft/b/b/d com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/vertices
+FD: com/mojang/minecraft/b/b/n com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/noColor
+FD: com/mojang/minecraft/b/b/a com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/tesselator
+FD: com/mojang/minecraft/b/b/g com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/r
+FD: com/mojang/minecraft/b/b/f com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/v
+FD: com/mojang/minecraft/b/b/l com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/length
+FD: com/mojang/minecraft/b/b/i com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/b
+FD: com/mojang/minecraft/b/b/b com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/buffer
+FD: com/mojang/minecraft/b/b/h com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/g
+FD: com/mojang/minecraft/b/b/e com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/u
+FD: com/mojang/minecraft/c/a/b com/mojang/minecraft/particle/com/mojang/minecraft/particle/ParticleEngine/textureManager
+FD: com/mojang/minecraft/c/a/a com/mojang/minecraft/particle/com/mojang/minecraft/particle/ParticleEngine/particles
+FD: com/mojang/minecraft/a/c/n com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/dirty
+FD: com/mojang/minecraft/a/c/a com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/aabb
+FD: com/mojang/minecraft/a/c/h com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/x1
+FD: com/mojang/minecraft/a/c/f com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/y0
+FD: com/mojang/minecraft/a/c/d com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/level
+FD: com/mojang/minecraft/a/c/j com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/z1
+FD: com/mojang/minecraft/a/c/q com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/totalTime
+FD: com/mojang/minecraft/a/c/m com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/z
+FD: com/mojang/minecraft/a/c/o com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/lists
+FD: com/mojang/minecraft/a/c/k com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/x
+FD: com/mojang/minecraft/a/c/b com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/visible
+FD: com/mojang/minecraft/a/c/c com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/updates
+FD: com/mojang/minecraft/a/c/g com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/z0
+FD: com/mojang/minecraft/a/c/e com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/x0
+FD: com/mojang/minecraft/a/c/i com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/y1
+FD: com/mojang/minecraft/a/c/l com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/y
+FD: com/mojang/minecraft/a/c/p com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/t
+FD: com/mojang/minecraft/a/c/r com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/totalUpdates
+FD: com/mojang/minecraft/f/a/e com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/y1
+FD: com/mojang/minecraft/f/a/f com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/z1
+FD: com/mojang/minecraft/f/a/g com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/epsilon
+FD: com/mojang/minecraft/f/a/a com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/x0
+FD: com/mojang/minecraft/f/a/b com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/y0
+FD: com/mojang/minecraft/f/a/c com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/z0
+FD: com/mojang/minecraft/f/a/d com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/x1
+FD: com/mojang/minecraft/a/f/c com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/surroundLists
+FD: com/mojang/minecraft/a/f/a com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/level
+FD: com/mojang/minecraft/a/f/i com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/textureManager
+FD: com/mojang/minecraft/a/f/g com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/chunkY
+FD: com/mojang/minecraft/a/f/f com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/chunkX
+FD: com/mojang/minecraft/a/f/d com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/drawDistance
+FD: com/mojang/minecraft/a/f/h com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/chunkZ
+FD: com/mojang/minecraft/a/f/l com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/Z
+FD: com/mojang/minecraft/a/f/k com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/Y
+FD: com/mojang/minecraft/a/f/j com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/X
+FD: com/mojang/minecraft/a/f/b com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/chunks
+FD: com/mojang/minecraft/a/f/e com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/sortedChunks
+FD: com/mojang/minecraft/d/c/f com/mojang/minecraft/character/com/mojang/minecraft/character/ZombieModel/leg1
+FD: com/mojang/minecraft/d/c/e com/mojang/minecraft/character/com/mojang/minecraft/character/ZombieModel/leg0
+FD: com/mojang/minecraft/d/c/d com/mojang/minecraft/character/com/mojang/minecraft/character/ZombieModel/arm1
+FD: com/mojang/minecraft/d/c/c com/mojang/minecraft/character/com/mojang/minecraft/character/ZombieModel/arm0
+FD: com/mojang/minecraft/d/c/b com/mojang/minecraft/character/com/mojang/minecraft/character/ZombieModel/body
+FD: com/mojang/minecraft/d/c/a com/mojang/minecraft/character/com/mojang/minecraft/character/ZombieModel/head
+FD: com/mojang/minecraft/a/e/a com/mojang/minecraft/level/com/mojang/minecraft/level/DistanceSorter/thePlayer
+FD: com/mojang/minecraft/e/a/a com/mojang/minecraft/gui/com/mojang/minecraft/gui/Font/charWidths
+FD: com/mojang/minecraft/e/a/b com/mojang/minecraft/gui/com/mojang/minecraft/gui/Font/fontTexture
+FD: com/mojang/minecraft/d/b/k com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/compiled
+FD: com/mojang/minecraft/d/b/e com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/polygons
+FD: com/mojang/minecraft/d/b/d com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/vertices
+FD: com/mojang/minecraft/d/b/g com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/textureOffsetY
+FD: com/mojang/minecraft/d/b/l com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/list
+FD: com/mojang/minecraft/d/b/i com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/y
+FD: com/mojang/minecraft/d/b/h com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/x
+FD: com/mojang/minecraft/d/b/j com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/z
+FD: com/mojang/minecraft/d/b/a com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/xRot
+FD: com/mojang/minecraft/d/b/f com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/textureOffsetX
+FD: com/mojang/minecraft/d/b/c com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/zRot
+FD: com/mojang/minecraft/d/b/b com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/yRot
+FD: com/mojang/minecraft/d/e/a com/mojang/minecraft/character/com/mojang/minecraft/character/Vertex/pos
+FD: com/mojang/minecraft/d/e/b com/mojang/minecraft/character/com/mojang/minecraft/character/Vertex/u
+FD: com/mojang/minecraft/d/e/c com/mojang/minecraft/character/com/mojang/minecraft/character/Vertex/v
+FD: com/mojang/minecraft/a/g/i com/mojang/minecraft/level/com/mojang/minecraft/level/Level/lightDepths
+FD: com/mojang/minecraft/a/g/c com/mojang/minecraft/level/com/mojang/minecraft/level/Level/depth
+FD: com/mojang/minecraft/a/g/b com/mojang/minecraft/level/com/mojang/minecraft/level/Level/height
+FD: com/mojang/minecraft/a/g/a com/mojang/minecraft/level/com/mojang/minecraft/level/Level/width
+FD: com/mojang/minecraft/a/g/h com/mojang/minecraft/level/com/mojang/minecraft/level/Level/unprocessed
+FD: com/mojang/minecraft/a/g/g com/mojang/minecraft/level/com/mojang/minecraft/level/Level/randValue
+FD: com/mojang/minecraft/a/g/k com/mojang/minecraft/level/com/mojang/minecraft/level/Level/coords
+FD: com/mojang/minecraft/a/g/d com/mojang/minecraft/level/com/mojang/minecraft/level/Level/blocks
+FD: com/mojang/minecraft/a/g/e com/mojang/minecraft/level/com/mojang/minecraft/level/Level/levelListeners
+FD: com/mojang/minecraft/a/g/j com/mojang/minecraft/level/com/mojang/minecraft/level/Level/minecraft
+FD: com/mojang/minecraft/a/g/f com/mojang/minecraft/level/com/mojang/minecraft/level/Level/random
+FD: com/mojang/minecraft/d/d/a com/mojang/minecraft/character/com/mojang/minecraft/character/Polygon/vertices
+FD: com/mojang/minecraft/f/t com/mojang/minecraft/com/mojang/minecraft/Entity/collisionBoxHeight
+FD: com/mojang/minecraft/f/l com/mojang/minecraft/com/mojang/minecraft/Entity/yd
+FD: com/mojang/minecraft/f/n com/mojang/minecraft/com/mojang/minecraft/Entity/yaw
+FD: com/mojang/minecraft/f/h com/mojang/minecraft/com/mojang/minecraft/Entity/x
+FD: com/mojang/minecraft/f/j com/mojang/minecraft/com/mojang/minecraft/Entity/z
+FD: com/mojang/minecraft/f/f com/mojang/minecraft/com/mojang/minecraft/Entity/yo
+FD: com/mojang/minecraft/f/b com/mojang/minecraft/com/mojang/minecraft/Entity/collisionBoxWidth
+FD: com/mojang/minecraft/f/r com/mojang/minecraft/com/mojang/minecraft/Entity/removed
+FD: com/mojang/minecraft/f/s com/mojang/minecraft/com/mojang/minecraft/Entity/heightOffset
+FD: com/mojang/minecraft/f/p com/mojang/minecraft/com/mojang/minecraft/Entity/boundingBox
+FD: com/mojang/minecraft/f/o com/mojang/minecraft/com/mojang/minecraft/Entity/pitch
+FD: com/mojang/minecraft/f/k com/mojang/minecraft/com/mojang/minecraft/Entity/xd
+FD: com/mojang/minecraft/f/m com/mojang/minecraft/com/mojang/minecraft/Entity/zd
+FD: com/mojang/minecraft/f/g com/mojang/minecraft/com/mojang/minecraft/Entity/zo
+FD: com/mojang/minecraft/f/i com/mojang/minecraft/com/mojang/minecraft/Entity/y
+FD: com/mojang/minecraft/f/e com/mojang/minecraft/com/mojang/minecraft/Entity/xo
+FD: com/mojang/minecraft/f/a com/mojang/minecraft/com/mojang/minecraft/Entity/level
+FD: com/mojang/minecraft/f/q com/mojang/minecraft/com/mojang/minecraft/Entity/onGround
+FD: com/mojang/minecraft/e/b com/mojang/minecraft/com/mojang/minecraft/HitResult/y
+FD: com/mojang/minecraft/e/a com/mojang/minecraft/com/mojang/minecraft/HitResult/x
+FD: com/mojang/minecraft/e/d com/mojang/minecraft/com/mojang/minecraft/HitResult/f
+FD: com/mojang/minecraft/e/c com/mojang/minecraft/com/mojang/minecraft/HitResult/z
+FD: com/mojang/minecraft/d/f/a com/mojang/minecraft/character/com/mojang/minecraft/character/Vec3/x
+FD: com/mojang/minecraft/d/f/b com/mojang/minecraft/character/com/mojang/minecraft/character/Vec3/y
+FD: com/mojang/minecraft/d/f/c com/mojang/minecraft/character/com/mojang/minecraft/character/Vec3/z
+FD: com/mojang/minecraft/c/t com/mojang/minecraft/com/mojang/minecraft/Minecraft/font
+FD: com/mojang/minecraft/c/e com/mojang/minecraft/com/mojang/minecraft/Minecraft/running
+FD: com/mojang/minecraft/c/q com/mojang/minecraft/com/mojang/minecraft/Minecraft/cursor
+FD: com/mojang/minecraft/c/s com/mojang/minecraft/com/mojang/minecraft/Minecraft/textureManager
+FD: com/mojang/minecraft/c/r com/mojang/minecraft/com/mojang/minecraft/Minecraft/yMouseAxis
+FD: com/mojang/minecraft/c/c com/mojang/minecraft/com/mojang/minecraft/Minecraft/appletMode
+FD: com/mojang/minecraft/c/g com/mojang/minecraft/com/mojang/minecraft/Minecraft/fogColor0
+FD: com/mojang/minecraft/c/k com/mojang/minecraft/com/mojang/minecraft/Minecraft/levelRenderer
+FD: com/mojang/minecraft/c/j com/mojang/minecraft/com/mojang/minecraft/Minecraft/level
+FD: com/mojang/minecraft/c/n com/mojang/minecraft/com/mojang/minecraft/Minecraft/particleEngine
+FD: com/mojang/minecraft/c/y com/mojang/minecraft/com/mojang/minecraft/Minecraft/selectBuffer
+FD: com/mojang/minecraft/c/b com/mojang/minecraft/com/mojang/minecraft/Minecraft/height
+FD: com/mojang/minecraft/c/o com/mojang/minecraft/com/mojang/minecraft/Minecraft/entities
+FD: com/mojang/minecraft/c/i com/mojang/minecraft/com/mojang/minecraft/Minecraft/timer
+FD: com/mojang/minecraft/c/d com/mojang/minecraft/com/mojang/minecraft/Minecraft/pause
+FD: com/mojang/minecraft/c/A com/mojang/minecraft/com/mojang/minecraft/Minecraft/lb
+FD: com/mojang/minecraft/c/u com/mojang/minecraft/com/mojang/minecraft/Minecraft/editMode
+FD: com/mojang/minecraft/c/l com/mojang/minecraft/com/mojang/minecraft/Minecraft/thePlayer
+FD: com/mojang/minecraft/c/f com/mojang/minecraft/com/mojang/minecraft/Minecraft/fullscreen
+FD: com/mojang/minecraft/c/h com/mojang/minecraft/com/mojang/minecraft/Minecraft/fogColor1
+FD: com/mojang/minecraft/c/m com/mojang/minecraft/com/mojang/minecraft/Minecraft/paintTexture
+FD: com/mojang/minecraft/c/z com/mojang/minecraft/com/mojang/minecraft/Minecraft/hitResult
+FD: com/mojang/minecraft/c/w com/mojang/minecraft/com/mojang/minecraft/Minecraft/mouseGrabbed
+FD: com/mojang/minecraft/c/x com/mojang/minecraft/com/mojang/minecraft/Minecraft/viewportBuffer
+FD: com/mojang/minecraft/c/p com/mojang/minecraft/com/mojang/minecraft/Minecraft/parent
+FD: com/mojang/minecraft/c/v com/mojang/minecraft/com/mojang/minecraft/Minecraft/fpsString
+FD: com/mojang/minecraft/c/a com/mojang/minecraft/com/mojang/minecraft/Minecraft/width
+FD: com/mojang/minecraft/b/a com/mojang/minecraft/com/mojang/minecraft/CanvasMinecraftApplet/applet
+FD: com/mojang/minecraft/a/e com/mojang/minecraft/com/mojang/minecraft/Timer/timeScale
+FD: com/mojang/minecraft/a/d com/mojang/minecraft/com/mojang/minecraft/Timer/a
+FD: com/mojang/minecraft/a/b com/mojang/minecraft/com/mojang/minecraft/Timer/lastTime
+FD: com/mojang/minecraft/a/a com/mojang/minecraft/com/mojang/minecraft/Timer/ticksPerSecond
+FD: com/mojang/minecraft/a/c com/mojang/minecraft/com/mojang/minecraft/Timer/ticks
+FD: com/mojang/minecraft/a/f com/mojang/minecraft/com/mojang/minecraft/Timer/passedTime
+MD: com/mojang/minecraft/a/a/e/d (Lcom/mojang/minecraft/a/g;IIII)Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/checkWater (Lcom/mojang/minecraft/level/Level;IIII)Z
+MD: com/mojang/minecraft/a/a/e/c (Lcom/mojang/minecraft/a/g;IIII)Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/LiquidTile/updateWater (Lcom/mojang/minecraft/level/Level;IIII)Z
+MD: com/mojang/minecraft/a/a/b/d ()I com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/getLiquidType ()I
+MD: com/mojang/minecraft/a/a/b/a (Lcom/mojang/minecraft/d;Lcom/mojang/minecraft/b/b;IIII)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/renderFaceNoTexture (Lcom/mojang/minecraft/Player;Lcom/mojang/minecraft/renderer/Tesselator;IIII)V
+MD: com/mojang/minecraft/a/a/b/a (Z)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/setTicking (Z)V
+MD: com/mojang/minecraft/a/a/b/a (Lcom/mojang/minecraft/a/g;IIILjava/util/Random;)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/tick (Lcom/mojang/minecraft/level/Level;IIILjava/util/Random;)V
+MD: com/mojang/minecraft/a/a/b/c ()Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/mayPick ()Z
+MD: com/mojang/minecraft/a/a/b/a (Lcom/mojang/minecraft/a/g;IIII)Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/shouldRenderFace (Lcom/mojang/minecraft/level/Level;IIII)Z
+MD: com/mojang/minecraft/a/a/b/a (FFFFFF)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/setShape (FFFFFF)V
+MD: com/mojang/minecraft/a/a/b/a ()Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/blocksLight ()Z
+MD: com/mojang/minecraft/a/a/b/b (III)Lcom/mojang/minecraft/f/a; com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/getBlockBoundingBox (III)Lcom/mojang/minecraft/phys/AABB;
+MD: com/mojang/minecraft/a/a/b/a (Lcom/mojang/minecraft/b/b;IIII)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/renderFace (Lcom/mojang/minecraft/renderer/Tesselator;IIII)V
+MD: com/mojang/minecraft/a/a/b/a (Lcom/mojang/minecraft/b/b;Lcom/mojang/minecraft/a/g;IIII)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/render (Lcom/mojang/minecraft/renderer/Tesselator;Lcom/mojang/minecraft/level/Level;IIII)V
+MD: com/mojang/minecraft/a/a/b/a (I)I com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/getTexture (I)I
+MD: com/mojang/minecraft/a/a/b/a (Lcom/mojang/minecraft/a/g;IIILcom/mojang/minecraft/c/a;)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/destroy (Lcom/mojang/minecraft/level/Level;IIILcom/mojang/minecraft/particle/ParticleEngine;)V
+MD: com/mojang/minecraft/a/a/b/b ()Z com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/isSolid ()Z
+MD: com/mojang/minecraft/a/a/b/b (Lcom/mojang/minecraft/a/g;IIII)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/neighborChanged (Lcom/mojang/minecraft/level/Level;IIII)V
+MD: com/mojang/minecraft/a/a/b/a (III)Lcom/mojang/minecraft/f/a; com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/getBoundingBox (III)Lcom/mojang/minecraft/phys/AABB;
+MD: com/mojang/minecraft/a/a/b/b (Lcom/mojang/minecraft/b/b;IIII)V com/mojang/minecraft/level/tile/com/mojang/minecraft/level/tile/Tile/renderBackFace (Lcom/mojang/minecraft/renderer/Tesselator;IIII)V
+MD: com/mojang/minecraft/b/a/a (Ljava/lang/String;I)I com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Textures/loadTexture (Ljava/lang/String;I)I
+MD: com/mojang/minecraft/MinecraftApplet/a ()V com/mojang/minecraft/com/mojang/minecraft/MinecraftApplet/stopGameThread ()V
+MD: com/mojang/minecraft/a/b/compare (Ljava/lang/Object;Ljava/lang/Object;)I com/mojang/minecraft/level/com/mojang/minecraft/level/DirtyChunkSorter/compare (Ljava/lang/Object;Ljava/lang/Object;)I
+MD: com/mojang/minecraft/a/a/a (II)[I com/mojang/minecraft/level/com/mojang/minecraft/level/NoiseMap/read (II)[I
+MD: com/mojang/minecraft/b/c/a ()Lcom/mojang/minecraft/b/c; com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/calculateFrustum ()Lcom/mojang/minecraft/renderer/Frustum;
+MD: com/mojang/minecraft/b/c/a (Lcom/mojang/minecraft/f/a;)Z com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/isVisible (Lcom/mojang/minecraft/phys/AABB;)Z
+MD: com/mojang/minecraft/b/c/a ([[FI)V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Frustum/normalizePlane ([[FI)V
+MD: com/mojang/minecraft/b/b/a ()V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/end ()V
+MD: com/mojang/minecraft/b/b/a (I)V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/color (I)V
+MD: com/mojang/minecraft/b/b/c ()V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/noColor ()V
+MD: com/mojang/minecraft/b/b/b ()V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/begin ()V
+MD: com/mojang/minecraft/b/b/d ()V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/clear ()V
+MD: com/mojang/minecraft/b/b/a (III)V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/color (III)V
+MD: com/mojang/minecraft/b/b/a (FFFFF)V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/vertexUV (FFFFF)V
+MD: com/mojang/minecraft/b/b/a (FFF)V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/vertex (FFF)V
+MD: com/mojang/minecraft/b/b/a (BBB)V com/mojang/minecraft/renderer/com/mojang/minecraft/renderer/Tesselator/color (BBB)V
+MD: com/mojang/minecraft/c/a/a (Lcom/mojang/minecraft/d;FI)V com/mojang/minecraft/particle/com/mojang/minecraft/particle/ParticleEngine/render (Lcom/mojang/minecraft/Player;FI)V
+MD: com/mojang/minecraft/a/c/a (Lcom/mojang/minecraft/d;)F com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/distanceToSqr (Lcom/mojang/minecraft/Player;)F
+MD: com/mojang/minecraft/a/c/a ()V com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/rebuild ()V
+MD: com/mojang/minecraft/a/c/c ()Z com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/isDirty ()Z
+MD: com/mojang/minecraft/a/c/a (I)V com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/render (I)V
+MD: com/mojang/minecraft/a/c/d ()V com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/reset ()V
+MD: com/mojang/minecraft/a/c/b ()V com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/setDirty ()V
+MD: com/mojang/minecraft/a/c/b (I)V com/mojang/minecraft/level/com/mojang/minecraft/level/Chunk/rebuild (I)V
+MD: com/mojang/minecraft/f/a/a (FFF)V com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/move (FFF)V
+MD: com/mojang/minecraft/f/a/a (Lcom/mojang/minecraft/f/a;)Z com/mojang/minecraft/phys/com/mojang/minecraft/phys/AABB/intersects (Lcom/mojang/minecraft/phys/AABB;)Z
+MD: com/mojang/minecraft/a/f/a (Lcom/mojang/minecraft/d;I)V com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/render (Lcom/mojang/minecraft/Player;I)V
+MD: com/mojang/minecraft/a/f/a (Lcom/mojang/minecraft/d;Lcom/mojang/minecraft/e;II)V com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/renderHit (Lcom/mojang/minecraft/Player;Lcom/mojang/minecraft/HitResult;II)V
+MD: com/mojang/minecraft/a/f/c ()V com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/compileSurroundingWater ()V
+MD: com/mojang/minecraft/a/f/b ()V com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/compileSurroundingGround ()V
+MD: com/mojang/minecraft/a/f/a (IIIIII)V com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/setDirty (IIIIII)V
+MD: com/mojang/minecraft/a/f/a ()V com/mojang/minecraft/level/com/mojang/minecraft/level/LevelRenderer/resetChunks ()V
+MD: com/mojang/minecraft/e/a/a (Ljava/lang/String;IIIZ)V com/mojang/minecraft/gui/com/mojang/minecraft/gui/Font/draw (Ljava/lang/String;IIIZ)V
+MD: com/mojang/minecraft/e/a/a (Ljava/lang/String;)I com/mojang/minecraft/gui/com/mojang/minecraft/gui/Font/getWidth (Ljava/lang/String;)I
+MD: com/mojang/minecraft/e/a/a (Ljava/lang/String;III)V com/mojang/minecraft/gui/com/mojang/minecraft/gui/Font/drawShadow (Ljava/lang/String;III)V
+MD: com/mojang/minecraft/d/b/a (FFFIII)V com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/addBox (FFFIII)V
+MD: com/mojang/minecraft/d/b/a ()V com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/render ()V
+MD: com/mojang/minecraft/d/b/a (FFF)V com/mojang/minecraft/character/com/mojang/minecraft/character/Cube/setPos (FFF)V
+MD: com/mojang/minecraft/d/e/a (FF)Lcom/mojang/minecraft/d/e; com/mojang/minecraft/character/com/mojang/minecraft/character/Vertex/remap (FF)Lcom/mojang/minecraft/character/Vertex;
+MD: com/mojang/minecraft/a/g/a (Lcom/mojang/minecraft/f/a;I)Z com/mojang/minecraft/level/com/mojang/minecraft/level/Level/containsLiquid (Lcom/mojang/minecraft/phys/AABB;I)Z
+MD: com/mojang/minecraft/a/g/a (IIIII)J com/mojang/minecraft/level/com/mojang/minecraft/level/Level/floodFill (IIIII)J
+MD: com/mojang/minecraft/a/g/a (III)Z com/mojang/minecraft/level/com/mojang/minecraft/level/Level/isLit (III)Z
+MD: com/mojang/minecraft/a/g/a (IIII)Z com/mojang/minecraft/level/com/mojang/minecraft/level/Level/setTile (IIII)Z
+MD: com/mojang/minecraft/a/g/a ()V com/mojang/minecraft/level/com/mojang/minecraft/level/Level/generateLevel ()V
+MD: com/mojang/minecraft/a/g/d (IIII)V com/mojang/minecraft/level/com/mojang/minecraft/level/Level/neighborChanged (IIII)V
+MD: com/mojang/minecraft/a/g/c (IIII)V com/mojang/minecraft/level/com/mojang/minecraft/level/Level/calculateLightDepths (IIII)V
+MD: com/mojang/minecraft/a/g/c ()Z com/mojang/minecraft/level/com/mojang/minecraft/level/Level/load ()Z
+MD: com/mojang/minecraft/a/g/b (IIII)Z com/mojang/minecraft/level/com/mojang/minecraft/level/Level/setTileNoUpdate (IIII)Z
+MD: com/mojang/minecraft/a/g/b ()V com/mojang/minecraft/level/com/mojang/minecraft/level/Level/save ()V
+MD: com/mojang/minecraft/a/g/b (III)I com/mojang/minecraft/level/com/mojang/minecraft/level/Level/getTile (III)I
+MD: com/mojang/minecraft/f/a (F)V com/mojang/minecraft/com/mojang/minecraft/Entity/render (F)V
+MD: com/mojang/minecraft/f/d ()Z com/mojang/minecraft/com/mojang/minecraft/Entity/isInLava ()Z
+MD: com/mojang/minecraft/f/b ()V com/mojang/minecraft/com/mojang/minecraft/Entity/resetPos ()V
+MD: com/mojang/minecraft/f/b (FFF)V com/mojang/minecraft/com/mojang/minecraft/Entity/move (FFF)V
+MD: com/mojang/minecraft/f/c ()Z com/mojang/minecraft/com/mojang/minecraft/Entity/isInWater ()Z
+MD: com/mojang/minecraft/f/a (FF)V com/mojang/minecraft/com/mojang/minecraft/Entity/setCollisionBoxSize (FF)V
+MD: com/mojang/minecraft/f/e ()Z com/mojang/minecraft/com/mojang/minecraft/Entity/isLit ()Z
+MD: com/mojang/minecraft/f/a ()V com/mojang/minecraft/com/mojang/minecraft/Entity/tick ()V
+MD: com/mojang/minecraft/f/c (FFF)V com/mojang/minecraft/com/mojang/minecraft/Entity/moveRelative (FFF)V
+MD: com/mojang/minecraft/f/a (FFF)V com/mojang/minecraft/com/mojang/minecraft/Entity/setPos (FFF)V
+MD: com/mojang/minecraft/e/a (Lcom/mojang/minecraft/d;I)F com/mojang/minecraft/com/mojang/minecraft/HitResult/distanceTo (Lcom/mojang/minecraft/Player;I)F
+MD: com/mojang/minecraft/c/a (F)V com/mojang/minecraft/com/mojang/minecraft/Minecraft/focusPlayerCamera (F)V
+MD: com/mojang/minecraft/c/d ()V com/mojang/minecraft/com/mojang/minecraft/Minecraft/tick ()V
+MD: com/mojang/minecraft/c/b ()V com/mojang/minecraft/com/mojang/minecraft/Minecraft/grabMouse ()V
+MD: com/mojang/minecraft/c/a (FFFF)Ljava/nio/FloatBuffer; com/mojang/minecraft/com/mojang/minecraft/Minecraft/getBuffer (FFFF)Ljava/nio/FloatBuffer;
+MD: com/mojang/minecraft/c/a (Ljava/lang/String;Ljava/lang/String;)V com/mojang/minecraft/com/mojang/minecraft/Minecraft/showLoadingScreen (Ljava/lang/String;Ljava/lang/String;)V
+MD: com/mojang/minecraft/c/a (I)V com/mojang/minecraft/com/mojang/minecraft/Minecraft/setupFog (I)V
+MD: com/mojang/minecraft/c/b (F)V com/mojang/minecraft/com/mojang/minecraft/Minecraft/render (F)V
+MD: com/mojang/minecraft/c/a ()V com/mojang/minecraft/com/mojang/minecraft/Minecraft/destroy ()V
+MD: com/mojang/minecraft/c/c ()V com/mojang/minecraft/com/mojang/minecraft/Minecraft/releaseMouse ()V
+MD: com/mojang/minecraft/c/a (Ljava/lang/String;)V com/mojang/minecraft/com/mojang/minecraft/Minecraft/reportGLError (Ljava/lang/String;)V
