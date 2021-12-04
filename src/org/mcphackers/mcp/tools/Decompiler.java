@@ -27,33 +27,32 @@ import de.fernflower.util.InterpreterUtil;
 
 public class Decompiler implements IBytecodeProvider, IResultSaver {
 
-	public int side;
 	public DecompileLogger log;
+	private String pathout;
 	private final Map<String, ZipOutputStream> mapArchiveStreams = new HashMap<String, ZipOutputStream>();
 	private final Map<String, Set<String>> mapArchiveEntries = new HashMap<String, Set<String>>();
 	
-	public Decompiler(int side) {
-		this.side = side;
+	public Decompiler() {
 		this.log = new DecompileLogger();
 	}
 
-	public void start() throws IOException
+	public void decompile(String source, String out) throws IOException
 	{
 	    Map<String, Object> mapOptions = new HashMap<String, Object>();
-	    List<File> lstSources = new ArrayList<File>();
 	    mapOptions.put("rbr", "0");
 	    mapOptions.put("asc", "1");
 	    mapOptions.put("nco", "1");
 	    mapOptions.put("ind", "\t");
 
-	    File destination = new File("jars" + File.separator + "src" + File.separator);
+	    pathout = out;
+	    File destination = new File(out);
 	    if (!destination.isDirectory()) {
 	    	if(!destination.mkdirs())
 	    	{
 	    		throw new IOException("Could not create '" + destination + "'");
 	    	}
 	    }
-	    String source = "jars" + File.separator + (side == 1 ? "minecraft_server.jar" : "minecraft.jar");
+	    List<File> lstSources = new ArrayList<File>();
         addPath(lstSources, source);
 
 	    if (lstSources.isEmpty()) {
@@ -80,7 +79,7 @@ public class Decompiler implements IBytecodeProvider, IResultSaver {
 	}
 
 	    private String getAbsolutePath(String path) {
-	        return new File("jars" + File.separator + "src" + File.separator).getAbsolutePath();
+	    	return (new File(pathout, path)).getAbsolutePath();
 	      }
 
 	      @Override

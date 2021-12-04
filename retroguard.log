@@ -1,0 +1,727 @@
+# If this log is to be used for incremental obfuscation / patch generation, 
+# add any '.class', '.method', '.field' and '.attribute' restrictions here:
+
+
+#-DO-NOT-EDIT-BELOW-THIS-LINE------------------DO-NOT-EDIT-BELOW-THIS-LINE--
+#
+# RetroGuard MCP v3.6.5
+#
+# Logfile created on Fri Dec 03 17:55:52 EET 2021
+#
+# Jar file to be obfuscated:           minecraft.jar
+# Target Jar file for obfuscated code: minecraft_rg.jar
+# RetroGuard Script file used:         (none, defaults used)
+#
+# WARNING - identifier from script file not found in JAR: Application (MethodNotFound)
+# WARNING - identifier from script file not found in JAR: Serializable (MethodNotFound)
+# WARNING - identifier from script file not found in JAR: RMI (ClassNotFound)
+#
+# Memory in use after class data structure built: 2679160 bytes
+# Total memory available                        : 128974848 bytes
+#
+#
+# Names reserved from obfuscation:
+#
+.class com/mojang/minecraft/MinecraftApplet
+#
+#
+# Obfuscated name mappings (some of these may be unchanged due to polymorphism constraints):
+#
+.package_map com/mojang/minecraft/a a
+.class_map com/mojang/minecraft/a/a C_100327_a
+.field_map com/mojang/minecraft/a/a/a field_100380_a
+.method_map com/mojang/minecraft/a/a/a (Ljava/lang/String;I)I func_100379_a
+.class_map com/mojang/minecraft/a/b C_100328_b
+.field_map com/mojang/minecraft/a/b/a field_100381_a
+.method_map com/mojang/minecraft/a/b/compare (Ljava/lang/Object;Ljava/lang/Object;)I compare
+.class_map com/mojang/minecraft/a/c C_100329_c
+.field_map com/mojang/minecraft/a/c/a field_100391_a
+.field_map com/mojang/minecraft/a/c/b field_100392_b
+.field_map com/mojang/minecraft/a/c/c field_100393_c
+.field_map com/mojang/minecraft/a/c/d field_100394_d
+.field_map com/mojang/minecraft/a/c/e field_100395_e
+.field_map com/mojang/minecraft/a/c/f field_100396_f
+.field_map com/mojang/minecraft/a/c/g field_100397_g
+.field_map com/mojang/minecraft/a/c/h field_100398_h
+.field_map com/mojang/minecraft/a/c/i field_100399_i
+.field_map com/mojang/minecraft/a/c/j field_100400_j
+.field_map com/mojang/minecraft/a/c/k field_100401_k
+.field_map com/mojang/minecraft/a/c/l field_100402_l
+.field_map com/mojang/minecraft/a/c/m field_100403_m
+.field_map com/mojang/minecraft/a/c/n field_100404_n
+.method_map com/mojang/minecraft/a/c/b (FFF)V func_100382_b
+.method_map com/mojang/minecraft/a/c/a (FFFFF)V func_100383_a
+.method_map com/mojang/minecraft/a/c/a (FFF)V func_100384_a
+.method_map com/mojang/minecraft/a/c/a (I)V func_100385_a
+.method_map com/mojang/minecraft/a/c/a ()V func_100386_a
+.method_map com/mojang/minecraft/a/c/a (III)V func_100387_a
+.method_map com/mojang/minecraft/a/c/b ()V func_100388_b
+.method_map com/mojang/minecraft/a/c/d ()V func_100389_d
+.method_map com/mojang/minecraft/a/c/c ()V func_100390_c
+.class_map com/mojang/minecraft/a/d C_100330_d
+.field_map com/mojang/minecraft/a/d/a field_100409_a
+.field_map com/mojang/minecraft/a/d/b field_100410_b
+.field_map com/mojang/minecraft/a/d/c field_100411_c
+.field_map com/mojang/minecraft/a/d/d field_100412_d
+.field_map com/mojang/minecraft/a/d/e field_100413_e
+.field_map com/mojang/minecraft/a/d/f field_100414_f
+.field_map com/mojang/minecraft/a/d/g field_100415_g
+.field_map com/mojang/minecraft/a/d/h field_100416_h
+.method_map com/mojang/minecraft/a/d/a ([[FI)V func_100405_a
+.method_map com/mojang/minecraft/a/d/a (FFFFFF)Z func_100406_a
+.method_map com/mojang/minecraft/a/d/a ()Lcom/mojang/minecraft/a/d; func_100407_a
+.method_map com/mojang/minecraft/a/d/a (Lcom/mojang/minecraft/phys/AABB;)Z func_100408_a
+.class_map com/mojang/minecraft/a/e C_100331_e
+.field_map com/mojang/minecraft/a/e/a field_100417_a
+.method_map com/mojang/minecraft/a/e/compare (Ljava/lang/Object;Ljava/lang/Object;)I compare
+.class_map com/mojang/minecraft/a/f C_100332_f
+.field_map com/mojang/minecraft/a/f/a field_100424_a
+.field_map com/mojang/minecraft/a/f/b field_100425_b
+.field_map com/mojang/minecraft/a/f/c field_100426_c
+.field_map com/mojang/minecraft/a/f/d field_100427_d
+.field_map com/mojang/minecraft/a/f/e field_100428_e
+.field_map com/mojang/minecraft/a/f/f field_100429_f
+.field_map com/mojang/minecraft/a/f/g field_100430_g
+.field_map com/mojang/minecraft/a/f/h field_100431_h
+.field_map com/mojang/minecraft/a/f/i field_100432_i
+.field_map com/mojang/minecraft/a/f/j field_100433_j
+.field_map com/mojang/minecraft/a/f/k field_100434_k
+.field_map com/mojang/minecraft/a/f/l field_100435_l
+.method_map com/mojang/minecraft/a/f/a (Lcom/mojang/minecraft/player/Player;)F func_100418_a
+.method_map com/mojang/minecraft/a/f/a ()V func_100419_a
+.method_map com/mojang/minecraft/a/f/a (Ljava/nio/IntBuffer;I)V func_100420_a
+.method_map com/mojang/minecraft/a/f/a (Lcom/mojang/minecraft/a/d;)V func_100421_a
+.method_map com/mojang/minecraft/a/f/b ()V func_100422_b
+.method_map com/mojang/minecraft/a/f/c ()V func_100423_c
+.class_map com/mojang/minecraft/a/g C_100333_g
+.field_map com/mojang/minecraft/a/g/a field_100445_a
+.field_map com/mojang/minecraft/a/g/b field_100446_b
+.field_map com/mojang/minecraft/a/g/c field_100447_c
+.field_map com/mojang/minecraft/a/g/d field_100448_d
+.field_map com/mojang/minecraft/a/g/e field_100449_e
+.field_map com/mojang/minecraft/a/g/f field_100450_f
+.field_map com/mojang/minecraft/a/g/g field_100451_g
+.field_map com/mojang/minecraft/a/g/h field_100452_h
+.field_map com/mojang/minecraft/a/g/i field_100453_i
+.field_map com/mojang/minecraft/a/g/j field_100454_j
+.field_map com/mojang/minecraft/a/g/k field_100455_k
+.field_map com/mojang/minecraft/a/g/l field_100456_l
+.field_map com/mojang/minecraft/a/g/m field_100457_m
+.field_map com/mojang/minecraft/a/g/n field_100458_n
+.field_map com/mojang/minecraft/a/g/o field_100459_o
+.method_map com/mojang/minecraft/a/g/a (Lcom/mojang/minecraft/a/d;F)V func_100436_a
+.method_map com/mojang/minecraft/a/g/a (Lcom/mojang/minecraft/player/Player;I)I func_100437_a
+.method_map com/mojang/minecraft/a/g/a (F)V func_100438_a
+.method_map com/mojang/minecraft/a/g/a ()V func_100439_a
+.method_map com/mojang/minecraft/a/g/a (Lcom/mojang/minecraft/player/Player;Lcom/mojang/minecraft/e;II)V func_100440_a
+.method_map com/mojang/minecraft/a/g/a (III)V func_100441_a
+.method_map com/mojang/minecraft/a/g/a (Lcom/mojang/minecraft/e;I)V func_100442_a
+.method_map com/mojang/minecraft/a/g/a (Lcom/mojang/minecraft/level/Level;)V func_100443_a
+.method_map com/mojang/minecraft/a/g/a (IIIIII)V func_100444_a
+.package_map com/mojang/minecraft/b b
+.class_map com/mojang/minecraft/b/a C_100334_a
+.field_map com/mojang/minecraft/b/a/e field_100489_e
+.field_map com/mojang/minecraft/b/a/f field_100490_f
+.field_map com/mojang/minecraft/b/a/g field_100491_g
+.field_map com/mojang/minecraft/b/a/h field_100492_h
+.field_map com/mojang/minecraft/b/a/i field_100493_i
+.method_map com/mojang/minecraft/b/a/a (CI)V func_100460_a
+.method_map com/mojang/minecraft/b/a/a ()V func_100465_a
+.method_map com/mojang/minecraft/b/a/a (II)V func_100464_a
+.method_map com/mojang/minecraft/b/a/a (Lcom/mojang/minecraft/b/e;)V func_100466_a
+.method_map com/mojang/minecraft/b/a/b ()V func_100469_b
+.method_map com/mojang/minecraft/b/a/c ()V func_100471_c
+.class_map com/mojang/minecraft/b/b C_100335_b
+.field_map com/mojang/minecraft/b/b/e field_100476_e
+.field_map com/mojang/minecraft/b/b/f field_100477_f
+.method_map com/mojang/minecraft/b/b/a (CI)V func_100460_a
+.method_map com/mojang/minecraft/b/b/a ()V func_100465_a
+.method_map com/mojang/minecraft/b/b/a (II)V func_100464_a
+.method_map com/mojang/minecraft/b/b/b ()V func_100469_b
+.method_map com/mojang/minecraft/b/b/c ()V func_100471_c
+.class_map com/mojang/minecraft/b/c C_100336_c
+.method_map com/mojang/minecraft/b/c/a ()V func_100465_a
+.method_map com/mojang/minecraft/b/c/a (II)V func_100464_a
+.method_map com/mojang/minecraft/b/c/a (Lcom/mojang/minecraft/b/e;)V func_100466_a
+.class_map com/mojang/minecraft/b/d C_100337_d
+.field_map com/mojang/minecraft/b/d/a field_100472_a
+.field_map com/mojang/minecraft/b/d/b field_100473_b
+.field_map com/mojang/minecraft/b/d/c field_100474_c
+.field_map com/mojang/minecraft/b/d/d field_100475_d
+.method_map com/mojang/minecraft/b/d/a (CI)V func_100460_a
+.method_map com/mojang/minecraft/b/d/a (IIIII)V func_100461_a
+.method_map com/mojang/minecraft/b/d/a (Ljava/lang/String;III)V func_100462_a
+.method_map com/mojang/minecraft/b/d/b (Ljava/lang/String;III)V func_100463_b
+.method_map com/mojang/minecraft/b/d/a (II)V func_100464_a
+.method_map com/mojang/minecraft/b/d/a ()V func_100465_a
+.method_map com/mojang/minecraft/b/d/a (Lcom/mojang/minecraft/b/e;)V func_100466_a
+.method_map com/mojang/minecraft/b/d/a (Lcom/mojang/minecraft/d;II)V func_100467_a
+.method_map com/mojang/minecraft/b/d/a (IIIIII)V func_100468_a
+.method_map com/mojang/minecraft/b/d/b ()V func_100469_b
+.method_map com/mojang/minecraft/b/d/d ()V func_100470_d
+.method_map com/mojang/minecraft/b/d/c ()V func_100471_c
+.class_map com/mojang/minecraft/b/e C_100338_e
+.field_map com/mojang/minecraft/b/e/a field_100494_a
+.field_map com/mojang/minecraft/b/e/b field_100495_b
+.field_map com/mojang/minecraft/b/e/c field_100496_c
+.field_map com/mojang/minecraft/b/e/d field_100497_d
+.field_map com/mojang/minecraft/b/e/e field_100498_e
+.field_map com/mojang/minecraft/b/e/f field_100499_f
+.field_map com/mojang/minecraft/b/e/g field_100500_g
+.field_map com/mojang/minecraft/b/e/h field_100501_h
+.class_map com/mojang/minecraft/b/f C_100339_f
+.field_map com/mojang/minecraft/b/f/e field_100478_e
+.method_map com/mojang/minecraft/b/f/a ()V func_100465_a
+.method_map com/mojang/minecraft/b/f/a (II)V func_100464_a
+.method_map com/mojang/minecraft/b/f/a (Lcom/mojang/minecraft/b/e;)V func_100466_a
+.class_map com/mojang/minecraft/b/g C_100340_g
+.field_map com/mojang/minecraft/b/g/e field_100481_e
+.field_map com/mojang/minecraft/b/g/f field_100482_f
+.field_map com/mojang/minecraft/b/g/g field_100483_g
+.field_map com/mojang/minecraft/b/g/h field_100484_h
+.field_map com/mojang/minecraft/b/g/i field_100485_i
+.field_map com/mojang/minecraft/b/g/j field_100486_j
+.method_map com/mojang/minecraft/b/g/run ()V run
+.method_map com/mojang/minecraft/b/g/a (I)V func_100479_a
+.method_map com/mojang/minecraft/b/g/a ([Ljava/lang/String;)V func_100480_a
+.method_map com/mojang/minecraft/b/g/a ()V func_100465_a
+.method_map com/mojang/minecraft/b/g/a (II)V func_100464_a
+.method_map com/mojang/minecraft/b/g/a (Lcom/mojang/minecraft/b/e;)V func_100466_a
+.class_map com/mojang/minecraft/b/h C_100341_h
+.field_map com/mojang/minecraft/b/h/e field_100487_e
+.field_map com/mojang/minecraft/b/h/f field_100488_f
+.method_map com/mojang/minecraft/b/h/a (CI)V func_100460_a
+.method_map com/mojang/minecraft/b/h/a ()V func_100465_a
+.method_map com/mojang/minecraft/b/h/a (II)V func_100464_a
+.class_map com/mojang/minecraft/b/i C_100342_i
+.method_map com/mojang/minecraft/b/i/a (I)V func_100479_a
+.method_map com/mojang/minecraft/b/i/a ([Ljava/lang/String;)V func_100480_a
+.class_map com/mojang/minecraft/b/j C_100343_j
+.field_map com/mojang/minecraft/b/j/a field_100506_a
+.field_map com/mojang/minecraft/b/j/b field_100507_b
+.method_map com/mojang/minecraft/b/j/a (Ljava/lang/String;III)V func_100502_a
+.method_map com/mojang/minecraft/b/j/b (Ljava/lang/String;III)V func_100503_b
+.method_map com/mojang/minecraft/b/j/a (Ljava/lang/String;IIIZ)V func_100504_a
+.method_map com/mojang/minecraft/b/j/a (Ljava/lang/String;)I func_100505_a
+.package_map com/mojang/minecraft/character character
+.class_map com/mojang/minecraft/character/a C_100344_a
+.field_map com/mojang/minecraft/character/a/a field_100509_a
+.field_map com/mojang/minecraft/character/a/b field_100510_b
+.field_map com/mojang/minecraft/character/a/c field_100511_c
+.field_map com/mojang/minecraft/character/a/d field_100512_d
+.field_map com/mojang/minecraft/character/a/e field_100513_e
+.field_map com/mojang/minecraft/character/a/f field_100514_f
+.method_map com/mojang/minecraft/character/a/a (FFF)V func_100508_a
+.class_map com/mojang/minecraft/character/b C_100345_b
+.field_map com/mojang/minecraft/character/b/a field_100515_a
+.class_map com/mojang/minecraft/character/c C_100346_c
+.field_map com/mojang/minecraft/character/c/a field_100516_a
+.field_map com/mojang/minecraft/character/c/b field_100517_b
+.field_map com/mojang/minecraft/character/c/c field_100518_c
+.class_map com/mojang/minecraft/character/d C_100347_d
+.field_map com/mojang/minecraft/character/d/a field_100522_a
+.field_map com/mojang/minecraft/character/d/b field_100523_b
+.field_map com/mojang/minecraft/character/d/c field_100524_c
+.field_map com/mojang/minecraft/character/d/d field_100525_d
+.field_map com/mojang/minecraft/character/d/e field_100526_e
+.field_map com/mojang/minecraft/character/d/f field_100527_f
+.field_map com/mojang/minecraft/character/d/g field_100528_g
+.field_map com/mojang/minecraft/character/d/h field_100529_h
+.field_map com/mojang/minecraft/character/d/i field_100530_i
+.field_map com/mojang/minecraft/character/d/j field_100531_j
+.field_map com/mojang/minecraft/character/d/k field_100532_k
+.field_map com/mojang/minecraft/character/d/l field_100533_l
+.method_map com/mojang/minecraft/character/d/a (FFFIII)V func_100519_a
+.method_map com/mojang/minecraft/character/d/a (FFF)V func_100520_a
+.method_map com/mojang/minecraft/character/d/a ()V func_100521_a
+.class_map com/mojang/minecraft/character/e C_100348_e
+.field_map com/mojang/minecraft/character/e/a field_100535_a
+.field_map com/mojang/minecraft/character/e/b field_100536_b
+.field_map com/mojang/minecraft/character/e/c field_100537_c
+.method_map com/mojang/minecraft/character/e/a (FF)Lcom/mojang/minecraft/character/e; func_100534_a
+.class_map com/mojang/minecraft/character/Zombie C_100349_Zombie
+.field_map com/mojang/minecraft/character/Zombie/a field_100606_a
+.field_map com/mojang/minecraft/character/Zombie/serialVersionUID field_100607_serialVersionUID
+.field_map com/mojang/minecraft/character/Zombie/rot field_100608_rot
+.field_map com/mojang/minecraft/character/Zombie/timeOffs field_100609_timeOffs
+.field_map com/mojang/minecraft/character/Zombie/speed field_100610_speed
+.field_map com/mojang/minecraft/character/Zombie/rotA field_100611_rotA
+.method_map com/mojang/minecraft/character/Zombie/tick ()V func_100552_tick
+.method_map com/mojang/minecraft/character/Zombie/render (Lcom/mojang/minecraft/a/a;F)V func_100543_render
+.package_map com/mojang/minecraft/level level
+.package_map com/mojang/minecraft/level/a a
+.class_map com/mojang/minecraft/level/a/a C_100353_a
+.field_map com/mojang/minecraft/level/a/a/A field_100634_A
+.field_map com/mojang/minecraft/level/a/a/B field_100635_B
+.field_map com/mojang/minecraft/level/a/a/C field_100636_C
+.field_map com/mojang/minecraft/level/a/a/D field_100637_D
+.field_map com/mojang/minecraft/level/a/a/a field_100638_a
+.field_map com/mojang/minecraft/level/a/a/b field_100639_b
+.field_map com/mojang/minecraft/level/a/a/c field_100640_c
+.field_map com/mojang/minecraft/level/a/a/d field_100641_d
+.field_map com/mojang/minecraft/level/a/a/e field_100642_e
+.field_map com/mojang/minecraft/level/a/a/f field_100643_f
+.field_map com/mojang/minecraft/level/a/a/g field_100644_g
+.field_map com/mojang/minecraft/level/a/a/h field_100645_h
+.field_map com/mojang/minecraft/level/a/a/i field_100646_i
+.field_map com/mojang/minecraft/level/a/a/j field_100647_j
+.field_map com/mojang/minecraft/level/a/a/k field_100648_k
+.field_map com/mojang/minecraft/level/a/a/l field_100649_l
+.field_map com/mojang/minecraft/level/a/a/m field_100650_m
+.field_map com/mojang/minecraft/level/a/a/n field_100651_n
+.field_map com/mojang/minecraft/level/a/a/o field_100652_o
+.field_map com/mojang/minecraft/level/a/a/p field_100653_p
+.field_map com/mojang/minecraft/level/a/a/q field_100654_q
+.field_map com/mojang/minecraft/level/a/a/r field_100655_r
+.field_map com/mojang/minecraft/level/a/a/s field_100656_s
+.field_map com/mojang/minecraft/level/a/a/t field_100657_t
+.field_map com/mojang/minecraft/level/a/a/u field_100658_u
+.field_map com/mojang/minecraft/level/a/a/v field_100659_v
+.field_map com/mojang/minecraft/level/a/a/w field_100660_w
+.field_map com/mojang/minecraft/level/a/a/x field_100661_x
+.field_map com/mojang/minecraft/level/a/a/y field_100662_y
+.field_map com/mojang/minecraft/level/a/a/z field_100663_z
+.method_map com/mojang/minecraft/level/a/a/a (Lcom/mojang/minecraft/player/Player;Lcom/mojang/minecraft/a/c;IIII)V func_100612_a
+.method_map com/mojang/minecraft/level/a/a/a (Lcom/mojang/minecraft/level/Level;IIILcom/mojang/minecraft/particle/a;)V func_100613_a
+.method_map com/mojang/minecraft/level/a/a/b (Lcom/mojang/minecraft/a/c;IIII)V func_100614_b
+.method_map com/mojang/minecraft/level/a/a/b (Lcom/mojang/minecraft/level/Level;III)V func_100615_b
+.method_map com/mojang/minecraft/level/a/a/a (I)V func_100616_a
+.method_map com/mojang/minecraft/level/a/a/a (Lcom/mojang/minecraft/a/c;IIII)V func_100617_a
+.method_map com/mojang/minecraft/level/a/a/a (Lcom/mojang/minecraft/a/c;Lcom/mojang/minecraft/level/Level;IIII)Z func_100618_a
+.method_map com/mojang/minecraft/level/a/a/a (III)Lcom/mojang/minecraft/phys/AABB; func_100619_a
+.method_map com/mojang/minecraft/level/a/a/a (Z)V func_100620_a
+.method_map com/mojang/minecraft/level/a/a/b (Lcom/mojang/minecraft/level/Level;IIII)V func_100621_b
+.method_map com/mojang/minecraft/level/a/a/a (Lcom/mojang/minecraft/level/Level;IIIII)Z func_100622_a
+.method_map com/mojang/minecraft/level/a/a/e ()I func_100623_e
+.method_map com/mojang/minecraft/level/a/a/a (FFFFFF)V func_100624_a
+.method_map com/mojang/minecraft/level/a/a/d ()Lcom/mojang/minecraft/level/c/a; func_100625_d
+.method_map com/mojang/minecraft/level/a/a/a (Lcom/mojang/minecraft/level/Level;IIII)Z func_100626_a
+.method_map com/mojang/minecraft/level/a/a/a ()Z func_100627_a
+.method_map com/mojang/minecraft/level/a/a/a (Lcom/mojang/minecraft/level/Level;IIILjava/util/Random;)V func_100628_a
+.method_map com/mojang/minecraft/level/a/a/a (Lcom/mojang/minecraft/level/Level;III)F func_100629_a
+.method_map com/mojang/minecraft/level/a/a/b ()Z func_100630_b
+.method_map com/mojang/minecraft/level/a/a/b (I)I func_100631_b
+.method_map com/mojang/minecraft/level/a/a/c ()Z func_100632_c
+.method_map com/mojang/minecraft/level/a/a/b (III)Lcom/mojang/minecraft/phys/AABB; func_100633_b
+.class_map com/mojang/minecraft/level/a/b C_100354_b
+.method_map com/mojang/minecraft/level/a/b/a ()Z func_100627_a
+.method_map com/mojang/minecraft/level/a/b/b ()Z func_100630_b
+.class_map com/mojang/minecraft/level/a/c C_100355_c
+.class_map com/mojang/minecraft/level/a/d C_100356_d
+.method_map com/mojang/minecraft/level/a/d/b (Lcom/mojang/minecraft/level/Level;III)V func_100615_b
+.method_map com/mojang/minecraft/level/a/d/c (Lcom/mojang/minecraft/level/Level;III)V func_100664_c
+.method_map com/mojang/minecraft/level/a/d/b (Lcom/mojang/minecraft/level/Level;IIII)V func_100621_b
+.class_map com/mojang/minecraft/level/a/e C_100357_e
+.method_map com/mojang/minecraft/level/a/e/a (Lcom/mojang/minecraft/level/Level;IIILjava/util/Random;)V func_100628_a
+.method_map com/mojang/minecraft/level/a/e/b (Lcom/mojang/minecraft/level/Level;IIII)V func_100621_b
+.class_map com/mojang/minecraft/level/a/f C_100358_f
+.method_map com/mojang/minecraft/level/a/f/b (I)I func_100631_b
+.class_map com/mojang/minecraft/level/a/g C_100359_g
+.method_map com/mojang/minecraft/level/a/g/a (Lcom/mojang/minecraft/level/Level;IIILjava/util/Random;)V func_100628_a
+.method_map com/mojang/minecraft/level/a/g/b (I)I func_100631_b
+.class_map com/mojang/minecraft/level/a/h C_100360_h
+.method_map com/mojang/minecraft/level/a/h/a (Lcom/mojang/minecraft/level/Level;IIILjava/util/Random;)V func_100628_a
+.method_map com/mojang/minecraft/level/a/h/a ()Z func_100627_a
+.method_map com/mojang/minecraft/level/a/h/a (Lcom/mojang/minecraft/a/c;Lcom/mojang/minecraft/level/Level;IIII)Z func_100618_a
+.method_map com/mojang/minecraft/level/a/h/b ()Z func_100630_b
+.method_map com/mojang/minecraft/level/a/h/b (III)Lcom/mojang/minecraft/phys/AABB; func_100633_b
+.class_map com/mojang/minecraft/level/a/i C_100361_i
+.field_map com/mojang/minecraft/level/a/i/x field_100666_x
+.field_map com/mojang/minecraft/level/a/i/y field_100667_y
+.field_map com/mojang/minecraft/level/a/i/z field_100668_z
+.method_map com/mojang/minecraft/level/a/i/c (Lcom/mojang/minecraft/level/Level;III)Z func_100665_c
+.method_map com/mojang/minecraft/level/a/i/b (Lcom/mojang/minecraft/level/Level;III)V func_100615_b
+.method_map com/mojang/minecraft/level/a/i/a (Lcom/mojang/minecraft/a/c;IIII)V func_100617_a
+.method_map com/mojang/minecraft/level/a/i/b (Lcom/mojang/minecraft/level/Level;IIII)V func_100621_b
+.method_map com/mojang/minecraft/level/a/i/a (Lcom/mojang/minecraft/level/Level;IIIII)Z func_100622_a
+.method_map com/mojang/minecraft/level/a/i/e ()I func_100623_e
+.method_map com/mojang/minecraft/level/a/i/d ()Lcom/mojang/minecraft/level/c/a; func_100625_d
+.method_map com/mojang/minecraft/level/a/i/a (Lcom/mojang/minecraft/level/Level;IIILjava/util/Random;)V func_100628_a
+.method_map com/mojang/minecraft/level/a/i/a ()Z func_100627_a
+.method_map com/mojang/minecraft/level/a/i/a (Lcom/mojang/minecraft/level/Level;III)F func_100629_a
+.method_map com/mojang/minecraft/level/a/i/b ()Z func_100630_b
+.method_map com/mojang/minecraft/level/a/i/c ()Z func_100632_c
+.method_map com/mojang/minecraft/level/a/i/b (III)Lcom/mojang/minecraft/phys/AABB; func_100633_b
+.package_map com/mojang/minecraft/level/b b
+.package_map com/mojang/minecraft/level/b/a a
+.class_map com/mojang/minecraft/level/b/a/a C_100363_a
+.field_map com/mojang/minecraft/level/b/a/a/a field_100676_a
+.field_map com/mojang/minecraft/level/b/a/a/b field_100677_b
+.method_map com/mojang/minecraft/level/b/a/a/a (DD)D func_100669_a
+.class_map com/mojang/minecraft/level/b/a/b C_100364_b
+.field_map com/mojang/minecraft/level/b/a/b/a field_100670_a
+.field_map com/mojang/minecraft/level/b/a/b/b field_100671_b
+.method_map com/mojang/minecraft/level/b/a/b/a (DD)D func_100669_a
+.class_map com/mojang/minecraft/level/b/a/c C_100365_c
+.method_map com/mojang/minecraft/level/b/a/c/a (DD)D func_100669_a
+.class_map com/mojang/minecraft/level/b/a/d C_100366_d
+.field_map com/mojang/minecraft/level/b/a/d/a field_100675_a
+.method_map com/mojang/minecraft/level/b/a/d/a (D)D func_100672_a
+.method_map com/mojang/minecraft/level/b/a/d/a (DDD)D func_100673_a
+.method_map com/mojang/minecraft/level/b/a/d/a (IDDD)D func_100674_a
+.method_map com/mojang/minecraft/level/b/a/d/a (DD)D func_100669_a
+.class_map com/mojang/minecraft/level/b/a C_100362_a
+.field_map com/mojang/minecraft/level/b/a/a field_100685_a
+.field_map com/mojang/minecraft/level/b/a/b field_100686_b
+.field_map com/mojang/minecraft/level/b/a/c field_100687_c
+.field_map com/mojang/minecraft/level/b/a/d field_100688_d
+.field_map com/mojang/minecraft/level/b/a/e field_100689_e
+.field_map com/mojang/minecraft/level/b/a/f field_100690_f
+.field_map com/mojang/minecraft/level/b/a/g field_100691_g
+.method_map com/mojang/minecraft/level/b/a/a (IIII)V func_100678_a
+.method_map com/mojang/minecraft/level/b/a/a (I)V func_100679_a
+.method_map com/mojang/minecraft/level/b/a/a ([I)V func_100680_a
+.method_map com/mojang/minecraft/level/b/a/a (Ljava/lang/String;III)Lcom/mojang/minecraft/level/Level; func_100681_a
+.method_map com/mojang/minecraft/level/b/a/b ([I)V func_100682_b
+.method_map com/mojang/minecraft/level/b/a/a ()V func_100683_a
+.method_map com/mojang/minecraft/level/b/a/a (IIIII)J func_100684_a
+.package_map com/mojang/minecraft/level/c c
+.class_map com/mojang/minecraft/level/c/a C_100367_a
+.field_map com/mojang/minecraft/level/c/a/a field_100692_a
+.field_map com/mojang/minecraft/level/c/a/b field_100693_b
+.field_map com/mojang/minecraft/level/c/a/c field_100694_c
+.field_map com/mojang/minecraft/level/c/a/d field_100695_d
+.class_map com/mojang/minecraft/level/a C_100350_a
+.field_map com/mojang/minecraft/level/a/a field_100702_a
+.method_map com/mojang/minecraft/level/a/a (Lcom/mojang/minecraft/level/Level;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Z func_100696_a
+.method_map com/mojang/minecraft/level/a/b (Ljava/io/InputStream;)Lcom/mojang/minecraft/level/Level; func_100697_b
+.method_map com/mojang/minecraft/level/a/a (Ljava/lang/String;Ljava/lang/String;I)Lcom/mojang/minecraft/level/Level; func_100698_a
+.method_map com/mojang/minecraft/level/a/c (Ljava/io/InputStream;)[B func_100699_c
+.method_map com/mojang/minecraft/level/a/a (Lcom/mojang/minecraft/level/Level;Ljava/io/OutputStream;)V func_100700_a
+.method_map com/mojang/minecraft/level/a/a (Ljava/io/InputStream;)Lcom/mojang/minecraft/level/Level; func_100701_a
+.class_map com/mojang/minecraft/level/b C_100351_b
+.field_map com/mojang/minecraft/level/b/a field_100703_a
+.field_map com/mojang/minecraft/level/b/b field_100704_b
+.field_map com/mojang/minecraft/level/b/c field_100705_c
+.field_map com/mojang/minecraft/level/b/d field_100706_d
+.field_map com/mojang/minecraft/level/b/e field_100707_e
+.class_map com/mojang/minecraft/level/Level C_100352_Level
+.field_map com/mojang/minecraft/level/Level/a field_100742_a
+.field_map com/mojang/minecraft/level/Level/creator field_100743_creator
+.field_map com/mojang/minecraft/level/Level/ySpawn field_100744_ySpawn
+.field_map com/mojang/minecraft/level/Level/b field_100745_b
+.field_map com/mojang/minecraft/level/Level/c field_100746_c
+.field_map com/mojang/minecraft/level/Level/d field_100747_d
+.field_map com/mojang/minecraft/level/Level/e field_100748_e
+.field_map com/mojang/minecraft/level/Level/blocks field_100749_blocks
+.field_map com/mojang/minecraft/level/Level/unprocessed field_100750_unprocessed
+.field_map com/mojang/minecraft/level/Level/xSpawn field_100751_xSpawn
+.field_map com/mojang/minecraft/level/Level/serialVersionUID field_100752_serialVersionUID
+.field_map com/mojang/minecraft/level/Level/depth field_100753_depth
+.field_map com/mojang/minecraft/level/Level/tickCount field_100754_tickCount
+.field_map com/mojang/minecraft/level/Level/zSpawn field_100755_zSpawn
+.field_map com/mojang/minecraft/level/Level/createTime field_100756_createTime
+.field_map com/mojang/minecraft/level/Level/rotSpawn field_100757_rotSpawn
+.field_map com/mojang/minecraft/level/Level/entities field_100758_entities
+.field_map com/mojang/minecraft/level/Level/width field_100759_width
+.field_map com/mojang/minecraft/level/Level/name field_100760_name
+.field_map com/mojang/minecraft/level/Level/height field_100761_height
+.method_map com/mojang/minecraft/level/Level/setTileNoNeighborChange (IIII)Z func_100708_setTileNoNeighborChange
+.method_map com/mojang/minecraft/level/Level/getCaveness (FFFF)F func_100709_getCaveness
+.method_map com/mojang/minecraft/level/Level/isLightBlocker (III)Z func_100710_isLightBlocker
+.method_map com/mojang/minecraft/level/Level/getHighestTile (II)I func_100711_getHighestTile
+.method_map com/mojang/minecraft/level/Level/containsLiquid (Lcom/mojang/minecraft/phys/AABB;Lcom/mojang/minecraft/level/c/a;)Z func_100712_containsLiquid
+.method_map com/mojang/minecraft/level/Level/setData (III[B)V func_100713_setData
+.method_map com/mojang/minecraft/level/Level/findSpawn ()V func_100714_findSpawn
+.method_map com/mojang/minecraft/level/Level/containsAnyLiquid (Lcom/mojang/minecraft/phys/AABB;)Z func_100715_containsAnyLiquid
+.method_map com/mojang/minecraft/level/Level/tickEntities ()V func_100716_tickEntities
+.method_map com/mojang/minecraft/level/Level/getWaterLevel ()F func_100717_getWaterLevel
+.method_map com/mojang/minecraft/level/Level/a (III)Z func_100718_a
+.method_map com/mojang/minecraft/level/Level/setTileNoUpdate (IIII)Z func_100719_setTileNoUpdate
+.method_map com/mojang/minecraft/level/Level/initTransient ()V func_100720_initTransient
+.method_map com/mojang/minecraft/level/Level/tick ()V func_100721_tick
+.method_map com/mojang/minecraft/level/Level/swap (IIIIII)V func_100722_swap
+.method_map com/mojang/minecraft/level/Level/calcLightDepths (IIII)V func_100723_calcLightDepths
+.method_map com/mojang/minecraft/level/Level/isSolidTile (III)Z func_100724_isSolidTile
+.method_map com/mojang/minecraft/level/Level/addToTickNextTick (IIII)V func_100725_addToTickNextTick
+.method_map com/mojang/minecraft/level/Level/getCaveness (Lcom/mojang/minecraft/Entity;)F func_100726_getCaveness
+.method_map com/mojang/minecraft/level/Level/getCubes (Lcom/mojang/minecraft/phys/AABB;)Ljava/util/ArrayList; func_100727_getCubes
+.method_map com/mojang/minecraft/level/Level/a (FFF)Z func_100728_a
+.method_map com/mojang/minecraft/level/Level/setTile (IIII)Z func_100729_setTile
+.method_map com/mojang/minecraft/level/Level/isLit (III)Z func_100730_isLit
+.method_map com/mojang/minecraft/level/Level/isFree (Lcom/mojang/minecraft/phys/AABB;)Z func_100731_isFree
+.method_map com/mojang/minecraft/level/Level/getBrightness (III)F func_100732_getBrightness
+.method_map com/mojang/minecraft/level/Level/a (IIII)V func_100733_a
+.method_map com/mojang/minecraft/level/Level/getGroundLevel ()F func_100734_getGroundLevel
+.method_map com/mojang/minecraft/level/Level/getTile (III)I func_100735_getTile
+.method_map com/mojang/minecraft/level/Level/removeListener$74652038 (Lcom/mojang/minecraft/a/g;)V func_100736_removeListener$74652038
+.method_map com/mojang/minecraft/level/Level/b (IIII)V func_100737_b
+.method_map com/mojang/minecraft/level/Level/isSolid (FFFF)Z func_100738_isSolid
+.method_map com/mojang/minecraft/level/Level/finalize ()V finalize
+.method_map com/mojang/minecraft/level/Level/addListener$74652038 (Lcom/mojang/minecraft/a/g;)V func_100739_addListener$74652038
+.method_map com/mojang/minecraft/level/Level/setSpawnPos (IIIF)V func_100740_setSpawnPos
+.method_map com/mojang/minecraft/level/Level/copyBlocks ()[B func_100741_copyBlocks
+.package_map com/mojang/minecraft/phys phys
+.class_map com/mojang/minecraft/phys/AABB C_100368_AABB
+.field_map com/mojang/minecraft/phys/AABB/epsilon field_100770_epsilon
+.field_map com/mojang/minecraft/phys/AABB/serialVersionUID field_100771_serialVersionUID
+.field_map com/mojang/minecraft/phys/AABB/z0 field_100772_z0
+.field_map com/mojang/minecraft/phys/AABB/y0 field_100773_y0
+.field_map com/mojang/minecraft/phys/AABB/z1 field_100774_z1
+.field_map com/mojang/minecraft/phys/AABB/x0 field_100775_x0
+.field_map com/mojang/minecraft/phys/AABB/y1 field_100776_y1
+.field_map com/mojang/minecraft/phys/AABB/x1 field_100777_x1
+.method_map com/mojang/minecraft/phys/AABB/clipZCollide (Lcom/mojang/minecraft/phys/AABB;F)F func_100762_clipZCollide
+.method_map com/mojang/minecraft/phys/AABB/clipYCollide (Lcom/mojang/minecraft/phys/AABB;F)F func_100763_clipYCollide
+.method_map com/mojang/minecraft/phys/AABB/move (FFF)V func_100764_move
+.method_map com/mojang/minecraft/phys/AABB/cloneMove (FFF)Lcom/mojang/minecraft/phys/AABB; func_100765_cloneMove
+.method_map com/mojang/minecraft/phys/AABB/intersects (Lcom/mojang/minecraft/phys/AABB;)Z func_100766_intersects
+.method_map com/mojang/minecraft/phys/AABB/grow (FFF)Lcom/mojang/minecraft/phys/AABB; func_100767_grow
+.method_map com/mojang/minecraft/phys/AABB/clipXCollide (Lcom/mojang/minecraft/phys/AABB;F)F func_100768_clipXCollide
+.method_map com/mojang/minecraft/phys/AABB/expand (FFF)Lcom/mojang/minecraft/phys/AABB; func_100769_expand
+.package_map com/mojang/minecraft/particle particle
+.class_map com/mojang/minecraft/particle/Particle C_100369_Particle
+.field_map com/mojang/minecraft/particle/Particle/size field_100580_size
+.field_map com/mojang/minecraft/particle/Particle/tex field_100581_tex
+.field_map com/mojang/minecraft/particle/Particle/gravity field_100582_gravity
+.field_map com/mojang/minecraft/particle/Particle/lifetime field_100583_lifetime
+.field_map com/mojang/minecraft/particle/Particle/vo field_100584_vo
+.field_map com/mojang/minecraft/particle/Particle/zd field_100562_zd
+.field_map com/mojang/minecraft/particle/Particle/uo field_100585_uo
+.field_map com/mojang/minecraft/particle/Particle/yd field_100563_yd
+.field_map com/mojang/minecraft/particle/Particle/xd field_100564_xd
+.field_map com/mojang/minecraft/particle/Particle/age field_100586_age
+.method_map com/mojang/minecraft/particle/Particle/render (Lcom/mojang/minecraft/a/c;FFFFFF)V func_100579_render
+.method_map com/mojang/minecraft/particle/Particle/tick ()V func_100552_tick
+.class_map com/mojang/minecraft/particle/a C_100370_a
+.field_map com/mojang/minecraft/particle/a/a field_100779_a
+.field_map com/mojang/minecraft/particle/a/b field_100780_b
+.method_map com/mojang/minecraft/particle/a/a (Lcom/mojang/minecraft/player/Player;F)V func_100778_a
+.package_map com/mojang/minecraft/net net
+.class_map com/mojang/minecraft/net/a C_100371_a
+.field_map com/mojang/minecraft/net/a/a field_100781_a
+.field_map com/mojang/minecraft/net/a/b field_100782_b
+.field_map com/mojang/minecraft/net/a/c field_100783_c
+.field_map com/mojang/minecraft/net/a/d field_100784_d
+.field_map com/mojang/minecraft/net/a/e field_100785_e
+.field_map com/mojang/minecraft/net/a/f field_100786_f
+.field_map com/mojang/minecraft/net/a/g field_100787_g
+.field_map com/mojang/minecraft/net/a/h field_100788_h
+.field_map com/mojang/minecraft/net/a/i field_100789_i
+.field_map com/mojang/minecraft/net/a/j field_100790_j
+.field_map com/mojang/minecraft/net/a/k field_100791_k
+.field_map com/mojang/minecraft/net/a/l field_100792_l
+.field_map com/mojang/minecraft/net/a/m field_100793_m
+.field_map com/mojang/minecraft/net/a/n field_100794_n
+.field_map com/mojang/minecraft/net/a/o field_100795_o
+.field_map com/mojang/minecraft/net/a/p field_100796_p
+.field_map com/mojang/minecraft/net/a/q field_100797_q
+.field_map com/mojang/minecraft/net/a/r field_100798_r
+.field_map com/mojang/minecraft/net/a/s field_100799_s
+.class_map com/mojang/minecraft/net/b C_100372_b
+.field_map com/mojang/minecraft/net/b/a field_100800_a
+.field_map com/mojang/minecraft/net/b/b field_100801_b
+.field_map com/mojang/minecraft/net/b/c field_100802_c
+.field_map com/mojang/minecraft/net/b/d field_100803_d
+.field_map com/mojang/minecraft/net/b/e field_100804_e
+.field_map com/mojang/minecraft/net/b/f field_100805_f
+.field_map com/mojang/minecraft/net/b/g field_100806_g
+.class_map com/mojang/minecraft/net/c C_100373_c
+.field_map com/mojang/minecraft/net/c/a field_100808_a
+.field_map com/mojang/minecraft/net/c/b field_100809_b
+.field_map com/mojang/minecraft/net/c/c field_100810_c
+.field_map com/mojang/minecraft/net/c/d field_100811_d
+.method_map com/mojang/minecraft/net/c/a (IIIII)V func_100807_a
+.class_map com/mojang/minecraft/net/NetworkPlayer C_100374_NetworkPlayer
+.field_map com/mojang/minecraft/net/NetworkPlayer/minecraft field_100591_minecraft
+.field_map com/mojang/minecraft/net/NetworkPlayer/yBodyRot field_100592_yBodyRot
+.field_map com/mojang/minecraft/net/NetworkPlayer/a field_100593_a
+.field_map com/mojang/minecraft/net/NetworkPlayer/serialVersionUID field_100594_serialVersionUID
+.field_map com/mojang/minecraft/net/NetworkPlayer/zp field_100595_zp
+.field_map com/mojang/minecraft/net/NetworkPlayer/animStepO field_100596_animStepO
+.field_map com/mojang/minecraft/net/NetworkPlayer/yp field_100597_yp
+.field_map com/mojang/minecraft/net/NetworkPlayer/xp field_100598_xp
+.field_map com/mojang/minecraft/net/NetworkPlayer/name field_100599_name
+.field_map com/mojang/minecraft/net/NetworkPlayer/moveQueue field_100600_moveQueue
+.field_map com/mojang/minecraft/net/NetworkPlayer/yBodyRotO field_100601_yBodyRotO
+.field_map com/mojang/minecraft/net/NetworkPlayer/animStep field_100602_animStep
+.method_map com/mojang/minecraft/net/NetworkPlayer/queue (BBBFF)V func_100587_queue
+.method_map com/mojang/minecraft/net/NetworkPlayer/queue (FF)V func_100588_queue
+.method_map com/mojang/minecraft/net/NetworkPlayer/tick ()V func_100552_tick
+.method_map com/mojang/minecraft/net/NetworkPlayer/queue (BBB)V func_100589_queue
+.method_map com/mojang/minecraft/net/NetworkPlayer/teleport (SSSFF)V func_100590_teleport
+.method_map com/mojang/minecraft/net/NetworkPlayer/render (Lcom/mojang/minecraft/a/a;F)V func_100543_render
+.package_map com/mojang/minecraft/player player
+.class_map com/mojang/minecraft/player/a C_100375_a
+.field_map com/mojang/minecraft/player/a/a field_100815_a
+.field_map com/mojang/minecraft/player/a/b field_100816_b
+.field_map com/mojang/minecraft/player/a/c field_100817_c
+.field_map com/mojang/minecraft/player/a/d field_100818_d
+.method_map com/mojang/minecraft/player/a/a ()V func_100812_a
+.method_map com/mojang/minecraft/player/a/a (IZ)V func_100813_a
+.method_map com/mojang/minecraft/player/a/b ()V func_100814_b
+.class_map com/mojang/minecraft/player/b C_100376_b
+.field_map com/mojang/minecraft/player/b/e field_100819_e
+.method_map com/mojang/minecraft/player/b/a ()V func_100812_a
+.method_map com/mojang/minecraft/player/b/a (IZ)V func_100813_a
+.method_map com/mojang/minecraft/player/b/b ()V func_100814_b
+.class_map com/mojang/minecraft/player/Player C_100377_Player
+.field_map com/mojang/minecraft/player/Player/input field_100605_input
+.method_map com/mojang/minecraft/player/Player/releaseAllKeys ()V func_100603_releaseAllKeys
+.method_map com/mojang/minecraft/player/Player/tick ()V func_100552_tick
+.method_map com/mojang/minecraft/player/Player/setKey (IZ)V func_100604_setKey
+.class_map com/mojang/minecraft/a C_100320_a
+.field_map com/mojang/minecraft/a/a field_100820_a
+.field_map com/mojang/minecraft/a/b field_100821_b
+.class_map com/mojang/minecraft/Entity C_100321_Entity
+.field_map com/mojang/minecraft/Entity/bb field_100557_bb
+.field_map com/mojang/minecraft/Entity/yRotO field_100558_yRotO
+.field_map com/mojang/minecraft/Entity/level field_100559_level
+.field_map com/mojang/minecraft/Entity/yRot field_100560_yRot
+.field_map com/mojang/minecraft/Entity/xRot field_100561_xRot
+.field_map com/mojang/minecraft/Entity/zd field_100562_zd
+.field_map com/mojang/minecraft/Entity/yd field_100563_yd
+.field_map com/mojang/minecraft/Entity/xd field_100564_xd
+.field_map com/mojang/minecraft/Entity/heightOffset field_100565_heightOffset
+.field_map com/mojang/minecraft/Entity/xRotO field_100566_xRotO
+.field_map com/mojang/minecraft/Entity/serialVersionUID field_100567_serialVersionUID
+.field_map com/mojang/minecraft/Entity/onGround field_100568_onGround
+.field_map com/mojang/minecraft/Entity/removed field_100569_removed
+.field_map com/mojang/minecraft/Entity/bbHeight field_100570_bbHeight
+.field_map com/mojang/minecraft/Entity/zo field_100571_zo
+.field_map com/mojang/minecraft/Entity/yo field_100572_yo
+.field_map com/mojang/minecraft/Entity/xo field_100573_xo
+.field_map com/mojang/minecraft/Entity/x field_100574_x
+.field_map com/mojang/minecraft/Entity/y field_100575_y
+.field_map com/mojang/minecraft/Entity/z field_100576_z
+.field_map com/mojang/minecraft/Entity/bbWidth field_100577_bbWidth
+.field_map com/mojang/minecraft/Entity/horizontalCollision field_100578_horizontalCollision
+.method_map com/mojang/minecraft/Entity/setPos (FFF)V func_100538_setPos
+.method_map com/mojang/minecraft/Entity/turn (FF)V func_100539_turn
+.method_map com/mojang/minecraft/Entity/interpolateTurn (FF)V func_100540_interpolateTurn
+.method_map com/mojang/minecraft/Entity/moveTo (FFFFF)V func_100541_moveTo
+.method_map com/mojang/minecraft/Entity/setLevel (Lcom/mojang/minecraft/level/Level;)V func_100542_setLevel
+.method_map com/mojang/minecraft/Entity/render (Lcom/mojang/minecraft/a/a;F)V func_100543_render
+.method_map com/mojang/minecraft/Entity/isInLava ()Z func_100544_isInLava
+.method_map com/mojang/minecraft/Entity/setSize (FF)V func_100545_setSize
+.method_map com/mojang/minecraft/Entity/setRot (FF)V func_100546_setRot
+.method_map com/mojang/minecraft/Entity/move (FFF)V func_100547_move
+.method_map com/mojang/minecraft/Entity/isFree (FFF)Z func_100548_isFree
+.method_map com/mojang/minecraft/Entity/moveRelative (FFF)V func_100549_moveRelative
+.method_map com/mojang/minecraft/Entity/isLit ()Z func_100550_isLit
+.method_map com/mojang/minecraft/Entity/isInWater ()Z func_100551_isInWater
+.method_map com/mojang/minecraft/Entity/tick ()V func_100552_tick
+.method_map com/mojang/minecraft/Entity/resetPos ()V func_100553_resetPos
+.method_map com/mojang/minecraft/Entity/setPos (Lcom/mojang/minecraft/net/b;)V func_100554_setPos
+.method_map com/mojang/minecraft/Entity/getBrightness ()F func_100555_getBrightness
+.method_map com/mojang/minecraft/Entity/remove ()V func_100556_remove
+.class_map com/mojang/minecraft/b C_100322_b
+.field_map com/mojang/minecraft/b/a field_100822_a
+.field_map com/mojang/minecraft/b/b field_100823_b
+.class_map com/mojang/minecraft/c C_100323_c
+.field_map com/mojang/minecraft/c/a field_100824_a
+.field_map com/mojang/minecraft/c/b field_100825_b
+.field_map com/mojang/minecraft/c/c field_100826_c
+.field_map com/mojang/minecraft/c/d field_100827_d
+.field_map com/mojang/minecraft/c/e field_100828_e
+.field_map com/mojang/minecraft/c/f field_100829_f
+.class_map com/mojang/minecraft/d C_100324_d
+.field_map com/mojang/minecraft/d/A field_100854_A
+.field_map com/mojang/minecraft/d/B field_100855_B
+.field_map com/mojang/minecraft/d/C field_100856_C
+.field_map com/mojang/minecraft/d/D field_100857_D
+.field_map com/mojang/minecraft/d/E field_100858_E
+.field_map com/mojang/minecraft/d/F field_100859_F
+.field_map com/mojang/minecraft/d/G field_100860_G
+.field_map com/mojang/minecraft/d/H field_100861_H
+.field_map com/mojang/minecraft/d/I field_100862_I
+.field_map com/mojang/minecraft/d/J field_100863_J
+.field_map com/mojang/minecraft/d/K field_100864_K
+.field_map com/mojang/minecraft/d/L field_100865_L
+.field_map com/mojang/minecraft/d/M field_100866_M
+.field_map com/mojang/minecraft/d/N field_100867_N
+.field_map com/mojang/minecraft/d/O field_100868_O
+.field_map com/mojang/minecraft/d/P field_100869_P
+.field_map com/mojang/minecraft/d/Q field_100870_Q
+.field_map com/mojang/minecraft/d/R field_100871_R
+.field_map com/mojang/minecraft/d/S field_100872_S
+.field_map com/mojang/minecraft/d/T field_100873_T
+.field_map com/mojang/minecraft/d/U field_100874_U
+.field_map com/mojang/minecraft/d/V field_100875_V
+.field_map com/mojang/minecraft/d/W field_100876_W
+.field_map com/mojang/minecraft/d/X field_100877_X
+.field_map com/mojang/minecraft/d/Y field_100878_Y
+.field_map com/mojang/minecraft/d/a field_100879_a
+.field_map com/mojang/minecraft/d/b field_100880_b
+.field_map com/mojang/minecraft/d/c field_100881_c
+.field_map com/mojang/minecraft/d/d field_100882_d
+.field_map com/mojang/minecraft/d/e field_100883_e
+.field_map com/mojang/minecraft/d/f field_100884_f
+.field_map com/mojang/minecraft/d/g field_100885_g
+.field_map com/mojang/minecraft/d/h field_100886_h
+.field_map com/mojang/minecraft/d/i field_100887_i
+.field_map com/mojang/minecraft/d/j field_100888_j
+.field_map com/mojang/minecraft/d/k field_100889_k
+.field_map com/mojang/minecraft/d/l field_100890_l
+.field_map com/mojang/minecraft/d/m field_100891_m
+.field_map com/mojang/minecraft/d/n field_100892_n
+.field_map com/mojang/minecraft/d/o field_100893_o
+.field_map com/mojang/minecraft/d/p field_100894_p
+.field_map com/mojang/minecraft/d/q field_100895_q
+.field_map com/mojang/minecraft/d/r field_100896_r
+.field_map com/mojang/minecraft/d/s field_100897_s
+.field_map com/mojang/minecraft/d/t field_100898_t
+.field_map com/mojang/minecraft/d/u field_100899_u
+.field_map com/mojang/minecraft/d/v field_100900_v
+.field_map com/mojang/minecraft/d/w field_100901_w
+.field_map com/mojang/minecraft/d/x field_100902_x
+.field_map com/mojang/minecraft/d/y field_100903_y
+.field_map com/mojang/minecraft/d/z field_100904_z
+.method_map com/mojang/minecraft/d/a (Ljava/lang/String;)V func_100830_a
+.method_map com/mojang/minecraft/d/d (Ljava/lang/String;)V func_100831_d
+.method_map com/mojang/minecraft/d/a (Lcom/mojang/minecraft/level/Level;)V func_100832_a
+.method_map com/mojang/minecraft/d/b (Ljava/lang/String;I)Z func_100833_b
+.method_map com/mojang/minecraft/d/a ()V func_100834_a
+.method_map com/mojang/minecraft/d/a (FFFF)Ljava/nio/FloatBuffer; func_100835_a
+.method_map com/mojang/minecraft/d/b (Ljava/lang/String;)V func_100836_b
+.method_map com/mojang/minecraft/d/i ()V func_100837_i
+.method_map com/mojang/minecraft/d/g ()Z func_100838_g
+.method_map com/mojang/minecraft/d/e ()V func_100839_e
+.method_map com/mojang/minecraft/d/c ()V func_100840_c
+.method_map com/mojang/minecraft/d/run ()V run
+.method_map com/mojang/minecraft/d/f ()V func_100841_f
+.method_map com/mojang/minecraft/d/h ()V func_100842_h
+.method_map com/mojang/minecraft/d/a (I)V func_100843_a
+.method_map com/mojang/minecraft/d/a (F)V func_100844_a
+.method_map com/mojang/minecraft/d/a (ILjava/lang/String;)Z func_100845_a
+.method_map com/mojang/minecraft/d/b (I)V func_100846_b
+.method_map com/mojang/minecraft/d/a (Ljava/lang/String;I)V func_100847_a
+.method_map com/mojang/minecraft/d/b (F)V func_100848_b
+.method_map com/mojang/minecraft/d/c (Ljava/lang/String;)V func_100849_c
+.method_map com/mojang/minecraft/d/a (Lcom/mojang/minecraft/b/d;)V func_100850_a
+.method_map com/mojang/minecraft/d/j ()V func_100851_j
+.method_map com/mojang/minecraft/d/b ()V func_100852_b
+.method_map com/mojang/minecraft/d/d ()V func_100853_d
+.class_map com/mojang/minecraft/e C_100325_e
+.field_map com/mojang/minecraft/e/a field_100906_a
+.field_map com/mojang/minecraft/e/b field_100907_b
+.field_map com/mojang/minecraft/e/c field_100908_c
+.field_map com/mojang/minecraft/e/d field_100909_d
+.method_map com/mojang/minecraft/e/a (Lcom/mojang/minecraft/player/Player;I)F func_100905_a
+.class_map com/mojang/minecraft/MinecraftApplet$1 1
+.field_map com/mojang/minecraft/MinecraftApplet$1/this$0 field_100910_this$0
+.method_map com/mojang/minecraft/MinecraftApplet$1/removeNotify ()V removeNotify
+.method_map com/mojang/minecraft/MinecraftApplet$1/addNotify ()V addNotify
+.field_map com/mojang/minecraft/MinecraftApplet/minecraft field_100913_minecraft
+.field_map com/mojang/minecraft/MinecraftApplet/canvas field_100914_canvas
+.field_map com/mojang/minecraft/MinecraftApplet/thread field_100915_thread
+.method_map com/mojang/minecraft/MinecraftApplet/stopGameThread ()V func_100911_stopGameThread
+.method_map com/mojang/minecraft/MinecraftApplet/init ()V init
+.method_map com/mojang/minecraft/MinecraftApplet/start ()V start
+.method_map com/mojang/minecraft/MinecraftApplet/startGameThread ()V func_100912_startGameThread
+.method_map com/mojang/minecraft/MinecraftApplet/stop ()V stop
+.method_map com/mojang/minecraft/MinecraftApplet/destroy ()V destroy
+.package_map com/mojang/a a
+.class_map com/mojang/a/a C_100378_a
+.field_map com/mojang/a/a/a field_100920_a
+.field_map com/mojang/a/a/b field_100921_b
+.field_map com/mojang/a/a/c field_100922_c
+.field_map com/mojang/a/a/d field_100923_d
+.field_map com/mojang/a/a/e field_100924_e
+.field_map com/mojang/a/a/f field_100925_f
+.field_map com/mojang/a/a/g field_100926_g
+.field_map com/mojang/a/a/h field_100927_h
+.method_map com/mojang/a/a/a (Lcom/mojang/minecraft/net/a;[Ljava/lang/Object;)V func_100916_a
+.method_map com/mojang/a/a/a (Ljava/lang/Class;)Ljava/lang/Object; func_100917_a
+.method_map com/mojang/a/a/a ()V func_100918_a
+.method_map com/mojang/a/a/b ()V func_100919_b

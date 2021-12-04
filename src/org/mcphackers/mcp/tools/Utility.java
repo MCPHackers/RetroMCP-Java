@@ -10,14 +10,11 @@ import java.util.zip.ZipInputStream;
 
 public class Utility {
 
-	public static int runCommand(String cmd) throws Exception
+	public static int runCommand(String cmd) throws IOException, IllegalArgumentException
 	{
 		Process proc = Runtime.getRuntime().exec(cmd);
 		while(proc.isAlive());
-		int extVal = proc.exitValue();
-		if (extVal == 1)
-			throw new RuntimeException("Failed to execute '" + cmd + "'");
-		return extVal;
+		return proc.exitValue();
 	}
 	
     public static void unzip(String zipFilePath, String destDirectory) throws IOException {

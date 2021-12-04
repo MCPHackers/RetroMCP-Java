@@ -6,7 +6,7 @@ import org.mcphackers.mcp.tasks.TaskDecompile;
 public class TaskInfoDecompile implements TaskInfo {
 
 	public String title() {
-		return "Decompiling...";
+		return "Decompiling";
 	}
 
 	public String successMsg() {

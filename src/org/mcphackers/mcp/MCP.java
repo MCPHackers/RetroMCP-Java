@@ -95,6 +95,7 @@ public class MCP {
 		    		{"recompile", "Recompile Minecraft sources"},
 		    		{"reobfuscate", "Reobfuscate Minecraft classes"},
 		    		{"setup", "Choose a version to setup"},
+		    		{"cleanup", "Deletes all source and class folders"},
 		    		{"updatemcp", "Check for updates"},
 		    		{"updatemd5", "Update md5 hash tables used for reobfuscation"},
 		    		{"exit", "Exit the program"},
@@ -117,7 +118,7 @@ public class MCP {
 		    	logger.println("Unknown command. Type 'help' for list of available commands");
 		    }
 		    args = new String[] {};
-		    MCPConfig.resetConfig();
+		    Conf.resetConfig();
 	    	if(!startedWithNoParams || mode == EnumMode.exit)
 	    		exit = true;
 	    	mode = null;
@@ -130,13 +131,13 @@ public class MCP {
 	{
 		TaskInfo task = getTaskInfo();
 		try {
-			logger.println(task.title());
+			logger.println(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault());
 			processTask(task);
 			logger.println(new Ansi().a('\n').fgBrightGreen().a(task.successMsg()).fgDefault());
 		} catch (Exception e) {
 			logger.println(new Ansi().a('\n').fgBrightRed().a(task.failMsg()).fgDefault());
-			if (MCPConfig.debug) e.printStackTrace();
-			else logger.println("Use -debug to see what went wrong");
+			if (Conf.debug) e.printStackTrace();
+			else {logger.println(e.getMessage()); logger.println("Use -debug for more info");}
 		}
 	}
 	
@@ -210,7 +211,7 @@ public class MCP {
 		        .a(String.join("", Collections.nCopies(10 - percent/10, "-")))
 		        .a("] ")
 		        .a(progressMsg)
-		        .a(String.join("", Collections.nCopies(100 - string.toString().length(), " ")));
+		        .a(String.join("", Collections.nCopies(100, " ")));
 		}
 
 	    return string.a("\n").toString();
@@ -258,7 +259,7 @@ public class MCP {
 	{
 		switch(name) {
 			case "debug":
-				MCPConfig.debug = value;
+				Conf.debug = value;
 				break;
 		}
 	}
