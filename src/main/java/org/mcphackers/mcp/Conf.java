@@ -1,34 +1,27 @@
 package org.mcphackers.mcp;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Conf {
 
-	public static boolean debug;
-	
-	public static final String JARS				 = path("jars/");
-	public static final String CLIENT 	 		 = path("jars/bin/minecraft.jar");
-	public static final String SERVER			 = path("jars/minecraft_server.jar");
-	public static final String CLIENT_RG_OUT 	 = path("temp/minecraft_rg.jar");
-	public static final String SERVER_RG_OUT 	 = path("temp/minecraft_server_rg.jar");
-	public static final String CLIENT_FF_OUT 	 = path("temp/minecraft.jar");
-	public static final String SERVER_FF_OUT 	 = path("temp/minecraft_server.jar");
-	public static final String CFG_RG 	 	 	 = path("temp/retroguard.cfg");
-	public static final String CFG_RG_RO 	 	 = path("temp/retroguard_ro.cfg");
-	
-	public static void resetConfig()
-	{
-		debug = false;
-	}
-	
-	private static String path(String path)
-	{
-		return path.replace("/", File.separator);
-	}
-	
-	static
-	{
-	    resetConfig();
-	}
-	
+    public static final Path JARS = Paths.get("jars/");
+    public static final Path CLIENT = Paths.get("jars/bin/minecraft.jar");
+    public static final Path SERVER = Paths.get("jars/minecraft_server.jar");
+    public static final Path CLIENT_RG_OUT = Paths.get("temp/minecraft_rg.jar");
+    public static final Path SERVER_RG_OUT = Paths.get("temp/minecraft_server_rg.jar");
+    public static final Path CLIENT_FF_OUT = Paths.get("temp/minecraft.jar");
+    public static final Path SERVER_FF_OUT = Paths.get("temp/minecraft_server.jar");
+    public static final Path CFG_RG = Paths.get("temp/retroguard.cfg");
+    public static final Path CFG_RG_RO = Paths.get("temp/retroguard_ro.cfg");
+    public static boolean debug;
+
+    static {
+        resetConfig();
+    }
+
+    public static void resetConfig() {
+        debug = false;
+    }
+
 }

@@ -4,11 +4,11 @@ import org.mcphackers.mcp.tasks.Task;
 
 public interface TaskInfo {
 
-	public abstract String title();
-	
-	public abstract String successMsg();
-	
-	public abstract String failMsg();
-	
-	public abstract Task newTask(int side);
+    String title();
+
+    String successMsg();
+
+    String failMsg();
+
+    Task newTask(int side);
 }

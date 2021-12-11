@@ -1,22 +1,17 @@
 package org.mcphackers.mcp.tools;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Utility {
 
-	public static int runCommand(String cmd) throws IOException, IllegalArgumentException
-	{
-		Process proc = Runtime.getRuntime().exec(cmd);
-		while(proc.isAlive());
-		return proc.exitValue();
-	}
-	
+    public static int runCommand(String cmd) throws IOException, IllegalArgumentException {
+        Process proc = Runtime.getRuntime().exec(cmd);
+        while (proc.isAlive()) ;
+        return proc.exitValue();
+    }
+
     public static void unzip(String zipFilePath, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {

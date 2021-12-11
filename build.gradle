@@ -4,6 +4,11 @@ plugins {
     id 'java'
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+mainClassName = 'org.mcphackers.mcp.MCP'
+
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
@@ -27,5 +32,24 @@ application {
 }
 
 runShadow {
-    args '-Duser.dir=test'
+
 }
+
+task decompile(type: JavaExec) {
+    group 'RetroMCP-Java'
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'decompile', '-debug'
+}
+
+/*task setup(type: JavaExec) {
+    group = 'RetroMCP-Java'
+    standardInput = System.in
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'setup', '-debug'
+}*/
