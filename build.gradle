@@ -1,0 +1,31 @@
+plugins {
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    flatDir {
+        dirs "libs"
+    }
+}
+
+dependencies {
+    // Required libraries
+    implementation 'com.github.MCPHackers:RetroFernflower:27123b6ebe'
+    implementation 'com.github.ModCoderPack:MCInjector:3.8'
+    implementation 'org.fusesource.jansi:jansi:2.4.0'
+    implementation name: 'retroguard'
+}
+
+application {
+    // Redirect all execution into the testing folder
+    mainClass = 'org.mcphackers.mcp.MCP'
+    executableDir = 'test'
+}
+
+runShadow {
+    args '-Duser.dir=test'
+}
