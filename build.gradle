@@ -44,7 +44,7 @@ task decompile(type: JavaExec) {
     args 'decompile', '-debug'
 }
 
-/*task setup(type: JavaExec) {
+task setup(type: JavaExec) {
     group = 'RetroMCP-Java'
     standardInput = System.in
 
@@ -52,4 +52,4 @@ task decompile(type: JavaExec) {
     main = mainClassName
     workingDir 'test'
     args 'setup', '-debug'
-}*/
+}

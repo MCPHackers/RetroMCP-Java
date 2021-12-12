@@ -1,8 +1,16 @@
 package org.mcphackers.mcp.tools;
 
-import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import com.sun.nio.zipfs.ZipFileSystem;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public class Utility {
 
@@ -12,34 +20,71 @@ public class Utility {
         return proc.exitValue();
     }
 
-    public static void unzip(String zipFilePath, String destDirectory) throws IOException {
-        File destDir = new File(destDirectory);
-        if (!destDir.exists()) {
-            destDir.mkdir();
-        }
-        ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
-        ZipEntry entry = zipIn.getNextEntry();
-        while (entry != null) {
-            String filePath = destDirectory + File.separator + entry.getName();
-            if (!entry.isDirectory()) {
-                extractFile(zipIn, filePath);
-            } else {
-                File dir = new File(filePath);
-                dir.mkdirs();
+    public static void unzip(final InputStream input, final Path destDirectory) throws IOException {
+        Path zipPath = null;
+        try {
+            zipPath = Files.createTempFile("unzipStream", ".zip");
+            Files.copy(input, zipPath, StandardCopyOption.REPLACE_EXISTING);
+            unzip(zipPath, destDirectory);
+        } finally {
+            input.close();
+            if (zipPath != null) {
+                Files.deleteIfExists(zipPath);
             }
-            zipIn.closeEntry();
-            entry = zipIn.getNextEntry();
         }
-        zipIn.close();
     }
 
-    private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-        byte[] bytesIn = new byte[4096];
-        int read = 0;
-        while ((read = zipIn.read(bytesIn)) != -1) {
-            bos.write(bytesIn, 0, read);
+    public static void unzip(final Path zipFile, final Path destDir) throws IOException {
+        if (Files.notExists(destDir)) {
+            Files.createDirectories(destDir);
         }
-        bos.close();
+
+        try (ZipFileSystem zipFileSystem = (ZipFileSystem) FileSystems.newFileSystem(zipFile, null)) {
+            final Path root = zipFileSystem.getRootDirectories().iterator().next();
+
+            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    final Path destFile = Paths.get(destDir.toString(), file.toString());
+                    try {
+                        Files.copy(file, destFile, StandardCopyOption.REPLACE_EXISTING);
+                    } catch (DirectoryNotEmptyException ignore) {
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    final Path dirToCreate = Paths.get(destDir.toString(), dir.toString());
+                    if (Files.notExists(dirToCreate)) {
+                        Files.createDirectory(dirToCreate);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+    }
+
+    public static void downloadFile(URL url, String fileName) {
+        try {
+            ReadableByteChannel channel = Channels.newChannel(url.openStream());
+            try (FileOutputStream stream = new FileOutputStream(fileName)) {
+                FileChannel fileChannel = stream.getChannel();
+                fileChannel.transferFrom(channel, 0, Long.MAX_VALUE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static String getOperatingSystem() {
+        String osName = System.getProperty("os.name");
+        if (osName.toLowerCase().startsWith("windows")) {
+            return "windows";
+        } else {
+            // TODO: Make this work for other OSes
+            return "null";
+        }
     }
 }

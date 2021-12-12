@@ -1,29 +1,31 @@
 package org.mcphackers.mcp.tasks.info;
 
 import org.mcphackers.mcp.tasks.Task;
-import org.mcphackers.mcp.tasks.TaskDecompile;
+import org.mcphackers.mcp.tasks.TaskSetup;
 
-public class TaskInfoDecompile implements TaskInfo {
-
+public class TaskInfoSetup implements TaskInfo {
+    @Override
     public String title() {
-        return "Decompiling";
+        return "Setup";
     }
 
+    @Override
     public String successMsg() {
-        return "SUCCESSFULLY DECOMPILED!";
+        return "SETUP SUCCESSFUL!";
     }
 
+    @Override
     public String failMsg() {
-        return "DECOMPILE FAILED!";
+        return "SETUP FAILED!";
     }
 
+    @Override
     public Task newTask(int side) {
-        return new TaskDecompile(side);
+        return new TaskSetup();
     }
 
     @Override
     public boolean hasServerThread() {
-        return true;
+        return false;
     }
-
 }

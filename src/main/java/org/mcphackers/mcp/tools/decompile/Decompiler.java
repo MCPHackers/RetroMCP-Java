@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tools;
+package org.mcphackers.mcp.tools.decompile;
 
 import de.fernflower.main.DecompilerContext;
 import de.fernflower.main.decompiler.BaseDecompiler;
@@ -169,7 +169,7 @@ public class Decompiler implements IBytecodeProvider, IResultSaver {
     private boolean checkEntry(String entryName, String file) {
         Set<String> set = mapArchiveEntries.get(file);
         if (set == null) {
-            mapArchiveEntries.put(file, set = new HashSet<String>());
+            mapArchiveEntries.put(file, set = new HashSet<>());
         }
 
         boolean added = set.add(entryName);

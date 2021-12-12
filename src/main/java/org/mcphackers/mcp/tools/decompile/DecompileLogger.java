@@ -1,6 +1,7 @@
-package org.mcphackers.mcp.tools;
+package org.mcphackers.mcp.tools.decompile;
 
 import de.fernflower.main.extern.IFernflowerLogger;
+import org.mcphackers.mcp.tools.ProgressInfo;
 
 public class DecompileLogger extends IFernflowerLogger {
 

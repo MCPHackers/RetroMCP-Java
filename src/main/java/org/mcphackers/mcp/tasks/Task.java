@@ -2,15 +2,9 @@ package org.mcphackers.mcp.tasks;
 
 import org.mcphackers.mcp.tools.ProgressInfo;
 
-public abstract class Task {
+public interface Task {
 
-    protected int side;
+    void doTask() throws Exception;
 
-    public Task(int side) {
-        this.side = side;
-    }
-
-    public abstract void doTask() throws Exception;
-
-    public abstract ProgressInfo getProgress();
+    ProgressInfo getProgress();
 }

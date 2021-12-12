@@ -3,20 +3,21 @@ package org.mcphackers.mcp.tasks;
 import COM.rl.NameProvider;
 import COM.rl.obf.RetroGuardImpl;
 import org.mcphackers.mcp.Conf;
-import org.mcphackers.mcp.tools.Decompiler;
+import org.mcphackers.mcp.tools.decompile.Decompiler;
 import org.mcphackers.mcp.tools.ProgressInfo;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class TaskDecompile extends Task {
+public class TaskDecompile implements Task {
 
     private final Decompiler decompiler;
     private int step;
+    private final int side;
 
     public TaskDecompile(int side) {
-        super(side);
+        this.side = side;
         step = 0;
         decompiler = new Decompiler();
     }

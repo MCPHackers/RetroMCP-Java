@@ -11,4 +11,6 @@ public interface TaskInfo {
     String failMsg();
 
     Task newTask(int side);
+
+    boolean hasServerThread();
 }

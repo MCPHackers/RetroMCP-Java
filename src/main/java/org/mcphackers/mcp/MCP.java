@@ -4,6 +4,7 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfoDecompile;
+import org.mcphackers.mcp.tasks.info.TaskInfoSetup;
 import org.mcphackers.mcp.tools.ProgressInfo;
 
 import java.io.PrintStream;
@@ -132,6 +133,8 @@ public class MCP {
                 return new TaskInfoDecompile();
             case recompile:
                 //return new TaskInfoRecompile();
+            case setup:
+                return new TaskInfoSetup();
             default:
                 return null;
         }
@@ -140,7 +143,7 @@ public class MCP {
     private static void processTask(TaskInfo task) throws Exception {
         SideThread clientThread = null;
         SideThread serverThread = null;
-        boolean hasServerThread = true;
+        boolean hasServerThread = task.hasServerThread();
         int threads = 1;
         if (hasServerThread) threads = 2;
         for (int i = 0; i < threads + 1; i++) {
@@ -159,13 +162,13 @@ public class MCP {
             alive1 = clientThread.isAlive();
             if (hasServerThread) alive2 = serverThread.isAlive();
             // Moves the blinking cursor above progress bars (Temporary solution)
-            String s = new Ansi().cursorUp(threads + 1).a('\n').toString();
+            StringBuilder s = new StringBuilder(new Ansi().cursorUp(threads + 1).a('\n').toString());
             for (int i = 0; i < threads; i++) {
                 ProgressInfo dinfo = i == 0 ? clientThread.getInfo() : serverThread.getInfo();
                 String side = i == 0 ? clientThread.getSideName() : serverThread.getSideName();
-                s += progressString(dinfo.progress[1], dinfo.progress[0], dinfo.msg, side + ":");
+                s.append(progressString(dinfo.progress[1], dinfo.progress[0], dinfo.msg, side + ":"));
             }
-            s += new Ansi().restoreCursorPosition().toString();
+            s.append(new Ansi().restoreCursorPosition().toString());
             logger.print(s);
             if (clientThread.exception != null)
                 throw clientThread.exception;
