@@ -1,6 +1,8 @@
 package org.mcphackers.mcp.tools;
 
 import com.sun.nio.zipfs.ZipFileSystem;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Comparator;
 
 public class Utility {
 
@@ -86,5 +89,32 @@ public class Utility {
             // TODO: Make this work for other OSes
             return "null";
         }
+    }
+
+    public static JSONObject parseJSONFile(Path path) throws JSONException, IOException {
+        String content = new String(Files.readAllBytes(path));
+        return new JSONObject(content);
+    }
+
+    public static void deleteDirectoryStream(Path path) throws IOException {
+        if (Files.exists(path)) {
+            Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach((file) -> {
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    System.err.println("Failed to delete " + file.getAbsolutePath());
+                }
+            });
+        }
+    }
+
+    public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
+        Files.walk(sourceFolder).forEach(source -> {
+            Path destination = Paths.get(targetFolder.toString(), source.toString().substring(sourceFolder.toString().length()));
+            try {
+                Files.copy(source, destination);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

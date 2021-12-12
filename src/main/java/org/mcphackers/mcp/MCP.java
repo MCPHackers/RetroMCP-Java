@@ -169,7 +169,7 @@ public class MCP {
                 s.append(progressString(dinfo.progress[1], dinfo.progress[0], dinfo.msg, side + ":"));
             }
             s.append(new Ansi().restoreCursorPosition().toString());
-            logger.print(s);
+            //logger.print(s);
             if (clientThread.exception != null)
                 throw clientThread.exception;
             if (hasServerThread)

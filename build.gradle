@@ -23,6 +23,7 @@ dependencies {
     implementation 'com.github.ModCoderPack:MCInjector:3.8'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
     implementation name: 'retroguard'
+    implementation 'org.json:json:20211205'
 }
 
 application {
