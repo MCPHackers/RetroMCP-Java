@@ -45,6 +45,15 @@ task decompile(type: JavaExec) {
     args 'decompile', '-debug'
 }
 
+task recompile(type: JavaExec) {
+    group 'RetroMCP-Java'
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'recompile', '-debug'
+}
+
 task setup(type: JavaExec) {
     group = 'RetroMCP-Java'
     standardInput = System.in

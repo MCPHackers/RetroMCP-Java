@@ -4,6 +4,7 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfoDecompile;
+import org.mcphackers.mcp.tasks.info.TaskInfoRecompile;
 import org.mcphackers.mcp.tasks.info.TaskInfoSetup;
 import org.mcphackers.mcp.tools.ProgressInfo;
 
@@ -132,7 +133,7 @@ public class MCP {
             case decompile:
                 return new TaskInfoDecompile();
             case recompile:
-                //return new TaskInfoRecompile();
+                return new TaskInfoRecompile();
             case setup:
                 return new TaskInfoSetup();
             default:
