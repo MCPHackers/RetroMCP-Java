@@ -2,10 +2,7 @@ package org.mcphackers.mcp;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tasks.info.TaskInfoDecompile;
-import org.mcphackers.mcp.tasks.info.TaskInfoRecompile;
-import org.mcphackers.mcp.tasks.info.TaskInfoSetup;
+import org.mcphackers.mcp.tasks.info.*;
 import org.mcphackers.mcp.tools.ProgressInfo;
 
 import java.io.PrintStream;
@@ -136,6 +133,8 @@ public class MCP {
                 return new TaskInfoRecompile();
             case setup:
                 return new TaskInfoSetup();
+            case updatemd5:
+                return new TaskInfoUpdateMD5();
             default:
                 return null;
         }

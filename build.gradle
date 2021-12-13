@@ -54,6 +54,15 @@ task recompile(type: JavaExec) {
     args 'recompile', '-debug'
 }
 
+task update_md5(type: JavaExec) {
+    group 'RetroMCP-Java'
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'updatemd5', '-debug'
+}
+
 task setup(type: JavaExec) {
     group = 'RetroMCP-Java'
     standardInput = System.in
