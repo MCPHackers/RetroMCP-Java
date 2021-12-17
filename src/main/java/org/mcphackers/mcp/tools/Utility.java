@@ -1,18 +1,18 @@
 package org.mcphackers.mcp.tools;
 
-import com.sun.nio.zipfs.ZipFileSystem;
+import net.lingala.zip4j.ZipFile;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 
 public class Utility {
@@ -23,49 +23,12 @@ public class Utility {
         return proc.exitValue();
     }
 
-    public static void unzip(final InputStream input, final Path destDirectory) throws IOException {
-        Path zipPath = null;
-        try {
-            zipPath = Files.createTempFile("unzipStream", ".zip");
-            Files.copy(input, zipPath, StandardCopyOption.REPLACE_EXISTING);
-            unzip(zipPath, destDirectory);
-        } finally {
-            input.close();
-            if (zipPath != null) {
-                Files.deleteIfExists(zipPath);
-            }
-        }
-    }
-
     public static void unzip(final Path zipFile, final Path destDir) throws IOException {
         if (Files.notExists(destDir)) {
             Files.createDirectories(destDir);
         }
 
-        try (ZipFileSystem zipFileSystem = (ZipFileSystem) FileSystems.newFileSystem(zipFile, null)) {
-            final Path root = zipFileSystem.getRootDirectories().iterator().next();
-
-            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    final Path destFile = Paths.get(destDir.toString(), file.toString());
-                    try {
-                        Files.copy(file, destFile, StandardCopyOption.REPLACE_EXISTING);
-                    } catch (DirectoryNotEmptyException ignore) {
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    final Path dirToCreate = Paths.get(destDir.toString(), dir.toString());
-                    if (Files.notExists(dirToCreate)) {
-                        Files.createDirectory(dirToCreate);
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        }
+        new ZipFile(zipFile.toFile()).extractAll(destDir.toString());
     }
 
     public static void downloadFile(URL url, String fileName) {

@@ -1,16 +1,20 @@
 package org.mcphackers.mcp.tasks;
 
-import COM.rl.NameProvider;
-import COM.rl.obf.RetroGuardImpl;
+import net.fabricmc.tinyremapper.*;
 import org.mcphackers.mcp.Conf;
-import org.mcphackers.mcp.tools.decompile.Decompiler;
 import org.mcphackers.mcp.tools.ProgressInfo;
+import org.mcphackers.mcp.tools.Utility;
+import org.mcphackers.mcp.tools.decompile.Decompiler;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.function.BiConsumer;
+import java.util.regex.Pattern;
 
 public class TaskDecompile implements Task {
+
+    private static final Pattern MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+");
 
     private final Decompiler decompiler;
     private int step;
@@ -22,18 +26,66 @@ public class TaskDecompile implements Task {
         decompiler = new Decompiler();
     }
 
+    @Override
     public void doTask() throws Exception {
 
-        String src = side == 1 ? Conf.SERVER.toString() : Conf.CLIENT.toString();
-        String rgout = side == 1 ? Conf.SERVER_RG_OUT.toString() : Conf.CLIENT_RG_OUT.toString();
-        String ffout = side == 1 ? Conf.SERVER_FF_OUT.toString() : Conf.CLIENT_FF_OUT.toString();
+        String src = side == 1 ? Conf.SERVER : Conf.CLIENT;
+        String rgout = side == 1 ? Conf.SERVER_RG_OUT : Conf.CLIENT_RG_OUT;
+        String ffout = side == 1 ? Conf.SERVER_FF_OUT : Conf.CLIENT_FF_OUT;
+
+        if (Files.exists(Paths.get("temp"))) {
+            Utility.deleteDirectoryStream(Paths.get("temp"));
+        }
 
         step = 0;
-        createRgCfg();
-        NameProvider.parseCommandLine(new String[]{"-searge", Conf.CFG_RG.toString()});
-        RetroGuardImpl.obfuscate(src, rgout, null, null);
-        step = 1;
-        decompiler.decompile(rgout, ffout);
+        // Remap Minecraft client JAR
+        if (side == 0) {
+            TinyRemapper remapper = null;
+
+            try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(rgout)).build()) {
+                remapper = remap(TinyUtils.createTinyMappingProvider(Paths.get("conf", "client.tiny"), "official", "named"), Paths.get(src), outputConsumer, Paths.get("jars", "bin"));
+                outputConsumer.addNonClassFiles(Paths.get(src), NonClassCopyMode.FIX_META_INF, remapper);
+            } finally {
+                if (remapper != null) {
+                    remapper.finish();
+                }
+            }
+            step = 1;
+            decompiler.decompile(rgout, "temp/cls");
+        }
+
+        if (side == 1) {
+            TinyRemapper remapper = null;
+
+            try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(rgout)).build()) {
+                remapper = remap(TinyUtils.createTinyMappingProvider(Paths.get("conf", "server.tiny"), "official", "named"), Paths.get(src), outputConsumer, Paths.get("jars", "bin"));
+                outputConsumer.addNonClassFiles(Paths.get(src), NonClassCopyMode.FIX_META_INF, remapper);
+            } finally {
+                if (remapper != null) {
+                    remapper.finish();
+                }
+            }
+            step = 1;
+            decompiler.decompile(rgout, "temp/cls");
+        }
+    }
+
+    private static TinyRemapper remap(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
+        TinyRemapper remapper = TinyRemapper.newRemapper()
+                .renameInvalidLocals(true)
+                .rebuildSourceFilenames(true)
+                .invalidLvNamePattern(MC_LV_PATTERN)
+                .withMappings(mappings)
+                .fixPackageAccess(true)
+                .threads(Runtime.getRuntime().availableProcessors() - 3)
+                .rebuildSourceFilenames(true)
+                .build();
+
+        remapper.readClassPath(classpath);
+        remapper.readInputs(input);
+        remapper.apply(consumer);
+
+        return remapper;
     }
 
     public ProgressInfo getProgress() {
@@ -41,30 +93,6 @@ public class TaskDecompile implements Task {
             return new ProgressInfo("Renaming...", 0, 1);
         }
         return decompiler.log.initInfo();
-    }
-
-    private void createRgCfg() throws IOException {
-        boolean reobf = false;
-        boolean keep_lvt = true;
-        boolean keep_generics = false;
-        BufferedWriter rgout = Files.newBufferedWriter(Conf.CFG_RG);
-        rgout.write(".option Application\n");
-        rgout.write(".option Applet\n");
-        rgout.write(".option Repackage\n");
-        rgout.write(".option Annotations\n");
-        rgout.write(".option MapClassString\n");
-        rgout.write(".attribute LineNumberTable\n");
-        rgout.write(".attribute EnclosingMethod\n");
-        rgout.write(".attribute Deprecated\n");
-        if (keep_lvt)
-            rgout.write(".attribute LocalVariableTable\n");
-        if (keep_generics) {
-            rgout.write(".option Generic\n");
-            rgout.write(".attribute LocalVariableTypeTable\n");
-        }
-        if (reobf)
-            rgout.write(".attribute SourceFile\n");
-        rgout.close();
     }
 
 }

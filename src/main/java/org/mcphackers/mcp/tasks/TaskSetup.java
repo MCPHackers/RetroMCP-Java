@@ -10,14 +10,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.zip.ZipInputStream;
 
 public class TaskSetup implements Task {
 
@@ -73,8 +71,8 @@ public class TaskSetup implements Task {
         System.out.println("> Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
         extracting = true;
         try {
-            Utility.unzip(Files.newInputStream(Paths.get("jars", "bin", "libs.zip")), Paths.get("jars", "bin"));
-            Utility.unzip(Files.newInputStream(Paths.get("jars", "bin", "natives.zip")), Paths.get("jars", "bin", "natives"));
+            Utility.unzip(Paths.get("jars", "bin", "libs.zip"), Paths.get("jars", "bin"));
+            Utility.unzip(Paths.get("jars", "bin", "natives.zip"), Paths.get("jars", "bin", "natives"));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -12,9 +12,7 @@ mainClassName = 'org.mcphackers.mcp.MCP'
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    flatDir {
-        dirs "libs"
-    }
+    maven { url 'https://maven.fabricmc.net/' }
 }
 
 dependencies {
@@ -22,7 +20,8 @@ dependencies {
     implementation 'com.github.MCPHackers:RetroFernflower:27123b6ebe'
     implementation 'com.github.ModCoderPack:MCInjector:3.8'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
-    implementation name: 'retroguard'
+    implementation 'net.fabricmc:tiny-remapper:0.6.0'
+    implementation 'net.lingala.zip4j:zip4j:2.6.1'
     implementation 'org.json:json:20211205'
 }
 

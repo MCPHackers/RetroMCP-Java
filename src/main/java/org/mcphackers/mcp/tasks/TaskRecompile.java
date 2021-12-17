@@ -40,7 +40,7 @@ public class TaskRecompile implements Task {
             Iterable<File> clientSrc = Files.walk(clientSrcPath).filter(path -> !Files.isDirectory(path)).map(Path::toFile).collect(Collectors.toList());
             recompile(compiler, ds, clientSrc, Arrays.asList("-d", "bin/minecraft", "-cp", "jars/bin/minecraft.jar;jars/bin/lwjgl_util.jar;jars/bin/lwjgl.jar;jars/bin/jinput.jar"));
         } else {
-            System.err.println("Client sources not found!");
+            System.err.println("Server sources not found!");
         }
 
         // Compile server
@@ -52,8 +52,7 @@ public class TaskRecompile implements Task {
         }
     }
 
-    public void recompile(JavaCompiler
-                                  compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> serverSrc, Iterable<String> recompileOptions) {
+    public void recompile(JavaCompiler compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> serverSrc, Iterable<String> recompileOptions) {
         try (StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null)) {
             Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(serverSrc);
             JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, recompileOptions, null, sources);
