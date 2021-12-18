@@ -16,6 +16,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.mcphackers.mcp.Conf;
+
 public class Decompiler implements IBytecodeProvider, IResultSaver {
 
     private final Map<String, ZipOutputStream> mapArchiveStreams = new HashMap<String, ZipOutputStream>();
@@ -39,7 +41,7 @@ public class Decompiler implements IBytecodeProvider, IResultSaver {
         mapOptions.put("rbr", "0");
         mapOptions.put("asc", "1");
         mapOptions.put("nco", "1");
-        mapOptions.put("ind", "\t");
+        mapOptions.put("ind", Conf.indentionString);
 
         pathout = out;
         File destination = new File(out);

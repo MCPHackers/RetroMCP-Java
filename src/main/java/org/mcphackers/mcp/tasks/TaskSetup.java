@@ -32,19 +32,19 @@ public class TaskSetup implements Task {
     @Override
     public void doTask() throws Exception {
         if (Files.exists(Paths.get("src"))) {
-            MCP.logger.println("! /src exists! Aborting.");
-            MCP.logger.println("! Run cleanup in order to run setup again.");
+            MCP.logger.info("! /src exists! Aborting.");
+            MCP.logger.info("! Run cleanup in order to run setup again.");
             return;
         }
 
-        MCP.logger.println("> Setting up your workspace...");
-        MCP.logger.println("> Making sure temp exists...");
+        MCP.logger.info("> Setting up your workspace...");
+        MCP.logger.info("> Making sure temp exists...");
 
         if (!Files.exists(Paths.get("temp"))) {
             Files.createDirectory(Paths.get("temp"));
         }
 
-        MCP.logger.println("> Making sure jars/bin/natives exists.");
+        MCP.logger.info("> Making sure jars/bin/natives exists.");
         if (!Files.exists(Paths.get("jars", "bin", "natives"))) {
             Files.createDirectories(Paths.get("jars", "bin", "natives"));
         }
@@ -59,23 +59,23 @@ public class TaskSetup implements Task {
         long seconds = TimeUnit.SECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
         long nanoSeconds = endTime - startTime;
 
-        MCP.logger.println("> Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
+        MCP.logger.info("> Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
         step = 2;
         try {
-            Utility.unzip(Files.newInputStream(Paths.get("jars", "bin", "libs.zip")), Paths.get("jars", "bin"));
-            Utility.unzip(Files.newInputStream(Paths.get("jars", "bin", "natives.zip")), Paths.get("jars", "bin", "natives"));
+            Utility.unzip(Paths.get("jars", "bin", "libs.zip"), Paths.get("jars", "bin"));
+            Utility.unzip(Paths.get("jars", "bin", "natives.zip"), Paths.get("jars", "bin", "natives"));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        MCP.logger.println("> Setting up minecraft...");
+        MCP.logger.info("> Setting up minecraft...");
         setupMC();
     }
 
     public void setupMC() throws IOException {
-        MCP.logger.println("> If you wish to supply your own configuration, type \"custom\".");
+        MCP.logger.info("> If you wish to supply your own configuration, type \"custom\".");
         String versionsFolder = Files.list(Paths.get("versions")).filter(Files::isDirectory).map(path -> path.getFileName().toString()).filter((fileName) -> !fileName.equals("workspace")).collect(Collectors.joining(","));
         JSONObject json = Utility.parseJSONFile(Paths.get("versions", "versions.json"));
-        MCP.logger.println("Current versions are:");
+        MCP.logger.info("Current versions are:");
         List<String> verList = new ArrayList<String>();
         for (String versionFolder : versionsFolder.split(",")) {
         	verList.add(versionFolder);
@@ -101,8 +101,8 @@ public class TaskSetup implements Task {
             }
         	table_str += "\n";
         }
-        MCP.logger.println(table_str);
-        MCP.logger.println("> What version would you like to install?");
+        MCP.logger.info(table_str);
+        MCP.logger.info("> What version would you like to install?");
         Scanner scanner = new Scanner(System.in);
         MCP.logger.print(": ");
         String chosenVersion = scanner.nextLine().toLowerCase();
@@ -119,7 +119,7 @@ public class TaskSetup implements Task {
             Utility.deleteDirectoryStream(Paths.get("patches_server"));
         }
         long startCopyTime = System.nanoTime();
-        MCP.logger.println("> Copying config");
+        MCP.logger.info("> Copying config");
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("conf", "version.cfg"))) {
             writer.write("ClientVersion = " + chosenVersion + "\n");
             if (chosenVersion.equals("custom")) {
@@ -131,7 +131,7 @@ public class TaskSetup implements Task {
             Utility.deleteDirectoryStream(Paths.get("eclipse"));
         }
         // Create Eclipse workspace
-        MCP.logger.println("> Copying workspace");
+        MCP.logger.info("> Copying workspace");
         int workspaceVersion = json.getJSONObject("client").getJSONObject(chosenVersion).getInt("workspace_version");
         Utility.copyDirectory(Paths.get("versions", "workspace", "eclipse_" + workspaceVersion), Paths.get("eclipse"));
 
@@ -150,7 +150,7 @@ public class TaskSetup implements Task {
 
         long nanoSeconds = System.nanoTime() - startCopyTime;
         long seconds = TimeUnit.SECONDS.convert(nanoSeconds, TimeUnit.NANOSECONDS);
-        MCP.logger.println("> Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
+        MCP.logger.info("> Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
 
         // Delete Minecraft.jar and Minecraft_server.jar if they exist.
         Files.deleteIfExists(Paths.get("jars", "minecraft.jar"));
@@ -159,7 +159,7 @@ public class TaskSetup implements Task {
         // Download Minecraft
         long startClientDownloadTime = System.nanoTime();
         if (!chosenVersion.equals("custom")) {
-            MCP.logger.println("> Downloading Minecraft client...");
+            MCP.logger.info("> Downloading Minecraft client...");
             String clientUrl = json.getJSONObject("client").getJSONObject(chosenVersion).getString("url");
             try {
                 Utility.downloadFile(new URI(clientUrl).toURL(), Paths.get("jars", "bin", "minecraft.jar").toAbsolutePath().toString());
@@ -168,20 +168,20 @@ public class TaskSetup implements Task {
             }
             long downloadNanoTime = System.nanoTime() - startClientDownloadTime;
             long downloadSeconds = TimeUnit.SECONDS.convert(nanoSeconds, TimeUnit.NANOSECONDS);
-            MCP.logger.println("> Done in " + (downloadSeconds == 0 ? downloadNanoTime + " ns" : downloadSeconds + " s"));
+            MCP.logger.info("> Done in " + (downloadSeconds == 0 ? downloadNanoTime + " ns" : downloadSeconds + " s"));
 
             // Download Minecraft Server
             try {
                 String serverVersion = json.getJSONObject("client").getJSONObject(chosenVersion).getString("server");
                 String serverUrl = json.getJSONObject("server").getJSONObject(serverVersion).getString("url");
                 try {
-                    MCP.logger.println("> Downloading Minecraft server...");
+                    MCP.logger.info("> Downloading Minecraft server...");
                     long startServerDownloadTime = System.nanoTime();
                     if (serverUrl.endsWith(".jar")) {
                         Utility.downloadFile(new URI(serverUrl).toURL(), Paths.get("jars", "minecraft_server.jar").toAbsolutePath().toString());
                     } else if (serverUrl.endsWith(".zip")) {
                         Utility.downloadFile(new URI(serverUrl).toURL(), Paths.get("jars", "minecraft_server.zip").toAbsolutePath().toString());
-                        MCP.logger.println("> Extracting Minecraft server...");
+                        MCP.logger.info("> Extracting Minecraft server...");
                         Utility.unzip(Paths.get("jars", "minecraft_server.zip").toAbsolutePath(), Paths.get("jars"));
                         Files.delete(Paths.get("jars", "minecraft_server.zip"));
                         File jarFile = Paths.get("jars", "minecraft-server.jar").toFile();
@@ -189,14 +189,13 @@ public class TaskSetup implements Task {
                     }
                     downloadNanoTime = System.nanoTime() - startServerDownloadTime;
                     downloadSeconds = TimeUnit.SECONDS.convert(downloadNanoTime, TimeUnit.NANOSECONDS);
-                    MCP.logger.println("> Done in " + (downloadSeconds == 0 ? downloadNanoTime + " ns" : downloadSeconds + " s"));
+                    MCP.logger.info("> Done in " + (downloadSeconds == 0 ? downloadNanoTime + " ns" : downloadSeconds + " s"));
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                     // TODO: Let the doTask throw this or only print exception in debug mode
                 }
             } catch (JSONException ex) {
-                // TODO: Only log this to a file
-            	//MCP.logger.println("Server not found for " + chosenVersion);
+            	//MCP.logger.error("Server not found for " + chosenVersion);
             }
         }
     }

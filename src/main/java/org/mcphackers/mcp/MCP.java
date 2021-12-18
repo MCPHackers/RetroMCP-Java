@@ -4,21 +4,19 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.*;
 import org.mcphackers.mcp.tools.ProgressInfo;
-
-import java.io.PrintStream;
 import java.util.*;
 
 public class MCP {
 
     public static EnumMode mode;
-    public static PrintStream logger;
+    public static MCPLogger logger;
 
     static {
         AnsiConsole.systemInstall();
     }
 
     public static void main(String[] args) {
-        logger = System.out;
+        logger = new MCPLogger();
         Scanner sc = new Scanner(System.in);
 
         boolean startedWithNoParams = false;
@@ -74,27 +72,20 @@ public class MCP {
                 }
                 start();
             } else if (mode == EnumMode.help) {
-                String[][] commands = new String[][]
-                        {
-                                {"help", "Show this list"},
-                                {"decompile", "Start decompiling Minecraft"},
-                                {"recompile", "Recompile Minecraft sources"},
-                                {"reobfuscate", "Reobfuscate Minecraft classes"},
-                                {"setup", "Choose a version to setup"},
-                                {"cleanup", "Deletes all source and class folders"},
-                                {"updatemcp", "Check for updates"},
-                                {"updatemd5", "Update md5 hash tables used for reobfuscation"},
-                                {"exit", "Exit the program"},
-                        };
-                for (int i = 0; i < commands.length; i++) {
-                    for (int i2 = 0; i2 < commands[i].length; i2++) {
+                List<String[]> commands = new ArrayList();
+                for (EnumMode mode : EnumMode.values()) {
+                	commands.add(new String[]{mode.name(), mode.desc});
+            	}
+
+                for (int i = 0; i < commands.size(); i++) {
+                    for (int i2 = 0; i2 < commands.get(i).length; i2++) {
                         if (i2 == 0)
-                            logger.print(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", commands[i][i2])).fgDefault());
+                            logger.info(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", commands.get(i)[i2])).fgDefault(), false);
                         else
-                            logger.print(new Ansi().fgGreen().a(" ").a(commands[i][i2]).fgDefault());
+                            logger.info(new Ansi().fgGreen().a(" ").a(commands.get(i)[i2]).fgDefault(), false);
                     }
 
-                    logger.println();
+                    logger.newLine();
                 }
             } else if (mode != EnumMode.exit) {
                 logger.println("Unknown command. Type 'help' for list of available commands");
@@ -112,15 +103,23 @@ public class MCP {
     private static void start() {
         TaskInfo task = getTaskInfo();
         try {
-            logger.println(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault());
+            logger.info(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault());
             processTask(task);
-            logger.println(new Ansi().a('\n').fgBrightGreen().a(task.successMsg()).fgDefault());
+            logger.info(new Ansi().a('\n').fgBrightGreen().a(task.successMsg()).fgDefault());
         } catch (Exception e) {
-            logger.println(new Ansi().a('\n').fgBrightRed().a(task.failMsg()).fgDefault());
-            if (Conf.debug) e.printStackTrace();
+        	Exception ex = e;
+        	String msg = e.getMessage();
+        	try {
+        		logger.info(new Ansi().a('\n').fgBrightRed().a(task.failMsg()).fgDefault());
+        	}
+        	catch (NullPointerException nullException) {
+        		ex = nullException;
+        		msg = "Invalid task detected!";
+        	}
+            if (Conf.debug) ex.printStackTrace();
             else {
-                logger.println(e.getMessage());
-                logger.println("Use -debug for more info");
+                logger.info(msg);
+                logger.info("Use -debug for more info");
             }
         }
     }
@@ -131,6 +130,8 @@ public class MCP {
                 return new TaskInfoDecompile();
             case recompile:
                 return new TaskInfoRecompile();
+            case reobfuscate:
+                return new TaskInfoReobfuscate();
             case setup:
                 return new TaskInfoSetup();
             case updatemd5:
@@ -144,8 +145,7 @@ public class MCP {
     	if(task.isMultiThreaded()) {
     		processMultitasks(task);
     	}
-    	else
-    	{
+    	else {
     		task.newTask(0).doTask();
     	}
     }
@@ -157,7 +157,7 @@ public class MCP {
         int threads = 1;
         if (hasServerThread) threads = 2;
         for (int i = 0; i < threads + 1; i++) {
-            logger.println();
+            logger.newLine();
         }
         clientThread = new SideThread(0, task.newTask(0));
         clientThread.start();
@@ -179,7 +179,7 @@ public class MCP {
                 s.append(progressString(dinfo.progress[1], dinfo.progress[0], dinfo.msg, side + ":"));
             }
             s.append(new Ansi().restoreCursorPosition().toString());
-            logger.print(s);
+            logger.print(s.toString());
             if (clientThread.exception != null)
                 throw clientThread.exception;
             if (hasServerThread)
@@ -214,6 +214,9 @@ public class MCP {
         if (arg.startsWith("-") && equalSign > 0) {
             String name = arg.substring(1, equalSign);
             String[] values = arg.substring(equalSign + 1).split(",");
+            for (int i = 0; i < values.length; i++) {
+            	values[i] = values[i].replace("\\n", "\n").replace("\\t", "\t");
+            }
             map.put(name, values);
         } else if (arg.startsWith("-")) {
             String name = arg.substring(1);
@@ -224,19 +227,26 @@ public class MCP {
 
     private static void setParameter(String name, int value) {
         switch (name) {
-            case "":
+        	case "side":
+        		Conf.onlySide = value;
+        		break;
         }
     }
 
     private static void setParameter(String name, String value) {
         switch (name) {
-            case "":
+        case "ind":
+        case "indention":
+        	Conf.indentionString = value;
+            break;
         }
     }
 
     private static void setParameter(String name, String[] value) {
         switch (name) {
-            case "":
+	        case "ignore":
+	            Conf.ignorePackages = value;
+	            break;
         }
     }
 
@@ -245,37 +255,18 @@ public class MCP {
             case "debug":
                 Conf.debug = value;
                 break;
+            case "patch":
+                Conf.patch = value;
+                break;
         }
     }
 
     private static boolean setMode(String name) {
-        switch (name) {
-            case "decompile":
-                mode = EnumMode.decompile;
-                return true;
-            case "recompile":
-                mode = EnumMode.recompile;
-                return true;
-            case "reobfuscate":
-                mode = EnumMode.reobfuscate;
-                return true;
-            case "updatemd5":
-                mode = EnumMode.updatemd5;
-                return true;
-            case "updatemcp":
-                mode = EnumMode.updatemcp;
-                return true;
-            case "setup":
-                mode = EnumMode.setup;
-                return true;
-            case "help":
-                mode = EnumMode.help;
-                return false;
-            case "exit":
-                mode = EnumMode.exit;
-                return false;
-            default:
-                return false;
-        }
+    	try {
+            mode = EnumMode.valueOf(name);
+            return mode != EnumMode.exit && mode != EnumMode.help;
+    	}
+    	catch (IllegalArgumentException ex) {}
+        return false;
     }
 }

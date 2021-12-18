@@ -1,18 +1,25 @@
 package org.mcphackers.mcp;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 public class Conf {
 
-    public static final Path JARS = Paths.get("jars/");
-    public static final Path CLIENT = Paths.get("jars/bin/minecraft.jar");
-    public static final Path SERVER = Paths.get("jars/minecraft_server.jar");
-    public static final Path CLIENT_CLASSES = Paths.get("temp/cls/minecraft");
-    public static final Path SERVER_CLASSES = Paths.get("temp/cls/minecraft_server");
-    public static final Path CLIENT_SOURCES = Paths.get("temp/src/minecraft");
-    public static final Path SERVER_SOURCES = Paths.get("temp/src/minecraft_server");
+    public static final String CLIENT = "jars/bin/minecraft.jar";
+    public static final String SERVER = "jars/minecraft_server.jar";
+    public static final String CLIENT_RG_OUT = "temp/minecraft_rg.jar";
+    public static final String SERVER_RG_OUT = "temp/minecraft_server_rg.jar";
+    public static final String CLIENT_EXC_OUT = "temp/minecraft_exc.jar";
+    public static final String SERVER_EXC_OUT = "temp/minecraft_server_exc.jar";
+    public static final String CLIENT_FF_OUT = "temp/minecraft.jar";
+    public static final String SERVER_FF_OUT = "temp/minecraft_server.jar";
+    public static final String CFG_RG = "temp/retroguard.cfg";
+    public static final String CFG_RG_RO = "temp/retroguard_ro.cfg";
+    public static final String CLIENT_MAPPINGS = "conf/client.tiny";
+    public static final String SERVER_MAPPINGS = "conf/server.tiny";
+
     public static boolean debug;
+    public static boolean patch;
+	public static String[] ignorePackages;
+	public static int onlySide;
+	public static String indentionString;
 
     static {
         resetConfig();
@@ -20,6 +27,10 @@ public class Conf {
 
     public static void resetConfig() {
         debug = false;
+        patch = true;
+    	onlySide = -1;
+    	ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
+    	indentionString = "\t";
     }
 
 }

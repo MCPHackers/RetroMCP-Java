@@ -1,16 +1,24 @@
 package org.mcphackers.mcp.tasks;
 
-import COM.rl.NameProvider;
-import COM.rl.obf.RetroGuardImpl;
+import codechicken.diffpatch.cli.DiffOperation;
+import codechicken.diffpatch.cli.PatchOperation;
+import mcp.mcinjector.MCInjectorImpl;
+import net.fabricmc.tinyremapper.*;
 import org.mcphackers.mcp.Conf;
-import org.mcphackers.mcp.tools.decompile.Decompiler;
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tools.ProgressInfo;
+import org.mcphackers.mcp.tools.Utility;
+import org.mcphackers.mcp.tools.decompile.Decompiler;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.function.BiConsumer;
+import java.util.regex.Pattern;
 
 public class TaskDecompile implements Task {
+
+    private static final Pattern MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+");
 
     private final Decompiler decompiler;
     private int step;
@@ -22,49 +30,119 @@ public class TaskDecompile implements Task {
         decompiler = new Decompiler();
     }
 
+    @Override
     public void doTask() throws Exception {
-
-        String src = side == 1 ? Conf.SERVER.toString() : Conf.CLIENT.toString();
-        String rgout = side == 1 ? Conf.SERVER_CLASSES.toString() : Conf.CLIENT_CLASSES.toString();
-        String ffout = side == 1 ? Conf.SERVER_SOURCES.toString() : Conf.CLIENT_SOURCES.toString();
+        if (Files.exists(Paths.get("src"))) {
+            throw new Exception("! /src exists! Aborting.");
+        }
+        String originalJar = side == 1 ? Conf.SERVER : Conf.CLIENT;
+        String rgout = side == 1 ? Conf.SERVER_RG_OUT : Conf.CLIENT_RG_OUT;
+        String excout = side == 1 ? Conf.SERVER_EXC_OUT : Conf.CLIENT_EXC_OUT;
+        String ffout = side == 1 ? Conf.SERVER_FF_OUT : Conf.CLIENT_FF_OUT;
+        Path srcPath = side == 1 ? Paths.get("src", "minecraft_server") : Paths.get("src", "minecraft");
 
         step = 0;
-        createRgCfg();
-        //NameProvider.parseCommandLine(new String[]{"-searge", Conf.CFG_RG.toString()});
-        RetroGuardImpl.obfuscate(src, rgout, null, null);
-        step = 1;
-        decompiler.decompile(rgout, ffout);
+        if (side == 0) {
+            // Remap Minecraft client JAR
+            MCP.logger.info("> Remapping client JAR...");
+            TinyRemapper remapper = null;
+
+            try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(rgout)).build()) {
+                remapper = remap(TinyUtils.createTinyMappingProvider(Paths.get(Conf.CLIENT_MAPPINGS), "official", "named"), Paths.get(originalJar), outputConsumer, Paths.get("jars", "bin"));
+                outputConsumer.addNonClassFiles(Paths.get(originalJar), NonClassCopyMode.FIX_META_INF, remapper);
+            } finally {
+                if (remapper != null) {
+                    remapper.finish();
+                }
+            }
+            step = 1;
+
+            // Apply MCInjector
+            MCP.logger.info("> Applying MCInjector...");
+            MCInjectorImpl.process(rgout, excout, Paths.get("conf", "client.exc").toString(), null, null, 0);
+
+            // Decompile and extract sources
+            MCP.logger.info("> Decompiling...");
+            decompiler.decompile(excout, "temp/cls");
+            MCP.logger.info("> Extracting sources...");
+            Utility.unzipByExtension(Paths.get("temp", "cls", "minecraft_exc.jar"), Paths.get("src", "minecraft"), ".java");
+
+            // Apply patches
+            MCP.logger.info("> Applying patches...");
+            PatchOperation patchOperation = PatchOperation.builder()
+                    .verbose(true)
+                    .basePath(srcPath)
+                    .patchesPath(Paths.get("conf", "patches_client"))
+                    .outputPath(srcPath)
+                    .build();
+            int code = patchOperation.operate().exit;
+            if (code != 0) {
+                System.err.println("Patching failed!!!");
+            }
+        }
+
+        if (side == 1) {
+            // Remap Minecraft server JAR
+            MCP.logger.info("> Remapping server JAR...");
+            TinyRemapper remapper = null;
+
+            try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(rgout)).build()) {
+                remapper = remap(TinyUtils.createTinyMappingProvider(Paths.get("conf", "server.tiny"), "official", "named"), Paths.get(originalJar), outputConsumer, Paths.get("jars", "bin"));
+                outputConsumer.addNonClassFiles(Paths.get(originalJar), NonClassCopyMode.FIX_META_INF, remapper);
+            } finally {
+                if (remapper != null) {
+                    remapper.finish();
+                }
+            }
+            step = 1;
+
+            // Apply MCInjector
+            MCP.logger.info("> Applying MCInjector...");
+            MCInjectorImpl.process(rgout, excout, Paths.get("conf", "server.exc").toString(), null, null, 0);
+
+            // Decompile and extract sources
+            MCP.logger.info("> Decompiling...");
+            decompiler.decompile(excout, "temp/cls");
+            MCP.logger.info("> Extracting sources...");
+            Utility.unzipByExtension(Paths.get("temp", "cls", "minecraft_server_exc.jar"), Paths.get("src", "minecraft_server"), ".java");
+
+            // Apply patches
+            MCP.logger.info("> Applying patches...");
+            PatchOperation patchOperation = PatchOperation.builder()
+                    .verbose(true)
+                    .basePath(srcPath)
+                    .patchesPath(Paths.get("conf", "patches_server"))
+                    .outputPath(srcPath)
+                    .build();
+            int code = patchOperation.operate().exit;
+            if (code != 0) {
+            	MCP.logger.error("Patching failed!!!");
+            }
+        }
+    }
+
+    private static TinyRemapper remap(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
+        TinyRemapper remapper = TinyRemapper.newRemapper()
+                .renameInvalidLocals(true)
+                .rebuildSourceFilenames(true)
+                .invalidLvNamePattern(MC_LV_PATTERN)
+                .withMappings(mappings)
+                .fixPackageAccess(true)
+                .threads(Runtime.getRuntime().availableProcessors() - 3)
+                .rebuildSourceFilenames(true)
+                .build();
+
+        remapper.readClassPath(classpath);
+        remapper.readInputs(input);
+        remapper.apply(consumer);
+
+        return remapper;
     }
 
     public ProgressInfo getProgress() {
         if (step == 0) {
-            return new ProgressInfo("Renaming...", 0, 1);
+            return new ProgressInfo("Decompiling...", 0, 1);
         }
         return decompiler.log.initInfo();
     }
-
-    private void createRgCfg() throws IOException {
-        boolean reobf = false;
-        boolean keep_lvt = true;
-        boolean keep_generics = false;
-        /*BufferedWriter rgout = Files.newBufferedWriter(Conf.CFG_RG);
-        rgout.write(".option Application\n");
-        rgout.write(".option Applet\n");
-        rgout.write(".option Repackage\n");
-        rgout.write(".option Annotations\n");
-        rgout.write(".option MapClassString\n");
-        rgout.write(".attribute LineNumberTable\n");
-        rgout.write(".attribute EnclosingMethod\n");
-        rgout.write(".attribute Deprecated\n");
-        if (keep_lvt)
-            rgout.write(".attribute LocalVariableTable\n");
-        if (keep_generics) {
-            rgout.write(".option Generic\n");
-            rgout.write(".attribute LocalVariableTypeTable\n");
-        }
-        if (reobf)
-            rgout.write(".attribute SourceFile\n");
-        rgout.close();*/
-    }
-
 }

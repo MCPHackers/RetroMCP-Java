@@ -1,31 +1,31 @@
 package org.mcphackers.mcp.tasks.info;
 
 import org.mcphackers.mcp.tasks.Task;
-import org.mcphackers.mcp.tasks.TaskSetup;
+import org.mcphackers.mcp.tasks.TaskReobfuscate;
 
-public class TaskInfoSetup implements TaskInfo {
+public class TaskInfoReobfuscate implements TaskInfo {
     @Override
     public String title() {
-        return "Setting up";
+        return "Reobfuscating";
     }
 
     @Override
     public String successMsg() {
-        return "SETUP SUCCESSFUL!";
+        return "REOBFUSCATION SUCCESSFUL!";
     }
 
     @Override
     public String failMsg() {
-        return "SETUP FAILED!";
+        return "REOBFUSCATION FAILED!";
     }
 
     @Override
     public Task newTask(int side) {
-        return new TaskSetup();
+        return new TaskReobfuscate(side);
     }
 
     @Override
     public boolean isMultiThreaded() {
-        return false;
+        return true;
     }
 }

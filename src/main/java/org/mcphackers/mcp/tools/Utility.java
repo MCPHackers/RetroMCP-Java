@@ -1,19 +1,21 @@
 package org.mcphackers.mcp.tools;
 
-//import com.sun.nio.zipfs.ZipFileSystem;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.FileHeader;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.MessageDigest;
 import java.util.Comparator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Utility {
 
@@ -23,49 +25,30 @@ public class Utility {
         return proc.exitValue();
     }
 
-    public static void unzip(final InputStream input, final Path destDirectory) throws IOException {
-        Path zipPath = null;
-        try {
-            zipPath = Files.createTempFile("unzipStream", ".zip");
-            Files.copy(input, zipPath, StandardCopyOption.REPLACE_EXISTING);
-            unzip(zipPath, destDirectory);
-        } finally {
-            input.close();
-            if (zipPath != null) {
-                Files.deleteIfExists(zipPath);
-            }
-        }
-    }
-
     public static void unzip(final Path zipFile, final Path destDir) throws IOException {
         if (Files.notExists(destDir)) {
             Files.createDirectories(destDir);
         }
 
-//        try (ZipFileSystem zipFileSystem = (ZipFileSystem) FileSystems.newFileSystem(zipFile, null)) {
-//            final Path root = zipFileSystem.getRootDirectories().iterator().next();
-//
-//            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
-//                @Override
-//                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-//                    final Path destFile = Paths.get(destDir.toString(), file.toString());
-//                    try {
-//                        Files.copy(file, destFile, StandardCopyOption.REPLACE_EXISTING);
-//                    } catch (DirectoryNotEmptyException ignore) {
-//                    }
-//                    return FileVisitResult.CONTINUE;
-//                }
-//
-//                @Override
-//                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-//                    final Path dirToCreate = Paths.get(destDir.toString(), dir.toString());
-//                    if (Files.notExists(dirToCreate)) {
-//                        Files.createDirectory(dirToCreate);
-//                    }
-//                    return FileVisitResult.CONTINUE;
-//                }
-//            });
-//        }
+        new ZipFile(zipFile.toFile()).extractAll(destDir.toString());
+    }
+
+    public static void unzipByExtension(final Path src, final Path destDir, String extension) throws IOException {
+        if (Files.notExists(destDir)) {
+            Files.createDirectories(destDir);
+        }
+
+        if (Files.exists(src)) {
+            ZipFile zipFile = new ZipFile(src.toFile());
+            List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+            for (FileHeader fileHeader : fileHeaders) {
+                String fileName = fileHeader.getFileName();
+                //TODO: Move this outta here and make it use Conf.ignorePackages
+                if (!(fileName.startsWith("paulscode") || fileName.startsWith("com")) && fileName.endsWith(extension)) {
+                    zipFile.extractFile(fileHeader, destDir.toString());
+                }
+            }
+        }
     }
 
     public static void downloadFile(URL url, String fileName) {
@@ -116,5 +99,48 @@ public class Utility {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static String getMD5OfFile(File file) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        FileInputStream fs = new FileInputStream(file);
+        BufferedInputStream bs = new BufferedInputStream(fs);
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+
+        while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
+            md.update(buffer, 0, bytesRead);
+        }
+        byte[] digest = md.digest();
+
+        StringBuilder sb = new StringBuilder();
+        for (byte bite : digest) {
+            sb.append(String.format("%02x", bite & 0xff));
+        }
+        return sb.toString();
+    }
+
+    public static void compress(Path sourceDir, Path target) {
+        try {
+            final ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(target.toFile()));
+            Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                    try {
+                        Path targetFile = sourceDir.relativize(file);
+                        outputStream.putNextEntry(new ZipEntry(targetFile.toString()));
+                        byte[] bytes = Files.readAllBytes(file);
+                        outputStream.write(bytes, 0, bytes.length);
+                        outputStream.closeEntry();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

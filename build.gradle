@@ -12,6 +12,7 @@ mainClassName = 'org.mcphackers.mcp.MCP'
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    maven { url 'https://maven.fabricmc.net/' }
     flatDir {
         dirs "libs"
     }
@@ -20,10 +21,13 @@ repositories {
 dependencies {
     // Required libraries
     implementation 'com.github.MCPHackers:RetroFernflower:27123b6ebe'
-    implementation 'com.github.ModCoderPack:MCInjector:3.8'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
-    implementation name: 'retroguard'
+    implementation 'net.fabricmc:tiny-remapper:0.6.0'
+    implementation 'net.lingala.zip4j:zip4j:2.6.1'
+    // TODO: Don't gut MCInjector bundled ASM
+    implementation name: 'mcinjector'
     implementation 'org.json:json:20211205'
+    implementation 'com.github.MinecraftForge:DiffPatch:25f256bf78'
 }
 
 application {
@@ -52,6 +56,15 @@ task recompile(type: JavaExec) {
     main = mainClassName
     workingDir 'test'
     args 'recompile', '-debug'
+}
+
+task reobfuscate(type: JavaExec) {
+    group 'RetroMCP-Java'
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'reobfuscate', '-debug'
 }
 
 task update_md5(type: JavaExec) {

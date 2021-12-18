@@ -6,7 +6,7 @@ import org.mcphackers.mcp.tasks.TaskUpdateMD5;
 public class TaskInfoUpdateMD5 implements TaskInfo {
     @Override
     public String title() {
-        return "Update MD5";
+        return "Updating MD5";
     }
 
     @Override
@@ -26,6 +26,6 @@ public class TaskInfoUpdateMD5 implements TaskInfo {
 
     @Override
     public boolean isMultiThreaded() {
-        return false;
+        return true;
     }
 }
