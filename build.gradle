@@ -58,6 +58,15 @@ task recompile(type: JavaExec) {
     args 'recompile', '-debug'
 }
 
+task reobfuscate(type: JavaExec) {
+    group 'RetroMCP-Java'
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'reobfuscate', '-debug'
+}
+
 task update_md5(type: JavaExec) {
     group 'RetroMCP-Java'
 

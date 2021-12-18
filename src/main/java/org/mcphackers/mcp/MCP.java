@@ -131,6 +131,8 @@ public class MCP {
                 return new TaskInfoDecompile();
             case recompile:
                 return new TaskInfoRecompile();
+            case reobfuscate:
+                return new TaskInfoReobfuscate();
             case setup:
                 return new TaskInfoSetup();
             case updatemd5:

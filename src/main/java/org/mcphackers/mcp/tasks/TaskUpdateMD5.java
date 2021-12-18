@@ -12,11 +12,15 @@ import java.nio.file.attribute.BasicFileAttributes;
 public class TaskUpdateMD5 implements Task {
     @Override
     public void doTask() throws Exception {
+        doTask(false);
+    }
+
+    public void doTask(boolean reobf) throws Exception {
         Path clientBinPath = Paths.get("bin", "minecraft");
         Path serverBinPath = Paths.get("bin", "minecraft_server");
 
-        Path clientMD5 = Paths.get("temp", "client.md5");
-        Path serverMD5 = Paths.get("temp", "server.md5");
+        Path clientMD5 = reobf ? Paths.get("temp", "client_reobf.md5") : Paths.get("temp", "client.md5");
+        Path serverMD5 = reobf ? Paths.get("temp", "server_reobf.md5") : Paths.get("temp", "server.md5");
 
         Files.deleteIfExists(clientMD5);
         Files.deleteIfExists(serverMD5);
@@ -24,12 +28,7 @@ public class TaskUpdateMD5 implements Task {
         if (Files.exists(clientBinPath)) {
             BufferedWriter writer = new BufferedWriter(new FileWriter(clientMD5.toFile()));
 
-            Files.walkFileTree(clientBinPath, new FileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-
+            Files.walkFileTree(clientBinPath, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     try {
@@ -43,16 +42,6 @@ public class TaskUpdateMD5 implements Task {
 
                     return FileVisitResult.CONTINUE;
                 }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
             });
         } else {
             System.err.println("Client classes not found!");
@@ -61,12 +50,7 @@ public class TaskUpdateMD5 implements Task {
         if (Files.exists(serverBinPath)) {
             BufferedWriter writer = new BufferedWriter(new FileWriter(serverMD5.toFile()));
 
-            Files.walkFileTree(serverBinPath, new FileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-
+            Files.walkFileTree(serverBinPath, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     try {
@@ -78,16 +62,6 @@ public class TaskUpdateMD5 implements Task {
                         ex.printStackTrace();
                     }
 
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                     return FileVisitResult.CONTINUE;
                 }
             });
