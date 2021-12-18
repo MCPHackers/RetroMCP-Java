@@ -5,9 +5,7 @@ import net.lingala.zip4j.model.FileHeader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -15,6 +13,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.Comparator;
 import java.util.List;
 
@@ -99,5 +98,24 @@ public class Utility {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static String getMD5OfFile(File file) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        FileInputStream fs = new FileInputStream(file);
+        BufferedInputStream bs = new BufferedInputStream(fs);
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+
+        while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
+            md.update(buffer, 0, bytesRead);
+        }
+        byte[] digest = md.digest();
+
+        StringBuilder sb = new StringBuilder();
+        for (byte bite : digest) {
+            sb.append(String.format("%02x", bite & 0xff));
+        }
+        return sb.toString();
     }
 }
