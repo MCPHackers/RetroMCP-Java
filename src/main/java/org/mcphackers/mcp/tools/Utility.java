@@ -1,11 +1,13 @@
 package org.mcphackers.mcp.tools;
 
 import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.FileHeader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -14,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.List;
 
 public class Utility {
 
@@ -29,6 +32,23 @@ public class Utility {
         }
 
         new ZipFile(zipFile.toFile()).extractAll(destDir.toString());
+    }
+
+    public static void unzipByExtension(final Path src, final Path destDir, String extension) throws IOException {
+        if (Files.notExists(destDir)) {
+            Files.createDirectories(destDir);
+        }
+
+        if (Files.exists(src)) {
+            ZipFile zipFile = new ZipFile(src.toFile());
+            List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+            for (FileHeader fileHeader : fileHeaders) {
+                String fileName = fileHeader.getFileName();
+                if (!(fileName.startsWith("paulscode") || fileName.startsWith("com")) && fileName.endsWith(extension)) {
+                    zipFile.extractFile(fileHeader, destDir.toString());
+                }
+            }
+        }
     }
 
     public static void downloadFile(URL url, String fileName) {
