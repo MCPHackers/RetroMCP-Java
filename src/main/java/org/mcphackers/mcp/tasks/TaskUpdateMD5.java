@@ -22,9 +22,6 @@ public class TaskUpdateMD5 implements Task {
         Path clientMD5 = reobf ? Paths.get("temp", "client_reobf.md5") : Paths.get("temp", "client.md5");
         Path serverMD5 = reobf ? Paths.get("temp", "server_reobf.md5") : Paths.get("temp", "server.md5");
 
-        Files.deleteIfExists(clientMD5);
-        Files.deleteIfExists(serverMD5);
-
         if (Files.exists(clientBinPath)) {
             BufferedWriter writer = new BufferedWriter(new FileWriter(clientMD5.toFile()));
 

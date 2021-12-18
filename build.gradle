@@ -20,6 +20,8 @@ repositories {
 
 dependencies {
     // Required libraries
+    implementation 'org.ow2.asm:asm:9.2'
+
     implementation 'com.github.MCPHackers:RetroFernflower:27123b6ebe'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
     implementation 'net.fabricmc:tiny-remapper:0.6.0'

@@ -119,9 +119,12 @@ public class TaskDecompile implements Task {
                 System.err.println("Patching failed!!!");
             }
         }
+
+        new TaskRecompile().doTask();
+        new TaskUpdateMD5().doTask();
     }
 
-    private static TinyRemapper remap(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
+    public static TinyRemapper remap(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
         TinyRemapper remapper = TinyRemapper.newRemapper()
                 .renameInvalidLocals(true)
                 .rebuildSourceFilenames(true)
