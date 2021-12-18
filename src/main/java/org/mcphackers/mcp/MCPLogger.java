@@ -3,6 +3,10 @@ package org.mcphackers.mcp;
 import org.fusesource.jansi.Ansi;
 
 public class MCPLogger {
+	
+	public MCPLogger() {
+	}
+	
 	/**
 	 * Prints a new line
 	 */
@@ -39,7 +43,7 @@ public class MCPLogger {
 	 * @param newLine
 	 */
 	public void info(String msg, boolean newLine) {
-		// Add some kind of logging to a file
+		//TODO: Add some kind of logging to a file
 		if(newLine) {
 			System.out.println(msg);
 		} else {
@@ -52,7 +56,7 @@ public class MCPLogger {
 	 * @param msg
 	 */
 	public void error(String msg) {
-		// Add some kind of logging to a file
+		//TODO: Add some kind of logging to a file
 		System.err.println(new Ansi().fgBrightRed().a(msg).fgDefault());
 	}
 }

@@ -235,10 +235,10 @@ public class MCP {
 
     private static void setParameter(String name, String value) {
         switch (name) {
-        case "ind":
-        case "indention":
-        	Conf.indentionString = value;
-            break;
+	        case "ind":
+	        case "indention":
+	        	Conf.indentionString = value;
+	            break;
         }
     }
 
@@ -264,7 +264,7 @@ public class MCP {
     private static boolean setMode(String name) {
     	try {
             mode = EnumMode.valueOf(name);
-            return mode != EnumMode.exit && mode != EnumMode.help;
+            return mode.isTask;
     	}
     	catch (IllegalArgumentException ex) {}
         return false;
