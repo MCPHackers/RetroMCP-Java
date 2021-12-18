@@ -141,9 +141,19 @@ public class MCP {
     }
 
     private static void processTask(TaskInfo task) throws Exception {
+    	if(task.isMultiThreaded()) {
+    		processMultitasks(task);
+    	}
+    	else
+    	{
+    		task.newTask(0).doTask();
+    	}
+    }
+    
+    private static void processMultitasks(TaskInfo task) throws Exception {
         SideThread clientThread = null;
         SideThread serverThread = null;
-        boolean hasServerThread = task.hasServerThread();
+        boolean hasServerThread = task.isMultiThreaded();
         int threads = 1;
         if (hasServerThread) threads = 2;
         for (int i = 0; i < threads + 1; i++) {
@@ -169,14 +179,13 @@ public class MCP {
                 s.append(progressString(dinfo.progress[1], dinfo.progress[0], dinfo.msg, side + ":"));
             }
             s.append(new Ansi().restoreCursorPosition().toString());
-            //logger.print(s);
+            logger.print(s);
             if (clientThread.exception != null)
                 throw clientThread.exception;
             if (hasServerThread)
                 if (serverThread.exception != null)
                     throw serverThread.exception;
         }
-
     }
 
     private static String progressString(long total, long current, String progressMsg, String prefix) {

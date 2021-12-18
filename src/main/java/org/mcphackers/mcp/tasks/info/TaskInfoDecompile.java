@@ -10,7 +10,7 @@ public class TaskInfoDecompile implements TaskInfo {
     }
 
     public String successMsg() {
-        return "SUCCESSFULLY DECOMPILED!";
+        return "DECOMPILE SUCCESSFUL!";
     }
 
     public String failMsg() {
@@ -22,7 +22,7 @@ public class TaskInfoDecompile implements TaskInfo {
     }
 
     @Override
-    public boolean hasServerThread() {
+    public boolean isMultiThreaded() {
         return true;
     }
 

@@ -25,7 +25,7 @@ public class TaskInfoRecompile implements TaskInfo {
     }
 
     @Override
-    public boolean hasServerThread() {
+    public boolean isMultiThreaded() {
         return false;
     }
 }

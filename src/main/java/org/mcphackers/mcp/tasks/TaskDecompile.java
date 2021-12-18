@@ -25,12 +25,12 @@ public class TaskDecompile implements Task {
     public void doTask() throws Exception {
 
         String src = side == 1 ? Conf.SERVER.toString() : Conf.CLIENT.toString();
-        String rgout = side == 1 ? Conf.SERVER_RG_OUT.toString() : Conf.CLIENT_RG_OUT.toString();
-        String ffout = side == 1 ? Conf.SERVER_FF_OUT.toString() : Conf.CLIENT_FF_OUT.toString();
+        String rgout = side == 1 ? Conf.SERVER_CLASSES.toString() : Conf.CLIENT_CLASSES.toString();
+        String ffout = side == 1 ? Conf.SERVER_SOURCES.toString() : Conf.CLIENT_SOURCES.toString();
 
         step = 0;
         createRgCfg();
-        NameProvider.parseCommandLine(new String[]{"-searge", Conf.CFG_RG.toString()});
+        //NameProvider.parseCommandLine(new String[]{"-searge", Conf.CFG_RG.toString()});
         RetroGuardImpl.obfuscate(src, rgout, null, null);
         step = 1;
         decompiler.decompile(rgout, ffout);
@@ -47,7 +47,7 @@ public class TaskDecompile implements Task {
         boolean reobf = false;
         boolean keep_lvt = true;
         boolean keep_generics = false;
-        BufferedWriter rgout = Files.newBufferedWriter(Conf.CFG_RG);
+        /*BufferedWriter rgout = Files.newBufferedWriter(Conf.CFG_RG);
         rgout.write(".option Application\n");
         rgout.write(".option Applet\n");
         rgout.write(".option Repackage\n");
@@ -64,7 +64,7 @@ public class TaskDecompile implements Task {
         }
         if (reobf)
             rgout.write(".attribute SourceFile\n");
-        rgout.close();
+        rgout.close();*/
     }
 
 }

@@ -12,5 +12,5 @@ public interface TaskInfo {
 
     Task newTask(int side);
 
-    boolean hasServerThread();
+    boolean isMultiThreaded();
 }

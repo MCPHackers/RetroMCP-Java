@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.tools;
 
-import com.sun.nio.zipfs.ZipFileSystem;
+//import com.sun.nio.zipfs.ZipFileSystem;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,30 +42,30 @@ public class Utility {
             Files.createDirectories(destDir);
         }
 
-        try (ZipFileSystem zipFileSystem = (ZipFileSystem) FileSystems.newFileSystem(zipFile, null)) {
-            final Path root = zipFileSystem.getRootDirectories().iterator().next();
-
-            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    final Path destFile = Paths.get(destDir.toString(), file.toString());
-                    try {
-                        Files.copy(file, destFile, StandardCopyOption.REPLACE_EXISTING);
-                    } catch (DirectoryNotEmptyException ignore) {
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    final Path dirToCreate = Paths.get(destDir.toString(), dir.toString());
-                    if (Files.notExists(dirToCreate)) {
-                        Files.createDirectory(dirToCreate);
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        }
+//        try (ZipFileSystem zipFileSystem = (ZipFileSystem) FileSystems.newFileSystem(zipFile, null)) {
+//            final Path root = zipFileSystem.getRootDirectories().iterator().next();
+//
+//            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+//                @Override
+//                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+//                    final Path destFile = Paths.get(destDir.toString(), file.toString());
+//                    try {
+//                        Files.copy(file, destFile, StandardCopyOption.REPLACE_EXISTING);
+//                    } catch (DirectoryNotEmptyException ignore) {
+//                    }
+//                    return FileVisitResult.CONTINUE;
+//                }
+//
+//                @Override
+//                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+//                    final Path dirToCreate = Paths.get(destDir.toString(), dir.toString());
+//                    if (Files.notExists(dirToCreate)) {
+//                        Files.createDirectory(dirToCreate);
+//                    }
+//                    return FileVisitResult.CONTINUE;
+//                }
+//            });
+//        }
     }
 
     public static void downloadFile(URL url, String fileName) {
