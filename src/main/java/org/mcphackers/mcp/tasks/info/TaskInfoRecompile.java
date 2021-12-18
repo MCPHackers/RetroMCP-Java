@@ -6,7 +6,7 @@ import org.mcphackers.mcp.tasks.TaskRecompile;
 public class TaskInfoRecompile implements TaskInfo {
     @Override
     public String title() {
-        return "Recompile";
+        return "Recompiling";
     }
 
     @Override
@@ -25,7 +25,7 @@ public class TaskInfoRecompile implements TaskInfo {
     }
 
     @Override
-    public boolean hasServerThread() {
-        return false;
+    public boolean isMultiThreaded() {
+        return true;
     }
 }

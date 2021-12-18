@@ -5,6 +5,7 @@ import codechicken.diffpatch.cli.PatchOperation;
 import mcp.mcinjector.MCInjectorImpl;
 import net.fabricmc.tinyremapper.*;
 import org.mcphackers.mcp.Conf;
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 import org.mcphackers.mcp.tools.decompile.Decompiler;
@@ -34,7 +35,6 @@ public class TaskDecompile implements Task {
         if (Files.exists(Paths.get("src"))) {
             throw new Exception("! /src exists! Aborting.");
         }
-
         String originalJar = side == 1 ? Conf.SERVER : Conf.CLIENT;
         String rgout = side == 1 ? Conf.SERVER_RG_OUT : Conf.CLIENT_RG_OUT;
         String excout = side == 1 ? Conf.SERVER_EXC_OUT : Conf.CLIENT_EXC_OUT;
@@ -44,7 +44,7 @@ public class TaskDecompile implements Task {
         step = 0;
         if (side == 0) {
             // Remap Minecraft client JAR
-            System.out.println("> Remapping client JAR...");
+            MCP.logger.info("> Remapping client JAR...");
             TinyRemapper remapper = null;
 
             try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(rgout)).build()) {
@@ -58,17 +58,17 @@ public class TaskDecompile implements Task {
             step = 1;
 
             // Apply MCInjector
-            System.out.println("> Applying MCInjector...");
+            MCP.logger.info("> Applying MCInjector...");
             MCInjectorImpl.process(rgout, excout, Paths.get("conf", "client.exc").toString(), null, null, 0);
 
             // Decompile and extract sources
-            System.out.println("> Decompiling...");
+            MCP.logger.info("> Decompiling...");
             decompiler.decompile(excout, "temp/cls");
-            System.out.println("> Extracting sources...");
+            MCP.logger.info("> Extracting sources...");
             Utility.unzipByExtension(Paths.get("temp", "cls", "minecraft_exc.jar"), Paths.get("src", "minecraft"), ".java");
 
             // Apply patches
-            System.out.println("> Applying patches...");
+            MCP.logger.info("> Applying patches...");
             PatchOperation patchOperation = PatchOperation.builder()
                     .verbose(true)
                     .basePath(srcPath)
@@ -83,7 +83,7 @@ public class TaskDecompile implements Task {
 
         if (side == 1) {
             // Remap Minecraft server JAR
-            System.out.println("> Remapping server JAR...");
+            MCP.logger.info("> Remapping server JAR...");
             TinyRemapper remapper = null;
 
             try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(rgout)).build()) {
@@ -97,17 +97,17 @@ public class TaskDecompile implements Task {
             step = 1;
 
             // Apply MCInjector
-            System.out.println("> Applying MCInjector...");
+            MCP.logger.info("> Applying MCInjector...");
             MCInjectorImpl.process(rgout, excout, Paths.get("conf", "server.exc").toString(), null, null, 0);
 
             // Decompile and extract sources
-            System.out.println("> Decompiling...");
+            MCP.logger.info("> Decompiling...");
             decompiler.decompile(excout, "temp/cls");
-            System.out.println("> Extracting sources...");
+            MCP.logger.info("> Extracting sources...");
             Utility.unzipByExtension(Paths.get("temp", "cls", "minecraft_server_exc.jar"), Paths.get("src", "minecraft_server"), ".java");
 
             // Apply patches
-            System.out.println("> Applying patches...");
+            MCP.logger.info("> Applying patches...");
             PatchOperation patchOperation = PatchOperation.builder()
                     .verbose(true)
                     .basePath(srcPath)
@@ -116,7 +116,7 @@ public class TaskDecompile implements Task {
                     .build();
             int code = patchOperation.operate().exit;
             if (code != 0) {
-                System.err.println("Patching failed!!!");
+            	MCP.logger.error("Patching failed!!!");
             }
         }
 
@@ -148,5 +148,4 @@ public class TaskDecompile implements Task {
         }
         return decompiler.log.initInfo();
     }
-
 }

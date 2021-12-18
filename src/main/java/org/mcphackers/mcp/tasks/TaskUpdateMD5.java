@@ -1,5 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 
@@ -41,7 +42,7 @@ public class TaskUpdateMD5 implements Task {
                 }
             });
         } else {
-            System.err.println("Client classes not found!");
+        	MCP.logger.error("Client classes not found!");
         }
 
         if (Files.exists(serverBinPath)) {
@@ -63,7 +64,7 @@ public class TaskUpdateMD5 implements Task {
                 }
             });
         } else {
-            System.err.println("Server classes not found!");
+        	MCP.logger.error("Server classes not found!");
         }
     }
 

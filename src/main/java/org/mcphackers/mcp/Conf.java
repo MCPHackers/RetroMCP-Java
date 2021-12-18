@@ -2,7 +2,6 @@ package org.mcphackers.mcp;
 
 public class Conf {
 
-    public static final String JARS = "jars";
     public static final String CLIENT = "jars/bin/minecraft.jar";
     public static final String SERVER = "jars/minecraft_server.jar";
     public static final String CLIENT_RG_OUT = "temp/minecraft_rg.jar";
@@ -13,11 +12,14 @@ public class Conf {
     public static final String SERVER_FF_OUT = "temp/minecraft_server.jar";
     public static final String CFG_RG = "temp/retroguard.cfg";
     public static final String CFG_RG_RO = "temp/retroguard_ro.cfg";
-
     public static final String CLIENT_MAPPINGS = "conf/client.tiny";
     public static final String SERVER_MAPPINGS = "conf/server.tiny";
 
     public static boolean debug;
+    public static boolean patch;
+	public static String[] ignorePackages;
+	public static int onlySide;
+	public static String indentionString;
 
     static {
         resetConfig();
@@ -25,6 +27,10 @@ public class Conf {
 
     public static void resetConfig() {
         debug = false;
+        patch = true;
+    	onlySide = -1;
+    	ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
+    	indentionString = "\t";
     }
 
 }

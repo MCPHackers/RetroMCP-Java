@@ -1,5 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 
@@ -41,7 +42,7 @@ public class TaskRecompile implements Task {
             Iterable<String> options = Arrays.asList("-d", "bin/minecraft", "-cp", "jars/bin/minecraft.jar;jars/bin/lwjgl_util.jar;jars/bin/lwjgl.jar;jars/bin/jinput.jar");
             recompile(compiler, ds, clientSrc, options);
         } else {
-            System.err.println("Client sources not found!");
+        	MCP.logger.error("Client sources not found!");
         }
 
         // Compile server
@@ -50,7 +51,7 @@ public class TaskRecompile implements Task {
             Iterable<String> options = Arrays.asList("-d", "bin/minecraft_server", "-cp", "jars/minecraft_server.jar;jars/bin/lwjgl_util.jar;jars/bin/lwjgl.jar;jars/bin/jinput.jar");
             recompile(compiler, ds, serverSrc, options);
         } else {
-            System.err.println("Server sources not found!");
+        	MCP.logger.error("Server sources not found!");
         }
     }
 

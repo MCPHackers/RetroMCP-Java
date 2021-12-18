@@ -25,7 +25,7 @@ public class TaskInfoReobfuscate implements TaskInfo {
     }
 
     @Override
-    public boolean hasServerThread() {
-        return false;
+    public boolean isMultiThreaded() {
+        return true;
     }
 }
