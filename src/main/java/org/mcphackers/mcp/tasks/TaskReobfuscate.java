@@ -44,7 +44,7 @@ public class TaskReobfuscate implements Task {
             }
 
             // Create recompilation hashes and compare them to the original hashes
-            new TaskUpdateMD5().doTask(true);
+            new TaskUpdateMD5(side).doTask(true);
             // Recompiled hashes
             gatherMD5Hashes(true, this.side);
             // Original hashes
@@ -74,7 +74,7 @@ public class TaskReobfuscate implements Task {
             }
 
             // Create recompilation hashes and compare them to the original hashes
-            new TaskUpdateMD5().doTask(true);
+            new TaskUpdateMD5(side).doTask(true);
             // Recompiled hashes
             gatherMD5Hashes(true, this.side);
             // Original hashes
@@ -102,7 +102,8 @@ public class TaskReobfuscate implements Task {
 
     @Override
     public ProgressInfo getProgress() {
-        return new ProgressInfo("Decompiling...", 0, 1);
+    	//TODO
+        return new ProgressInfo("WHAT", 0, 1);
     }
 
     // Utility methods

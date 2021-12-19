@@ -4,20 +4,22 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.*;
 import org.mcphackers.mcp.tools.ProgressInfo;
+
 import java.util.*;
 
 public class MCP {
 
     public static EnumMode mode;
     public static MCPLogger logger;
+    public static Scanner input;
 
     static {
-        AnsiConsole.systemInstall();
+    	AnsiConsole.systemInstall();
     }
 
     public static void main(String[] args) {
         logger = new MCPLogger();
-        Scanner sc = new Scanner(System.in);
+        input = new Scanner(System.in);
 
         boolean startedWithNoParams = false;
         boolean exit = false;
@@ -39,7 +41,7 @@ public class MCP {
         while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
             while (args.length < 1) {
                 logger.print(new Ansi().fgBrightCyan().a("> ").a("\u001B[37m"));
-                String str = sc.nextLine();
+                String str = input.nextLine();
                 logger.print(new Ansi().fgDefault());
                 args = str.split(" ");
             }
@@ -97,7 +99,7 @@ public class MCP {
             mode = null;
             executeTimes++;
         }
-        sc.close();
+        input.close();
     }
 
     private static void start() {
@@ -118,7 +120,9 @@ public class MCP {
         	}
             if (Conf.debug) ex.printStackTrace();
             else {
-                logger.info(msg);
+            	if(msg != null) {
+            		logger.info(msg);
+            	}
                 logger.info("Use -debug for more info");
             }
         }
@@ -153,9 +157,8 @@ public class MCP {
     private static void processMultitasks(TaskInfo task) throws Exception {
         SideThread clientThread = null;
         SideThread serverThread = null;
-        boolean hasServerThread = task.isMultiThreaded();
-        int threads = 1;
-        if (hasServerThread) threads = 2;
+        boolean hasServerThread = true;
+        int threads = hasServerThread ? 2 : 1;
         for (int i = 0; i < threads + 1; i++) {
             logger.newLine();
         }
@@ -180,11 +183,14 @@ public class MCP {
             }
             s.append(new Ansi().restoreCursorPosition().toString());
             logger.print(s.toString());
-            if (clientThread.exception != null)
+            if (clientThread.exception != null) {
                 throw clientThread.exception;
+            }
             if (hasServerThread)
-                if (serverThread.exception != null)
-                    throw serverThread.exception;
+                if (serverThread.exception != null) {
+                	// AAAAAAA CAN'T STOP THIS THREAD IF ANOTHER ONE FAILS
+                	throw serverThread.exception;
+                }
         }
     }
 

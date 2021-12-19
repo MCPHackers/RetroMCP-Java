@@ -34,21 +34,18 @@ public class TaskSetup implements Task {
         if (Files.exists(Paths.get("src"))) {
             MCP.logger.info("! /src exists! Aborting.");
             MCP.logger.info("! Run cleanup in order to run setup again.");
-            return;
+            throw new IOException();
         }
 
         MCP.logger.info("> Setting up your workspace...");
-        MCP.logger.info("> Making sure temp exists...");
-
         if (!Files.exists(Paths.get("temp"))) {
             Files.createDirectory(Paths.get("temp"));
         }
-
-        MCP.logger.info("> Making sure jars/bin/natives exists.");
         if (!Files.exists(Paths.get("jars", "bin", "natives"))) {
             Files.createDirectories(Paths.get("jars", "bin", "natives"));
         }
         step = 0;
+        MCP.logger.info("> Downloading libraries...");
         long startTime = System.nanoTime();
         Utility.downloadFile(new URI("https://files.betacraft.uk/launcher/assets/libs-windows.zip").toURL(), Paths.get("jars", "bin", "libs.zip").toString());
 
@@ -103,16 +100,14 @@ public class TaskSetup implements Task {
         }
         MCP.logger.info(table_str);
         MCP.logger.info("> What version would you like to install?");
-        Scanner scanner = new Scanner(System.in);
         MCP.logger.print(": ");
-        String chosenVersion = scanner.nextLine().toLowerCase();
+        String chosenVersion = MCP.input.nextLine().toLowerCase();
         // Keep asking until they have a valid option
         List<String> versions = Arrays.stream(versionsFolder.toLowerCase().split(",")).collect(Collectors.toList());
         while (!versions.contains(chosenVersion)) {
             MCP.logger.print(": ");
-            chosenVersion = scanner.nextLine().toLowerCase();
+            chosenVersion = MCP.input.nextLine().toLowerCase();
         }
-        scanner.close();
 
         if (Files.exists(Paths.get("conf"))) {
             Utility.deleteDirectoryStream(Paths.get("patches_client"));

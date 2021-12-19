@@ -21,7 +21,7 @@ public class TaskInfoRecompile implements TaskInfo {
 
     @Override
     public Task newTask(int side) {
-        return new TaskRecompile();
+        return new TaskRecompile(side);
     }
 
     @Override

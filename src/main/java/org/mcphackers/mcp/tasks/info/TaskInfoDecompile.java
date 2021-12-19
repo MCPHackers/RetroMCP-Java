@@ -28,5 +28,4 @@ public class TaskInfoDecompile implements TaskInfo {
     public boolean isMultiThreaded() {
         return true;
     }
-
 }

@@ -21,7 +21,7 @@ public class TaskInfoUpdateMD5 implements TaskInfo {
 
     @Override
     public Task newTask(int side) {
-        return new TaskUpdateMD5();
+        return new TaskUpdateMD5(side);
     }
 
     @Override

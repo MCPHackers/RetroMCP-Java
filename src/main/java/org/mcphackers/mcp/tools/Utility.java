@@ -24,6 +24,10 @@ public class Utility {
         while (proc.isAlive()) ;
         return proc.exitValue();
     }
+    
+    public static Path getPath(String pathStr) {
+    	return Paths.get(pathStr.replace("/", File.separator));
+    }
 
     public static void unzip(final Path zipFile, final Path destDir) throws IOException {
         if (Files.notExists(destDir)) {
