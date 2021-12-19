@@ -10,14 +10,18 @@ public class Conf {
     public static final String SERVER_EXC_OUT = "temp/minecraft_server_exc.jar";
     public static final String CLIENT_SOURCES = "src/minecraft";
     public static final String SERVER_SOURCES = "src/minecraft_server";
-    public static final String CFG_RG = "temp/retroguard.cfg";
-    public static final String CFG_RG_RO = "temp/retroguard_ro.cfg";
+    public static final String CLIENT_BIN = "src/minecraft";
+    public static final String SERVER_BIN = "src/minecraft_server";
     public static final String CLIENT_MAPPINGS = "conf/client.tiny";
     public static final String SERVER_MAPPINGS = "conf/server.tiny";
     public static final String EXC_CLIENT = "conf/client.exc";
     public static final String EXC_SERVER = "conf/server.exc";
     public static final String CLIENT_PATCHES = "conf/patches_client";
     public static final String SERVER_PATCHES = "conf/patches_server";
+    public static final String CLIENT_MD5 = "temp/client.md5";
+    public static final String SERVER_MD5 = "temp/server.md5";
+    public static final String CLIENT_MD5_RO = "temp/client_reobf.md5";
+    public static final String SERVER_MD5_RO = "temp/server_reobf.md5";
 
     public static boolean debug;
     public static boolean patch;

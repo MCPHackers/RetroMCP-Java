@@ -88,7 +88,7 @@ public class Utility {
             Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach((file) -> {
                 boolean deleted = file.delete();
                 if (!deleted) {
-                    System.err.println("Failed to delete " + file.getAbsolutePath());
+                    //System.err.println("Failed to delete " + file.getAbsolutePath());
                 }
             });
         }

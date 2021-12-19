@@ -51,6 +51,11 @@ public class MCPLogger {
 		}
 	}
 	
+	public void warning(String msg) {
+		System.err.println(new Ansi().fgBrightRed().a(msg).fgDefault());
+		//TODO: Add some kind of logging to a file
+	}
+	
 	/**
 	 * Logs an error message and prints it in red
 	 * @param msg

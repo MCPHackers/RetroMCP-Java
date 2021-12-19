@@ -79,7 +79,6 @@ public class TaskDecompile implements Task {
         	throw new Exception("Patching failed!!!");
         }
         step = 5;
-        // Only update MD5 and recompile for one of the sides, not both
         new TaskRecompile(side).doTask();
         step = 6;
         new TaskUpdateMD5(side).doTask();

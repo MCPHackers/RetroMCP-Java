@@ -188,7 +188,6 @@ public class MCP {
             }
             if (hasServerThread)
                 if (serverThread.exception != null) {
-                	// AAAAAAA CAN'T STOP THIS THREAD IF ANOTHER ONE FAILS
                 	throw serverThread.exception;
                 }
         }

@@ -1,5 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 
@@ -35,22 +36,26 @@ public class TaskRecompile implements Task {
 
         // Compile side
         if (Files.exists(srcPath)) {
-            Iterable<File> clientSrc = Files.walk(srcPath).filter(path -> !Files.isDirectory(path)).map(Path::toFile).collect(Collectors.toList());
+            Iterable<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path)).map(Path::toFile).collect(Collectors.toList());
             Iterable<String> options = Arrays.asList("-d", "bin/minecraft", "-cp", "jars/bin/minecraft.jar;jars/bin/lwjgl_util.jar;jars/bin/lwjgl.jar;jars/bin/jinput.jar");
-            recompile(compiler, ds, clientSrc, options);
+            if(side == 1) {
+            	options = Arrays.asList("-d", "bin/minecraft_server", "-cp", "jars/minecraft_server.jar");
+            }
+            recompile(compiler, ds, src, options);
         } else {
         	throw new IOException((side == 1 ? "Server" : "Client") + " sources not found!");
         }
     }
 
-    public void recompile(JavaCompiler compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> serverSrc, Iterable<String> recompileOptions) throws RuntimeException, IOException {
+	public void recompile(JavaCompiler compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> serverSrc, Iterable<String> recompileOptions) throws IOException {
         StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null);
         Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(serverSrc);
         JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, recompileOptions, null, sources);
+        mgr.close();
         boolean success = task.call();
         if (!success) {
             for (Diagnostic<?> diagnostic : ds.getDiagnostics()) {
-                throw new RuntimeException(diagnostic.toString());
+                MCP.logger.warning(diagnostic.toString());
             }
         }
     }

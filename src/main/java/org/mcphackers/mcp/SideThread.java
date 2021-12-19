@@ -20,7 +20,6 @@ public class SideThread extends Thread {
             task.doTask();
         } catch (Exception e) {
             exception = e;
-            Thread.currentThread().interrupt();
         }
     }
 
