@@ -12,6 +12,15 @@ public class MCP {
     public static EnumMode mode;
     public static MCPLogger logger;
     public static Scanner input;
+    private static Ansi logo = 
+    		new Ansi()
+            .fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____  ").a('\n')
+            .fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\ ").a('\n')
+            .fgCyan().a(" | |__) |___| |_ _ __ ___ ").fgYellow().a("| \\  / | |    | |__) |").a('\n')
+            .fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |    |  ___/ ").a('\n')
+            .fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |     ").a('\n')
+            .fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
+            .fgDefault();
 
     static {
     	AnsiConsole.systemInstall();
@@ -26,21 +35,13 @@ public class MCP {
 
         if (args.length <= 0) {
             startedWithNoParams = true;
-            Ansi ansi = new Ansi().fgCyan()
-                    .fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____  ").a('\n')
-                    .fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\ ").a('\n')
-                    .fgCyan().a(" | |__) |___| |_ _ __ ___ ").fgYellow().a("| \\  / | |    | |__) |").a('\n')
-                    .fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |    |  ___/ ").a('\n')
-                    .fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |     ").a('\n')
-                    .fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
-                    .fgDefault();
-            logger.println(ansi);
+            logger.println(logo);
             logger.println("Enter a command to execute:");
         }
         int executeTimes = 0;
         while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
             while (args.length < 1) {
-                logger.print(new Ansi().fgBrightCyan().a("> ").a("\u001B[37m"));
+                logger.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
                 String str = input.nextLine();
                 logger.print(new Ansi().fgDefault());
                 args = str.split(" ");
@@ -99,11 +100,16 @@ public class MCP {
             mode = null;
             executeTimes++;
         }
-        input.close();
+        shutdown();
     }
 
-    private static void start() {
-        TaskInfo task = getTaskInfo();
+    private static void shutdown() {
+        input.close();
+        //TODO: Close logger (unimplemented)
+	}
+
+	private static void start() {
+        TaskInfo task = getTaskInfo(mode);
         try {
             logger.info(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault());
             processTask(task);
@@ -128,21 +134,8 @@ public class MCP {
         }
     }
 
-    private static TaskInfo getTaskInfo() {
-        switch (mode) {
-            case decompile:
-                return new TaskInfoDecompile();
-            case recompile:
-                return new TaskInfoRecompile();
-            case reobfuscate:
-                return new TaskInfoReobfuscate();
-            case setup:
-                return new TaskInfoSetup();
-            case updatemd5:
-                return new TaskInfoUpdateMD5();
-            default:
-                return null;
-        }
+    public static TaskInfo getTaskInfo(EnumMode enumMode) {
+        return enumMode.task;
     }
 
     private static void processTask(TaskInfo task) throws Exception {
@@ -155,63 +148,33 @@ public class MCP {
     }
     
     private static void processMultitasks(TaskInfo task) throws Exception {
-        SideThread clientThread = null;
-        SideThread serverThread = null;
-        boolean hasServerThread = true;
-        int threads = hasServerThread ? 2 : 1;
-        for (int i = 0; i < threads + 1; i++) {
+        List<SideThread> threads = new ArrayList<SideThread>();
+        int threadsAmount = 2;
+        logger.newLine();
+        for (int i = 0; i < threadsAmount; i++) {
             logger.newLine();
+            threads.add(new SideThread(i, task.newTask(i)));
+            threads.get(i).start();
         }
-        clientThread = new SideThread(0, task.newTask(0));
-        clientThread.start();
-        if (hasServerThread) {
-            serverThread = new SideThread(1, task.newTask(1));
-            serverThread.start();
-        }
-        boolean alive1 = true;
-        boolean alive2 = hasServerThread;
-        while (alive1 || alive2) {
+        boolean working = true;
+        while (working) {
             Thread.sleep(10);
-            alive1 = clientThread.isAlive();
-            if (hasServerThread) alive2 = serverThread.isAlive();
-            // Moves the blinking cursor above progress bars (Temporary solution)
-            StringBuilder s = new StringBuilder(new Ansi().cursorUp(threads + 1).a('\n').toString());
-            for (int i = 0; i < threads; i++) {
-                ProgressInfo dinfo = i == 0 ? clientThread.getInfo() : serverThread.getInfo();
-                String side = i == 0 ? clientThread.getSideName() : serverThread.getSideName();
-                s.append(progressString(dinfo.progress[1], dinfo.progress[0], dinfo.msg, side + ":"));
-            }
-            s.append(new Ansi().restoreCursorPosition().toString());
-            logger.print(s.toString());
-            if (clientThread.exception != null) {
-                throw clientThread.exception;
-            }
-            if (hasServerThread)
-                if (serverThread.exception != null) {
-                	throw serverThread.exception;
+            logger.printProgressBars(threads);
+            working = false;
+            Exception ex = null;
+            for(SideThread thread : threads) {
+                if (thread.exception != null) {
+                	ex = thread.exception;
                 }
+            	working = !working ? thread.isAlive() : true;
+            }
+            if(ex != null) {
+            	for(SideThread thread : threads) {
+            		thread.stopThread();
+            	}
+            	throw ex; 
+            }
         }
-    }
-
-    private static String progressString(long total, long current, String progressMsg, String prefix) {
-        Ansi string = new Ansi(100);
-        if (total != 0) {
-            int percent = (int) (current * 100 / total);
-            string
-                    .a(" ")
-                    .a(String.format("%-7s", prefix))
-                    .a(String.join("", Collections.nCopies(percent == 0 ? 2 : 2 - (int) (Math.log10(percent)), " ")))
-                    .a(String.format(" %d%% [", percent))
-                    .fgGreen()
-                    .a(String.join("", Collections.nCopies(percent / 10, "=")))
-                    .fgDefault()
-                    .a(String.join("", Collections.nCopies(10 - percent / 10, "-")))
-                    .a("] ")
-                    .a(progressMsg)
-                    .a(String.join("", Collections.nCopies(100, " ")));
-        }
-
-        return string.a("\n").toString();
     }
 
     private static void parseArg(String arg, HashMap<String, String[]> map) {
@@ -269,7 +232,7 @@ public class MCP {
     private static boolean setMode(String name) {
     	try {
             mode = EnumMode.valueOf(name);
-            return mode.isTask;
+            return mode.task != null;
     	}
     	catch (IllegalArgumentException ex) {}
         return false;

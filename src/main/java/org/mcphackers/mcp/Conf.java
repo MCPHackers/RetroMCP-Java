@@ -10,8 +10,8 @@ public class Conf {
     public static final String SERVER_EXC_OUT = "temp/minecraft_server_exc.jar";
     public static final String CLIENT_SOURCES = "src/minecraft";
     public static final String SERVER_SOURCES = "src/minecraft_server";
-    public static final String CLIENT_BIN = "src/minecraft";
-    public static final String SERVER_BIN = "src/minecraft_server";
+    public static final String CLIENT_BIN = "bin/minecraft";
+    public static final String SERVER_BIN = "bin/minecraft_server";
     public static final String CLIENT_MAPPINGS = "conf/client.tiny";
     public static final String SERVER_MAPPINGS = "conf/server.tiny";
     public static final String EXC_CLIENT = "conf/client.exc";

@@ -1,22 +1,29 @@
 package org.mcphackers.mcp;
 
+import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tasks.info.TaskInfoDecompile;
+import org.mcphackers.mcp.tasks.info.TaskInfoRecompile;
+import org.mcphackers.mcp.tasks.info.TaskInfoReobfuscate;
+import org.mcphackers.mcp.tasks.info.TaskInfoSetup;
+import org.mcphackers.mcp.tasks.info.TaskInfoUpdateMD5;
+
 public enum EnumMode {
 
-    help("Show this list", false),
-    decompile("Start decompiling Minecraft", true),
-    recompile("Recompile Minecraft sources", true),
-    reobfuscate("Reobfuscate Minecraft classes", true),
-    updatemd5("Update md5 hash tables used for reobfuscation", true),
-    updatemcp("Download an update if available", true),
-    setup("Choose a version to setup", true),
-    cleanup("Delete all source and class folders", true),
-    exit("Exit the program", false);
+    help("Show this list", null),
+    decompile("Start decompiling Minecraft", new TaskInfoDecompile()),
+    recompile("Recompile Minecraft sources", new TaskInfoRecompile()),
+    reobfuscate("Reobfuscate Minecraft classes", new TaskInfoReobfuscate()),
+    updatemd5("Update md5 hash tables used for reobfuscation", new TaskInfoUpdateMD5()),
+    updatemcp("Download an update if available", null),
+    setup("Choose a version to setup", new TaskInfoSetup()),
+    cleanup("Delete all source and class folders", null),
+    exit("Exit the program", null);
 	
 	public String desc;
-	public boolean isTask;
+	public TaskInfo task;
     
-    private EnumMode(String desc, boolean task) {
+    private EnumMode(String desc, TaskInfo task) {
     	this.desc = desc;
-    	this.isTask = task;
+    	this.task = task;
     }
 }

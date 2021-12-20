@@ -10,9 +10,9 @@ public class DecompileLogger extends IFernflowerLogger {
     private String currentMessage;
 
     public DecompileLogger() {
-        numberOfClasses = 0;
+        numberOfClasses = 1;
         currentClassNumber = 0;
-        currentMessage = "";
+        currentMessage = "Decompiling...";
     }
 
     public ProgressInfo initInfo() {

@@ -4,6 +4,8 @@ import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.FileHeader;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mcphackers.mcp.MCP;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -37,7 +39,7 @@ public class Utility {
         new ZipFile(zipFile.toFile()).extractAll(destDir.toString());
     }
 
-    public static void unzipByExtension(final Path src, final Path destDir, String extension) throws IOException {
+    public static void unzipByExtension(final Path src, final Path destDir, String extension, String[] excludedPackages) throws IOException {
         if (Files.notExists(destDir)) {
             Files.createDirectories(destDir);
         }
@@ -47,8 +49,12 @@ public class Utility {
             List<FileHeader> fileHeaders = zipFile.getFileHeaders();
             for (FileHeader fileHeader : fileHeaders) {
                 String fileName = fileHeader.getFileName();
-                //TODO: Move this outta here and make it use Conf.ignorePackages
-                if (!(fileName.startsWith("paulscode") || fileName.startsWith("com")) && fileName.endsWith(extension)) {
+                boolean excluded = false;
+                for(String pkg : excludedPackages) {
+                	excluded = fileName.startsWith(pkg);
+                	if(excluded) break;
+                }
+                if (!excluded && fileName.endsWith(extension)) {
                     zipFile.extractFile(fileHeader, destDir.toString());
                 }
             }
@@ -88,7 +94,7 @@ public class Utility {
             Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach((file) -> {
                 boolean deleted = file.delete();
                 if (!deleted) {
-                    //System.err.println("Failed to delete " + file.getAbsolutePath());
+                    MCP.logger.warning("Failed to delete " + file.getAbsolutePath());
                 }
             });
         }

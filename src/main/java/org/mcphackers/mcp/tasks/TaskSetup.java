@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class TaskSetup implements Task {
+public class TaskSetup extends Task {
 
     private int step = 0;
     private static Map<String, String> natives = new HashMap<>();
@@ -192,20 +192,6 @@ public class TaskSetup implements Task {
             } catch (JSONException ex) {
             	//MCP.logger.error("Server not found for " + chosenVersion);
             }
-        }
-    }
-
-    @Override
-    public ProgressInfo getProgress() {
-        switch (step) {
-        case 0:
-            return new ProgressInfo("> Downloading libraries...", step, 1);
-        case 1:
-            return new ProgressInfo("> Downloading natives for your platform...", step, 1);
-        case 2:
-            return new ProgressInfo("> Extracting...", step, 1);
-        default:
-            return null;
         }
     }
 }

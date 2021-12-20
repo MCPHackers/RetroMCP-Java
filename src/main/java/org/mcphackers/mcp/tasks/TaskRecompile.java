@@ -13,11 +13,15 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class TaskRecompile implements Task {
+public class TaskRecompile extends Task {
     private final int side;
+	private int total;
+	private int progress;
 
     public TaskRecompile(int side) {
 		this.side = side;
+        this.total = 1;
+        this.progress = 0;
 	}
 
 	@Override
@@ -28,6 +32,7 @@ public class TaskRecompile implements Task {
         Path binPath = side == 1 ? Paths.get("bin", "minecraft_server") : Paths.get("bin", "minecraft");
         Path srcPath = side == 1 ? Paths.get("src", "minecraft_server") : Paths.get("src", "minecraft");
 
+        step();
         if (Files.exists(binPath)) {
             Utility.deleteDirectoryStream(binPath);
         }
@@ -47,21 +52,27 @@ public class TaskRecompile implements Task {
         }
     }
 
-	public void recompile(JavaCompiler compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> serverSrc, Iterable<String> recompileOptions) throws IOException {
+	public void recompile(JavaCompiler compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> src, Iterable<String> recompileOptions) throws IOException, RuntimeException {
         StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null);
-        Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(serverSrc);
+        Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(src);
         JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, recompileOptions, null, sources);
         mgr.close();
         boolean success = task.call();
         if (!success) {
-            for (Diagnostic<?> diagnostic : ds.getDiagnostics()) {
-                MCP.logger.warning(diagnostic.toString());
-            }
+            for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
+                MCP.logger.error(String.format("Error on line %d in %s%n",
+                                  diagnostic.getLineNumber(),
+                                  diagnostic.getSource().toUri()));
+            throw new RuntimeException("Compilation error!");
         }
     }
 
     @Override
     public ProgressInfo getProgress() {
-        return new ProgressInfo("Recompiling...", 0, 1);
+    	//TODO: Progress values stay at 0 and 1. Add a way to monitor progress of compilation.
+        if(step == 1) {
+        	return new ProgressInfo("Recompiling...", progress, total);
+        }
+        return super.getProgress();
     }
 }

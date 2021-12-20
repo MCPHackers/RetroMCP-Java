@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class TaskReobfuscate implements Task {
+public class TaskReobfuscate extends Task {
     private final int side;
 
     private final Map<String, String> recompHashes = new HashMap<>();
@@ -44,7 +44,7 @@ public class TaskReobfuscate implements Task {
             }
 
             // Create recompilation hashes and compare them to the original hashes
-            new TaskUpdateMD5(side).doTask(true);
+            new TaskUpdateMD5(side).updateMD5(true);
             // Recompiled hashes
             gatherMD5Hashes(true, this.side);
             // Original hashes
@@ -74,7 +74,7 @@ public class TaskReobfuscate implements Task {
             }
 
             // Create recompilation hashes and compare them to the original hashes
-            new TaskUpdateMD5(side).doTask(true);
+            new TaskUpdateMD5(side).updateMD5(true);
             // Recompiled hashes
             gatherMD5Hashes(true, this.side);
             // Original hashes
@@ -103,7 +103,7 @@ public class TaskReobfuscate implements Task {
     @Override
     public ProgressInfo getProgress() {
     	//TODO
-        return new ProgressInfo("WHAT", 0, 1);
+        return new ProgressInfo("Reobfuscating...", 0, 1);
     }
 
     // Utility methods

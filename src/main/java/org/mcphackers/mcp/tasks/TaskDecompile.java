@@ -8,25 +8,22 @@ import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 import org.mcphackers.mcp.tools.decompile.Decompiler;
 
-import java.io.PrintStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
-public class TaskDecompile implements Task {
+public class TaskDecompile extends Task {
 
     private static final Pattern MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+");
 
     private final Decompiler decompiler;
-    private int step;
     private final int side;
+	private TaskUpdateMD5 md5Task;
 
     public TaskDecompile(int side) {
         this.side = side;
-        step = 0;
         decompiler = new Decompiler();
     }
 
@@ -42,7 +39,7 @@ public class TaskDecompile implements Task {
         Path srcPath = Utility.getPath((side == 1 ? Conf.SERVER_SOURCES : Conf.CLIENT_SOURCES));
         Path patchesPath = Utility.getPath((side == 1 ? Conf.SERVER_PATCHES : Conf.CLIENT_PATCHES));
 
-        step = 0;
+        step();
         // Remap Minecraft client JAR
         TinyRemapper remapper = null;
 
@@ -54,20 +51,17 @@ public class TaskDecompile implements Task {
                 remapper.finish();
             }
         }
-        step = 1;
-
+        step();
         // Apply MCInjector
         MCInjector.process(rgout, excout, exc, null, null, 0);
-
-        // Decompile and extract sources
-        step = 2;
+        step();
+        // Decompile
         decompiler.decompile(excout, "temp/cls");
-        step = 3;
-        //TODO: Client and Server
-        Utility.unzipByExtension(Utility.getPath((side == 1 ? "temp/cls/minecraft_server_exc.jar" : "temp/cls/minecraft_exc.jar")), srcPath, ".java");
-
+        step();
+        // Extract sources
+        Utility.unzipByExtension(Utility.getPath((side == 1 ? "temp/cls/minecraft_server_exc.jar" : "temp/cls/minecraft_exc.jar")), srcPath, ".java", Conf.ignorePackages);
+        step();
         // Apply patches
-        step = 4;
         PatchOperation patchOperation = PatchOperation.builder()
                 .verbose(true)
                 .basePath(srcPath)
@@ -78,11 +72,15 @@ public class TaskDecompile implements Task {
         if (code != 0) {
         	throw new Exception("Patching failed!!!");
         }
-        step = 5;
+        step();
+        if(side == 1) {
+        	throw new Exception("Test");
+        }
         new TaskRecompile(side).doTask();
-        step = 6;
-        new TaskUpdateMD5(side).doTask();
-        step = 7;
+        this.md5Task = new TaskUpdateMD5(side);
+        step();
+        this.md5Task.doTask();
+        this.md5Task = null;
     }
 
     public static TinyRemapper remap(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
@@ -104,27 +102,45 @@ public class TaskDecompile implements Task {
     }
 
     public ProgressInfo getProgress() {
-        if (step == 0) {
-            return new ProgressInfo("Remapping JAR...", 0, 1);
-        }
+    	//Don't look here
+    	int total = 100;
+    	int current = 0;
         if (step == 1) {
-            return new ProgressInfo("Applying MCInjector...", 0, 1);
+        	current = 1;
+            return new ProgressInfo("Remapping JAR...", current, total);
         }
         if (step == 2) {
-            return decompiler.log.initInfo();
+        	current = 2;
+            return new ProgressInfo("Applying MCInjector...", current, total);
         }
-        if (step == 3) {
-            return new ProgressInfo("Extracting sources...", 99, 100);
+        if (step == 3 && decompiler != null) {
+        	current = 3;
+        	ProgressInfo info = decompiler.log.initInfo();
+        	int percent = (int) (info.progress[0] * 100 / info.progress[1] * 0.84D);
+        	info.progress[0] = current + percent;
+        	info.progress[1] = total;
+            return info;
         }
         if (step == 4) {
-            return new ProgressInfo("Applying patches...", 99, 100);
+        	current = 88;
+            return new ProgressInfo("Extracting sources...", current, total);
         }
         if (step == 5) {
-            return new ProgressInfo("Recompiling...", 99, 100);
+        	current = 89;
+            return new ProgressInfo("Applying patches...", current, total);
         }
         if (step == 6) {
-            return new ProgressInfo("Updating MD5...", 99, 100);
+        	current = 90;
+            return new ProgressInfo("Recompiling...", current, total);
         }
-        return new ProgressInfo("Done!", 1, 1);
+        if (step == 7 && md5Task != null) {
+        	current = 91;
+        	ProgressInfo info = md5Task.getProgress();
+        	int percent = (int) (info.progress[0] * 100 / info.progress[1] * 0.1D);
+        	info.progress[0] = current + percent;
+        	info.progress[1] = total;
+            return info;
+        }
+        return super.getProgress();
     }
 }

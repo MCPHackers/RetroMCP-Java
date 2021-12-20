@@ -5,11 +5,13 @@ import org.mcphackers.mcp.tools.ProgressInfo;
 
 public class SideThread extends Thread {
 
-    private final int side;
+    private boolean stopThread;
+	private final int side;
     private final Task task;
-    public Exception exception;
+    public volatile Exception exception;
 
     public SideThread(int i, Task t) {
+    	super(getSideName(i) + " thread");
         side = i;
         exception = null;
         task = t;
@@ -17,13 +19,25 @@ public class SideThread extends Thread {
 
     public void run() {
         try {
-            task.doTask();
+            task.doTask(this);
         } catch (Exception e) {
             exception = e;
         }
     }
+    
+    public void stopThread() {
+    	stopThread = true;
+    }
+    
+    public boolean stopped() {
+    	return stopThread;
+    }
 
     public String getSideName() {
+    	return getSideName(side);
+    }
+
+    public static String getSideName(int side) {
         if (side == 0)
             return "Client";
         if (side == 1)
