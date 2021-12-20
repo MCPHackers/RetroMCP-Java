@@ -94,7 +94,7 @@ public class MCP {
                 logger.println("Unknown command. Type 'help' for list of available commands");
             }
             args = new String[]{};
-            Conf.resetConfig();
+            MCPConfig.resetConfig();
             if (!startedWithNoParams || mode == EnumMode.exit)
                 exit = true;
             mode = null;
@@ -124,7 +124,7 @@ public class MCP {
         		ex = nullException;
         		msg = "Invalid task detected!";
         	}
-            if (Conf.debug) ex.printStackTrace();
+            if (MCPConfig.debug) ex.printStackTrace();
             else {
             	if(msg != null) {
             		logger.info(msg);
@@ -196,7 +196,7 @@ public class MCP {
     private static void setParameter(String name, int value) {
         switch (name) {
         	case "side":
-        		Conf.onlySide = value;
+        		MCPConfig.onlySide = value;
         		break;
         }
     }
@@ -205,7 +205,7 @@ public class MCP {
         switch (name) {
 	        case "ind":
 	        case "indention":
-	        	Conf.indentionString = value;
+	        	MCPConfig.indentionString = value;
 	            break;
         }
     }
@@ -213,7 +213,7 @@ public class MCP {
     private static void setParameter(String name, String[] value) {
         switch (name) {
 	        case "ignore":
-	            Conf.ignorePackages = value;
+	            MCPConfig.ignorePackages = value;
 	            break;
         }
     }
@@ -221,10 +221,10 @@ public class MCP {
     private static void setParameter(String name, boolean value) {
         switch (name) {
             case "debug":
-                Conf.debug = value;
+                MCPConfig.debug = value;
                 break;
             case "patch":
-                Conf.patch = value;
+                MCPConfig.patch = value;
                 break;
         }
     }

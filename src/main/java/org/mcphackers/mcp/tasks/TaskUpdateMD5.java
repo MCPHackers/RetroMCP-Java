@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
-import org.mcphackers.mcp.Conf;
+import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 
@@ -28,8 +28,8 @@ public class TaskUpdateMD5 extends Task {
     }
 
     public void updateMD5(boolean reobf) throws Exception {
-        Path binPath = side == 1 ? Utility.getPath(Conf.SERVER_BIN) : Utility.getPath(Conf.CLIENT_BIN);
-        Path md5 = side == 1 ? (reobf ? Utility.getPath(Conf.SERVER_MD5_RO) : Utility.getPath(Conf.SERVER_MD5)) : (reobf ? Utility.getPath(Conf.CLIENT_MD5_RO) : Utility.getPath(Conf.CLIENT_MD5));
+        Path binPath = side == 1 ? Utility.getPath(MCPConfig.SERVER_BIN) : Utility.getPath(MCPConfig.CLIENT_BIN);
+        Path md5 = side == 1 ? (reobf ? Utility.getPath(MCPConfig.SERVER_MD5_RO) : Utility.getPath(MCPConfig.SERVER_MD5)) : (reobf ? Utility.getPath(MCPConfig.CLIENT_MD5_RO) : Utility.getPath(MCPConfig.CLIENT_MD5));
 
         if (Files.exists(binPath)) {
             BufferedWriter writer = new BufferedWriter(new FileWriter(md5.toFile()));
@@ -42,7 +42,8 @@ public class TaskUpdateMD5 extends Task {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     try {
                         String md5_hash = Utility.getMD5OfFile(file.toFile());
-                        String fileName = file.toString().replace((side == 1 ? Conf.SERVER_BIN : Conf.CLIENT_BIN).replace("/", File.separator), "").replace(".class", "");
+                        //String fileName = file.relativize((side == 1 ? Paths.get(MCPConfig.SERVER_BIN) : Paths.get(MCPConfig.CLIENT_BIN))).toString().replace(".class", "");
+                        String fileName = ((side == 1 ? Utility.getPath(MCPConfig.SERVER_BIN) : Utility.getPath(MCPConfig.CLIENT_BIN)).relativize(file).toString().replace(".class", ""));
                         writer.append(fileName).append(" ").append(md5_hash).append("\n");
                         progress++;
                     } catch (Exception ex) {

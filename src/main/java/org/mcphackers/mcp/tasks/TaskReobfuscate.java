@@ -4,6 +4,8 @@ import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.TinyUtils;
+
+import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 import org.objectweb.asm.*;
@@ -35,12 +37,11 @@ public class TaskReobfuscate extends Task {
 
     @Override
     public void doTask() throws Exception {
-        boolean clientCheck = checkBins(0);
-        boolean serverCheck = checkBins(1);
+        boolean binCheck = checkBins(side);
 
-        if (clientCheck) {
-            if (Files.exists(Paths.get("reobf", "minecraft"))) {
-                Utility.deleteDirectoryStream(Paths.get("reobf", "minecraft"));
+        if (binCheck) {
+            if (Files.exists(Utility.getPath(side == 1 ? MCPConfig.SERVER_REOBF : MCPConfig.CLIENT_REOBF))) {
+                Utility.deleteDirectoryStream(Utility.getPath(side == 1 ? MCPConfig.SERVER_REOBF : MCPConfig.CLIENT_REOBF));
             }
 
             // Create recompilation hashes and compare them to the original hashes
@@ -50,47 +51,16 @@ public class TaskReobfuscate extends Task {
             // Original hashes
             gatherMD5Hashes(false, this.side);
 
-            System.out.println("> Compacting client bin directory");
+            //Compacting bin directory
             readDeobfuscationMappings(this.side);
             writeReobfuscationMappings(this.side);
 
-            Path reobfJar = Paths.get("temp", "client_reobf.jar");
-            Utility.compress(Paths.get("bin", "minecraft"), reobfJar);
+            Path reobfJar = Utility.getPath(side == 1 ? MCPConfig.SERVER_REOBF_JAR : MCPConfig.CLIENT_REOBF_JAR);
+            Utility.compress(Utility.getPath(side == 1 ? MCPConfig.SERVER_BIN : MCPConfig.CLIENT_BIN), reobfJar);
             TinyRemapper remapper = null;
 
             try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(reobfJar).build()) {
-                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(Paths.get("conf", "client_reobf.tiny"), "official", "named"), reobfJar, outputConsumer, Paths.get("jars", "bin"));
-                outputConsumer.addNonClassFiles(reobfJar, NonClassCopyMode.FIX_META_INF, remapper);
-            } finally {
-                if (remapper != null) {
-                    remapper.finish();
-                }
-            }
-        }
-
-        if (serverCheck) {
-            if (Files.exists(Paths.get("reobf", "minecraft_server"))) {
-                Utility.deleteDirectoryStream(Paths.get("reobf", "minecraft_server"));
-            }
-
-            // Create recompilation hashes and compare them to the original hashes
-            new TaskUpdateMD5(side).updateMD5(true);
-            // Recompiled hashes
-            gatherMD5Hashes(true, this.side);
-            // Original hashes
-            gatherMD5Hashes(false, this.side);
-
-            System.out.println("> Compacting server bin directory");
-
-            readDeobfuscationMappings(this.side);
-            writeReobfuscationMappings(this.side);
-
-            Path reobfJar = Paths.get("temp", "server_reobf.jar");
-            Utility.compress(Paths.get("bin", "minecraft_server"), reobfJar);
-            TinyRemapper remapper = null;
-
-            try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(reobfJar).build()) {
-                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(Paths.get("conf", "server_reobf.tiny"), "official", "named"), reobfJar, outputConsumer, Paths.get("jars", "bin"));
+                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO), "official", "named"), reobfJar, outputConsumer, Paths.get("jars", "bin"));
                 outputConsumer.addNonClassFiles(reobfJar, NonClassCopyMode.FIX_META_INF, remapper);
             } finally {
                 if (remapper != null) {
@@ -102,92 +72,89 @@ public class TaskReobfuscate extends Task {
 
     @Override
     public ProgressInfo getProgress() {
-    	//TODO
         return new ProgressInfo("Reobfuscating...", 0, 1);
     }
 
     // Utility methods
     private void writeReobfuscationMappings(int side) throws IOException {
-        if (side == 0) {
-            Files.walkFileTree(Paths.get("bin", "minecraft"), new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (file.toString().endsWith(".class")) {
-                        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9) {
-                            private String className = "";
+        Files.walkFileTree(Paths.get(side == 1 ? MCPConfig.SERVER_BIN : MCPConfig.CLIENT_BIN), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if (file.toString().endsWith(".class")) {
+                    ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9) {
+                        private String className = "";
 
-                            @Override
-                            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-                                className = name;
-                                if (!defaultReobfClasses.containsKey(name)) {
-                                    extraReobfClasses.put(name, name.replace("net/minecraft/src/", ""));
-                                }
-                                super.visit(version, access, name, signature, superName, interfaces);
+                        @Override
+                        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+                            className = name;
+                            if (!defaultReobfClasses.containsKey(name)) {
+                                extraReobfClasses.put(name, name.replace("net/minecraft/src/", ""));
                             }
-
-                            @Override
-                            public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-                                if (!defaultReobfFields.containsKey(className + "/" + name) && !name.equals("$VALUES")) {
-                                    //extraReobfFields.put(className + "/" + name, className + "/" + name);
-                                    //System.out.println("Class-name: " + className + ", Field: " + name + ", Signature: " + descriptor);
-                                }
-                                return super.visitField(access, name, descriptor, signature, value);
-                            }
-
-                            @Override
-                            public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-                                if (!defaultReobfMethods.containsKey(className + "/" + name) && !name.equals("<init>") && !name.equals("<clinit>")) {
-                                    //System.out.println("Class-name: " + className + ", Method name: " + name);
-                                }
-                                return super.visitMethod(access, name, descriptor, signature, exceptions);
-                            }
-                        };
-                        ClassReader reader = new ClassReader(Files.readAllBytes(file));
-                        reader.accept(visitor, 0);
-                    }
-                    return super.visitFile(file, attrs);
-                }
-            });
-
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(Paths.get("conf", "client_reobf.tiny").toFile()))) {
-                writer.write("tiny\t2\t0\tofficial\tnamed\n");
-
-                for (Map.Entry<String, String> classKeyPair : defaultReobfClasses.entrySet()) {
-                    String deobfuscatedClassName = classKeyPair.getKey();
-                    String reobfuscatedClassName = classKeyPair.getValue();
-                    writer.write("c\t" + deobfuscatedClassName + "\t" + reobfuscatedClassName + "\n");
-
-                    for (Map.Entry<String, String> methodKeyPair : defaultReobfMethods.entrySet()) {
-                        String deobfuscatedFullName = methodKeyPair.getKey();
-                        if (deobfuscatedFullName.startsWith(deobfuscatedClassName) && !deobfuscatedFullName.endsWith("<init>") && !deobfuscatedFullName.endsWith("<clinit>")) {
-                            String deobfuscatedMethodName = deobfuscatedFullName.substring(methodKeyPair.getKey().lastIndexOf("/") + 1);
-                            String reobfuscatedMethodName = methodKeyPair.getValue();
-
-                            // 	m	(Lho;IIIII)V	a	renderQuad
-                            String signature = reobfuscatedMethodName.substring(reobfuscatedMethodName.lastIndexOf("("));
-                            String remappedSignature = remapSignature(signature);
-                            writer.write("\tm\t" + remappedSignature + "\t" + deobfuscatedMethodName + "\t" + reobfuscatedMethodName.replace(signature, "") + "\n");
+                            super.visit(version, access, name, signature, superName, interfaces);
                         }
-                    }
-                    writer.flush();
 
-                    for (Map.Entry<String, String> fieldKeyPair : defaultReobfFields.entrySet()) {
-                        String deobfuscatedFullName = fieldKeyPair.getKey();
-                        if (deobfuscatedFullName.startsWith(deobfuscatedClassName)) {
-                            String deobfuscatedFieldName = deobfuscatedFullName.substring(fieldKeyPair.getKey().lastIndexOf("/") + 1);
-                            String reobfuscatedFieldName = fieldKeyPair.getValue();
-
-                            // 	m	(Lho;IIIII)V	a	renderQuad
-                            String signature = reobfuscatedFieldName.substring(reobfuscatedFieldName.lastIndexOf("(") + 1, reobfuscatedFieldName.length() - 1);
-                            String remappedSignature = remapSignature(signature);
-                            writer.write("\tf\t" + remappedSignature + "\t" + deobfuscatedFieldName + "\t" + reobfuscatedFieldName.substring(0, reobfuscatedFieldName.indexOf("(")) + "\n");
+                        @Override
+                        public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
+                            if (!defaultReobfFields.containsKey(className + "/" + name) && !name.equals("$VALUES")) {
+                                //extraReobfFields.put(className + "/" + name, className + "/" + name);
+                                //System.out.println("Class-name: " + className + ", Field: " + name + ", Signature: " + descriptor);
+                            }
+                            return super.visitField(access, name, descriptor, signature, value);
                         }
-                    }
-                    writer.flush();
+
+                        @Override
+                        public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+                            if (!defaultReobfMethods.containsKey(className + "/" + name) && !name.equals("<init>") && !name.equals("<clinit>")) {
+                                //System.out.println("Class-name: " + className + ", Method name: " + name);
+                            }
+                            return super.visitMethod(access, name, descriptor, signature, exceptions);
+                        }
+                    };
+                    ClassReader reader = new ClassReader(Files.readAllBytes(file));
+                    reader.accept(visitor, 0);
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
+                return super.visitFile(file, attrs);
             }
+        });
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO).toFile()))) {
+            writer.write("tiny\t2\t0\tofficial\tnamed\n");
+
+            for (Map.Entry<String, String> classKeyPair : defaultReobfClasses.entrySet()) {
+                String deobfuscatedClassName = classKeyPair.getKey();
+                String reobfuscatedClassName = classKeyPair.getValue();
+                writer.write("c\t" + deobfuscatedClassName + "\t" + reobfuscatedClassName + "\n");
+
+                for (Map.Entry<String, String> methodKeyPair : defaultReobfMethods.entrySet()) {
+                    String deobfuscatedFullName = methodKeyPair.getKey();
+                    if (deobfuscatedFullName.startsWith(deobfuscatedClassName) && !deobfuscatedFullName.endsWith("<init>") && !deobfuscatedFullName.endsWith("<clinit>")) {
+                        String deobfuscatedMethodName = deobfuscatedFullName.substring(methodKeyPair.getKey().lastIndexOf("/") + 1);
+                        String reobfuscatedMethodName = methodKeyPair.getValue();
+
+                        // 	m	(Lho;IIIII)V	a	renderQuad
+                        String signature = reobfuscatedMethodName.substring(reobfuscatedMethodName.lastIndexOf("("));
+                        String remappedSignature = remapSignature(signature);
+                        writer.write("\tm\t" + remappedSignature + "\t" + deobfuscatedMethodName + "\t" + reobfuscatedMethodName.replace(signature, "") + "\n");
+                    }
+                }
+                writer.flush();
+
+                for (Map.Entry<String, String> fieldKeyPair : defaultReobfFields.entrySet()) {
+                    String deobfuscatedFullName = fieldKeyPair.getKey();
+                    if (deobfuscatedFullName.startsWith(deobfuscatedClassName)) {
+                        String deobfuscatedFieldName = deobfuscatedFullName.substring(fieldKeyPair.getKey().lastIndexOf("/") + 1);
+                        String reobfuscatedFieldName = fieldKeyPair.getValue();
+
+                        // 	m	(Lho;IIIII)V	a	renderQuad
+                        String signature = reobfuscatedFieldName.substring(reobfuscatedFieldName.lastIndexOf("(") + 1, reobfuscatedFieldName.length() - 1);
+                        String remappedSignature = remapSignature(signature);
+                        writer.write("\tf\t" + remappedSignature + "\t" + deobfuscatedFieldName + "\t" + reobfuscatedFieldName.substring(0, reobfuscatedFieldName.indexOf("(")) + "\n");
+                    }
+                }
+                writer.flush();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -204,7 +171,7 @@ public class TaskReobfuscate extends Task {
 
     private void readDeobfuscationMappings(int side) {
         if (side == 0) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get("conf", "client.tiny").toFile()))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS).toFile()))) {
                 String line = reader.readLine();
                 String currentClassName = "";
                 while (line != null) {

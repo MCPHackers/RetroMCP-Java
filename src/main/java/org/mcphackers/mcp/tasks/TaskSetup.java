@@ -3,7 +3,6 @@ package org.mcphackers.mcp.tasks;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 
 import java.io.BufferedWriter;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 
 public class TaskSetup extends Task {
 
-    private int step = 0;
     private static Map<String, String> natives = new HashMap<>();
 
     static {

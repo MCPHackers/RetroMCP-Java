@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tasks.mcinjector;
+package org.mcphackers.mcp.tools.mcinjector;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;

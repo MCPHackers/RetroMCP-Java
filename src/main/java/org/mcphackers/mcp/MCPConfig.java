@@ -1,6 +1,6 @@
 package org.mcphackers.mcp;
 
-public class Conf {
+public class MCPConfig {
 
     public static final String CLIENT = "jars/bin/minecraft.jar";
     public static final String SERVER = "jars/minecraft_server.jar";
@@ -14,6 +14,8 @@ public class Conf {
     public static final String SERVER_BIN = "bin/minecraft_server";
     public static final String CLIENT_MAPPINGS = "conf/client.tiny";
     public static final String SERVER_MAPPINGS = "conf/server.tiny";
+    public static final String CLIENT_MAPPINGS_RO = "temp/client_reobf.tiny";
+    public static final String SERVER_MAPPINGS_RO = "temp/server_reobf.tiny";
     public static final String EXC_CLIENT = "conf/client.exc";
     public static final String EXC_SERVER = "conf/server.exc";
     public static final String CLIENT_PATCHES = "conf/patches_client";
@@ -22,6 +24,10 @@ public class Conf {
     public static final String SERVER_MD5 = "temp/server.md5";
     public static final String CLIENT_MD5_RO = "temp/client_reobf.md5";
     public static final String SERVER_MD5_RO = "temp/server_reobf.md5";
+    public static final String CLIENT_REOBF = "reobf/minecraft";
+    public static final String SERVER_REOBF = "reobf/minecraft_server";
+	public static final String CLIENT_REOBF_JAR = "temp/client_reobf.jar";
+	public static final String SERVER_REOBF_JAR = "temp/server_reobf.jar";
 
     public static boolean debug;
     public static boolean patch;
