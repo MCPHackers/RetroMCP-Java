@@ -3,7 +3,7 @@ package org.mcphackers.mcp.tasks.info;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.TaskReobfuscate;
 
-public class TaskInfoReobfuscate implements TaskInfo {
+public class TaskInfoReobfuscate extends TaskInfo {
     @Override
     public String title() {
         return "Reobfuscating";
@@ -21,7 +21,7 @@ public class TaskInfoReobfuscate implements TaskInfo {
 
     @Override
     public Task newTask(int side) {
-        return new TaskReobfuscate(side);
+        return new TaskReobfuscate(side, this);
     }
 
     @Override

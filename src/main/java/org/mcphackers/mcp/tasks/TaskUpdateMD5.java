@@ -1,23 +1,22 @@
 package org.mcphackers.mcp.tasks;
 
 import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class TaskUpdateMD5 extends Task {
-    private final int side;
 	private int total;
 	private int progress;
     
-    public TaskUpdateMD5(int side) {
-        this.side = side;
+    public TaskUpdateMD5(int side, TaskInfo info) {
+        super(side, info);
         this.total = 1;
         this.progress = 0;
 	}
@@ -42,7 +41,6 @@ public class TaskUpdateMD5 extends Task {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     try {
                         String md5_hash = Utility.getMD5OfFile(file.toFile());
-                        //String fileName = file.relativize((side == 1 ? Paths.get(MCPConfig.SERVER_BIN) : Paths.get(MCPConfig.CLIENT_BIN))).toString().replace(".class", "");
                         String fileName = ((side == 1 ? Utility.getPath(MCPConfig.SERVER_BIN) : Utility.getPath(MCPConfig.CLIENT_BIN)).relativize(file).toString().replace(".class", ""));
                         writer.append(fileName).append(" ").append(md5_hash).append("\n");
                         progress++;

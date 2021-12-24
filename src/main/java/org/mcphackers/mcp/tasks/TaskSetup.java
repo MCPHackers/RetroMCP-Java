@@ -3,6 +3,7 @@ package org.mcphackers.mcp.tasks;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.Utility;
 
 import java.io.BufferedWriter;
@@ -19,7 +20,11 @@ import java.util.stream.Collectors;
 
 public class TaskSetup extends Task {
 
-    private static Map<String, String> natives = new HashMap<>();
+    public TaskSetup(TaskInfo info) {
+		super(-1 , info);
+	}
+
+	private static Map<String, String> natives = new HashMap<>();
 
     static {
         natives.put("windows", "https://files.betacraft.uk/launcher/assets/natives-windows.zip");
@@ -30,9 +35,7 @@ public class TaskSetup extends Task {
     @Override
     public void doTask() throws Exception {
         if (Files.exists(Paths.get("src"))) {
-            MCP.logger.info("! /src exists! Aborting.");
-            MCP.logger.info("! Run cleanup in order to run setup again.");
-            throw new IOException();
+            throw new IOException("! /src exists! Aborting.");
         }
 
         MCP.logger.info("> Setting up your workspace...");

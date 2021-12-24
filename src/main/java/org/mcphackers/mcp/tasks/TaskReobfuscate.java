@@ -6,6 +6,8 @@ import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.TinyUtils;
 
 import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tasks.info.TaskInfoUpdateMD5;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
 import org.objectweb.asm.*;
@@ -18,8 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class TaskReobfuscate extends Task {
-    private final int side;
-
     private final Map<String, String> recompHashes = new HashMap<>();
     private final Map<String, String> originalHashes = new HashMap<>();
 
@@ -31,8 +31,8 @@ public class TaskReobfuscate extends Task {
     private final Map<String, String> extraReobfMethods = new HashMap<>();
     private final Map<String, String> extraReobfFields = new HashMap<>();
 
-    public TaskReobfuscate(int side) {
-        this.side = side;
+    public TaskReobfuscate(int side, TaskInfo info) {
+        super(side, info);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class TaskReobfuscate extends Task {
             }
 
             // Create recompilation hashes and compare them to the original hashes
-            new TaskUpdateMD5(side).updateMD5(true);
+            new TaskUpdateMD5(side, new TaskInfoUpdateMD5()).updateMD5(true);
             // Recompiled hashes
             gatherMD5Hashes(true, this.side);
             // Original hashes
@@ -294,8 +294,7 @@ public class TaskReobfuscate extends Task {
         Path clientMD5 = reobf ? Paths.get("temp", "client_reobf.md5") : Paths.get("temp", "client.md5");
         Path serverMD5 = reobf ? Paths.get("temp", "server_reobf.md5") : Paths.get("temp", "server.md5");
 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(side == 0 ? clientMD5.toFile() : serverMD5.toFile()));
+        try (BufferedReader reader = new BufferedReader(new FileReader(side == 0 ? clientMD5.toFile() : serverMD5.toFile()))) {
             String line = reader.readLine();
             while (line != null) {
                 String[] tokens = line.split(" ");

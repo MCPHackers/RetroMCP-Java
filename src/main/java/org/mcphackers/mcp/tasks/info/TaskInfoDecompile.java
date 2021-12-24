@@ -3,7 +3,7 @@ package org.mcphackers.mcp.tasks.info;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.TaskDecompile;
 
-public class TaskInfoDecompile implements TaskInfo {
+public class TaskInfoDecompile extends TaskInfo {
     @Override
     public String title() {
         return "Decompiling";
@@ -21,7 +21,7 @@ public class TaskInfoDecompile implements TaskInfo {
 
     @Override
     public Task newTask(int side) {
-        return new TaskDecompile(side);
+        return new TaskDecompile(side, this);
     }
 
     @Override

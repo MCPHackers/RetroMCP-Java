@@ -9,12 +9,15 @@ public class SideThread extends Thread {
 	private final int side;
     private final Task task;
     public volatile Exception exception;
+    
+    public static final int CLIENT = 0;
+    public static final int SERVER = 1;
 
     public SideThread(int i, Task t) {
     	super(getSideName(i) + " thread");
         side = i;
-        exception = null;
         task = t;
+        exception = null;
     }
 
     public void run() {
@@ -38,9 +41,9 @@ public class SideThread extends Thread {
     }
 
     public static String getSideName(int side) {
-        if (side == 0)
+        if (side == CLIENT)
             return "Client";
-        if (side == 1)
+        if (side == SERVER)
             return "Server";
         return "Unknown";
     }

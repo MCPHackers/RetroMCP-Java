@@ -3,7 +3,7 @@ package org.mcphackers.mcp.tasks.info;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.TaskSetup;
 
-public class TaskInfoSetup implements TaskInfo {
+public class TaskInfoSetup extends TaskInfo {
     @Override
     public String title() {
         return "Setting up";
@@ -21,7 +21,7 @@ public class TaskInfoSetup implements TaskInfo {
 
     @Override
     public Task newTask(int side) {
-        return new TaskSetup();
+        return new TaskSetup(this);
     }
 
     @Override

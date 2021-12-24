@@ -3,7 +3,6 @@ package org.mcphackers.mcp;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.*;
-import org.mcphackers.mcp.tools.ProgressInfo;
 
 import java.util.*;
 
@@ -56,20 +55,20 @@ public class MCP {
                     Map.Entry mapElement = iterator.next();
                     String[] e = (String[]) mapElement.getValue();
                     if (e.length == 0) {
-                        setParameter((String) mapElement.getKey(), true);
+                        MCPConfig.setParameter((String) mapElement.getKey(), true);
                         continue;
                     }
                     if (e.length == 1) {
                         try {
-                            setParameter((String) mapElement.getKey(), Integer.parseInt(e[0]));
+                        	MCPConfig.setParameter((String) mapElement.getKey(), Integer.parseInt(e[0]));
                             continue;
                         } catch (NumberFormatException ex) {
-                            setParameter((String) mapElement.getKey(), e[0]);
+                        	MCPConfig.setParameter((String) mapElement.getKey(), e[0]);
                             continue;
                         }
                     }
                     if (e.length > 1) {
-                        setParameter((String) mapElement.getKey(), e);
+                    	MCPConfig.setParameter((String) mapElement.getKey(), e);
                         continue;
                     }
                 }
@@ -119,6 +118,10 @@ public class MCP {
         	String msg = e.getMessage();
         	try {
         		logger.info(new Ansi().a('\n').fgBrightRed().a(task.failMsg()).fgDefault());
+        		List<String> errors = task.getErrorList();
+        		for(String error : errors) {
+            		logger.info(new Ansi().a(" ").fgBrightRed().a(error).fgDefault());
+        		}
         	}
         	catch (NullPointerException nullException) {
         		ex = nullException;
@@ -149,19 +152,25 @@ public class MCP {
     
     private static void processMultitasks(TaskInfo task) throws Exception {
         List<SideThread> threads = new ArrayList<SideThread>();
-        int threadsAmount = 2;
+		if(MCPConfig.onlySide < 0 || MCPConfig.onlySide == SideThread.CLIENT) {
+			threads.add(new SideThread(SideThread.CLIENT, task.newTask(SideThread.CLIENT)));
+		}
+
+		if(MCPConfig.onlySide < 0 || MCPConfig.onlySide == SideThread.SERVER) {
+			threads.add(new SideThread(SideThread.SERVER, task.newTask(SideThread.SERVER)));
+		}
         logger.newLine();
-        for (int i = 0; i < threadsAmount; i++) {
+        for (SideThread thread : threads) {
             logger.newLine();
-            threads.add(new SideThread(i, task.newTask(i)));
-            threads.get(i).start();
+            thread.start();
         }
         boolean working = true;
+        Exception ex = null;
+        
         while (working) {
             Thread.sleep(10);
             logger.printProgressBars(threads);
             working = false;
-            Exception ex = null;
             for(SideThread thread : threads) {
                 if (thread.exception != null) {
                 	ex = thread.exception;
@@ -172,9 +181,9 @@ public class MCP {
             	for(SideThread thread : threads) {
             		thread.stopThread();
             	}
-            	throw ex; 
             }
         }
+    	if(ex != null) throw ex;
     }
 
     private static void parseArg(String arg, HashMap<String, String[]> map) {
@@ -190,42 +199,6 @@ public class MCP {
             String name = arg.substring(1);
             String[] value = new String[]{};
             map.put(name, value);
-        }
-    }
-
-    private static void setParameter(String name, int value) {
-        switch (name) {
-        	case "side":
-        		MCPConfig.onlySide = value;
-        		break;
-        }
-    }
-
-    private static void setParameter(String name, String value) {
-        switch (name) {
-	        case "ind":
-	        case "indention":
-	        	MCPConfig.indentionString = value;
-	            break;
-        }
-    }
-
-    private static void setParameter(String name, String[] value) {
-        switch (name) {
-	        case "ignore":
-	            MCPConfig.ignorePackages = value;
-	            break;
-        }
-    }
-
-    private static void setParameter(String name, boolean value) {
-        switch (name) {
-            case "debug":
-                MCPConfig.debug = value;
-                break;
-            case "patch":
-                MCPConfig.patch = value;
-                break;
         }
     }
 

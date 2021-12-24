@@ -3,7 +3,7 @@ package org.mcphackers.mcp.tasks.info;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.TaskUpdateMD5;
 
-public class TaskInfoUpdateMD5 implements TaskInfo {
+public class TaskInfoUpdateMD5 extends TaskInfo {
     @Override
     public String title() {
         return "Updating MD5";
@@ -21,7 +21,7 @@ public class TaskInfoUpdateMD5 implements TaskInfo {
 
     @Override
     public Task newTask(int side) {
-        return new TaskUpdateMD5(side);
+        return new TaskUpdateMD5(side, this);
     }
 
     @Override

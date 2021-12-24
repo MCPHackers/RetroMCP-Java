@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tools.decompile;
+package org.mcphackers.mcp.tools.fernflower;
 
 import de.fernflower.main.extern.IFernflowerLogger;
 import org.mcphackers.mcp.tools.ProgressInfo;

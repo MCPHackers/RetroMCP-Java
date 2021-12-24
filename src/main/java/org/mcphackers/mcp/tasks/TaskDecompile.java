@@ -3,9 +3,10 @@ package org.mcphackers.mcp.tasks;
 import codechicken.diffpatch.cli.PatchOperation;
 import net.fabricmc.tinyremapper.*;
 import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Utility;
-import org.mcphackers.mcp.tools.decompile.Decompiler;
+import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.mcinjector.MCInjector;
 
 import java.nio.file.Files;
@@ -19,7 +20,6 @@ public class TaskDecompile extends Task {
     private static final Pattern MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+");
 
     private final Decompiler decompiler;
-    private final int side;
 	private TaskUpdateMD5 md5Task;
 	
 	private static final int REMAP = 1;
@@ -27,14 +27,15 @@ public class TaskDecompile extends Task {
 	private static final int DECOMPILE = 3;
 	private static final int EXTRACT = 4;
 	private static final int PATCH = 5;
-	private static final int RECOMPILE = 6;
-	private static final int MD5 = 7;
-    private static final int STEPS = 7;
+	private static final int COPYSRC = 6;
+	private static final int RECOMPILE = 7;
+	private static final int MD5 = 8;
+    private static final int STEPS = 8;
 
-    public TaskDecompile(int side) {
-        this.side = side;
+    public TaskDecompile(int side, TaskInfo info) {
+        super(side, info);
         decompiler = new Decompiler();
-        md5Task = new TaskUpdateMD5(side);
+        md5Task = new TaskUpdateMD5(side, info);
     }
 
     @Override
@@ -42,19 +43,22 @@ public class TaskDecompile extends Task {
         if (Files.exists(Paths.get("src"))) {
             throw new Exception("! /src exists! Aborting.");
         }
-        String originalJar = side == 1 ? MCPConfig.SERVER : MCPConfig.CLIENT;
-        String rgout = side == 1 ? MCPConfig.SERVER_RG_OUT : MCPConfig.CLIENT_RG_OUT;
-        String excout = side == 1 ? MCPConfig.SERVER_EXC_OUT : MCPConfig.CLIENT_EXC_OUT;
-        String exc = side == 1 ? MCPConfig.EXC_SERVER : MCPConfig.EXC_CLIENT;
-        Path srcPath = Utility.getPath((side == 1 ? MCPConfig.SERVER_SOURCES : MCPConfig.CLIENT_SOURCES));
-        Path patchesPath = Utility.getPath((side == 1 ? MCPConfig.SERVER_PATCHES : MCPConfig.CLIENT_PATCHES));
+        String originalJar 	= side == 1 ? MCPConfig.SERVER 				: MCPConfig.CLIENT;
+        String tinyOut 		= side == 1 ? MCPConfig.SERVER_TINY_OUT 	: MCPConfig.CLIENT_TINY_OUT;
+        String excOut 		= side == 1 ? MCPConfig.SERVER_EXC_OUT 		: MCPConfig.CLIENT_EXC_OUT;
+        String exc 			= side == 1 ? MCPConfig.EXC_SERVER 			: MCPConfig.EXC_CLIENT;
+		String ffOut 		= side == 1 ? MCPConfig.SERVER_TEMP_SOURCES : MCPConfig.CLIENT_TEMP_SOURCES;
+		String srcZip 		= side == 1 ? MCPConfig.SERVER_SRC 			: MCPConfig.CLIENT_SRC;
+        Path srcPath 		= Utility.getPath((side == 1 ? MCPConfig.SERVER_SOURCES : MCPConfig.CLIENT_SOURCES));
+        Path patchesPath 	= Utility.getPath((side == 1 ? MCPConfig.SERVER_PATCHES : MCPConfig.CLIENT_PATCHES));
+        
 		while(step < STEPS) {
 		    step();
 		    switch (step) {
 			case REMAP:
 		        TinyRemapper remapper = null;
 		
-		        try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(rgout)).build()) {
+		        try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(tinyOut)).build()) {
 		            remapper = remap(TinyUtils.createTinyMappingProvider(Utility.getPath(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS), "official", "named"), Paths.get(originalJar), outputConsumer, Paths.get("jars", "bin"));
 		            outputConsumer.addNonClassFiles(Utility.getPath(originalJar), NonClassCopyMode.FIX_META_INF, remapper);
 		        } finally {
@@ -64,28 +68,36 @@ public class TaskDecompile extends Task {
 		        }
 		        break;
 		    case EXCEPTOR:
-			    MCInjector.process(rgout, excout, exc, null, null, 0);
+			    MCInjector.process(tinyOut, excOut, exc, null, null, 0);
 		    	break;
 		    case DECOMPILE:
-			    decompiler.decompile(excout, "temp/cls");
+				this.decompiler.decompile(excOut, srcZip);
 		    	break;
 		    case EXTRACT:
-		    	Utility.unzipByExtension(Utility.getPath((side == 1 ? "temp/cls/minecraft_server_exc.jar" : "temp/cls/minecraft_exc.jar")), srcPath, ".java", MCPConfig.ignorePackages);
+				if(Files.notExists(Paths.get("src"))) {
+					Files.createDirectory(Paths.get("src"));
+				}
+				Utility.unzipByExtension(Utility.getPath(srcZip), Utility.getPath(ffOut), ".java");
 		    	break;
 		    case PATCH:
-			    PatchOperation patchOperation = PatchOperation.builder()
-		            .verbose(true)
-		            .basePath(srcPath)
-		            .patchesPath(patchesPath)
-		            .outputPath(srcPath)
-		            .build();
-			    int code = patchOperation.operate().exit;
-			    if (code != 0) {
-			    	throw new Exception("Patching failed!!!");
-			    }
+		    	if(MCPConfig.patch) {
+				    PatchOperation patchOperation = PatchOperation.builder()
+			            .verbose(true)
+			            .basePath(Utility.getPath(ffOut))
+			            .patchesPath(patchesPath)
+			            .outputPath(Utility.getPath(ffOut))
+			            .build();
+				    int code = patchOperation.operate().exit;
+				    if (code != 0) {
+				    	info.addError("Patching failed!");
+				    }
+		    	}
+		    	break;
+		    case COPYSRC:
+				Utility.copyDirectory(Utility.getPath(ffOut), srcPath);
 		    	break;
 		    case RECOMPILE:
-			    new TaskRecompile(side).doTask();
+			    new TaskRecompile(side, info).doTask();
 		    	break;
 		    case MD5:
 			    this.md5Task.doTask();
@@ -126,26 +138,25 @@ public class TaskDecompile extends Task {
 	    case DECOMPILE: {
         	current = 3;
         	ProgressInfo info = decompiler.log.initInfo();
-        	int percent = (int) (info.progress[0] * 100 / info.progress[1] * 0.84D);
-        	info.progress[0] = current + percent;
-        	info.progress[1] = total;
-            return info; }
+        	int percent = (int) (info.getCurrent() * 100 / info.getTotal() * 0.83D);
+            return new ProgressInfo(info.getMessage(), current + percent, total); }
 	    case EXTRACT:
-        	current = 88;
+        	current = 87;
             return new ProgressInfo("Extracting sources...", current, total);
 	    case PATCH:
-        	current = 89;
+        	current = 88;
             return new ProgressInfo("Applying patches...", current, total);
+		case COPYSRC:
+			current = 89;
+			return new ProgressInfo("Copying sources...", current, total);
 	    case RECOMPILE:
         	current = 90;
             return new ProgressInfo("Recompiling...", current, total);
 	    case MD5: {
         	current = 91;
         	ProgressInfo info = md5Task.getProgress();
-        	int percent = (int) (info.progress[0] * 100 / info.progress[1] * 0.1D);
-        	info.progress[0] = current + percent;
-        	info.progress[1] = total;
-            return info; }
+        	int percent = (int) (info.getCurrent() * 100 / info.getTotal() * 0.09D);
+            return new ProgressInfo(info.getMessage(), current + percent, total); }
 	    default:
 	    	return super.getProgress();
         }

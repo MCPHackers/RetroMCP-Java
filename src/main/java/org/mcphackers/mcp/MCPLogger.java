@@ -11,20 +11,14 @@ public class MCPLogger {
 	public MCPLogger() {
 	}
 	
-	/**
-	 * Prints a new line
-	 */
 	public void newLine() {
 		System.out.println();
 	}
 	
-	/**
-	 * Prints text without logging it to a file
-	 * @param msg
-	 */
 	public void print(Object msg) {
 		System.out.print(msg);
 	}
+	
 	public void println(Object msg) {
 		System.out.println(msg);
 	}
@@ -34,7 +28,7 @@ public class MCPLogger {
         for (int i = 0; i < threads.size(); i++) {
             ProgressInfo dinfo = threads.get(i).getInfo();
             String side = threads.get(i).getSideName();
-            s.append(progressString(dinfo.progress[1], dinfo.progress[0], dinfo.msg, side + ":"));
+            s.append(progressString(dinfo.getTotal(), dinfo.getCurrent(), dinfo.getMessage(), side + ":"));
         }
         s.append(new Ansi().restoreCursorPosition().toString());
         print(s.toString());
@@ -73,11 +67,6 @@ public class MCPLogger {
 		info(msg, true);
 	}
 	
-	/**
-	 * Logs and prints some message
-	 * @param msg
-	 * @param newLine
-	 */
 	public void info(String msg, boolean newLine) {
 		//TODO: Add some kind of logging to a file
 		if(newLine) {
@@ -92,10 +81,6 @@ public class MCPLogger {
 		//TODO: Add some kind of logging to a file
 	}
 	
-	/**
-	 * Logs an error message and prints it in red
-	 * @param msg
-	 */
 	public void error(String msg) {
 		//TODO: Add some kind of logging to a file
 		System.err.println(new Ansi().fgBrightRed().a(msg).fgDefault());

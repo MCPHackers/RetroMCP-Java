@@ -1,16 +1,28 @@
 package org.mcphackers.mcp.tasks.info;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mcphackers.mcp.tasks.Task;
 
-public interface TaskInfo {
+public abstract class TaskInfo {
+	private List<String> errors = new ArrayList<String>();
 
-    String title();
+	public abstract String title();
 
-    String successMsg();
+	public abstract String successMsg();
 
-    String failMsg();
+	public abstract String failMsg();
 
-    Task newTask(int side);
+	public abstract Task newTask(int side);
 
-    boolean isMultiThreaded();
+	public abstract boolean isMultiThreaded();
+
+	public List<String> getErrorList() {
+		return this.errors;
+	}
+
+	public void addError(String err) {
+		this.errors.add(err);
+	}
 }

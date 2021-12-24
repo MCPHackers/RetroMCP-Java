@@ -39,7 +39,7 @@ public class Utility {
         new ZipFile(zipFile.toFile()).extractAll(destDir.toString());
     }
 
-    public static void unzipByExtension(final Path src, final Path destDir, String extension, String[] excludedPackages) throws IOException {
+    public static void unzipByExtension(final Path src, final Path destDir, String extension) throws IOException {
         if (Files.notExists(destDir)) {
             Files.createDirectories(destDir);
         }
@@ -49,12 +49,7 @@ public class Utility {
             List<FileHeader> fileHeaders = zipFile.getFileHeaders();
             for (FileHeader fileHeader : fileHeaders) {
                 String fileName = fileHeader.getFileName();
-                boolean excluded = false;
-                for(String pkg : excludedPackages) {
-                	excluded = fileName.startsWith(pkg);
-                	if(excluded) break;
-                }
-                if (!excluded && fileName.endsWith(extension)) {
+                if (fileName.endsWith(extension)) {
                     zipFile.extractFile(fileHeader, destDir.toString());
                 }
             }
@@ -127,6 +122,7 @@ public class Utility {
         for (byte bite : digest) {
             sb.append(String.format("%02x", bite & 0xff));
         }
+        bs.close();
         return sb.toString();
     }
 
