@@ -5,6 +5,7 @@ import org.mcphackers.mcp.tasks.info.TaskInfoDecompile;
 import org.mcphackers.mcp.tasks.info.TaskInfoRecompile;
 import org.mcphackers.mcp.tasks.info.TaskInfoReobfuscate;
 import org.mcphackers.mcp.tasks.info.TaskInfoSetup;
+import org.mcphackers.mcp.tasks.info.TaskInfoRun;
 import org.mcphackers.mcp.tasks.info.TaskInfoUpdateMD5;
 
 public enum EnumMode {
@@ -17,6 +18,8 @@ public enum EnumMode {
     updatemcp("Download an update if available", null),
     setup("Choose a version to setup", new TaskInfoSetup()),
     cleanup("Delete all source and class folders", null),
+    startclient("Runs the client from compiled classes", new TaskInfoRun(0)),
+    startserver("Runs the server from compiled classes", new TaskInfoRun(1)),
     exit("Exit the program", null);
 	
 	public String desc;

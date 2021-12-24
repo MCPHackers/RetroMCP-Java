@@ -3,7 +3,9 @@ package org.mcphackers.mcp;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.*;
+import org.mcphackers.mcp.tools.Utility;
 
+import java.io.IOException;
 import java.util.*;
 
 public class MCP {
@@ -112,12 +114,18 @@ public class MCP {
         try {
             logger.info(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault());
             processTask(task);
-            logger.info(new Ansi().a('\n').fgBrightGreen().a(task.successMsg()).fgDefault());
+            String completemsg = task.successMsg();
+            if(completemsg != null) {
+            	logger.info(new Ansi().a('\n').fgBrightGreen().a(completemsg).fgDefault());
+            }
         } catch (Exception e) {
         	Exception ex = e;
         	String msg = e.getMessage();
         	try {
-        		logger.info(new Ansi().a('\n').fgBrightRed().a(task.failMsg()).fgDefault());
+                String completemsg = task.failMsg();
+                if(msg != null) {
+                	logger.info(new Ansi().a('\n').fgBrightRed().a(completemsg).fgDefault());
+                }
         		List<String> errors = task.getErrorList();
         		for(String error : errors) {
             		logger.info(new Ansi().a(" ").fgBrightRed().a(error).fgDefault());

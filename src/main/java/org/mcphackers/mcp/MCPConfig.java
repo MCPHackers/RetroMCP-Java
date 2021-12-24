@@ -35,6 +35,7 @@ public class MCPConfig {
 	public static final String LWJGL = "jars/bin/lwjgl.jar";
 	public static final String LWJGL_UTIL = "jars/bin/lwjgl_util.jar";
 	public static final String JINPUT = "jars/bin/jinput.jar";
+	public static final String NATIVES = "jars/bin/natives";
 	
 	public static boolean debug;
 	public static boolean patch;

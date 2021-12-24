@@ -23,12 +23,24 @@ public class Utility {
 
     public static int runCommand(String cmd) throws IOException, IllegalArgumentException {
         Process proc = Runtime.getRuntime().exec(cmd);
-        while (proc.isAlive()) ;
+        BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        while (proc.isAlive()) {
+        	String line;
+        	if((line = input.readLine()) != null) {
+        	    MCP.logger.println(line);
+        	}
+        }
+        input.close();
         return proc.exitValue();
     }
     
     public static Path getPath(String pathStr) {
-    	return Paths.get(pathStr.replace("/", File.separator));
+        String[] all = pathStr.split("/");
+        String[] more = new String[all.length - 1];
+        for(int i = 1; i < all.length; i++) {
+            more[i - 1] = all[i];
+        }
+        return Paths.get(all[0], more);
     }
 
     public static void unzip(final Path zipFile, final Path destDir) throws IOException {

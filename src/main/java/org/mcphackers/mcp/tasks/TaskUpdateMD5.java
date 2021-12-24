@@ -14,6 +14,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 public class TaskUpdateMD5 extends Task {
 	private int total;
 	private int progress;
+	
+	
     
     public TaskUpdateMD5(int side, TaskInfo info) {
         super(side, info);
@@ -29,7 +31,9 @@ public class TaskUpdateMD5 extends Task {
     public void updateMD5(boolean reobf) throws Exception {
         Path binPath = side == 1 ? Utility.getPath(MCPConfig.SERVER_BIN) : Utility.getPath(MCPConfig.CLIENT_BIN);
         Path md5 = side == 1 ? (reobf ? Utility.getPath(MCPConfig.SERVER_MD5_RO) : Utility.getPath(MCPConfig.SERVER_MD5)) : (reobf ? Utility.getPath(MCPConfig.CLIENT_MD5_RO) : Utility.getPath(MCPConfig.CLIENT_MD5));
-
+        step();
+        if(!reobf) new TaskRecompile(side, info).doTask();
+        step();
         if (Files.exists(binPath)) {
             BufferedWriter writer = new BufferedWriter(new FileWriter(md5.toFile()));
             this.total = (int)Files.walk(binPath)
@@ -58,6 +62,12 @@ public class TaskUpdateMD5 extends Task {
 
     @Override
     public ProgressInfo getProgress() {
-        return new ProgressInfo("Updating MD5...", progress, total);
+        switch(step) {
+        case 1:
+        	return new ProgressInfo("Recompiling...", 0, 1);
+        case 2:
+        	return new ProgressInfo("Updating MD5...", progress, total);
+        }
+        return super.getProgress();
     }
 }
