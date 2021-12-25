@@ -51,6 +51,15 @@ task decompile(type: JavaExec) {
     args 'decompile', '-debug'
 }
 
+task startClient(type: JavaExec) {
+    group 'RetroMCP-Java'
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'startclient', '-debug'
+}
+
 task recompile(type: JavaExec) {
     group 'RetroMCP-Java'
 
