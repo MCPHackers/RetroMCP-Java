@@ -71,7 +71,7 @@ public class TaskDecompile extends Task {
 			    MCInjector.process(tinyOut, excOut, exc, null, null, 0);
 		    	break;
 		    case DECOMPILE:
-				this.decompiler.decompile(excOut, srcZip);
+				this.decompiler.decompile(excOut, srcZip, side == 1 ? MCPConfig.JAVADOC_SERVER : MCPConfig.JAVADOC_CLIENT);
 		    	break;
 		    case EXTRACT:
 				if(Files.notExists(Paths.get("src"))) {
@@ -89,7 +89,7 @@ public class TaskDecompile extends Task {
 			            .build();
 				    int code = patchOperation.operate().exit;
 				    if (code != 0) {
-				    	info.addError("Patching failed!");
+				    	info.addInfo("Patching failed!");
 				    }
 		    	}
 		    	break;

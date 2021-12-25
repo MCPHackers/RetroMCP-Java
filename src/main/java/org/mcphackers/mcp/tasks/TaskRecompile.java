@@ -57,11 +57,15 @@ public class TaskRecompile extends Task {
         JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, recompileOptions, null, sources);
         mgr.close();
         boolean success = task.call();
+        for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
+        	if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
+        		String kind = diagnostic.getKind() == Diagnostic.Kind.ERROR ? "Error" : "Warning";
+            	info.addInfo(kind + String.format(" on line %d in %s%n%s%n",
+                                  		diagnostic.getLineNumber(),
+                                  		diagnostic.getSource().getName(),
+                                  		diagnostic.getMessage(null)));
+        	}
         if (!success) {
-            for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
-            	info.addError(String.format("Error on line %d in %s%n",
-                                  diagnostic.getLineNumber(),
-                                  diagnostic.getSource().toUri()));
             throw new RuntimeException("Compilation error!");
         }
     }

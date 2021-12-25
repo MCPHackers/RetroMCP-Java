@@ -3,14 +3,13 @@ package org.mcphackers.mcp;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.*;
-import org.mcphackers.mcp.tools.Utility;
 
-import java.io.IOException;
 import java.util.*;
 
 public class MCP {
 
-    public static EnumMode mode;
+    public static EnumMode mode = null;
+    public static EnumMode helpCommand = null;
     public static MCPLogger logger;
     public static Scanner input;
     private static Ansi logo = 
@@ -47,50 +46,39 @@ public class MCP {
                 logger.print(new Ansi().fgDefault());
                 args = str.split(" ");
             }
-            if (setMode(args[0])) {
-                HashMap parsedArgs = new HashMap();
-                for (int index = 1; index < args.length; index++) {
-                    parseArg(args[index], parsedArgs);
-                }
-                Iterator<Map.Entry> iterator = parsedArgs.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry mapElement = iterator.next();
-                    String[] e = (String[]) mapElement.getValue();
-                    if (e.length == 0) {
-                        MCPConfig.setParameter((String) mapElement.getKey(), true);
-                        continue;
-                    }
-                    if (e.length == 1) {
-                        try {
-                        	MCPConfig.setParameter((String) mapElement.getKey(), Integer.parseInt(e[0]));
-                            continue;
-                        } catch (NumberFormatException ex) {
-                        	MCPConfig.setParameter((String) mapElement.getKey(), e[0]);
-                            continue;
-                        }
-                    }
-                    if (e.length > 1) {
-                    	MCPConfig.setParameter((String) mapElement.getKey(), e);
-                        continue;
-                    }
-                }
+            boolean taskMode = setMode(args[0]);
+            Map<String, Object> parsedArgs = new HashMap<String, Object>();
+            for (int index = 1; index < args.length; index++) {
+                parseArg(args[index], parsedArgs);
+            }
+            setParams(parsedArgs, mode);
+            if (taskMode) {
                 start();
             } else if (mode == EnumMode.help) {
-                List<String[]> commands = new ArrayList();
-                for (EnumMode mode : EnumMode.values()) {
-                	commands.add(new String[]{mode.name(), mode.desc});
+            	if(helpCommand == null) {
+	                List<String[]> commands = new ArrayList();
+	                for (EnumMode mode : EnumMode.values()) {
+	                	commands.add(new String[]{mode.name(), mode.desc});
+	            	}
+	
+	                for (int i = 0; i < commands.size(); i++) {
+	                    for (int i2 = 0; i2 < commands.get(i).length; i2++) {
+	                        if (i2 == 0)
+	                            logger.print(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", commands.get(i)[i2])).fgDefault());
+	                        else
+	                            logger.print(new Ansi().fgGreen().a(" ").a(commands.get(i)[i2]).fgDefault());
+	                    }
+	
+	                    logger.newLine();
+	                }
             	}
-
-                for (int i = 0; i < commands.size(); i++) {
-                    for (int i2 = 0; i2 < commands.get(i).length; i2++) {
-                        if (i2 == 0)
-                            logger.info(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", commands.get(i)[i2])).fgDefault(), false);
-                        else
-                            logger.info(new Ansi().fgGreen().a(" ").a(commands.get(i)[i2]).fgDefault(), false);
+            	else {
+                    logger.println(new Ansi().fgBrightMagenta().a(String.format("%-12s", helpCommand.name())).fgGreen().a(" ").a(helpCommand.desc).fgDefault());
+                    logger.println("Optional parameters:");
+                    for(String param : helpCommand.params) {
+                		logger.println(new Ansi().a(" ").fgCyan().a(String.format("%-7s", param)).a(" - ").fgBrightYellow().a(EnumMode.getParamDesc(param)).fgDefault());
                     }
-
-                    logger.newLine();
-                }
+            	}
             } else if (mode != EnumMode.exit) {
                 logger.println("Unknown command. Type 'help' for list of available commands");
             }
@@ -99,12 +87,48 @@ public class MCP {
             if (!startedWithNoParams || mode == EnumMode.exit)
                 exit = true;
             mode = null;
+            helpCommand = null;
             executeTimes++;
         }
         shutdown();
     }
 
-    private static void shutdown() {
+    private static void setParams(Map<String, Object> parsedArgs, EnumMode mode) {
+    	for (Map.Entry<String, Object> arg : parsedArgs.entrySet()) {
+    		Object value = arg.getValue();
+    		String name = arg.getKey();
+    		if(value == null) {
+    			switch (name) {
+    			case "client":
+        			MCPConfig.setParameter(name, true);
+        			break;
+    			case "server":
+        			MCPConfig.setParameter(name, true);
+        			break;
+    			}
+        		if(mode == EnumMode.help) {
+        			try {
+        				helpCommand = EnumMode.valueOf(name);
+        			}
+        			catch (IllegalArgumentException ex) {}
+        		}
+    		}
+    		else if(value instanceof Integer) {
+    			MCPConfig.setParameter(name, (Integer)value);
+    		}
+    		else if(value instanceof Boolean) {
+    			MCPConfig.setParameter(name, (Boolean)value);
+    		}
+    		else if(value instanceof String) {
+    			MCPConfig.setParameter(name, (String)value);
+    		}
+    		else if(value instanceof String[]) {
+    			MCPConfig.setParameter(name, (String[])value);
+    		}
+    	}
+	}
+
+	private static void shutdown() {
         input.close();
         //TODO: Close logger (unimplemented)
 	}
@@ -117,6 +141,10 @@ public class MCP {
             String completemsg = task.successMsg();
             if(completemsg != null) {
             	logger.info(new Ansi().a('\n').fgBrightGreen().a(completemsg).fgDefault());
+        		List<String> errors = task.getInfoList();
+        		for(String error : errors) {
+            		logger.info(" " + error.replace("\n", "\n "));
+        		}
             }
         } catch (Exception e) {
         	Exception ex = e;
@@ -126,9 +154,9 @@ public class MCP {
                 if(msg != null) {
                 	logger.info(new Ansi().a('\n').fgBrightRed().a(completemsg).fgDefault());
                 }
-        		List<String> errors = task.getErrorList();
+        		List<String> errors = task.getInfoList();
         		for(String error : errors) {
-            		logger.info(new Ansi().a(" ").fgBrightRed().a(error).fgDefault());
+            		logger.info(" " + error.replace("\n", "\n "));
         		}
         	}
         	catch (NullPointerException nullException) {
@@ -143,6 +171,7 @@ public class MCP {
                 logger.info("Use -debug for more info");
             }
         }
+		task.clearInfoList();
     }
 
     public static TaskInfo getTaskInfo(EnumMode enumMode) {
@@ -154,7 +183,7 @@ public class MCP {
     		processMultitasks(task);
     	}
     	else {
-    		task.newTask(0).doTask();
+    		task.newTask(-1).doTask();
     	}
     }
     
@@ -194,19 +223,41 @@ public class MCP {
     	if(ex != null) throw ex;
     }
 
-    private static void parseArg(String arg, HashMap<String, String[]> map) {
+    private static void parseArg(String arg, Map<String, Object> map) {
         int equalSign = arg.indexOf('=');
         if (arg.startsWith("-") && equalSign > 0) {
             String name = arg.substring(1, equalSign);
             String[] values = arg.substring(equalSign + 1).split(",");
+            Object value;
             for (int i = 0; i < values.length; i++) {
             	values[i] = values[i].replace("\\n", "\n").replace("\\t", "\t");
             }
-            map.put(name, values);
+            if(values.length == 1) {
+            	try {
+            		int i = Integer.parseInt(values[0]);
+            		value = new Integer(i);
+            	}
+            	catch (NumberFormatException e) {
+            		if(values[0].equals("false") || values[0].equals("true")) {
+            			boolean b = Boolean.parseBoolean(values[0]);
+            			value = new Boolean(b);
+            		}
+            		else {
+            			value = values[0];
+            		}
+            	}
+            }
+            else {
+            	value = values;
+            }
+            map.put(name, value);
         } else if (arg.startsWith("-")) {
             String name = arg.substring(1);
-            String[] value = new String[]{};
+            Boolean value = new Boolean(true);
             map.put(name, value);
+        } else {
+            String name = arg;
+            map.put(name, null);
         }
     }
 

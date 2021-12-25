@@ -32,6 +32,8 @@ public class MCPConfig {
 	public static final String SERVER_REOBF = "reobf/minecraft_server";
 	public static final String CLIENT_REOBF_JAR = "temp/client_reobf.jar";
 	public static final String SERVER_REOBF_JAR = "temp/server_reobf.jar";
+	public static final String JAVADOC_CLIENT = "conf/client.javadoc";
+	public static final String JAVADOC_SERVER = "conf/server.javadoc";
 	public static final String LWJGL = "jars/bin/lwjgl.jar";
 	public static final String LWJGL_UTIL = "jars/bin/lwjgl_util.jar";
 	public static final String JINPUT = "jars/bin/jinput.jar";
@@ -88,6 +90,12 @@ public class MCPConfig {
             case "patch":
                 patch = value;
                 break;
+        	case "client":
+        		onlySide = value ? 0 : onlySide;
+        		break;
+        	case "server":
+        		onlySide = value ? 1 : onlySide;
+        		break;
         }
     }
 

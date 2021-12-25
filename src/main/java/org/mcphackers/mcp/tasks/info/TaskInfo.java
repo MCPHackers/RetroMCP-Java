@@ -6,7 +6,7 @@ import java.util.List;
 import org.mcphackers.mcp.tasks.Task;
 
 public abstract class TaskInfo {
-	private List<String> errors = new ArrayList<String>();
+	private List<String> completionInfo = new ArrayList<String>();
 
 	public abstract String title();
 
@@ -18,11 +18,15 @@ public abstract class TaskInfo {
 
 	public abstract boolean isMultiThreaded();
 
-	public List<String> getErrorList() {
-		return this.errors;
+	public void clearInfoList() {
+		this.completionInfo.clear();
 	}
 
-	public void addError(String err) {
-		this.errors.add(err);
+	public List<String> getInfoList() {
+		return this.completionInfo;
+	}
+
+	public void addInfo(String err) {
+		this.completionInfo.add(err);
 	}
 }

@@ -1,6 +1,8 @@
 package org.mcphackers.mcp.tools.fernflower;
 
 import de.fernflower.main.decompiler.BaseDecompiler;
+import de.fernflower.main.decompiler.DirectoryResultSaver;
+import de.fernflower.main.decompiler.SingleFileSaver;
 import de.fernflower.main.extern.IBytecodeProvider;
 import de.fernflower.main.extern.IResultSaver;
 import de.fernflower.util.InterpreterUtil;
@@ -20,11 +22,12 @@ public class Decompiler implements IBytecodeProvider {
         this.log = new DecompileLogger();
     }
 
-    public void decompile(String source, String out) throws IOException {
+    public void decompile(String source, String out, String javadocs) throws IOException {
         Map<String, Object> mapOptions = new HashMap<String, Object>();
         mapOptions.put("rbr", "0");
         mapOptions.put("asc", "1");
         mapOptions.put("nco", "1");
+        mapOptions.put("jds", javadocs);
         mapOptions.put("ind", MCPConfig.indentionString);
 
         SaveType saveType = SaveType.FOLDER;

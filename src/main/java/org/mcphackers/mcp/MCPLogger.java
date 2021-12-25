@@ -8,6 +8,8 @@ import org.mcphackers.mcp.tools.ProgressInfo;
 
 public class MCPLogger {
 	
+	private String cachedProgressBar;
+	
 	public MCPLogger() {
 	}
 	
@@ -30,8 +32,10 @@ public class MCPLogger {
             String side = threads.get(i).getSideName();
             s.append(progressString(dinfo.getTotal(), dinfo.getCurrent(), dinfo.getMessage(), side + ":"));
         }
-        s.append(new Ansi().restoreCursorPosition().toString());
-        print(s.toString());
+        s.append(new Ansi().reset().toString());
+        String progressBar = s.toString();
+        if(!progressBar.equals(cachedProgressBar)) print(progressBar);
+        cachedProgressBar = progressBar;
 	}
 
     private static String progressString(long total, long current, String progressMsg, String prefix) {
