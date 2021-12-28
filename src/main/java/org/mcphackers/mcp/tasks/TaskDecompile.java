@@ -5,7 +5,7 @@ import net.fabricmc.tinyremapper.*;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.ProgressInfo;
-import org.mcphackers.mcp.tools.Utility;
+import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.mcinjector.MCInjector;
 
@@ -36,21 +36,29 @@ public class TaskDecompile extends Task {
         super(side, info);
         decompiler = new Decompiler();
         md5Task = new TaskUpdateMD5(side, info);
+        md5Task.recompile = false;
     }
 
     @Override
     public void doTask() throws Exception {
-        if (Files.exists(Paths.get("src"))) {
-            throw new Exception("! /src exists! Aborting.");
-        }
         String originalJar 	= side == 1 ? MCPConfig.SERVER 				: MCPConfig.CLIENT;
         String tinyOut 		= side == 1 ? MCPConfig.SERVER_TINY_OUT 	: MCPConfig.CLIENT_TINY_OUT;
         String excOut 		= side == 1 ? MCPConfig.SERVER_EXC_OUT 		: MCPConfig.CLIENT_EXC_OUT;
         String exc 			= side == 1 ? MCPConfig.EXC_SERVER 			: MCPConfig.EXC_CLIENT;
 		String ffOut 		= side == 1 ? MCPConfig.SERVER_TEMP_SOURCES : MCPConfig.CLIENT_TEMP_SOURCES;
 		String srcZip 		= side == 1 ? MCPConfig.SERVER_SRC 			: MCPConfig.CLIENT_SRC;
-        Path srcPath 		= Utility.getPath((side == 1 ? MCPConfig.SERVER_SOURCES : MCPConfig.CLIENT_SOURCES));
-        Path patchesPath 	= Utility.getPath((side == 1 ? MCPConfig.SERVER_PATCHES : MCPConfig.CLIENT_PATCHES));
+        Path srcPath 		= Util.getPath((side == 1 ? MCPConfig.SERVER_SOURCES : MCPConfig.CLIENT_SOURCES));
+        Path patchesPath 	= Util.getPath((side == 1 ? MCPConfig.SERVER_PATCHES : MCPConfig.CLIENT_PATCHES));
+        
+        if (Files.exists(srcPath)) {
+            throw new Exception("/src exists! Aborting.");
+        }
+        Path[] pathsToDelete = new Path[] { Util.getPath(tinyOut), Util.getPath(excOut), Util.getPath(ffOut), Util.getPath(srcZip)};
+        for (Path path : pathsToDelete) {
+        	if (Files.exists(path)) {
+        		Util.deleteDirectory(path);
+        	}
+        }
         
 		while(step < STEPS) {
 		    step();
@@ -59,8 +67,8 @@ public class TaskDecompile extends Task {
 		        TinyRemapper remapper = null;
 		
 		        try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(tinyOut)).build()) {
-		            remapper = remap(TinyUtils.createTinyMappingProvider(Utility.getPath(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS), "official", "named"), Paths.get(originalJar), outputConsumer, Paths.get("jars", "bin"));
-		            outputConsumer.addNonClassFiles(Utility.getPath(originalJar), NonClassCopyMode.FIX_META_INF, remapper);
+		            remapper = remap(TinyUtils.createTinyMappingProvider(Util.getPath(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS), "official", "named"), Paths.get(originalJar), outputConsumer, Paths.get("jars", "bin"));
+		            outputConsumer.addNonClassFiles(Util.getPath(originalJar), NonClassCopyMode.FIX_META_INF, remapper);
 		        } finally {
 		            if (remapper != null) {
 		                remapper.finish();
@@ -77,15 +85,15 @@ public class TaskDecompile extends Task {
 				if(Files.notExists(Paths.get("src"))) {
 					Files.createDirectory(Paths.get("src"));
 				}
-				Utility.unzipByExtension(Utility.getPath(srcZip), Utility.getPath(ffOut), ".java");
+				Util.unzipByExtension(Util.getPath(srcZip), Util.getPath(ffOut), ".java");
 		    	break;
 		    case PATCH:
 		    	if(MCPConfig.patch) {
 				    PatchOperation patchOperation = PatchOperation.builder()
 			            .verbose(true)
-			            .basePath(Utility.getPath(ffOut))
+			            .basePath(Util.getPath(ffOut))
 			            .patchesPath(patchesPath)
-			            .outputPath(Utility.getPath(ffOut))
+			            .outputPath(Util.getPath(ffOut))
 			            .build();
 				    int code = patchOperation.operate().exit;
 				    if (code != 0) {
@@ -94,7 +102,7 @@ public class TaskDecompile extends Task {
 		    	}
 		    	break;
 		    case COPYSRC:
-				Utility.copyDirectory(Utility.getPath(ffOut), srcPath);
+				Util.copyDirectory(Util.getPath(ffOut), srcPath);
 		    	break;
 		    case RECOMPILE:
 			    new TaskRecompile(side, info).doTask();

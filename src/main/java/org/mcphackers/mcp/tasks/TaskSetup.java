@@ -3,8 +3,9 @@ package org.mcphackers.mcp.tasks;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.Utility;
+import org.mcphackers.mcp.tools.Util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -39,29 +40,23 @@ public class TaskSetup extends Task {
         }
 
         MCP.logger.info("> Setting up your workspace...");
-        if (!Files.exists(Paths.get("temp"))) {
-            Files.createDirectory(Paths.get("temp"));
+        if (!Files.exists(Util.getPath(MCPConfig.NATIVES))) {
+            Files.createDirectories(Util.getPath(MCPConfig.NATIVES));
         }
-        if (!Files.exists(Paths.get("jars", "bin", "natives"))) {
-            Files.createDirectories(Paths.get("jars", "bin", "natives"));
-        }
-        step = 0;
         MCP.logger.info("> Downloading libraries...");
         long startTime = System.nanoTime();
-        Utility.downloadFile(new URI("https://files.betacraft.uk/launcher/assets/libs-windows.zip").toURL(), Paths.get("jars", "bin", "libs.zip").toString());
+        Util.downloadFile(new URI("https://files.betacraft.uk/launcher/assets/libs-windows.zip").toURL(), Paths.get("jars", "bin", "libs.zip").toString());
 
-        step = 1;
-        Utility.downloadFile(new URI(natives.get(Utility.getOperatingSystem())).toURL(), Paths.get("jars", "bin", "natives.zip").toString());
+        Util.downloadFile(new URI(natives.get(Util.getOperatingSystem())).toURL(), Paths.get("jars", "bin", "natives.zip").toString());
         long endTime = System.nanoTime();
 
         long seconds = TimeUnit.SECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
         long nanoSeconds = endTime - startTime;
 
         MCP.logger.info("> Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
-        step = 2;
         try {
-            Utility.unzip(Paths.get("jars", "bin", "libs.zip"), Paths.get("jars", "bin"));
-            Utility.unzip(Paths.get("jars", "bin", "natives.zip"), Paths.get("jars", "bin", "natives"));
+            Util.unzip(Paths.get("jars", "bin", "libs.zip"), Paths.get("jars", "bin"));
+            Util.unzip(Paths.get("jars", "bin", "natives.zip"), Paths.get("jars", "bin", "natives"));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -72,7 +67,7 @@ public class TaskSetup extends Task {
     public void setupMC() throws IOException {
         MCP.logger.info("> If you wish to supply your own configuration, type \"custom\".");
         String versionsFolder = Files.list(Paths.get("versions")).filter(Files::isDirectory).map(path -> path.getFileName().toString()).filter((fileName) -> !fileName.equals("workspace")).collect(Collectors.joining(","));
-        JSONObject json = Utility.parseJSONFile(Paths.get("versions", "versions.json"));
+        JSONObject json = Util.parseJSONFile(Paths.get("versions", "versions.json"));
         MCP.logger.info("Current versions are:");
         List<String> verList = new ArrayList<String>();
         for (String versionFolder : versionsFolder.split(",")) {
@@ -111,8 +106,7 @@ public class TaskSetup extends Task {
         }
 
         if (Files.exists(Paths.get("conf"))) {
-            Utility.deleteDirectoryStream(Paths.get("patches_client"));
-            Utility.deleteDirectoryStream(Paths.get("patches_server"));
+            //Util.deleteDirectoryStream(Paths.get("conf"));
         }
         long startCopyTime = System.nanoTime();
         MCP.logger.info("> Copying config");
@@ -124,12 +118,12 @@ public class TaskSetup extends Task {
         }
 
         if (Files.exists(Paths.get("eclipse"))) {
-            Utility.deleteDirectoryStream(Paths.get("eclipse"));
+            Util.deleteDirectory(Paths.get("eclipse"));
         }
         // Create Eclipse workspace
         MCP.logger.info("> Copying workspace");
         int workspaceVersion = json.getJSONObject("client").getJSONObject(chosenVersion).getInt("workspace_version");
-        Utility.copyDirectory(Paths.get("versions", "workspace", "eclipse_" + workspaceVersion), Paths.get("eclipse"));
+        Util.copyDirectory(Paths.get("versions", "workspace", "eclipse_" + workspaceVersion), Paths.get("eclipse"));
 
         // Create Intellij workspace
         String[] projects = { "Client", "Server" };
@@ -149,8 +143,9 @@ public class TaskSetup extends Task {
         MCP.logger.info("> Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
 
         // Delete Minecraft.jar and Minecraft_server.jar if they exist.
-        Files.deleteIfExists(Paths.get("jars", "minecraft.jar"));
-        Files.deleteIfExists(Paths.get("jars", "minecraft_server.jar"));
+        Util.deleteDirectoryStream(Paths.get("conf"));
+        Files.deleteIfExists(Util.getPath(MCPConfig.CLIENT));
+        Files.deleteIfExists(Util.getPath(MCPConfig.SERVER));
 
         // Download Minecraft
         long startClientDownloadTime = System.nanoTime();
@@ -158,7 +153,7 @@ public class TaskSetup extends Task {
             MCP.logger.info("> Downloading Minecraft client...");
             String clientUrl = json.getJSONObject("client").getJSONObject(chosenVersion).getString("url");
             try {
-                Utility.downloadFile(new URI(clientUrl).toURL(), Paths.get("jars", "bin", "minecraft.jar").toAbsolutePath().toString());
+                Util.downloadFile(new URI(clientUrl).toURL(), Util.getPath(MCPConfig.CLIENT).toAbsolutePath().toString());
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
@@ -174,25 +169,22 @@ public class TaskSetup extends Task {
                     MCP.logger.info("> Downloading Minecraft server...");
                     long startServerDownloadTime = System.nanoTime();
                     if (serverUrl.endsWith(".jar")) {
-                        Utility.downloadFile(new URI(serverUrl).toURL(), Paths.get("jars", "minecraft_server.jar").toAbsolutePath().toString());
+                        Util.downloadFile(new URI(serverUrl).toURL(), Util.getPath(MCPConfig.SERVER).toAbsolutePath().toString());
                     } else if (serverUrl.endsWith(".zip")) {
-                        Utility.downloadFile(new URI(serverUrl).toURL(), Paths.get("jars", "minecraft_server.zip").toAbsolutePath().toString());
+                        Util.downloadFile(new URI(serverUrl).toURL(), Util.getPath(MCPConfig.SERVER_ZIP).toAbsolutePath().toString());
                         MCP.logger.info("> Extracting Minecraft server...");
-                        Utility.unzip(Paths.get("jars", "minecraft_server.zip").toAbsolutePath(), Paths.get("jars"));
-                        Files.delete(Paths.get("jars", "minecraft_server.zip"));
+                        Util.unzip(Util.getPath(MCPConfig.SERVER_ZIP).toAbsolutePath(), Paths.get("jars"));
+                        Files.delete(Util.getPath(MCPConfig.SERVER));
                         File jarFile = Paths.get("jars", "minecraft-server.jar").toFile();
-                        jarFile.renameTo(Paths.get("jars", "minecraft_server.jar").toFile());
+                        jarFile.renameTo(Util.getPath(MCPConfig.SERVER).toFile());
                     }
                     downloadNanoTime = System.nanoTime() - startServerDownloadTime;
                     downloadSeconds = TimeUnit.SECONDS.convert(downloadNanoTime, TimeUnit.NANOSECONDS);
                     MCP.logger.info("> Done in " + (downloadSeconds == 0 ? downloadNanoTime + " ns" : downloadSeconds + " s"));
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
-                    // TODO: Let the doTask throw this or only print exception in debug mode
                 }
-            } catch (JSONException ex) {
-            	//MCP.logger.error("Server not found for " + chosenVersion);
-            }
+            } catch (JSONException ex) {}
         }
     }
 }

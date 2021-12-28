@@ -138,6 +138,7 @@ public class MCP {
         try {
             logger.info(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault());
             processTask(task);
+            logger.resetProgressString();
             String completemsg = task.successMsg();
             if(completemsg != null) {
             	logger.info(new Ansi().a('\n').fgBrightGreen().a(completemsg).fgDefault());

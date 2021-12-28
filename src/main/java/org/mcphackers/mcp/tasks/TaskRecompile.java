@@ -3,7 +3,7 @@ package org.mcphackers.mcp.tasks;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.ProgressInfo;
-import org.mcphackers.mcp.tools.Utility;
+import org.mcphackers.mcp.tools.Util;
 
 import javax.tools.*;
 import java.io.File;
@@ -28,12 +28,12 @@ public class TaskRecompile extends Task {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
 
-        Path binPath = side == 1 ? Utility.getPath(MCPConfig.SERVER_BIN) 		: Utility.getPath(MCPConfig.CLIENT_BIN);
-        Path srcPath = side == 1 ? Utility.getPath(MCPConfig.SERVER_SOURCES) 	: Utility.getPath(MCPConfig.CLIENT_SOURCES);
+        Path binPath = side == 1 ? Util.getPath(MCPConfig.SERVER_BIN) 		: Util.getPath(MCPConfig.CLIENT_BIN);
+        Path srcPath = side == 1 ? Util.getPath(MCPConfig.SERVER_SOURCES) 	: Util.getPath(MCPConfig.CLIENT_SOURCES);
 
         step();
         if (Files.exists(binPath)) {
-            Utility.deleteDirectoryStream(binPath);
+            Util.deleteDirectory(binPath);
         }
 
         Files.createDirectories(binPath);

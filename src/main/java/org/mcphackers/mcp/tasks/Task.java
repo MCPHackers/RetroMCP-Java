@@ -27,10 +27,11 @@ public abstract class Task {
     	return new ProgressInfo("Idle", (step > 0 ? 1 : 0), 1);
     }
     
-    protected void step() throws Exception {
-    	step++;
+    protected boolean step() throws Exception {
     	if(ownerThread != null && ownerThread.stopped()) {
-    		throw new Exception("Stopping execution");
+    		return false;
     	}
+    	step++;
+    	return true;
     }
 }

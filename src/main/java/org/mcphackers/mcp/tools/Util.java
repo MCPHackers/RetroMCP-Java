@@ -16,17 +16,23 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class Utility {
+public class Util {
 
     public static int runCommand(String cmd) throws IOException, IllegalArgumentException {
+    	return runCommand(cmd, false);
+    }
+
+    public static int runCommand(String cmd, boolean doLog) throws IOException, IllegalArgumentException {
         Process proc = Runtime.getRuntime().exec(cmd);
         BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         while (proc.isAlive()) {
         	String line;
-        	if((line = input.readLine()) != null) {
+        	if(doLog && (line = input.readLine()) != null) {
         	    MCP.logger.println(line);
         	}
         }
@@ -97,15 +103,15 @@ public class Utility {
     }
 
     public static void deleteDirectoryStream(Path path) throws IOException {
-        if (Files.exists(path)) {
-            Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach((file) -> {
-                boolean deleted = file.delete();
-                if (!deleted) {
-                    MCP.logger.warning("Failed to delete " + file.getAbsolutePath());
-                }
-            });
-        }
-    }
+	  Files.walk(path)
+	    .sorted(Comparator.reverseOrder())
+	    .map(Path::toFile)
+	    .forEach(File::delete);
+	}
+
+    public static void deleteDirectory(Path path) throws IOException {
+      deleteDirectoryStream(path);
+	}
 
     public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
         Files.walk(sourceFolder).forEach(source -> {
@@ -160,5 +166,14 @@ public class Utility {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public static <K, V> K getKey(Map<K, V> map, V value) {
+        for (Entry<K, V> entry : map.entrySet()) {
+            if (entry.getValue().equals(value)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }

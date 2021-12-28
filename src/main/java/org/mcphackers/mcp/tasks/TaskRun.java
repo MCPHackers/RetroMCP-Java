@@ -2,13 +2,12 @@ package org.mcphackers.mcp.tasks;
 
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.Utility;
+import org.mcphackers.mcp.tools.Util;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.*;
@@ -31,21 +30,16 @@ public class TaskRun extends Task {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}*/
 
+		System.setProperty("org.lwjgl.librarypath", Util.getPath(MCPConfig.NATIVES).toAbsolutePath().toString());
+		System.setProperty("net.java.games.input.librarypath", Util.getPath(MCPConfig.NATIVES).toAbsolutePath().toString());
+		System.setProperty("http.proxyHost", "betacraft.uk");
+		System.setProperty("http.proxyPort", "11702");
+
 		URL[] urls = getAllJarsInDirectory(side == 1 ? Paths.get("jars") : Paths.get("jars", "bin"));
 		URLClassLoader classLoader = new URLClassLoader(urls);
 		MethodHandle handle = MethodHandles.publicLookup().findStatic(classLoader.loadClass(side == 1 ? "net.minecraft.server.MinecraftServer" : "net.minecraft.client.Minecraft"), "main", MethodType.methodType(void.class, String[].class));
 		try {
-			//System.setProperty("org.lwjgl.librarypath", Paths.get("jars", "bin", "natives").toAbsolutePath().toString());
-
-			try {
-				final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
-				sysPathsField.setAccessible(true);
-				sysPathsField.set(null, null);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			handle.invokeExact(new String[] {"fullscreen"});
+			handle.invoke(new String[] {"User"});
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

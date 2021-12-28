@@ -4,18 +4,20 @@ import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.TinyUtils;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.FileHeader;
 
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tasks.info.TaskInfoUpdateMD5;
 import org.mcphackers.mcp.tools.ProgressInfo;
-import org.mcphackers.mcp.tools.Utility;
+import org.mcphackers.mcp.tools.Util;
 import org.objectweb.asm.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,9 +32,12 @@ public class TaskReobfuscate extends Task {
     private final Map<String, String> extraReobfClasses = new HashMap<>();
     private final Map<String, String> extraReobfMethods = new HashMap<>();
     private final Map<String, String> extraReobfFields = new HashMap<>();
+    
+	private TaskUpdateMD5 md5Task;
 
     public TaskReobfuscate(int side, TaskInfo info) {
         super(side, info);
+        md5Task = new TaskUpdateMD5(side, info);
     }
 
     @Override
@@ -40,39 +45,61 @@ public class TaskReobfuscate extends Task {
         boolean binCheck = checkBins(side);
 
         if (binCheck) {
-            if (Files.exists(Utility.getPath(side == 1 ? MCPConfig.SERVER_REOBF : MCPConfig.CLIENT_REOBF))) {
-                Utility.deleteDirectoryStream(Utility.getPath(side == 1 ? MCPConfig.SERVER_REOBF : MCPConfig.CLIENT_REOBF));
+        	Path reobfDir = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF : MCPConfig.CLIENT_REOBF);
+            if (Files.exists(reobfDir)) {
+                Util.deleteDirectoryStream(reobfDir);
             }
 
-            // Create recompilation hashes and compare them to the original hashes
-            new TaskUpdateMD5(side, new TaskInfoUpdateMD5()).updateMD5(true);
-            // Recompiled hashes
+            step();
+            md5Task.updateMD5(true);
+            step();
             gatherMD5Hashes(true, this.side);
-            // Original hashes
             gatherMD5Hashes(false, this.side);
 
-            //Compacting bin directory
+            step();
             readDeobfuscationMappings(this.side);
             writeReobfuscationMappings(this.side);
 
-            Path reobfJar = Utility.getPath(side == 1 ? MCPConfig.SERVER_REOBF_JAR : MCPConfig.CLIENT_REOBF_JAR);
-            Utility.compress(Utility.getPath(side == 1 ? MCPConfig.SERVER_BIN : MCPConfig.CLIENT_BIN), reobfJar);
+            Path reobfJar = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF_JAR : MCPConfig.CLIENT_REOBF_JAR);
+            Path reobfBin = Util.getPath(side == 1 ? MCPConfig.SERVER_BIN 		: MCPConfig.CLIENT_BIN);
+            Files.deleteIfExists(reobfJar);
             TinyRemapper remapper = null;
 
             try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(reobfJar).build()) {
-                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO), "official", "named"), reobfJar, outputConsumer, Paths.get("jars", "bin"));
-                outputConsumer.addNonClassFiles(reobfJar, NonClassCopyMode.FIX_META_INF, remapper);
+                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO), "official", "named"), reobfBin, outputConsumer, Paths.get("jars", "bin"));
+                outputConsumer.addNonClassFiles(reobfBin, NonClassCopyMode.SKIP_META_INF, remapper);
             } finally {
                 if (remapper != null) {
                     remapper.finish();
                 }
             }
+            step();
+            unpack(reobfJar, reobfDir);
         }
     }
 
     @Override
     public ProgressInfo getProgress() {
-        return new ProgressInfo("Reobfuscating...", 0, 1);
+    	int total = 100;
+    	int current = 0;
+    	switch (step) {
+	    case 1: {
+	    	current = 1;
+	    	ProgressInfo info = md5Task.getProgress();
+	    	int percent = (int) (info.getCurrent() * 100 / info.getTotal() * 0.5D);
+	        return new ProgressInfo(info.getMessage(), current + percent, total); }
+	    case 2:
+        	current = 51;
+            return new ProgressInfo("Gathering MD5 hashes...", current, total);
+	    case 3:
+        	current = 52;
+            return new ProgressInfo("Reobfuscating...", current, total);
+	    case 4:
+        	current = 54;
+            return new ProgressInfo("Unpacking...", current, total);
+	    default:
+	    	return super.getProgress();
+	    }
     }
 
     // Utility methods
@@ -170,35 +197,33 @@ public class TaskReobfuscate extends Task {
     }
 
     private void readDeobfuscationMappings(int side) {
-        if (side == 0) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS).toFile()))) {
-                String line = reader.readLine();
-                String currentClassName = "";
-                while (line != null) {
-                    String[] tokens = line.split("\t");
+        try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS).toFile()))) {
+            String line = reader.readLine();
+            String currentClassName = "";
+            while (line != null) {
+                String[] tokens = line.split("\t");
 
-                    // Tiny v2 uses indentation to denote level, so classes are always before methods and fields
-                    if (line.startsWith("c")) {
-                        // Class
-                        // c	aa	net/minecraft/src/TextureCompassFX
-                        defaultReobfClasses.put(tokens[2], tokens[1]);
-                        currentClassName = tokens[2];
-                    } else if (line.startsWith("\tm")) {
-                        // Method
-                        // m	(Lho;IIIII)V	a	renderQuad
-                        defaultReobfMethods.put(currentClassName + "/" + tokens[4], tokens[3] + tokens[2]);
-                    } else if (line.startsWith("\tf")) {
-                        // Field
-                        // 	f	D	k	currentAngle
-                        defaultReobfFields.put(currentClassName + "/" + tokens[4], tokens[3] + "(" + tokens[2] + ")");
-                    }
-
-                    // Read next line
-                    line = reader.readLine();
+                // Tiny v2 uses indentation to denote level, so classes are always before methods and fields
+                if (line.startsWith("c")) {
+                    // Class
+                    // c	aa	net/minecraft/src/TextureCompassFX
+                    defaultReobfClasses.put(tokens[2], tokens[1]);
+                    currentClassName = tokens[2];
+                } else if (line.startsWith("\tm")) {
+                    // Method
+                    // m	(Lho;IIIII)V	a	renderQuad
+                    defaultReobfMethods.put(currentClassName + "/" + tokens[4], tokens[3] + tokens[2]);
+                } else if (line.startsWith("\tf")) {
+                    // Field
+                    // 	f	D	k	currentAngle
+                    defaultReobfFields.put(currentClassName + "/" + tokens[4], tokens[3] + "(" + tokens[2] + ")");
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
+
+                // Read next line
+                line = reader.readLine();
             }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -291,8 +316,8 @@ public class TaskReobfuscate extends Task {
     }
 
     private void gatherMD5Hashes(boolean reobf, int side) {
-        Path clientMD5 = reobf ? Paths.get("temp", "client_reobf.md5") : Paths.get("temp", "client.md5");
-        Path serverMD5 = reobf ? Paths.get("temp", "server_reobf.md5") : Paths.get("temp", "server.md5");
+        Path clientMD5 = reobf ? Util.getPath(MCPConfig.CLIENT_MD5_RO) : Util.getPath(MCPConfig.CLIENT_MD5);
+        Path serverMD5 = reobf ? Util.getPath(MCPConfig.SERVER_MD5_RO) : Util.getPath(MCPConfig.SERVER_MD5);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(side == 0 ? clientMD5.toFile() : serverMD5.toFile()))) {
             String line = reader.readLine();
@@ -312,24 +337,36 @@ public class TaskReobfuscate extends Task {
         }
     }
 
-    private boolean checkBins(int side) {
-        Path minecraft1 = Paths.get("bin", "minecraft", "net", "minecraft", "client", "Minecraft.class");
-        Path minecraft2 = Paths.get("bin", "minecraft", "net", "minecraft", "src", "Minecraft.class");
+    private void unpack(final Path src, final Path destDir) throws IOException {
+        if (Files.notExists(destDir)) {
+            Files.createDirectories(destDir);
+        }
 
-        Path minecraftServer1 = Paths.get("bin", "minecraft_server", "net", "minecraft", "server", "MinecraftServer.class");
-        Path minecraftServer2 = Paths.get("bin", "minecraft_server", "net", "minecraft", "src", "MinecraftServer.class");
+        if (Files.exists(src)) {
+            ZipFile zipFile = new ZipFile(src.toFile());
+            List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+            for (FileHeader fileHeader : fileHeaders) {
+                String fileName = fileHeader.getFileName();
+                String deobfName = Util.getKey(defaultReobfClasses, fileName.replace(".class", ""));
+                String entry = originalHashes.get(deobfName);
+                if (entry != null && !entry.equals(recompHashes.get(deobfName))) {
+                    zipFile.extractFile(fileHeader, destDir.toString());
+                }
+            }
+        }
+    }
+
+    private boolean checkBins(int side) {
+        Path minecraft1 = Util.getPath(MCPConfig.CLIENT_BIN + "/net/minecraft/client/Minecraft.class");
+        Path minecraft2 = Util.getPath(MCPConfig.CLIENT_BIN + "/net/minecraft/src/Minecraft.class");
+
+        Path minecraftServer1 = Util.getPath(MCPConfig.SERVER_BIN + "/net/minecraft/server/MinecraftServer.class");
         if (side == 0 && (Files.exists(minecraft1) || Files.exists(minecraft2))) {
             return true;
-        } else if (side == 0) {
-            return false;
         }
-
-        if (side == 1 && (Files.exists(minecraftServer1) || Files.exists(minecraftServer2))) {
+        if (side == 1 && Files.exists(minecraftServer1)) {
             return true;
-        } else if (side == 1) {
-            return false;
         }
-
         return false;
     }
 }

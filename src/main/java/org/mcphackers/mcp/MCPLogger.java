@@ -58,6 +58,10 @@ public class MCPLogger {
 
         return string.a("\n").toString();
     }
+    
+    public void resetProgressString() {
+    	cachedProgressBar = null;
+    }
 	
 	public void info(Ansi msg) {
 		info(msg.toString());
