@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.NoSuchAlgorithmException;
 
 public class TaskUpdateMD5 extends Task {
 	private int total;
@@ -51,7 +52,7 @@ public class TaskUpdateMD5 extends Task {
                         String fileName = ((side == 1 ? Util.getPath(MCPConfig.SERVER_BIN) : Util.getPath(MCPConfig.CLIENT_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", ""));
                         writer.append(fileName).append(" ").append(md5_hash).append("\n");
                         progress++;
-                    } catch (Exception ex) {
+                    } catch (NoSuchAlgorithmException ex) {
                         ex.printStackTrace();
                     }
                     return FileVisitResult.CONTINUE;

@@ -1,5 +1,11 @@
 package org.mcphackers.mcp;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,8 +15,15 @@ import org.mcphackers.mcp.tools.ProgressInfo;
 public class MCPLogger {
 	
 	private String cachedProgressBar;
+	private BufferedWriter writer;
 	
 	public MCPLogger() {
+		try {
+			if(Files.notExists(Paths.get("logs"))) {
+				Files.createDirectory(Paths.get("logs"));
+			}
+			writer = new BufferedWriter(new FileWriter(new File("logs/mcp.log")));
+		} catch (IOException e) {}
 	}
 	
 	public void newLine() {
@@ -63,34 +76,16 @@ public class MCPLogger {
     	cachedProgressBar = null;
     }
 	
-	public void info(Ansi msg) {
-		info(msg.toString());
-	}
-	
-	public void info(Ansi msg, boolean newLine) {
-		info(msg.toString(), newLine);
-	}
-	
 	public void info(String msg) {
-		info(msg, true);
+		try {
+			writer.write(msg + "\n");
+		} catch (IOException e) {}
+		System.out.println(msg);
 	}
-	
-	public void info(String msg, boolean newLine) {
-		//TODO: Add some kind of logging to a file
-		if(newLine) {
-			System.out.println(msg);
-		} else {
-			System.out.print(msg);
-		}
-	}
-	
-	public void warning(String msg) {
-		System.err.println(new Ansi().fgBrightYellow().a(msg).fgDefault());
-		//TODO: Add some kind of logging to a file
-	}
-	
-	public void error(String msg) {
-		//TODO: Add some kind of logging to a file
-		System.err.println(new Ansi().fgBrightRed().a(msg).fgDefault());
+
+	public void close() {
+		try {
+			writer.close();
+		} catch (IOException e) {}	
 	}
 }

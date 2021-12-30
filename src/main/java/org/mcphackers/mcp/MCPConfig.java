@@ -42,6 +42,7 @@ public class MCPConfig {
 	
 	public static boolean debug;
 	public static boolean patch;
+	public static boolean srcCleanup;
 	public static String[] ignorePackages;
 	public static int onlySide;
 	public static String indentionString;
@@ -53,6 +54,7 @@ public class MCPConfig {
     public static void resetConfig() {
         debug = false;
         patch = true;
+        srcCleanup = false;
     	onlySide = -1;
     	ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
     	indentionString = "\t";
@@ -71,6 +73,9 @@ public class MCPConfig {
 	        case "ind":
 	        case "indention":
 	        	indentionString = value;
+	            break;
+	        case "ignore":
+	            ignorePackages = new String[] {value};
 	            break;
         }
     }
@@ -97,6 +102,9 @@ public class MCPConfig {
         	case "server":
         		onlySide = value ? 1 : onlySide;
         		break;
+	        case "src":
+	            srcCleanup = value;
+	            break;
         }
     }
 

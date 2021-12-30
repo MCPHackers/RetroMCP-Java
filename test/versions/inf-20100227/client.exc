@@ -1,0 +1,11 @@
+net/minecraft/client/LoadingScreenRenderer.read(Ljava/io/InputStream;)Lcom/mojang/nbt/NBTTagCompound;=java/io/IOException
+net/minecraft/client/LoadingScreenRenderer.write(Lcom/mojang/nbt/NBTTagCompound;Ljava/io/OutputStream;)V=java/io/IOException
+com/mojang/nbt/NBTBase.readNamedTag(Ljava/io/DataInput;)Lcom/mojang/nbt/NBTBase;=java/io/IOException
+com/mojang/nbt/NBTBase.writeNamedTag(Lcom/mojang/nbt/NBTBase;Ljava/io/DataOutput;)V=java/io/IOException
+com/mojang/nbt/NBTBase.writeTagContents(Ljava/io/DataOutput;)V=java/io/IOException
+com/mojang/nbt/NBTBase.readTagContents(Ljava/io/DataInput;)V=java/io/IOException
+com/mojang/nbt/NBTTagCompound.writeTagContents(Ljava/io/DataOutput;)V=java/io/IOException
+com/mojang/nbt/NBTTagCompound.readTagContents(Ljava/io/DataInput;)V=java/io/IOException
+net/minecraft/client/Minecraft.startGame()V=org/lwjgl/LWJGLException
+net/minecraft/client/Minecraft.loadScreen()V=org/lwjgl/LWJGLException
+net/minecraft/client/ThreadDownloadResources.downloadResource(Ljava/net/URL;Ljava/io/File;)V=java/io/IOException

@@ -3,13 +3,7 @@ package org.mcphackers.mcp;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tasks.info.TaskInfoDecompile;
-import org.mcphackers.mcp.tasks.info.TaskInfoRecompile;
-import org.mcphackers.mcp.tasks.info.TaskInfoReobfuscate;
-import org.mcphackers.mcp.tasks.info.TaskInfoSetup;
-import org.mcphackers.mcp.tasks.info.TaskInfoRun;
-import org.mcphackers.mcp.tasks.info.TaskInfoUpdateMD5;
+import org.mcphackers.mcp.tasks.info.*;
 
 public enum EnumMode {
 
@@ -19,8 +13,8 @@ public enum EnumMode {
     reobfuscate("Reobfuscate Minecraft classes", new TaskInfoReobfuscate(), new String[] {"debug", "side", "client", "server"}),
     updatemd5("Update md5 hash tables used for reobfuscation", new TaskInfoUpdateMD5(), new String[] {"debug", "side", "client", "server"}),
     updatemcp("Download an update if available", null),
-    setup("Choose a version to setup", new TaskInfoSetup()),
-    cleanup("Delete all source and class folders", null),
+    setup("Choose a version to setup", new TaskInfoSetup(), new String[] {"debug"}),
+    cleanup("Delete all source and class folders", new TaskInfoCleanup(), new String[] {"debug", "src"}),
     startclient("Runs the client from compiled classes", new TaskInfoRun(0)),
     startserver("Runs the server from compiled classes", new TaskInfoRun(1)),
     exit("Exit the program", null);
@@ -55,5 +49,6 @@ public enum EnumMode {
     	paramDescs.put("side", "Performs operation only for specified side");
     	paramDescs.put("client", "Performs operation only for client");
     	paramDescs.put("server", "Performs operation only for server");
+    	paramDescs.put("src", "Only clear sources and classes folders");
     }
 }

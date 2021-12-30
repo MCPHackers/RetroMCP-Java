@@ -22,11 +22,8 @@ public class MCP {
             .fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
             .fgDefault();
 
-    static {
-    	AnsiConsole.systemInstall();
-    }
-
     public static void main(String[] args) {
+    	AnsiConsole.systemInstall();
         logger = new MCPLogger();
         input = new Scanner(System.in);
 
@@ -73,8 +70,8 @@ public class MCP {
 	                }
             	}
             	else {
-                    logger.println(new Ansi().fgBrightMagenta().a(String.format("%-12s", helpCommand.name())).fgGreen().a(" ").a(helpCommand.desc).fgDefault());
-                    logger.println("Optional parameters:");
+                    logger.println(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.name())).fgDefault().fgGreen().a(" ").a(helpCommand.desc).fgDefault());
+                    if(helpCommand.params.length > 0) logger.println("Optional parameters:");
                     for(String param : helpCommand.params) {
                 		logger.println(new Ansi().a(" ").fgCyan().a(String.format("%-7s", param)).a(" - ").fgBrightYellow().a(EnumMode.getParamDesc(param)).fgDefault());
                     }
@@ -130,42 +127,32 @@ public class MCP {
 
 	private static void shutdown() {
         input.close();
-        //TODO: Close logger (unimplemented)
+        logger.close();
 	}
 
 	private static void start() {
         TaskInfo task = getTaskInfo(mode);
         try {
-            logger.info(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault());
+            logger.info(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault().toString());
             processTask(task);
             logger.resetProgressString();
             String completemsg = task.successMsg();
             if(completemsg != null) {
-            	logger.info(new Ansi().a('\n').fgBrightGreen().a(completemsg).fgDefault());
+            	logger.info(new Ansi().a('\n').fgBrightGreen().a(completemsg).fgDefault().toString());
         		List<String> errors = task.getInfoList();
         		for(String error : errors) {
             		logger.info(" " + error.replace("\n", "\n "));
         		}
             }
         } catch (Exception e) {
-        	Exception ex = e;
-        	String msg = e.getMessage();
-        	try {
-                String completemsg = task.failMsg();
-                if(msg != null) {
-                	logger.info(new Ansi().a('\n').fgBrightRed().a(completemsg).fgDefault());
-                }
-        		List<String> errors = task.getInfoList();
-        		for(String error : errors) {
-            		logger.info(" " + error.replace("\n", "\n "));
-        		}
-        	}
-        	catch (NullPointerException nullException) {
-        		ex = nullException;
-        		msg = "Invalid task detected!";
-        	}
-            if (MCPConfig.debug) ex.printStackTrace();
+        	logger.info(new Ansi().a('\n').fgBrightRed().a(task.failMsg()).fgDefault().toString());
+    		List<String> errors = task.getInfoList();
+    		for(String error : errors) {
+        		logger.info(" " + error.replace("\n", "\n "));
+    		}
+            if (MCPConfig.debug) e.printStackTrace();
             else {
+            	String msg = e.getMessage();
             	if(msg != null) {
             		logger.info(msg);
             	}
@@ -214,11 +201,6 @@ public class MCP {
                 	ex = thread.exception;
                 }
             	working = !working ? thread.isAlive() : true;
-            }
-            if(ex != null) {
-            	for(SideThread thread : threads) {
-            		thread.stopThread();
-            	}
             }
         }
     	if(ex != null) throw ex;

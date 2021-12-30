@@ -1,6 +1,5 @@
 package org.mcphackers.mcp.tasks;
 
-import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.TinyUtils;
@@ -25,13 +24,14 @@ public class TaskReobfuscate extends Task {
     private final Map<String, String> recompHashes = new HashMap<>();
     private final Map<String, String> originalHashes = new HashMap<>();
 
-    private final Map<String, String> defaultReobfClasses = new HashMap<>();
-    private final Map<String, String> defaultReobfMethods = new HashMap<>();
-    private final Map<String, String> defaultReobfFields = new HashMap<>();
+    private final Map<String, String> reobfClasses = new HashMap<>();
+    private final Map<String, String> reobfPackages = new HashMap<>();
+    private final Map<String, String> reobfMethods = new HashMap<>();
+    private final Map<String, String> reobfFields = new HashMap<>();
 
-    private final Map<String, String> extraReobfClasses = new HashMap<>();
-    private final Map<String, String> extraReobfMethods = new HashMap<>();
-    private final Map<String, String> extraReobfFields = new HashMap<>();
+    //private final Map<String, String> extraReobfClasses = new HashMap<>();
+    //private final Map<String, String> extraReobfMethods = new HashMap<>();
+    //private final Map<String, String> extraReobfFields = new HashMap<>();
     
 	private TaskUpdateMD5 md5Task;
 
@@ -42,12 +42,14 @@ public class TaskReobfuscate extends Task {
 
     @Override
     public void doTask() throws Exception {
-        boolean binCheck = checkBins(side);
 
-        if (binCheck) {
+        Path reobfJar = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF_JAR : MCPConfig.CLIENT_REOBF_JAR);
+        Path reobfBin = Util.getPath(side == 1 ? MCPConfig.SERVER_BIN 		: MCPConfig.CLIENT_BIN);
+
+        if (Files.exists(reobfBin)) {
         	Path reobfDir = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF : MCPConfig.CLIENT_REOBF);
             if (Files.exists(reobfDir)) {
-                Util.deleteDirectoryStream(reobfDir);
+                Util.deleteDirectory(reobfDir);
             }
 
             step();
@@ -59,15 +61,12 @@ public class TaskReobfuscate extends Task {
             step();
             readDeobfuscationMappings(this.side);
             writeReobfuscationMappings(this.side);
-
-            Path reobfJar = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF_JAR : MCPConfig.CLIENT_REOBF_JAR);
-            Path reobfBin = Util.getPath(side == 1 ? MCPConfig.SERVER_BIN 		: MCPConfig.CLIENT_BIN);
+            
             Files.deleteIfExists(reobfJar);
             TinyRemapper remapper = null;
 
             try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(reobfJar).build()) {
                 remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO), "official", "named"), reobfBin, outputConsumer, Paths.get("jars", "bin"));
-                outputConsumer.addNonClassFiles(reobfBin, NonClassCopyMode.SKIP_META_INF, remapper);
             } finally {
                 if (remapper != null) {
                     remapper.finish();
@@ -75,6 +74,8 @@ public class TaskReobfuscate extends Task {
             }
             step();
             unpack(reobfJar, reobfDir);
+        } else {
+        	throw new IOException((side == 1 ? "Server" : "Client") + " classes not found!");
         }
     }
 
@@ -114,15 +115,21 @@ public class TaskReobfuscate extends Task {
                         @Override
                         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
                             className = name;
-                            if (!defaultReobfClasses.containsKey(name)) {
-                                extraReobfClasses.put(name, name.replace("net/minecraft/src/", ""));
+                            if (!reobfClasses.containsKey(name)) {
+                            	String key = name.lastIndexOf("/") >= 0 ? name.substring(0, name.lastIndexOf("/") + 1) : null;
+                                String obfPackage = reobfPackages.get(key);
+                                if(obfPackage != null) {
+                                	String clsName = name.lastIndexOf("/") >= 0 ? name.substring(name.lastIndexOf("/") + 1) : name;
+                                	reobfClasses.put(name, obfPackage + clsName);
+                                }
+                                //extraReobfClasses.put(name, name.replace("net/minecraft/src/", ""));
                             }
                             super.visit(version, access, name, signature, superName, interfaces);
                         }
 
                         @Override
                         public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-                            if (!defaultReobfFields.containsKey(className + "/" + name) && !name.equals("$VALUES")) {
+                            if (!reobfFields.containsKey(className + "/" + name) && !name.equals("$VALUES")) {
                                 //extraReobfFields.put(className + "/" + name, className + "/" + name);
                                 //System.out.println("Class-name: " + className + ", Field: " + name + ", Signature: " + descriptor);
                             }
@@ -131,7 +138,7 @@ public class TaskReobfuscate extends Task {
 
                         @Override
                         public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-                            if (!defaultReobfMethods.containsKey(className + "/" + name) && !name.equals("<init>") && !name.equals("<clinit>")) {
+                            if (!reobfMethods.containsKey(className + "/" + name) && !name.equals("<init>") && !name.equals("<clinit>")) {
                                 //System.out.println("Class-name: " + className + ", Method name: " + name);
                             }
                             return super.visitMethod(access, name, descriptor, signature, exceptions);
@@ -147,12 +154,12 @@ public class TaskReobfuscate extends Task {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO).toFile()))) {
             writer.write("tiny\t2\t0\tofficial\tnamed\n");
 
-            for (Map.Entry<String, String> classKeyPair : defaultReobfClasses.entrySet()) {
+            for (Map.Entry<String, String> classKeyPair : reobfClasses.entrySet()) {
                 String deobfuscatedClassName = classKeyPair.getKey();
                 String reobfuscatedClassName = classKeyPair.getValue();
                 writer.write("c\t" + deobfuscatedClassName + "\t" + reobfuscatedClassName + "\n");
 
-                for (Map.Entry<String, String> methodKeyPair : defaultReobfMethods.entrySet()) {
+                for (Map.Entry<String, String> methodKeyPair : reobfMethods.entrySet()) {
                     String deobfuscatedFullName = methodKeyPair.getKey();
                     if (deobfuscatedFullName.startsWith(deobfuscatedClassName) && !deobfuscatedFullName.endsWith("<init>") && !deobfuscatedFullName.endsWith("<clinit>")) {
                         String deobfuscatedMethodName = deobfuscatedFullName.substring(methodKeyPair.getKey().lastIndexOf("/") + 1);
@@ -166,7 +173,7 @@ public class TaskReobfuscate extends Task {
                 }
                 writer.flush();
 
-                for (Map.Entry<String, String> fieldKeyPair : defaultReobfFields.entrySet()) {
+                for (Map.Entry<String, String> fieldKeyPair : reobfFields.entrySet()) {
                     String deobfuscatedFullName = fieldKeyPair.getKey();
                     if (deobfuscatedFullName.startsWith(deobfuscatedClassName)) {
                         String deobfuscatedFieldName = deobfuscatedFullName.substring(fieldKeyPair.getKey().lastIndexOf("/") + 1);
@@ -180,8 +187,6 @@ public class TaskReobfuscate extends Task {
                 }
                 writer.flush();
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -196,7 +201,7 @@ public class TaskReobfuscate extends Task {
         return remappedSignature;
     }
 
-    private void readDeobfuscationMappings(int side) {
+    private void readDeobfuscationMappings(int side) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS).toFile()))) {
             String line = reader.readLine();
             String currentClassName = "";
@@ -207,23 +212,26 @@ public class TaskReobfuscate extends Task {
                 if (line.startsWith("c")) {
                     // Class
                     // c	aa	net/minecraft/src/TextureCompassFX
-                    defaultReobfClasses.put(tokens[2], tokens[1]);
+                    reobfClasses.put(tokens[2], tokens[1]);
+                    String deobfPackage = tokens[2].lastIndexOf("/") >= 0 ? tokens[2].substring(0, tokens[2].lastIndexOf("/") + 1) : "";
+                    if(!reobfPackages.containsKey(deobfPackage)) {
+                        String obfPackage 	= tokens[1].lastIndexOf("/") >= 0 ? tokens[1].substring(0, tokens[1].lastIndexOf("/") + 1) : "";
+                    	reobfPackages.put(deobfPackage, obfPackage);
+                    }
                     currentClassName = tokens[2];
                 } else if (line.startsWith("\tm")) {
                     // Method
                     // m	(Lho;IIIII)V	a	renderQuad
-                    defaultReobfMethods.put(currentClassName + "/" + tokens[4], tokens[3] + tokens[2]);
+                    reobfMethods.put(currentClassName + "/" + tokens[4], tokens[3] + tokens[2]);
                 } else if (line.startsWith("\tf")) {
                     // Field
                     // 	f	D	k	currentAngle
-                    defaultReobfFields.put(currentClassName + "/" + tokens[4], tokens[3] + "(" + tokens[2] + ")");
+                    reobfFields.put(currentClassName + "/" + tokens[4], tokens[3] + "(" + tokens[2] + ")");
                 }
 
                 // Read next line
                 line = reader.readLine();
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -245,7 +253,7 @@ public class TaskReobfuscate extends Task {
                     int codepoint = signature.codePointAt(++endObject);
                     if (codepoint == ';') {
                         String name = signature.substring(start, endObject);
-                        String newName = getKeyByValue(defaultReobfClasses, name);
+                        String newName = getKeyByValue(reobfClasses, name);
                         boolean modified = false;
                         if (newName != null) {
                             name = newName;
@@ -272,7 +280,7 @@ public class TaskReobfuscate extends Task {
                             }
                         }
                         String name = signature.substring(start, endObject);
-                        String newName = getKeyByValue(defaultReobfClasses, name);
+                        String newName = getKeyByValue(reobfClasses, name);
                         boolean modified = false;
                         if (newName != null) {
                             name = newName;
@@ -315,7 +323,7 @@ public class TaskReobfuscate extends Task {
         return null;
     }
 
-    private void gatherMD5Hashes(boolean reobf, int side) {
+    private void gatherMD5Hashes(boolean reobf, int side) throws IOException {
         Path clientMD5 = reobf ? Util.getPath(MCPConfig.CLIENT_MD5_RO) : Util.getPath(MCPConfig.CLIENT_MD5);
         Path serverMD5 = reobf ? Util.getPath(MCPConfig.SERVER_MD5_RO) : Util.getPath(MCPConfig.SERVER_MD5);
 
@@ -332,8 +340,6 @@ public class TaskReobfuscate extends Task {
                 // Read next line
                 line = reader.readLine();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -347,26 +353,12 @@ public class TaskReobfuscate extends Task {
             List<FileHeader> fileHeaders = zipFile.getFileHeaders();
             for (FileHeader fileHeader : fileHeaders) {
                 String fileName = fileHeader.getFileName();
-                String deobfName = Util.getKey(defaultReobfClasses, fileName.replace(".class", ""));
-                String entry = originalHashes.get(deobfName);
-                if (entry != null && !entry.equals(recompHashes.get(deobfName))) {
+                String deobfName = Util.getKey(reobfClasses, fileName.replace(".class", ""));
+                String hash = originalHashes.get(deobfName);
+                if (!fileHeader.isDirectory() && ( hash != null && !hash.equals(recompHashes.get(deobfName)) || hash == null)) {
                     zipFile.extractFile(fileHeader, destDir.toString());
                 }
             }
         }
-    }
-
-    private boolean checkBins(int side) {
-        Path minecraft1 = Util.getPath(MCPConfig.CLIENT_BIN + "/net/minecraft/client/Minecraft.class");
-        Path minecraft2 = Util.getPath(MCPConfig.CLIENT_BIN + "/net/minecraft/src/Minecraft.class");
-
-        Path minecraftServer1 = Util.getPath(MCPConfig.SERVER_BIN + "/net/minecraft/server/MinecraftServer.class");
-        if (side == 0 && (Files.exists(minecraft1) || Files.exists(minecraft2))) {
-            return true;
-        }
-        if (side == 1 && Files.exists(minecraftServer1)) {
-            return true;
-        }
-        return false;
     }
 }

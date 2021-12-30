@@ -5,7 +5,6 @@ import org.mcphackers.mcp.tools.ProgressInfo;
 
 public class SideThread extends Thread {
 
-    private boolean stopThread;
 	private final int side;
     private final Task task;
     public volatile Exception exception;
@@ -22,18 +21,10 @@ public class SideThread extends Thread {
 
     public void run() {
         try {
-            task.doTask(this);
+            task.doTask();
         } catch (Exception e) {
             exception = e;
         }
-    }
-    
-    public void stopThread() {
-    	stopThread = true;
-    }
-    
-    public boolean stopped() {
-    	return stopThread;
     }
 
     public String getSideName() {

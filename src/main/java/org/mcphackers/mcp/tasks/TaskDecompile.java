@@ -102,7 +102,7 @@ public class TaskDecompile extends Task {
 		    	}
 		    	break;
 		    case COPYSRC:
-				Util.copyDirectory(Util.getPath(ffOut), srcPath);
+				Util.copyDirectory(Util.getPath(ffOut), srcPath, MCPConfig.ignorePackages);
 		    	break;
 		    case RECOMPILE:
 			    new TaskRecompile(side, info).doTask();
@@ -117,11 +117,11 @@ public class TaskDecompile extends Task {
 
     public static TinyRemapper remap(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
         TinyRemapper remapper = TinyRemapper.newRemapper()
-                .renameInvalidLocals(true)
+                .renameInvalidLocals(false)
                 .rebuildSourceFilenames(true)
                 .invalidLvNamePattern(MC_LV_PATTERN)
                 .withMappings(mappings)
-                .fixPackageAccess(true)
+                .fixPackageAccess(false)
                 .threads(Runtime.getRuntime().availableProcessors() - 3)
                 .rebuildSourceFilenames(true)
                 .build();
