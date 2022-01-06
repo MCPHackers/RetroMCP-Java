@@ -4,6 +4,7 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.*;
 
+import java.io.IOException;
 import java.util.*;
 
 public class MCP {
@@ -22,7 +23,13 @@ public class MCP {
             .fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
             .fgDefault();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        //if(System.console() == null) {
+    	if(false) {
+            String filename = MCP.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
+            Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd","/k","java -cp \"" + filename + ";D:/Stuff/git/RetroMCP-Java/build/libs/RetroMCP-Java-all.jar" + "\" org.mcphackers.mcp.MCP"});
+        	return;
+        }
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
         input = new Scanner(System.in);
@@ -39,7 +46,10 @@ public class MCP {
         while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
             while (args.length < 1) {
                 logger.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
-                String str = input.nextLine();
+                String str = "";
+                try {
+                	str = input.nextLine();
+                } catch (NoSuchElementException ex) {};
                 logger.print(new Ansi().fgDefault());
                 args = str.split(" ");
             }

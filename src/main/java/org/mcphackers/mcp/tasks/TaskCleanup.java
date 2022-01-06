@@ -25,7 +25,7 @@ public class TaskCleanup extends Task {
         for (Path path : pathsToDelete) {
         	if (Files.exists(path)) {
         		foldersDeleted++;
-        		MCP.logger.info("Deleting " + path + "...");
+        		MCP.logger.info(" Deleting " + path + "...");
         		Util.deleteDirectory(path);
         	}
         }
@@ -35,10 +35,10 @@ public class TaskCleanup extends Task {
         long nanoSeconds = endTime - startTime;
 
         if(foldersDeleted > 0) {
-        	MCP.logger.info("Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
+        	MCP.logger.info(" Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
         }
         else {
-        	MCP.logger.info("Nothing to clear!");
+        	MCP.logger.info(" Nothing to clear!");
         }
     }
 }

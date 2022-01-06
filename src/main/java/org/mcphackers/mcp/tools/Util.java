@@ -2,6 +2,8 @@ package org.mcphackers.mcp.tools;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.FileHeader;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
@@ -15,7 +17,10 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -181,5 +186,35 @@ public class Util {
             }
         }
         return null;
+    }
+	
+    public static Map<String, Object> jsonToMap(JSONObject jsonobj)  throws JSONException {
+        Map<String, Object> map = new HashMap<String, Object>();
+        Iterator<String> keys = jsonobj.keys();
+        while(keys.hasNext()) {
+            String key = keys.next();
+            Object value = jsonobj.get(key);
+            if (value instanceof JSONArray) {
+                value = jsonToList((JSONArray) value);
+            } else if (value instanceof JSONObject) {
+                value = jsonToMap((JSONObject) value);
+            }   
+            map.put(key, value);
+        }   return map;
+    }
+
+    public static List<Object> jsonToList(JSONArray array) throws JSONException {
+        List<Object> list = new ArrayList<Object>();
+        for(int i = 0; i < array.length(); i++) {
+            Object value = array.get(i);
+            if (value instanceof JSONArray) {
+                value = jsonToList((JSONArray) value);
+            }
+            else if (value instanceof JSONObject) {
+                value = jsonToMap((JSONObject) value);
+            }
+            list.add(value);
+        }
+        return list;
     }
 }

@@ -77,8 +77,9 @@ public class MCPLogger {
     }
 	
 	public void info(String msg) {
+		String msgNoAnsi =  msg.replaceAll("\u001B\\[[;\\d]*m", "");
 		try {
-			writer.write(msg + "\n");
+			writer.write(msgNoAnsi + "\n");
 		} catch (IOException e) {}
 		System.out.println(msg);
 	}

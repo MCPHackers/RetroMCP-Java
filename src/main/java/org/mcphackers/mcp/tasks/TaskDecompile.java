@@ -4,6 +4,7 @@ import codechicken.diffpatch.cli.PatchOperation;
 import net.fabricmc.tinyremapper.*;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tools.GLConstants;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
@@ -27,10 +28,11 @@ public class TaskDecompile extends Task {
 	private static final int DECOMPILE = 3;
 	private static final int EXTRACT = 4;
 	private static final int PATCH = 5;
-	private static final int COPYSRC = 6;
-	private static final int RECOMPILE = 7;
-	private static final int MD5 = 8;
-    private static final int STEPS = 8;
+	private static final int CONSTS = 6;
+	private static final int COPYSRC = 7;
+	private static final int RECOMPILE = 8;
+	private static final int MD5 = 9;
+    private static final int STEPS = 9;
 
     public TaskDecompile(int side, TaskInfo info) {
         super(side, info);
@@ -101,6 +103,9 @@ public class TaskDecompile extends Task {
 				    }
 		    	}
 		    	break;
+		    case CONSTS:
+				GLConstants.annotate(Util.getPath(ffOut));
+		    	break;
 		    case COPYSRC:
 				Util.copyDirectory(Util.getPath(ffOut), srcPath, MCPConfig.ignorePackages);
 		    	break;
@@ -146,14 +151,17 @@ public class TaskDecompile extends Task {
 	    case DECOMPILE: {
         	current = 3;
         	ProgressInfo info = decompiler.log.initInfo();
-        	int percent = (int) (info.getCurrent() * 100 / info.getTotal() * 0.83D);
+        	int percent = (int) (info.getCurrent() * 100 / info.getTotal() * 0.82D);
             return new ProgressInfo(info.getMessage(), current + percent, total); }
 	    case EXTRACT:
-        	current = 87;
+        	current = 86;
             return new ProgressInfo("Extracting sources...", current, total);
 	    case PATCH:
-        	current = 88;
+        	current = 87;
             return new ProgressInfo("Applying patches...", current, total);
+	    case CONSTS:
+        	current = 88;
+            return new ProgressInfo("Replacing LWJGL constants...", current, total);
 		case COPYSRC:
 			current = 89;
 			return new ProgressInfo("Copying sources...", current, total);
