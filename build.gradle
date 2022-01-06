@@ -60,6 +60,15 @@ task startClient(type: JavaExec) {
     args 'startclient', '-debug'
 }
 
+task startServer(type: JavaExec) {
+    group 'RetroMCP-Java'
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'startserver', '-debug'
+}
+
 task recompile(type: JavaExec) {
     group 'RetroMCP-Java'
 
