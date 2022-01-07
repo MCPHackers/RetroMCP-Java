@@ -104,7 +104,7 @@ public class TaskDecompile extends Task {
 		    	}
 		    	break;
 		    case CONSTS:
-				GLConstants.annotate(Util.getPath(ffOut));
+				GLConstants.replace(Util.getPath(ffOut));
 		    	break;
 		    case COPYSRC:
 				Util.copyDirectory(Util.getPath(ffOut), srcPath, MCPConfig.ignorePackages);

@@ -24,12 +24,11 @@ public class MCP {
             .fgDefault();
 
     public static void main(String[] args) throws IOException {
-        //if(System.console() == null) {
-    	if(false) {
-            String filename = MCP.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
-            Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd","/k","java -cp \"" + filename + ";D:/Stuff/git/RetroMCP-Java/build/libs/RetroMCP-Java-all.jar" + "\" org.mcphackers.mcp.MCP"});
-        	return;
-        }
+//        if(System.console() == null) {
+//            String filename = MCP.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
+//            Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd","/k","java -cp \"" + filename + ";D:/Stuff/git/RetroMCP-Java/build/libs/RetroMCP-Java-all.jar" + "\" org.mcphackers.mcp.MCP"});
+//        	return;
+//        }
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
         input = new Scanner(System.in);

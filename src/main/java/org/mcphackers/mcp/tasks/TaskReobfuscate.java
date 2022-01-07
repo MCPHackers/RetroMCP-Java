@@ -151,7 +151,7 @@ public class TaskReobfuscate extends Task {
             }
         });
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO).toFile()))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Util.getPath(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO).toFile()))) {
             writer.write("tiny\t2\t0\tofficial\tnamed\n");
 
             for (Map.Entry<String, String> classKeyPair : reobfClasses.entrySet()) {
@@ -202,7 +202,7 @@ public class TaskReobfuscate extends Task {
     }
 
     private void readDeobfuscationMappings(int side) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS).toFile()))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(Util.getPath(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS).toFile()))) {
             String line = reader.readLine();
             String currentClassName = "";
             while (line != null) {
