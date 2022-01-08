@@ -27,7 +27,7 @@ public class GLConstants {
 	private static final List _PACKAGES = json.getJSONArray("PACKAGES").toList();
 	private static final Pattern _CALL_REGEX = Pattern.compile("(" + String.join("|", _PACKAGES) + ")\\.([\\w]+)\\(.+\\)");
 	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
-	private static final Pattern _INPUT_REGEX = Pattern.compile("(Keyboard)\\.((getKeyName|isKeyDown)\\(.+\\)|getEventKey\\(\\) == .+)");;
+	private static final Pattern _INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(\\d+\\)|getEventKey\\(\\) == \\d+)|new KeyBinding\\([ \\w\\\"]+, \\d+\\))");
 	private static final Map _CONSTANTS_KEYBOARD = Util.jsonToMap(json.getJSONObject("CONSTANTS_KEYBOARD"));
 	private static final List _CONSTANTS = Util.jsonToList(json.getJSONArray("CONSTANTS"));
 	
@@ -40,13 +40,21 @@ public class GLConstants {
             	Files.write(file, code.getBytes());
                 return FileVisitResult.CONTINUE;
             }
+            
+            private String updateImports(String code, String imp) {
+            	// TODO Import won't be added if GL11 isn't imported already
+                String addAfter = "org.lwjgl.opengl.GL11";
+                if(!code.contains("import " + imp + ";")) {
+                    code = code.replace("import " + addAfter + ";",
+                                        "import " + addAfter + ";\nimport " + imp + ";");
+                }
+                return code;
+        	}
 
 			private String replace_constants(String code) {
-				//FIXME Still captures inccorrect matches, such as
-				// "Keyboard.isKeyDown(42) && !Keyboard.isKeyDown(54) ? 1 : -1)"
-				// Normal order would probably fix it, but it would also break indexes of match start and end
-				code = replaceTextOfMatchGroup(code, _INPUT_REGEX, 0, match1 -> {
-					return replaceTextOfMatchGroup(match1.group(0), _CONSTANT_REGEX, 0, match2 -> {
+				code = replaceTextOfMatchGroup(code, _INPUT_REGEX, match1 -> {
+					String full_call = match1.group(0);
+					return replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
 						String replaceConst = (String)_CONSTANTS_KEYBOARD.get(match2.group(0));
 						if(replaceConst == null) {
 							return match2.group();
@@ -54,14 +62,15 @@ public class GLConstants {
 						return "Keyboard." + replaceConst;
 					});
 				});
-				code = replaceTextOfMatchGroup(code, _CALL_REGEX, 0, match1 -> {
+				code = replaceTextOfMatchGroup(code, _CALL_REGEX, match1 -> {
+					String full_call = match1.group(0);
 					String pkg = match1.group(1);
 					String method = match1.group(2);
-					return replaceTextOfMatchGroup(match1.group(0), _CONSTANT_REGEX, 0, match2 -> {
+					return replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
 			            String full_match = match2.group(0);
 	                    for (Object groupg : _CONSTANTS) {
-	                    	List<Object> group = (List<Object>)groupg;
-	                        if (((Map)group.get(0)).containsKey(pkg) && ((List)((Map)((List)group).get(0)).get(pkg)).contains(method)) {
+	                    	List group = (List)groupg;
+	                        if (((Map<String, List>)group.get(0)).containsKey(pkg) && ((List<Map<String, List>>)group).get(0).get(pkg).contains(method)) {
 	                            for (Entry entry : ((Map<String, List<String>>)group.get(1)).entrySet()) {
 	                                if(((Map)entry.getValue()).containsKey(full_match)) {
 	                                    return String.format("%s.%s", entry.getKey(), ((Map)entry.getValue()).get(full_match));
@@ -72,12 +81,20 @@ public class GLConstants {
 	                    return full_match;
 					});
 				});
+				for(String pkg : (List<String>)_PACKAGES) {
+					if(code.contains(pkg + ".")) {
+						code = updateImports(code, "org.lwjgl.opengl." + pkg);
+					}
+				}
+				if(code.contains("Keyboard.")) {
+					code = updateImports(code, "org.lwjgl.input.Keyboard");
+				}
 				return code;
 			}
         });
 	}
 	
-	public static String replaceTextOfMatchGroup(String sourceString, Pattern pattern, int groupToReplace, Function<MatchResult,String> replaceStrategy) {
+	public static String replaceTextOfMatchGroup(String sourceString, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
 	    Stack<MatchResult> startPositions = new Stack<>();
 	    Matcher matcher = pattern.matcher(sourceString);
 
@@ -87,8 +104,8 @@ public class GLConstants {
 	    StringBuilder sb = new StringBuilder(sourceString);
 	    while (! startPositions.isEmpty()) {
 	        MatchResult match = startPositions.pop();
-	        if (match.start(groupToReplace) >= 0 && match.end(groupToReplace) >= 0) {
-	            sb.replace(match.start(groupToReplace), match.end(groupToReplace), replaceStrategy.apply(match));
+	        if (match.start() >= 0 && match.end() >= 0) {
+	            sb.replace(match.start(), match.end(), replaceStrategy.apply(match));
 	        }
 	    }
 	    return sb.toString();       
@@ -96,8 +113,8 @@ public class GLConstants {
 	
 	private static JSONObject getJson() {
 		try {
-			return Util.parseJSONFile(Paths.get(GLConstants.class.getClassLoader().getResource("gl_constants.json").toURI()));
-		} catch (JSONException | IOException | URISyntaxException e) {
+			return Util.parseJSONFile(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
+		} catch (JSONException | IOException e) {
 			e.printStackTrace();
 			return null;
 		}

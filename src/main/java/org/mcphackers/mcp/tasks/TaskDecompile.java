@@ -10,6 +10,7 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.mcinjector.MCInjector;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,8 +53,10 @@ public class TaskDecompile extends Task {
         Path srcPath 		= Util.getPath((side == 1 ? MCPConfig.SERVER_SOURCES : MCPConfig.CLIENT_SOURCES));
         Path patchesPath 	= Util.getPath((side == 1 ? MCPConfig.SERVER_PATCHES : MCPConfig.CLIENT_PATCHES));
         
+        boolean hasLWJGL = side == 0;
+        
         if (Files.exists(srcPath)) {
-            throw new Exception("/src exists! Aborting.");
+        	throw new IOException((side == 1 ? "Server" : "Client") + " sources found! Aborting.");
         }
         Path[] pathsToDelete = new Path[] { Util.getPath(tinyOut), Util.getPath(excOut), Util.getPath(ffOut), Util.getPath(srcZip)};
         for (Path path : pathsToDelete) {
@@ -61,7 +64,6 @@ public class TaskDecompile extends Task {
         		Util.deleteDirectory(path);
         	}
         }
-        
 		while(step < STEPS) {
 		    step();
 		    switch (step) {
@@ -104,7 +106,9 @@ public class TaskDecompile extends Task {
 		    	}
 		    	break;
 		    case CONSTS:
-				GLConstants.replace(Util.getPath(ffOut));
+		    	if(hasLWJGL) {
+		    		GLConstants.replace(Util.getPath(ffOut));
+		    	}
 		    	break;
 		    case COPYSRC:
 				Util.copyDirectory(Util.getPath(ffOut), srcPath, MCPConfig.ignorePackages);
@@ -114,7 +118,6 @@ public class TaskDecompile extends Task {
 		    	break;
 		    case MD5:
 			    this.md5Task.doTask();
-			    this.md5Task = null;
 		    	break;
 			}
 		}

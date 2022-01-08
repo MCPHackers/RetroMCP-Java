@@ -37,7 +37,12 @@ public class TaskSetup extends Task {
     @Override
     public void doTask() throws Exception {
         if (Files.exists(Paths.get("src"))) {
-            throw new IOException("/src exists! Aborting.");
+            MCP.logger.println(new Ansi().a("Sources folder found! Type \"yes\" if you want to continue setup").fgRgb(255,255,255));
+            String confirm = MCP.input.nextLine().toLowerCase();
+            MCP.logger.print(new Ansi().fgDefault());
+            if(!confirm.equals("yes")) {
+            	throw new Exception("Setup aborted");
+            }
         }
         
         MCPConfig.srcCleanup = false;
