@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -40,12 +41,20 @@ public class TaskRecompile extends Task {
 
         // Compile side
         if (Files.exists(srcPath)) {
-            Iterable<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path)).map(Path::toFile).collect(Collectors.toList());
+            Iterable<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
             Iterable<String> options = Arrays.asList("-d", MCPConfig.CLIENT_BIN, "-cp", String.join(";", new String[] {MCPConfig.CLIENT, MCPConfig.LWJGL, MCPConfig.LWJGL_UTIL, MCPConfig.JINPUT}));
             if(side == 1) {
             	options = Arrays.asList("-d", MCPConfig.SERVER_BIN, "-cp", String.join(";", MCPConfig.SERVER));
             }
             recompile(compiler, ds, src, options);
+            // Copy assets from source folder
+            Iterable<Path> assets = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java")).collect(Collectors.toList());
+            for(Path path : assets) {
+            	if(srcPath.relativize(path).getParent() != null) {
+            		Files.createDirectories(Paths.get(binPath.toString(), srcPath.relativize(path).getParent().toString()));
+            	}
+            	Files.copy(path, Paths.get(binPath.toString(), srcPath.relativize(path).toString()));
+            }
         } else {
         	throw new IOException((side == 1 ? "Server" : "Client") + " sources not found!");
         }

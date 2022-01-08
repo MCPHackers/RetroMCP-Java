@@ -32,6 +32,7 @@ public class MCP {
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
         input = new Scanner(System.in);
+        logger.log("Operating system: " + System.getProperty("os.name"));
 
         boolean startedWithNoParams = false;
         boolean exit = false;

@@ -45,15 +45,15 @@ public class TaskReobfuscate extends Task {
 
         Path reobfJar = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF_JAR : MCPConfig.CLIENT_REOBF_JAR);
         Path reobfBin = Util.getPath(side == 1 ? MCPConfig.SERVER_BIN 		: MCPConfig.CLIENT_BIN);
+    	Path reobfDir = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF 	: MCPConfig.CLIENT_REOBF);
+
+        step();
+        md5Task.updateMD5(true);
 
         if (Files.exists(reobfBin)) {
-        	Path reobfDir = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF : MCPConfig.CLIENT_REOBF);
             if (Files.exists(reobfDir)) {
                 Util.deleteDirectory(reobfDir);
             }
-
-            step();
-            md5Task.updateMD5(true);
             step();
             gatherMD5Hashes(true, this.side);
             gatherMD5Hashes(false, this.side);

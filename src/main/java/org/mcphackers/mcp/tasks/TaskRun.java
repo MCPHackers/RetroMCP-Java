@@ -25,18 +25,31 @@ public class TaskRun extends Task {
 	public void doTask() throws Exception {
 		String java = "\"" + System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java" + "\"";
 		String natives = Util.getPath(MCPConfig.NATIVES).toAbsolutePath().toString();
-		String cp = String.join(";", 
-				(side == 1 ? new String[] {
-					MCPConfig.SERVER_BIN,
-					MCPConfig.SERVER,
-				} : new String[] {
-					MCPConfig.CLIENT_BIN,
-					MCPConfig.CLIENT,
-					MCPConfig.LWJGL,
-					MCPConfig.LWJGL_UTIL,
-					MCPConfig.JINPUT
-				})
-			);
+		List<String> cpList = new ArrayList<String>();
+		if(side == 1) {
+			if(MCPConfig.runBuild) {
+				cpList.add(MCPConfig.BUILD_JAR_SERVER);
+			}
+			else {
+				cpList.add(MCPConfig.SERVER_BIN);
+				cpList.add(MCPConfig.SERVER);
+			}
+		}
+		else {
+			if(MCPConfig.runBuild) {
+				cpList.add(MCPConfig.BUILD_JAR_CLIENT);
+			}
+			else {
+				cpList.add(MCPConfig.CLIENT_BIN);
+				cpList.add(MCPConfig.CLIENT);
+			}
+			cpList.add(MCPConfig.LWJGL);
+			cpList.add(MCPConfig.LWJGL_UTIL);
+			cpList.add(MCPConfig.JINPUT);
+		}
+		
+		
+		String cp = String.join(";", cpList);
 		int exit = Util.runCommand(
 			String.join(" ",
 				java,

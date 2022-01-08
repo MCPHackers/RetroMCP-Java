@@ -15,8 +15,9 @@ public enum EnumMode {
     updatemcp("Download an update if available", null),
     setup("Choose a version to setup", new TaskInfoSetup(), new String[] {"debug"}),
     cleanup("Delete all source and class folders", new TaskInfoCleanup(), new String[] {"debug", "src"}),
-    startclient("Runs the client from compiled classes", new TaskInfoRun(0)),
-    startserver("Runs the server from compiled classes", new TaskInfoRun(1)),
+    startclient("Runs the client from compiled classes", new TaskInfoRun(0), new String[] {"runbuild"}),
+    startserver("Runs the server from compiled classes", new TaskInfoRun(1), new String[] {"runbuild"}),
+    build("Builds the final jar or zip", new TaskInfoBuild(), new String[] {"debug", "fullbuild", "side", "client", "server"}),
     exit("Exit the program", null);
 	
 	public final String desc;
@@ -50,5 +51,7 @@ public enum EnumMode {
     	paramDescs.put("client", "Performs operation only for client");
     	paramDescs.put("server", "Performs operation only for server");
     	paramDescs.put("src", "Only clear sources and classes folders");
+    	paramDescs.put("fullbuild", "Builds a runnable jar");
+    	paramDescs.put("runbuild", "Runs the built jar");
     }
 }

@@ -39,6 +39,10 @@ public class MCPConfig {
 	public static final String SERVER_PATCHES = 	 "conf/patches_server";
 	public static final String JAVADOC_CLIENT = 	 "conf/client.javadoc";
 	public static final String JAVADOC_SERVER = 	 "conf/server.javadoc";
+	public static final String BUILD_ZIP_CLIENT = 	 "build/minecraft.zip";
+	public static final String BUILD_ZIP_SERVER = 	 "build/minecraft_server.zip";
+	public static final String BUILD_JAR_CLIENT = 	 "build/minecraft.jar";
+	public static final String BUILD_JAR_SERVER = 	 "build/minecraft_server.jar";
 	
 	public static boolean debug;
 	public static boolean patch;
@@ -46,6 +50,8 @@ public class MCPConfig {
 	public static String[] ignorePackages;
 	public static int onlySide;
 	public static String indentionString;
+	public static boolean fullBuild;
+	public static boolean runBuild;
 
     static {
         resetConfig();
@@ -58,6 +64,8 @@ public class MCPConfig {
     	onlySide = -1;
     	ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
     	indentionString = "\t";
+    	fullBuild = false;
+    	runBuild = false;
     }
 
     public static void setParameter(String name, int value) {
@@ -104,6 +112,12 @@ public class MCPConfig {
         		break;
 	        case "src":
 	            srcCleanup = value;
+	            break;
+	        case "fullbuild":
+	        	fullBuild = value;
+	            break;
+	        case "runbuild":
+	        	runBuild = value;
 	            break;
         }
     }

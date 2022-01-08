@@ -13,7 +13,6 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
@@ -54,6 +53,25 @@ public class Util {
             more[i - 1] = all[i];
         }
         return Paths.get(all[0], more);
+    }
+    
+    public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
+        try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+            for(Path file : files) {
+            	Path fileInsideZipPath = fs.getPath(relativeTo.relativize(file).toString());
+            	Files.deleteIfExists(fileInsideZipPath);
+            	if(fileInsideZipPath.getParent() != null && !Files.exists(fileInsideZipPath.getParent()))
+            		Files.createDirectories(fileInsideZipPath.getParent());
+            	Files.copy(file, fileInsideZipPath);
+            }
+        }
+    }
+    
+    public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
+        try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+        	Path fileInsideZipPath = fs.getPath(file);
+        	Files.deleteIfExists(fileInsideZipPath);
+        }
     }
 
     public static void unzip(final Path zipFile, final Path destDir, boolean deleteZip) throws IOException {

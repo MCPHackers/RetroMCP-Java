@@ -20,8 +20,8 @@ public class TaskCleanup extends Task {
     public void doTask() throws Exception {
         long startTime = System.nanoTime();
         int foldersDeleted = 0;
-        Path[] pathsToDelete = new Path[] { Paths.get("jars"), Paths.get("temp"), Paths.get("src"), Paths.get("reobf"), Paths.get("eclipse"), Paths.get("bin")};
-        if (MCPConfig.srcCleanup) pathsToDelete = new Path[] { Paths.get("src"), Paths.get("bin")};
+        Path[] pathsToDelete = new Path[] { Paths.get("jars"), Paths.get("temp"), Paths.get("src"), Paths.get("reobf"), Paths.get("eclipse"), Paths.get("bin"), Paths.get("build")};
+        if (MCPConfig.srcCleanup) pathsToDelete = new Path[] { Paths.get("src"), Paths.get("bin"), Paths.get("build")};
         for (Path path : pathsToDelete) {
         	if (Files.exists(path)) {
         		foldersDeleted++;
