@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class MCP {
-
+	
+	public static final String VERSION = "v0.1";
     public static EnumMode mode = null;
     public static EnumMode helpCommand = null;
     public static MCPLogger logger;
@@ -33,6 +34,7 @@ public class MCP {
         logger = new MCPLogger();
         input = new Scanner(System.in);
         logger.log("Operating system: " + System.getProperty("os.name"));
+        logger.log("RetroMCP " + VERSION);
 
         boolean startedWithNoParams = false;
         boolean exit = false;
@@ -40,6 +42,7 @@ public class MCP {
         if (args.length <= 0) {
             startedWithNoParams = true;
             logger.println(logo);
+            logger.println("RetroMCP " + VERSION);
             logger.println("Enter a command to execute:");
         }
         int executeTimes = 0;
@@ -118,6 +121,9 @@ public class MCP {
         				helpCommand = EnumMode.valueOf(name);
         			}
         			catch (IllegalArgumentException ex) {}
+        		}
+        		if(mode == EnumMode.setup) {
+        			MCPConfig.setParameter("setupversion", name);
         		}
     		}
     		else if(value instanceof Integer) {
@@ -207,10 +213,12 @@ public class MCP {
             logger.printProgressBars(threads);
             working = false;
             for(SideThread thread : threads) {
-                if (thread.exception != null) {
-                	ex = thread.exception;
-                }
             	working = !working ? thread.isAlive() : true;
+            }
+        }
+        for(SideThread thread : threads) {
+            if (thread.exception != null) {
+            	ex = thread.exception;
             }
         }
     	if(ex != null) throw ex;

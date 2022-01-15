@@ -18,7 +18,7 @@ public class TaskCleanup extends Task {
 
     @Override
     public void doTask() throws Exception {
-        long startTime = System.nanoTime();
+        long startTime = System.currentTimeMillis();
         int foldersDeleted = 0;
         Path[] pathsToDelete = new Path[] { Paths.get("jars"), Paths.get("temp"), Paths.get("src"), Paths.get("reobf"), Paths.get("eclipse"), Paths.get("bin"), Paths.get("build")};
         if (MCPConfig.srcCleanup) pathsToDelete = new Path[] { Paths.get("src"), Paths.get("bin"), Paths.get("build")};
@@ -29,13 +29,9 @@ public class TaskCleanup extends Task {
         		Util.deleteDirectory(path);
         	}
         }
-        long endTime = System.nanoTime();
-
-        long seconds = TimeUnit.SECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS);
-        long nanoSeconds = endTime - startTime;
 
         if(foldersDeleted > 0) {
-        	MCP.logger.info(" Done in " + (seconds == 0 ? nanoSeconds + " ns" : seconds + " s"));
+        	MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
         }
         else {
         	MCP.logger.info(" Nothing to clear!");

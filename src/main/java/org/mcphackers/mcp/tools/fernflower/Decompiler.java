@@ -27,7 +27,6 @@ public class Decompiler implements IBytecodeProvider {
         mapOptions.put("rbr", "0");
         mapOptions.put("asc", "1");
         mapOptions.put("nco", "1");
-        mapOptions.put("jds", javadocs);
         mapOptions.put("ind", MCPConfig.indentionString);
 
         SaveType saveType = SaveType.FOLDER;
@@ -47,8 +46,8 @@ public class Decompiler implements IBytecodeProvider {
         if (lstSources.isEmpty()) {
             throw new IOException("No sources found");
         }
-
-        BaseDecompiler decompiler = new BaseDecompiler(this, saveType.getSaver().apply(destination), mapOptions, log);
+        File jdFile = new File(javadocs);
+        BaseDecompiler decompiler = new BaseDecompiler(this, saveType.getSaver().apply(destination), mapOptions, log, jdFile.exists() ? new JavadocProvider(jdFile) : null);
         try {
             for (File source2 : lstSources) {
                 decompiler.addSpace(source2, true);

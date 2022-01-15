@@ -2,13 +2,13 @@ package org.mcphackers.mcp;
 
 public class MCPConfig {
 
-	public static final String CLIENT = 			 "jars/bin/minecraft.jar";
+	public static final String CLIENT = 			 "jars/minecraft.jar";
 	public static final String SERVER = 			 "jars/minecraft_server.jar";
-	public static final String SERVER_ZIP = 		 "jars/minecraft_server.zip";
-	public static final String LWJGL = 				 "jars/bin/lwjgl.jar";
-	public static final String LWJGL_UTIL = 		 "jars/bin/lwjgl_util.jar";
-	public static final String JINPUT = 	 		 "jars/bin/jinput.jar";
-	public static final String NATIVES = 			 "jars/bin/natives";
+	public static final String CLIENT_FIXED = 		 "jars/libraries/minecraft.jar";
+	public static final String LWJGL = 				 "jars/libraries/lwjgl.jar";
+	public static final String LWJGL_UTIL = 		 "jars/libraries/lwjgl_util.jar";
+	public static final String JINPUT = 	 		 "jars/libraries/jinput.jar";
+	public static final String NATIVES = 			 "jars/natives";
 	public static final String CLIENT_TINY_OUT = 	 "temp/minecraft_remapped.jar";
 	public static final String SERVER_TINY_OUT = 	 "temp/minecraft_server_remapped.jar";
 	public static final String CLIENT_EXC_OUT = 	 "temp/minecraft_exc.jar";
@@ -39,6 +39,8 @@ public class MCPConfig {
 	public static final String SERVER_PATCHES = 	 "conf/patches_server";
 	public static final String JAVADOC_CLIENT = 	 "conf/client.javadoc";
 	public static final String JAVADOC_SERVER = 	 "conf/server.javadoc";
+	public static final String PROPERTIES_CLIENT = 	 "conf/client.properties";
+	public static final String PROPERTIES_SERVER = 	 "conf/server.properties";
 	public static final String BUILD_ZIP_CLIENT = 	 "build/minecraft.zip";
 	public static final String BUILD_ZIP_SERVER = 	 "build/minecraft_server.zip";
 	public static final String BUILD_JAR_CLIENT = 	 "build/minecraft.jar";
@@ -52,6 +54,7 @@ public class MCPConfig {
 	public static String indentionString;
 	public static boolean fullBuild;
 	public static boolean runBuild;
+	public static String setupVersion;
 
     static {
         resetConfig();
@@ -66,6 +69,7 @@ public class MCPConfig {
     	indentionString = "\t";
     	fullBuild = false;
     	runBuild = false;
+    	setupVersion = null;
     }
 
     public static void setParameter(String name, int value) {
@@ -84,6 +88,9 @@ public class MCPConfig {
 	            break;
 	        case "ignore":
 	            ignorePackages = new String[] {value};
+	            break;
+	        case "setupversion":
+	        	setupVersion = value;
 	            break;
         }
     }

@@ -12,15 +12,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class TaskRecompile extends Task {
 	private int total;
 	private int progress;
+	
+	private static final int RECOMPILE = 1;
+	private static final int COPYRES = 2;
 
     public TaskRecompile(int side, TaskInfo info) {
         super(side, info);
-        this.total = 1;
+        this.total = 100;
         this.progress = 0;
 	}
 
@@ -29,34 +33,40 @@ public class TaskRecompile extends Task {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
 
-        Path binPath = side == 1 ? Util.getPath(MCPConfig.SERVER_BIN) 		: Util.getPath(MCPConfig.CLIENT_BIN);
-        Path srcPath = side == 1 ? Util.getPath(MCPConfig.SERVER_SOURCES) 	: Util.getPath(MCPConfig.CLIENT_SOURCES);
+        Path binPath = Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));
+        Path srcPath = Util.getPath(chooseFromSide(MCPConfig.CLIENT_SOURCES, 	MCPConfig.SERVER_SOURCES));
 
         step();
-        if (Files.exists(binPath)) {
-            Util.deleteDirectory(binPath);
-        }
-
+        this.progress = 1;
+        Util.deleteDirectoryIfExists(binPath);
         Files.createDirectories(binPath);
+        this.progress = 2;
 
         // Compile side
         if (Files.exists(srcPath)) {
             Iterable<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-            Iterable<String> options = Arrays.asList("-d", MCPConfig.CLIENT_BIN, "-cp", String.join(";", new String[] {MCPConfig.CLIENT, MCPConfig.LWJGL, MCPConfig.LWJGL_UTIL, MCPConfig.JINPUT}));
-            if(side == 1) {
+            Iterable<String> options = Arrays.asList("-d", MCPConfig.CLIENT_BIN, "-cp", String.join(";", new String[] {MCPConfig.CLIENT_FIXED, MCPConfig.LWJGL, MCPConfig.LWJGL_UTIL, MCPConfig.JINPUT}));
+            if(side == SERVER) {
             	options = Arrays.asList("-d", MCPConfig.SERVER_BIN, "-cp", String.join(";", MCPConfig.SERVER));
             }
+            this.progress = 3;
             recompile(compiler, ds, src, options);
+            this.progress = 50;
             // Copy assets from source folder
-            Iterable<Path> assets = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java")).collect(Collectors.toList());
+            step();
+            List<Path> assets = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java")).collect(Collectors.toList());
+            int i = 0;
             for(Path path : assets) {
             	if(srcPath.relativize(path).getParent() != null) {
             		Files.createDirectories(Paths.get(binPath.toString(), srcPath.relativize(path).getParent().toString()));
             	}
             	Files.copy(path, Paths.get(binPath.toString(), srcPath.relativize(path).toString()));
+            	i++;
+            	this.progress = 50 + (int)((double)i / assets.size() * 49);
             }
+            this.progress = 99;
         } else {
-        	throw new IOException((side == 1 ? "Server" : "Client") + " sources not found!");
+        	throw new IOException(chooseFromSide("Client", "Server") + " sources not found!");
         }
     }
 
@@ -81,9 +91,11 @@ public class TaskRecompile extends Task {
 
     @Override
     public ProgressInfo getProgress() {
-    	//TODO: Progress values stay at 0 and 1. Add a way to monitor progress of compilation.
-        if(step == 1) {
+        if(step == RECOMPILE) {
         	return new ProgressInfo("Recompiling...", progress, total);
+        }
+        if(step == COPYRES) {
+        	return new ProgressInfo("Copying resources...", progress, total);
         }
         return super.getProgress();
     }

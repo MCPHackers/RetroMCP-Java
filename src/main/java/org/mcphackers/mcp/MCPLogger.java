@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.fusesource.jansi.Ansi;
 import org.mcphackers.mcp.tools.ProgressInfo;
+import org.mcphackers.mcp.tools.Util;
 
 public class MCPLogger {
 	
@@ -19,9 +20,7 @@ public class MCPLogger {
 	
 	public MCPLogger() {
 		try {
-			if(Files.notExists(Paths.get("logs"))) {
-				Files.createDirectory(Paths.get("logs"));
-			}
+			Util.createDirectories(Paths.get("logs"));
 			writer = new BufferedWriter(new FileWriter(new File("logs/mcp.log")));
 		} catch (IOException e) {}
 	}
@@ -85,6 +84,7 @@ public class MCPLogger {
 		String msgNoAnsi =  msg.replaceAll("\u001B\\[[;\\d]*m", "");
 		try {
 			writer.write(msgNoAnsi + "\n");
+			writer.flush();
 		} catch (IOException e) {}
 	}
 

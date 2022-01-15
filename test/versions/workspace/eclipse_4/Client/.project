@@ -28,7 +28,7 @@
 		<link>
 			<name>start</name>
 			<type>2</type>
-			<locationURI>MCP_LOC/conf/patches_client</locationURI>
+			<locationURI>MCP_LOC/conf/start</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources>
@@ -47,7 +47,7 @@
 			<type>13</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-bin</arguments>
+				<arguments>1.0-name-matches-false-false-*</arguments>
 			</matcher>
 		</filter>
 		<filter>
@@ -61,7 +61,7 @@
 		</filter>
 		<filter>
 			<id>1307293504507</id>
-			<name>jars/bin</name>
+			<name>jars/libraries</name>
 			<type>5</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
@@ -70,7 +70,7 @@
 		</filter>
 		<filter>
 			<id>1307293480435</id>
-			<name>jars/bin/natives</name>
+			<name>jars/natives</name>
 			<type>6</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>

@@ -16,6 +16,10 @@ public class TaskUpdateMD5 extends Task {
 	private int total;
 	private int progress;
 	public boolean recompile;
+	private TaskRecompile recompTask;
+	
+	private static final int RECOMPILE = 1;
+	private static final int MD5 = 2;
 	
     
     public TaskUpdateMD5(int side, TaskInfo info) {
@@ -23,6 +27,7 @@ public class TaskUpdateMD5 extends Task {
         this.total = 1;
         this.progress = 0;
         this.recompile = true;
+        this.recompTask = new TaskRecompile(side, info);
 	}
 
 	@Override
@@ -31,8 +36,9 @@ public class TaskUpdateMD5 extends Task {
     }
 
     public void updateMD5(boolean reobf) throws Exception {
-        Path binPath = side == 1 ? Util.getPath(MCPConfig.SERVER_BIN) : Util.getPath(MCPConfig.CLIENT_BIN);
-        Path md5 = side == 1 ? (reobf ? Util.getPath(MCPConfig.SERVER_MD5_RO) : Util.getPath(MCPConfig.SERVER_MD5)) : (reobf ? Util.getPath(MCPConfig.CLIENT_MD5_RO) : Util.getPath(MCPConfig.CLIENT_MD5));
+        Path binPath 	= Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN));
+        Path md5 = Util.getPath(reobf ? chooseFromSide(MCPConfig.CLIENT_MD5_RO, MCPConfig.SERVER_MD5_RO)
+				  					  : chooseFromSide(MCPConfig.CLIENT_MD5, MCPConfig.SERVER_MD5));
         step();
         if(recompile) {
         	new TaskRecompile(side, info).doTask();
@@ -49,7 +55,7 @@ public class TaskUpdateMD5 extends Task {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     try {
                         String md5_hash = Util.getMD5OfFile(file.toFile());
-                        String fileName = ((side == 1 ? Util.getPath(MCPConfig.SERVER_BIN) : Util.getPath(MCPConfig.CLIENT_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", ""));
+                        String fileName = Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
                         writer.append(fileName).append(" ").append(md5_hash).append("\n");
                         progress++;
                     } catch (NoSuchAlgorithmException ex) {
@@ -60,17 +66,23 @@ public class TaskUpdateMD5 extends Task {
             });
             writer.close();
         } else {
-        	throw new IOException((side == 1 ? "Server" : "Client") + " classes not found!");
+        	throw new IOException(chooseFromSide("Client", "Server") + " classes not found!");
         }
     }
 
     @Override
     public ProgressInfo getProgress() {
+    	int total = 100;
+    	int current = 0;
         switch(step) {
-        case 1:
-        	return new ProgressInfo("Recompiling...", 0, 1);
-        case 2:
-        	return new ProgressInfo("Updating MD5...", progress, total);
+        case RECOMPILE: {
+        	current = 1;
+        	ProgressInfo info = recompTask.getProgress();
+        	int percent = (int) ((double)info.getCurrent() / info.getTotal() * 2);
+            return new ProgressInfo(info.getMessage(), current + percent, total); }
+        case MD5:
+        	current = 50 + (int)((double)progress / this.total * 50);
+        	return new ProgressInfo("Updating MD5...", current, total);
         }
         return super.getProgress();
     }

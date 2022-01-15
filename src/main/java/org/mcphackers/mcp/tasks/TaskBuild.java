@@ -25,11 +25,11 @@ public class TaskBuild extends Task {
 
     @Override
     public void doTask() throws Exception {
-    	Path originalJar =  Util.getPath(side == 1 ? MCPConfig.SERVER 		: MCPConfig.CLIENT);
-        Path bin = 			Util.getPath(side == 1 ? MCPConfig.SERVER_BIN 	: MCPConfig.CLIENT_BIN);
-    	Path reobfDir = 	Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF : MCPConfig.CLIENT_REOBF);
-    	Path buildJar = 	Util.getPath(side == 1 ? MCPConfig.BUILD_JAR_SERVER : MCPConfig.BUILD_JAR_CLIENT);
-    	Path buildZip = 	Util.getPath(side == 1 ? MCPConfig.BUILD_ZIP_SERVER : MCPConfig.BUILD_ZIP_CLIENT);
+    	Path originalJar =  Util.getPath(chooseFromSide(MCPConfig.CLIENT, 			MCPConfig.SERVER));
+        Path bin = 			Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));
+    	Path reobfDir = 	Util.getPath(chooseFromSide(MCPConfig.CLIENT_REOBF, 	MCPConfig.SERVER_REOBF));
+    	Path buildJar = 	Util.getPath(chooseFromSide(MCPConfig.BUILD_JAR_CLIENT, MCPConfig.BUILD_JAR_SERVER));
+    	Path buildZip = 	Util.getPath(chooseFromSide(MCPConfig.BUILD_ZIP_CLIENT, MCPConfig.BUILD_ZIP_SERVER));
         
 		while(step < STEPS) {
 		    step();
@@ -38,9 +38,7 @@ public class TaskBuild extends Task {
 			    this.reobfTask.doTask();
 		    	break;
 		    case BUILD:
-		    	if(!Files.exists(Paths.get("build"))) {
-		    		Files.createDirectory(Paths.get("build"));
-		    	}
+		    	Util.createDirectories(Paths.get("build"));
 		    	if(MCPConfig.fullBuild) {
 			    	Files.deleteIfExists(buildJar);
 		    		Files.copy(originalJar, buildJar);
@@ -69,7 +67,7 @@ public class TaskBuild extends Task {
 	    case REOBF: {
         	current = 1;
         	ProgressInfo info = reobfTask.getProgress();
-        	int percent = (int) (info.getCurrent() * 100 / info.getTotal() * 0.49D);
+        	int percent = (int) ((double)info.getCurrent() / info.getTotal() * 49);
             return new ProgressInfo(info.getMessage(), current + percent, total); }
 	    case BUILD:
         	current = 52;

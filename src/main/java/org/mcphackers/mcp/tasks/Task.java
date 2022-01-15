@@ -5,6 +5,9 @@ import org.mcphackers.mcp.tools.ProgressInfo;
 
 public abstract class Task {
 	
+	protected static final int CLIENT = 0;
+	protected static final int SERVER = 1;
+	
 	protected int step = 0;
 	protected final int side;
 	protected final TaskInfo info;
@@ -22,5 +25,12 @@ public abstract class Task {
     
     protected void step() {
     	step++;
+    }
+    
+    protected String chooseFromSide(String... strings) {
+    	if(side < strings.length) {
+    		return strings[side];
+    	}
+    	return null;
     }
 }

@@ -1,17 +1,16 @@
 package org.mcphackers.mcp.tools;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -28,6 +27,7 @@ public class GLConstants {
 	private static final Pattern _CALL_REGEX = Pattern.compile("(" + String.join("|", _PACKAGES) + ")\\.([\\w]+)\\(.+\\)");
 	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
 	private static final Pattern _INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(\\d+\\)|getEventKey\\(\\) == \\d+)|new KeyBinding\\([ \\w\\\"]+, \\d+\\))");
+	private static final Pattern _IMPORT = Pattern.compile("import [.*\\w]+;");
 	private static final Map _CONSTANTS_KEYBOARD = Util.jsonToMap(json.getJSONObject("CONSTANTS_KEYBOARD"));
 	private static final List _CONSTANTS = Util.jsonToList(json.getJSONArray("CONSTANTS"));
 	
@@ -41,17 +41,27 @@ public class GLConstants {
                 return FileVisitResult.CONTINUE;
             }
             
-            private String updateImports(String code, String imp) {
-            	// TODO Import won't be added if GL11 isn't imported already
-                String addAfter = "org.lwjgl.opengl.GL11";
-                if(!code.contains("import " + imp + ";")) {
-                    code = code.replace("import " + addAfter + ";",
-                                        "import " + addAfter + ";\nimport " + imp + ";");
-                }
+            private String updateImport(String code, String imp) {
+        	    Matcher matcher = _IMPORT.matcher(code);
+            	int lastIndex = -1;
+        	    while (matcher.find()) {
+        	        lastIndex = matcher.end();
+        	    }
+        	    String impString = "import " + imp + ";";
+        	    if(lastIndex >= 0 && !code.contains(impString)) {
+        	    	code = code.substring(0, lastIndex) + System.lineSeparator() + impString + code.substring(lastIndex);
+        	    }
                 return code;
         	}
+            
+            private void addImport(String imp, List<String> imports) {
+            	if(!imports.contains(imp)) {
+            		imports.add(imp);
+            	}
+            }
 
 			private String replace_constants(String code) {
+				List<String> imports = new LinkedList<String>();
 				code = replaceTextOfMatchGroup(code, _INPUT_REGEX, match1 -> {
 					String full_call = match1.group(0);
 					return replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
@@ -59,6 +69,7 @@ public class GLConstants {
 						if(replaceConst == null) {
 							return match2.group();
 						}
+						addImport("org.lwjgl.input.Keyboard", imports);
 						return "Keyboard." + replaceConst;
 					});
 				});
@@ -73,6 +84,7 @@ public class GLConstants {
 	                        if (((Map<String, List>)group.get(0)).containsKey(pkg) && ((List<Map<String, List>>)group).get(0).get(pkg).contains(method)) {
 	                            for (Entry entry : ((Map<String, List<String>>)group.get(1)).entrySet()) {
 	                                if(((Map)entry.getValue()).containsKey(full_match)) {
+	            						addImport("org.lwjgl.opengl." + entry.getKey(), imports);
 	                                    return String.format("%s.%s", entry.getKey(), ((Map)entry.getValue()).get(full_match));
 	                                }
 	                            }
@@ -81,13 +93,8 @@ public class GLConstants {
 	                    return full_match;
 					});
 				});
-				for(String pkg : (List<String>)_PACKAGES) {
-					if(code.contains(pkg + ".")) {
-						code = updateImports(code, "org.lwjgl.opengl." + pkg);
-					}
-				}
-				if(code.contains("Keyboard.")) {
-					code = updateImports(code, "org.lwjgl.input.Keyboard");
+				for(String imp : imports) {
+					code = updateImport(code, imp);
 				}
 				return code;
 			}

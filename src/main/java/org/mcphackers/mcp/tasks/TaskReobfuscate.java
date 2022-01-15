@@ -43,17 +43,16 @@ public class TaskReobfuscate extends Task {
     @Override
     public void doTask() throws Exception {
 
-        Path reobfJar = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF_JAR : MCPConfig.CLIENT_REOBF_JAR);
-        Path reobfBin = Util.getPath(side == 1 ? MCPConfig.SERVER_BIN 		: MCPConfig.CLIENT_BIN);
-    	Path reobfDir = Util.getPath(side == 1 ? MCPConfig.SERVER_REOBF 	: MCPConfig.CLIENT_REOBF);
+        Path reobfJar = Util.getPath(chooseFromSide(MCPConfig.CLIENT_REOBF_JAR, 	MCPConfig.SERVER_REOBF_JAR));
+        Path reobfBin = Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, 			MCPConfig.SERVER_BIN));
+    	Path reobfDir = Util.getPath(chooseFromSide(MCPConfig.CLIENT_REOBF, 		MCPConfig.SERVER_REOBF));
+    	Path mappings = Util.getPath(chooseFromSide(MCPConfig.CLIENT_MAPPINGS_RO, 	MCPConfig.SERVER_MAPPINGS_RO));
 
         step();
         md5Task.updateMD5(true);
 
         if (Files.exists(reobfBin)) {
-            if (Files.exists(reobfDir)) {
-                Util.deleteDirectory(reobfDir);
-            }
+            Util.deleteDirectoryIfExists(reobfDir);
             step();
             gatherMD5Hashes(true, this.side);
             gatherMD5Hashes(false, this.side);
@@ -66,7 +65,7 @@ public class TaskReobfuscate extends Task {
             TinyRemapper remapper = null;
 
             try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(reobfJar).build()) {
-                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(Paths.get(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO), "official", "named"), reobfBin, outputConsumer, Paths.get("jars", "bin"));
+                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(mappings, "official", "named"), reobfBin, outputConsumer, TaskDecompile.getLibraryPaths(side));
             } finally {
                 if (remapper != null) {
                     remapper.finish();
@@ -75,7 +74,7 @@ public class TaskReobfuscate extends Task {
             step();
             unpack(reobfJar, reobfDir);
         } else {
-        	throw new IOException((side == 1 ? "Server" : "Client") + " classes not found!");
+        	throw new IOException(chooseFromSide("Client", "Server") + " classes not found!");
         }
     }
 
@@ -87,7 +86,7 @@ public class TaskReobfuscate extends Task {
 	    case 1: {
 	    	current = 1;
 	    	ProgressInfo info = md5Task.getProgress();
-	    	int percent = (int) (info.getCurrent() * 100 / info.getTotal() * 0.5D);
+	    	int percent = (int)((double)info.getCurrent() / info.getTotal() * 50);
 	        return new ProgressInfo(info.getMessage(), current + percent, total); }
 	    case 2:
         	current = 51;
@@ -105,7 +104,11 @@ public class TaskReobfuscate extends Task {
 
     // Utility methods
     private void writeReobfuscationMappings(int side) throws IOException {
-        Files.walkFileTree(Paths.get(side == 1 ? MCPConfig.SERVER_BIN : MCPConfig.CLIENT_BIN), new SimpleFileVisitor<Path>() {
+    	
+        Path reobfBin = Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, 			MCPConfig.SERVER_BIN));
+    	Path mappings = Util.getPath(chooseFromSide(MCPConfig.CLIENT_MAPPINGS_RO, 	MCPConfig.SERVER_MAPPINGS_RO));
+    	
+        Files.walkFileTree(reobfBin, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 if (file.toString().endsWith(".class")) {
@@ -151,7 +154,7 @@ public class TaskReobfuscate extends Task {
             }
         });
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Util.getPath(side == 1 ? MCPConfig.SERVER_MAPPINGS_RO : MCPConfig.CLIENT_MAPPINGS_RO).toFile()))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(mappings.toFile()))) {
             writer.write("tiny\t2\t0\tofficial\tnamed\n");
 
             for (Map.Entry<String, String> classKeyPair : reobfClasses.entrySet()) {
@@ -202,7 +205,9 @@ public class TaskReobfuscate extends Task {
     }
 
     private void readDeobfuscationMappings(int side) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(Util.getPath(side == 1 ? MCPConfig.SERVER_MAPPINGS : MCPConfig.CLIENT_MAPPINGS).toFile()))) {
+    	Path mappings = Util.getPath(chooseFromSide(MCPConfig.CLIENT_MAPPINGS, 	MCPConfig.SERVER_MAPPINGS));
+    	
+        try (BufferedReader reader = new BufferedReader(new FileReader(mappings.toFile()))) {
             String line = reader.readLine();
             String currentClassName = "";
             while (line != null) {
@@ -324,10 +329,10 @@ public class TaskReobfuscate extends Task {
     }
 
     private void gatherMD5Hashes(boolean reobf, int side) throws IOException {
-        Path clientMD5 = reobf ? Util.getPath(MCPConfig.CLIENT_MD5_RO) : Util.getPath(MCPConfig.CLIENT_MD5);
-        Path serverMD5 = reobf ? Util.getPath(MCPConfig.SERVER_MD5_RO) : Util.getPath(MCPConfig.SERVER_MD5);
+        Path md5 = Util.getPath(reobf ? chooseFromSide(MCPConfig.CLIENT_MD5_RO, MCPConfig.SERVER_MD5_RO)
+        							  : chooseFromSide(MCPConfig.CLIENT_MD5, MCPConfig.SERVER_MD5));
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(side == 0 ? clientMD5.toFile() : serverMD5.toFile()))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(md5.toFile()))) {
             String line = reader.readLine();
             while (line != null) {
                 String[] tokens = line.split(" ");

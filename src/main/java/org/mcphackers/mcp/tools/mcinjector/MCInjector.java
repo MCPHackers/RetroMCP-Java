@@ -11,7 +11,7 @@ public class MCInjector extends MCInjectorImpl {
 		super(index);
 	}
 
-    public static void process(String inFile, String outFile, String mapFile, String logFile, String outMapFile, int index)
+    public static void process(String inFile, String outFile, String mapFile, int index)
         throws IOException
     {
         MCInjectorImpl.log.setUseParentHandlers(false);

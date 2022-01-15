@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -39,11 +40,17 @@ public class Util {
         while (proc.isAlive()) {
         	String line;
         	if(doLog && (line = input.readLine()) != null) {
-        	    MCP.logger.println(line);
+        	    MCP.logger.info(line);
         	}
         }
         input.close();
         return proc.exitValue();
+    }
+    
+    public static void createDirectories(Path path) throws IOException {
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
+        }
     }
     
     public static Path getPath(String pathStr) {
@@ -112,17 +119,42 @@ public class Util {
         }
     }
 
-    public static String getOperatingSystem() {
-        String osName = System.getProperty("os.name");
-        if (osName.toLowerCase().startsWith("windows")) {
-            return "windows";
-        } else {
-            // TODO: Make this work for other OSes
-            return "null";
-        }
+    public static OS getOperatingSystem() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        return osName.contains("win") ? OS.windows
+        	: (osName.contains("mac") ? OS.macos
+        	: (osName.contains("solaris") ? OS.linux
+        	: (osName.contains("sunos") ? OS.linux
+        	: (osName.contains("linux") ? OS.linux
+        	: (osName.contains("unix") ? OS.linux
+        	: OS.unknown)))));
     }
     
-    public static byte[] readAllBytes(InputStream inputStream) throws IOException {
+    public enum OS {
+    	windows,
+    	linux,
+    	macos,
+    	unknown
+    }
+    
+    public static String time(long time) {
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(time);
+        long milliseconds = TimeUnit.MILLISECONDS.toMillis(time);
+        return seconds + "s " + milliseconds + "ms";
+    }
+
+    public static JSONObject parseJSONFile(Path path) throws JSONException, IOException {
+        String content = new String(Files.readAllBytes(path));
+        return new JSONObject(content);
+    }
+
+    public static JSONObject parseJSONFile(InputStream stream) throws JSONException, IOException {
+    	byte[] bytes = readAllBytes(stream);
+        String content = new String(bytes);
+        return new JSONObject(content);
+    }
+    
+    private static byte[] readAllBytes(InputStream inputStream) throws IOException {
         final int bufLen = 4 * 0x400; // 4KB
         byte[] buf = new byte[bufLen];
         int readLen;
@@ -147,16 +179,11 @@ public class Util {
             }
         }
     }
-
-    public static JSONObject parseJSONFile(Path path) throws JSONException, IOException {
-        String content = new String(Files.readAllBytes(path));
-        return new JSONObject(content);
-    }
-
-    public static JSONObject parseJSONFile(InputStream stream) throws JSONException, IOException {
-    	byte[] bytes = readAllBytes(stream);
-        String content = new String(bytes);
-        return new JSONObject(content);
+    
+    public static void deleteDirectoryIfExists(Path path) throws IOException {
+        if (Files.exists(path)) {
+        	deleteDirectory(path);
+        }
     }
 
     public static void deleteDirectory(Path path) throws IOException {
