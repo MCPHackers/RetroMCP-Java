@@ -22,7 +22,7 @@ dependencies {
     // Required libraries
     implementation 'org.ow2.asm:asm:9.2'
 
-    implementation 'com.github.MCPHackers:RetroFernflower:72f6e7a90b'
+    implementation 'com.github.MCPHackers:RetroFernflower:65eb7e6ba3'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
     implementation 'net.fabricmc:tiny-remapper:0.6.0'
     implementation 'net.lingala.zip4j:zip4j:2.6.1'
