@@ -25,17 +25,22 @@ dependencies {
     implementation 'com.github.MCPHackers:RetroFernflower:65eb7e6ba3'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
     implementation 'net.fabricmc:tiny-remapper:0.6.0'
-    implementation 'net.lingala.zip4j:zip4j:2.6.1'
+    implementation 'net.lingala.zip4j:zip4j:2.9.1'
     // TODO: Don't gut MCInjector bundled ASM
     implementation name: 'mcinjector'
     implementation 'org.json:json:20211205'
     implementation 'com.github.MCPHackers:DiffPatch:e2473fdba3'
+    implementation 'net.fabricmc:mapping-io:0.3.0'
 }
 
 application {
     // Redirect all execution into the testing folder
     mainClass = 'org.mcphackers.mcp.MCP'
     executableDir = 'test'
+}
+
+shadowJar {
+    minimize()
 }
 
 runShadow {

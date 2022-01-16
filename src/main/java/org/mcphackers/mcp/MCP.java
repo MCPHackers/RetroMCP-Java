@@ -1,20 +1,21 @@
 package org.mcphackers.mcp;
 
+import jredfox.terminal.OpenTerminal;
+import jredfox.terminal.app.TerminalApp;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
-import org.mcphackers.mcp.tasks.info.*;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
 
-import java.io.IOException;
 import java.util.*;
 
-public class MCP {
+public class MCP extends TerminalApp {
 	
 	public static final String VERSION = "v0.1";
     public static EnumMode mode = null;
     public static EnumMode helpCommand = null;
     public static MCPLogger logger;
     public static Scanner input;
-    private static Ansi logo = 
+    private static final Ansi logo =
     		new Ansi()
             .fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____  ").a('\n')
             .fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\ ").a('\n')
@@ -24,12 +25,16 @@ public class MCP {
             .fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
             .fgDefault();
 
-    public static void main(String[] args) throws IOException {
-//        if(System.console() == null) {
-//            String filename = MCP.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
-//            Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd","/k","java -cp \"" + filename + ";D:/Stuff/git/RetroMCP-Java/build/libs/RetroMCP-Java-all.jar" + "\" org.mcphackers.mcp.MCP"});
-//        	return;
-//        }
+    public MCP(Class<?> iclass, String[] args) {
+        super(iclass, args);
+    }
+
+    public static void main(String[] args) {
+        OpenTerminal.INSTANCE.run(new MCP(MCP.class, args));
+        if (System.console() == null) {
+            logger.log("YO");
+        }
+
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
         input = new Scanner(System.in);
@@ -52,12 +57,12 @@ public class MCP {
                 String str = "";
                 try {
                 	str = input.nextLine();
-                } catch (NoSuchElementException ex) {};
+                } catch (NoSuchElementException ignored) {}
                 logger.print(new Ansi().fgDefault());
                 args = str.split(" ");
             }
             boolean taskMode = setMode(args[0]);
-            Map<String, Object> parsedArgs = new HashMap<String, Object>();
+            Map<String, Object> parsedArgs = new HashMap<>();
             for (int index = 1; index < args.length; index++) {
                 parseArg(args[index], parsedArgs);
             }
@@ -66,21 +71,21 @@ public class MCP {
                 start();
             } else if (mode == EnumMode.help) {
             	if(helpCommand == null) {
-	                List<String[]> commands = new ArrayList();
+	                List<String[]> commands = new ArrayList<>();
 	                for (EnumMode mode : EnumMode.values()) {
 	                	commands.add(new String[]{mode.name(), mode.desc});
 	            	}
-	
-	                for (int i = 0; i < commands.size(); i++) {
-	                    for (int i2 = 0; i2 < commands.get(i).length; i2++) {
-	                        if (i2 == 0)
-	                            logger.print(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", commands.get(i)[i2])).fgDefault());
-	                        else
-	                            logger.print(new Ansi().fgGreen().a(" ").a(commands.get(i)[i2]).fgDefault());
-	                    }
-	
-	                    logger.newLine();
-	                }
+
+                    for (String[] command : commands) {
+                        for (int i2 = 0; i2 < command.length; i2++) {
+                            if (i2 == 0)
+                                logger.print(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", command[i2])).fgDefault());
+                            else
+                                logger.print(new Ansi().fgGreen().a(" ").a(command[i2]).fgDefault());
+                        }
+
+                        logger.newLine();
+                    }
             	}
             	else {
                     logger.println(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.name())).fgDefault().fgGreen().a(" ").a(helpCommand.desc).fgDefault());
@@ -110,17 +115,15 @@ public class MCP {
     		if(value == null) {
     			switch (name) {
     			case "client":
-        			MCPConfig.setParameter(name, true);
+                    case "server":
+                        MCPConfig.setParameter(name, true);
         			break;
-    			case "server":
-        			MCPConfig.setParameter(name, true);
-        			break;
-    			}
+                }
         		if(mode == EnumMode.help) {
         			try {
         				helpCommand = EnumMode.valueOf(name);
         			}
-        			catch (IllegalArgumentException ex) {}
+        			catch (IllegalArgumentException ignored) {}
         		}
         		if(mode == EnumMode.setup) {
         			MCPConfig.setParameter("setupversion", name);
@@ -192,7 +195,7 @@ public class MCP {
     }
     
     private static void processMultitasks(TaskInfo task) throws Exception {
-        List<SideThread> threads = new ArrayList<SideThread>();
+        List<SideThread> threads = new ArrayList<>();
 		if(MCPConfig.onlySide < 0 || MCPConfig.onlySide == SideThread.CLIENT) {
 			threads.add(new SideThread(SideThread.CLIENT, task.newTask(SideThread.CLIENT)));
 		}
@@ -213,7 +216,7 @@ public class MCP {
             logger.printProgressBars(threads);
             working = false;
             for(SideThread thread : threads) {
-            	working = !working ? thread.isAlive() : true;
+            	working = working || thread.isAlive();
             }
         }
         for(SideThread thread : threads) {
@@ -235,13 +238,11 @@ public class MCP {
             }
             if(values.length == 1) {
             	try {
-            		int i = Integer.parseInt(values[0]);
-            		value = new Integer(i);
+                    value = Integer.parseInt(values[0]);
             	}
             	catch (NumberFormatException e) {
             		if(values[0].equals("false") || values[0].equals("true")) {
-            			boolean b = Boolean.parseBoolean(values[0]);
-            			value = new Boolean(b);
+                        value = Boolean.parseBoolean(values[0]);
             		}
             		else {
             			value = values[0];
@@ -254,11 +255,9 @@ public class MCP {
             map.put(name, value);
         } else if (arg.startsWith("-")) {
             String name = arg.substring(1);
-            Boolean value = new Boolean(true);
-            map.put(name, value);
+            map.put(name, true);
         } else {
-            String name = arg;
-            map.put(name, null);
+            map.put(arg, null);
         }
     }
 
@@ -267,7 +266,7 @@ public class MCP {
             mode = EnumMode.valueOf(name);
             return mode.task != null;
     	}
-    	catch (IllegalArgumentException ex) {}
+    	catch (IllegalArgumentException ignored) {}
         return false;
     }
 }

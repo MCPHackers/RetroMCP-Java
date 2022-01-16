@@ -23,7 +23,7 @@ public class Decompiler implements IBytecodeProvider {
     }
 
     public void decompile(String source, String out, String javadocs) throws IOException {
-        Map<String, Object> mapOptions = new HashMap<String, Object>();
+        Map<String, Object> mapOptions = new HashMap<>();
         mapOptions.put("rbr", "0");
         mapOptions.put("asc", "1");
         mapOptions.put("nco", "1");
@@ -40,14 +40,14 @@ public class Decompiler implements IBytecodeProvider {
 	      } else {
 	        destination.mkdirs();
 	      }
-        List<File> lstSources = new ArrayList<File>();
+        List<File> lstSources = new ArrayList<>();
         addPath(lstSources, source);
 
         if (lstSources.isEmpty()) {
             throw new IOException("No sources found");
         }
         File jdFile = new File(javadocs);
-        BaseDecompiler decompiler = new BaseDecompiler(this, saveType.getSaver().apply(destination), mapOptions, log, jdFile.exists() ? new JavadocProvider(jdFile) : null);
+        BaseDecompiler decompiler = new BaseDecompiler(this, saveType.getSaver().apply(destination), mapOptions, log, jdFile.exists() ? new TinyJavadocProvider(jdFile) : null);
         try {
             for (File source2 : lstSources) {
                 decompiler.addSpace(source2, true);
