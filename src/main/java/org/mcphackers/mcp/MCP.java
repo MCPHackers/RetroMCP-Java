@@ -31,9 +31,6 @@ public class MCP extends TerminalApp {
 
     public static void main(String[] args) {
         OpenTerminal.INSTANCE.run(new MCP(MCP.class, args));
-        if (System.console() == null) {
-            logger.log("YO");
-        }
 
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
