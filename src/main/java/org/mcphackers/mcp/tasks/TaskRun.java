@@ -6,6 +6,7 @@ import org.mcphackers.mcp.tools.Util;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class TaskRun extends Task {
 	@Override
 	public void doTask() throws Exception {
 		String java = "\"" + System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java" + "\"";
-		String natives = Util.getPath(MCPConfig.NATIVES).toAbsolutePath().toString();
+		String natives = Paths.get(MCPConfig.NATIVES).toAbsolutePath().toString();
 		List<String> cpList = new LinkedList<String>();
 		if(side == SERVER) {
 			if(MCPConfig.runBuild) {
@@ -34,7 +35,7 @@ public class TaskRun extends Task {
 			}
 			else {
 				cpList.add(MCPConfig.CLIENT_BIN);
-				cpList.add(Files.exists(Util.getPath(MCPConfig.CLIENT_FIXED)) ? MCPConfig.CLIENT_FIXED : MCPConfig.CLIENT);
+				cpList.add(Files.exists(Paths.get(MCPConfig.CLIENT_FIXED)) ? MCPConfig.CLIENT_FIXED : MCPConfig.CLIENT);
 			}
 			cpList.add(MCPConfig.LWJGL);
 			cpList.add(MCPConfig.LWJGL_UTIL);

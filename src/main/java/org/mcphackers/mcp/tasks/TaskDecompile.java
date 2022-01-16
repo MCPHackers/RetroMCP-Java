@@ -50,18 +50,18 @@ public class TaskDecompile extends Task {
         String excOut 		= chooseFromSide(MCPConfig.CLIENT_EXC_OUT, MCPConfig.SERVER_EXC_OUT);
         String exc 			= chooseFromSide(MCPConfig.EXC_CLIENT, MCPConfig.EXC_SERVER);
 		String srcZip 		= chooseFromSide(MCPConfig.CLIENT_SRC, MCPConfig.SERVER_SRC);
-        Path originalJar 	= Util.getPath(chooseFromSide(MCPConfig.CLIENT, MCPConfig.SERVER));
-		Path ffOut 			= Util.getPath(chooseFromSide(MCPConfig.CLIENT_TEMP_SOURCES, MCPConfig.SERVER_TEMP_SOURCES));
-        Path srcPath 		= Util.getPath(chooseFromSide(MCPConfig.CLIENT_SOURCES, MCPConfig.SERVER_SOURCES));
-        Path patchesPath 	= Util.getPath(chooseFromSide(MCPConfig.CLIENT_PATCHES, MCPConfig.SERVER_PATCHES));
-        Path mappings		= Util.getPath(chooseFromSide(MCPConfig.CLIENT_MAPPINGS, MCPConfig.SERVER_MAPPINGS));
+        Path originalJar 	= Paths.get(chooseFromSide(MCPConfig.CLIENT, MCPConfig.SERVER));
+		Path ffOut 			= Paths.get(chooseFromSide(MCPConfig.CLIENT_TEMP_SOURCES, MCPConfig.SERVER_TEMP_SOURCES));
+        Path srcPath 		= Paths.get(chooseFromSide(MCPConfig.CLIENT_SOURCES, MCPConfig.SERVER_SOURCES));
+        Path patchesPath 	= Paths.get(chooseFromSide(MCPConfig.CLIENT_PATCHES, MCPConfig.SERVER_PATCHES));
+        Path mappings		= Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS, MCPConfig.SERVER_MAPPINGS));
         
         boolean hasLWJGL = side == 0;
         
         if (Files.exists(srcPath)) {
         	throw new IOException(chooseFromSide("Client", "Server") + " sources found! Aborting.");
         }
-        for (Path path : new Path[] { Util.getPath(tinyOut), Util.getPath(excOut), Util.getPath(srcZip)}) {
+        for (Path path : new Path[] { Paths.get(tinyOut), Paths.get(excOut), Paths.get(srcZip)}) {
         	Files.deleteIfExists(path);
         }
 		Util.deleteDirectoryIfExists(ffOut);
@@ -71,7 +71,7 @@ public class TaskDecompile extends Task {
 			case REMAP:
 		        TinyRemapper remapper = null;
 		
-		        try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Util.getPath(tinyOut)).build()) {
+		        try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(tinyOut)).build()) {
 		            remapper = remap(TinyUtils.createTinyMappingProvider(mappings, "official", "named"), originalJar, outputConsumer, getLibraryPaths(side));
 		            outputConsumer.addNonClassFiles(originalJar, NonClassCopyMode.FIX_META_INF, remapper);
 		        } finally {
@@ -84,16 +84,16 @@ public class TaskDecompile extends Task {
 			    MCInjector.process(tinyOut, excOut, exc, 0);
 			    // Copying a fixed jar to libs
 			    if(side == CLIENT) {
-			    	Files.deleteIfExists(Util.getPath(MCPConfig.CLIENT_FIXED));
-			    	Files.copy(Util.getPath(excOut), Util.getPath(MCPConfig.CLIENT_FIXED));
+			    	Files.deleteIfExists(Paths.get(MCPConfig.CLIENT_FIXED));
+			    	Files.copy(Paths.get(excOut), Paths.get(MCPConfig.CLIENT_FIXED));
 			    }
 		    	break;
 		    case DECOMPILE:
 				this.decompiler.decompile(excOut, srcZip, chooseFromSide(MCPConfig.JAVADOC_CLIENT, MCPConfig.JAVADOC_SERVER));
 		    	break;
 		    case EXTRACT:
-				Util.createDirectories(Paths.get("src"));
-				Util.unzipByExtension(Util.getPath(srcZip), ffOut, ".java");
+				Util.createDirectories(Paths.get(MCPConfig.SRC));
+				Util.unzipByExtension(Paths.get(srcZip), ffOut, ".java");
 		    	break;
 		    case PATCH:
 		    	if(MCPConfig.patch && Files.exists(patchesPath)) {
@@ -148,9 +148,9 @@ public class TaskDecompile extends Task {
     public static Path[] getLibraryPaths(int side) {
     	if(side == CLIENT) {
     		return new Path[] {
-    			Util.getPath(MCPConfig.LWJGL),
-    			Util.getPath(MCPConfig.LWJGL_UTIL),
-    			Util.getPath(MCPConfig.JINPUT)
+    			Paths.get(MCPConfig.LWJGL),
+    			Paths.get(MCPConfig.LWJGL_UTIL),
+    			Paths.get(MCPConfig.JINPUT)
     		};
     	}
     	else {

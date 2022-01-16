@@ -3,7 +3,6 @@ package org.mcphackers.mcp.tasks;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
@@ -20,8 +19,22 @@ public class TaskCleanup extends Task {
     public void doTask() throws Exception {
         long startTime = System.currentTimeMillis();
         int foldersDeleted = 0;
-        Path[] pathsToDelete = new Path[] { Paths.get("jars"), Paths.get("temp"), Paths.get("src"), Paths.get("reobf"), Paths.get("eclipse"), Paths.get("bin"), Paths.get("build")};
-        if (MCPConfig.srcCleanup) pathsToDelete = new Path[] { Paths.get("src"), Paths.get("bin"), Paths.get("build")};
+        Path[] pathsToDelete = new Path[] {
+	    		Paths.get(MCPConfig.JARS),
+	    		Paths.get(MCPConfig.LIB),
+	    		Paths.get(MCPConfig.TEMP),
+	    		Paths.get(MCPConfig.SRC),
+	    		Paths.get(MCPConfig.BIN),
+	    		Paths.get(MCPConfig.REOBF),
+	    		Paths.get(MCPConfig.BUILD),
+	    		Paths.get("eclipse")
+	    	};
+        if (MCPConfig.srcCleanup) pathsToDelete = new Path[] {
+	    		Paths.get(MCPConfig.SRC),
+	    		Paths.get(MCPConfig.BIN),
+	    		Paths.get(MCPConfig.REOBF),
+	    		Paths.get(MCPConfig.BUILD)
+	    	};
         for (Path path : pathsToDelete) {
         	if (Files.exists(path)) {
         		foldersDeleted++;

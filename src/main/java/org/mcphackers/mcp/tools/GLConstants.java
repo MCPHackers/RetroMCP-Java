@@ -9,8 +9,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -53,15 +54,9 @@ public class GLConstants {
         	    }
                 return code;
         	}
-            
-            private void addImport(String imp, List<String> imports) {
-            	if(!imports.contains(imp)) {
-            		imports.add(imp);
-            	}
-            }
 
 			private String replace_constants(String code) {
-				List<String> imports = new LinkedList<String>();
+				Set<String> imports = new HashSet<String>();
 				code = replaceTextOfMatchGroup(code, _INPUT_REGEX, match1 -> {
 					String full_call = match1.group(0);
 					return replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
@@ -69,7 +64,7 @@ public class GLConstants {
 						if(replaceConst == null) {
 							return match2.group();
 						}
-						addImport("org.lwjgl.input.Keyboard", imports);
+	            		imports.add("org.lwjgl.input.Keyboard");
 						return "Keyboard." + replaceConst;
 					});
 				});
@@ -84,7 +79,7 @@ public class GLConstants {
 	                        if (((Map<String, List>)group.get(0)).containsKey(pkg) && ((List<Map<String, List>>)group).get(0).get(pkg).contains(method)) {
 	                            for (Entry entry : ((Map<String, List<String>>)group.get(1)).entrySet()) {
 	                                if(((Map)entry.getValue()).containsKey(full_match)) {
-	            						addImport("org.lwjgl.opengl." + entry.getKey(), imports);
+	            	            		imports.add("org.lwjgl.opengl." + entry.getKey());
 	                                    return String.format("%s.%s", entry.getKey(), ((Map)entry.getValue()).get(full_match));
 	                                }
 	                            }

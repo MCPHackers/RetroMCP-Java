@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -51,15 +53,6 @@ public class Util {
         if (Files.notExists(path)) {
             Files.createDirectories(path);
         }
-    }
-    
-    public static Path getPath(String pathStr) {
-        String[] all = pathStr.split("/");
-        String[] more = new String[all.length - 1];
-        for(int i = 1; i < all.length; i++) {
-            more[i - 1] = all[i];
-        }
-        return Paths.get(all[0], more);
     }
     
     public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
@@ -193,12 +186,26 @@ public class Util {
 	    .forEach(File::delete);
 	}
 
+    public static List<Path> listDirectory(Path path) throws IOException {
+    	if(!Files.isDirectory(path)) {
+    		throw new IOException(path + "is not a directory");
+    	}
+    	return Files.walk(path).collect(Collectors.toList());
+	}
+
+    public static List<Path> listDirectory(Path path, Predicate<Path> predicate) throws IOException {
+		if(!Files.isDirectory(path)) {
+			throw new IOException(path + "is not a directory");
+		}
+		return Files.walk(path).filter(predicate).collect(Collectors.toList());
+	}
+
     public static void copyDirectory(Path sourceFolder, Path targetFolder, String[] excludedFolders) throws IOException {
         Files.walk(sourceFolder).filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
             Path destination = Paths.get(targetFolder.toString(), source.toString().substring(sourceFolder.toString().length()));
 		    boolean doCopy = true;
             for (String excludedFolder : excludedFolders) {
-            	if(targetFolder.relativize(destination).startsWith(Util.getPath(excludedFolder))) {
+            	if(targetFolder.relativize(destination).startsWith(Paths.get(excludedFolder))) {
             		doCopy = false;
             		break;
             	}
@@ -235,6 +242,17 @@ public class Util {
         }
         bs.close();
         return sb.toString();
+    }
+    
+    public static boolean setCurrentDirectory(Path directory) throws IOException {
+        boolean result = false;
+        Files.createDirectories(directory);
+        if (Files.exists(directory))
+        {
+            result = (System.setProperty("user.dir", directory.toAbsolutePath().toString()) != null);
+        }
+
+        return result;
     }
 
     public static void compress(Path sourceDir, Path target) throws IOException {

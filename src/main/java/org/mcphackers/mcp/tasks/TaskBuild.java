@@ -3,7 +3,7 @@ package org.mcphackers.mcp.tasks;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
@@ -25,11 +25,11 @@ public class TaskBuild extends Task {
 
     @Override
     public void doTask() throws Exception {
-    	Path originalJar =  Util.getPath(chooseFromSide(MCPConfig.CLIENT, 			MCPConfig.SERVER));
-        Path bin = 			Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));
-    	Path reobfDir = 	Util.getPath(chooseFromSide(MCPConfig.CLIENT_REOBF, 	MCPConfig.SERVER_REOBF));
-    	Path buildJar = 	Util.getPath(chooseFromSide(MCPConfig.BUILD_JAR_CLIENT, MCPConfig.BUILD_JAR_SERVER));
-    	Path buildZip = 	Util.getPath(chooseFromSide(MCPConfig.BUILD_ZIP_CLIENT, MCPConfig.BUILD_ZIP_SERVER));
+    	Path originalJar =  Paths.get(chooseFromSide(MCPConfig.CLIENT, 			MCPConfig.SERVER));
+        Path bin = 			Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));
+    	Path reobfDir = 	Paths.get(chooseFromSide(MCPConfig.CLIENT_REOBF, 	MCPConfig.SERVER_REOBF));
+    	Path buildJar = 	Paths.get(chooseFromSide(MCPConfig.BUILD_JAR_CLIENT, MCPConfig.BUILD_JAR_SERVER));
+    	Path buildZip = 	Paths.get(chooseFromSide(MCPConfig.BUILD_ZIP_CLIENT, MCPConfig.BUILD_ZIP_SERVER));
         
 		while(step < STEPS) {
 		    step();
@@ -38,13 +38,13 @@ public class TaskBuild extends Task {
 			    this.reobfTask.doTask();
 		    	break;
 		    case BUILD:
-		    	Util.createDirectories(Paths.get("build"));
+		    	Util.createDirectories(Paths.get(MCPConfig.BUILD));
 		    	if(MCPConfig.fullBuild) {
 			    	Files.deleteIfExists(buildJar);
 		    		Files.copy(originalJar, buildJar);
-			    	Iterable<Path> reobfClasses = Files.walk(reobfDir).filter(path -> !Files.isDirectory(path)).collect(Collectors.toList());
+		    		List<Path> reobfClasses = Util.listDirectory(reobfDir, path -> !Files.isDirectory(path));
 		    		Util.packFilesToZip(buildJar, reobfClasses, reobfDir);
-			    	Iterable<Path> assets = Files.walk(bin).filter(path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class")).collect(Collectors.toList());
+			    	List<Path> assets = Util.listDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
 		    		Util.packFilesToZip(buildJar, assets, bin);
 		    		Util.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.DSA");
 		    		Util.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.SF");
@@ -52,7 +52,7 @@ public class TaskBuild extends Task {
 		    	else {
 			    	Files.deleteIfExists(buildZip);
 		    		Util.compress(reobfDir, buildZip);
-			    	Iterable<Path> assets = Files.walk(bin).filter(path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class")).collect(Collectors.toList());
+		    		List<Path> assets = Util.listDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
 		    		Util.packFilesToZip(buildZip, assets, bin);
 		    	}
 		    	break;

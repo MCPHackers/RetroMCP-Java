@@ -28,6 +28,7 @@ dependencies {
     implementation 'net.lingala.zip4j:zip4j:2.9.1'
     // TODO: Don't gut MCInjector bundled ASM
     implementation name: 'mcinjector'
+    implementation name: 'OpenTerminal'
     implementation 'org.json:json:20211205'
     implementation 'com.github.MCPHackers:DiffPatch:e2473fdba3'
     implementation 'net.fabricmc:mapping-io:0.3.0'

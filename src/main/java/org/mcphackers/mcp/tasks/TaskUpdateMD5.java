@@ -36,8 +36,8 @@ public class TaskUpdateMD5 extends Task {
     }
 
     public void updateMD5(boolean reobf) throws Exception {
-        Path binPath 	= Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN));
-        Path md5 = Util.getPath(reobf ? chooseFromSide(MCPConfig.CLIENT_MD5_RO, MCPConfig.SERVER_MD5_RO)
+        Path binPath 	= Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN));
+        Path md5 = Paths.get(reobf ? chooseFromSide(MCPConfig.CLIENT_MD5_RO, MCPConfig.SERVER_MD5_RO)
 				  					  : chooseFromSide(MCPConfig.CLIENT_MD5, MCPConfig.SERVER_MD5));
         step();
         if(recompile) {
@@ -55,7 +55,7 @@ public class TaskUpdateMD5 extends Task {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     try {
                         String md5_hash = Util.getMD5OfFile(file.toFile());
-                        String fileName = Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
+                        String fileName = Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
                         writer.append(fileName).append(" ").append(md5_hash).append("\n");
                         progress++;
                     } catch (NoSuchAlgorithmException ex) {

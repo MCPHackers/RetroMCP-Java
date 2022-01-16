@@ -33,8 +33,8 @@ public class TaskRecompile extends Task {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
 
-        Path binPath = Util.getPath(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));
-        Path srcPath = Util.getPath(chooseFromSide(MCPConfig.CLIENT_SOURCES, 	MCPConfig.SERVER_SOURCES));
+        Path binPath = Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));
+        Path srcPath = Paths.get(chooseFromSide(MCPConfig.CLIENT_SOURCES, 	MCPConfig.SERVER_SOURCES));
 
         step();
         this.progress = 1;
@@ -45,16 +45,24 @@ public class TaskRecompile extends Task {
         // Compile side
         if (Files.exists(srcPath)) {
             Iterable<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-            Iterable<String> options = Arrays.asList("-d", MCPConfig.CLIENT_BIN, "-cp", String.join(";", new String[] {MCPConfig.CLIENT_FIXED, MCPConfig.LWJGL, MCPConfig.LWJGL_UTIL, MCPConfig.JINPUT}));
+            Iterable<String> options = Arrays.asList(
+            		"-d", MCPConfig.CLIENT_BIN,
+            		"-cp", String.join(";", new String[] {
+            				MCPConfig.CLIENT_FIXED,
+            				MCPConfig.LWJGL,
+            				MCPConfig.LWJGL_UTIL,
+            				MCPConfig.JINPUT}));
             if(side == SERVER) {
-            	options = Arrays.asList("-d", MCPConfig.SERVER_BIN, "-cp", String.join(";", MCPConfig.SERVER));
+            	options = Arrays.asList(
+            			"-d", MCPConfig.SERVER_BIN,
+            			"-cp", MCPConfig.SERVER);
             }
             this.progress = 3;
             recompile(compiler, ds, src, options);
             this.progress = 50;
             // Copy assets from source folder
             step();
-            List<Path> assets = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java")).collect(Collectors.toList());
+            List<Path> assets = Util.listDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
             int i = 0;
             for(Path path : assets) {
             	if(srcPath.relativize(path).getParent() != null) {
