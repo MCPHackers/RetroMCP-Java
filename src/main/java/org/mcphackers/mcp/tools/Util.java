@@ -38,10 +38,14 @@ public class Util {
         	procBuilder.directory(dir.toAbsolutePath().toFile());
         }
         Process proc = procBuilder.start();
-        BufferedReader input = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+        BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        BufferedReader error = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
         while (proc.isAlive()) {
         	String line;
-        	if(doLog && (line = input.readLine()) != null) {
+        	while(doLog && (line = input.readLine()) != null) {
+        	    MCP.logger.info(line);
+        	}
+        	while(doLog && (line = error.readLine()) != null) {
         	    MCP.logger.info(line);
         	}
         }

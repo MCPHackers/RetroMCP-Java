@@ -1,14 +1,13 @@
 package org.mcphackers.mcp;
 
-import jredfox.terminal.OpenTerminal;
-import jredfox.terminal.app.TerminalApp;
+import jredfox.selfcmd.SelfCommandPrompt;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 
 import java.util.*;
 
-public class MCP extends TerminalApp {
+public class MCP {
 	
 	public static final String VERSION = "v0.1";
     public static EnumMode mode = null;
@@ -25,13 +24,8 @@ public class MCP extends TerminalApp {
             .fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
             .fgDefault();
 
-    public MCP(Class<?> iclass, String[] args) {
-        super(iclass, suggestAppId(iclass), "RetroMCP", VERSION, args);
-    }
-
     public static void main(String[] args) {
-        OpenTerminal.INSTANCE.run(new MCP(MCP.class, args));
-
+    	SelfCommandPrompt.runWithCMD(SelfCommandPrompt.suggestAppId(), "RetroMCP " + VERSION, args);
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
         input = new Scanner(System.in);
@@ -44,7 +38,6 @@ public class MCP extends TerminalApp {
         if (args.length <= 0) {
             startedWithNoParams = true;
             logger.println(logo);
-            logger.println("RetroMCP " + VERSION);
             logger.println("Enter a command to execute:");
         }
         int executeTimes = 0;

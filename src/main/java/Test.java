@@ -1,3 +1,4 @@
+import java.util.Scanner;
 
 public class Test {
 	
@@ -8,5 +9,7 @@ public class Test {
 				System.out.println((double)(float)d + "D " + "(double)" + (float)d + "F");
 			}
 		}
+		Scanner ss = new Scanner(System.in);
+		String s = ss.nextLine();
 	}
 }
