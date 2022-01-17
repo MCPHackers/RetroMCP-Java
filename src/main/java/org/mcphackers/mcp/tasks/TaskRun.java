@@ -17,35 +17,35 @@ public class TaskRun extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		String java = "\"" + System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java" + "\"";
-		String natives = Paths.get(MCPConfig.NATIVES).toAbsolutePath().toString();
+		String java = System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		String natives = Util.absolutePathString(MCPConfig.NATIVES);
 		List<String> cpList = new LinkedList<String>();
 		if(side == SERVER) {
 			if(MCPConfig.runBuild) {
-				cpList.add(MCPConfig.BUILD_JAR_SERVER);
+				cpList.add(Util.absolutePathString(MCPConfig.BUILD_JAR_SERVER));
 			}
 			else {
-				cpList.add(MCPConfig.SERVER_BIN);
-				cpList.add(MCPConfig.SERVER);
+				cpList.add(Util.absolutePathString(MCPConfig.SERVER_BIN));
+				cpList.add(Util.absolutePathString(MCPConfig.SERVER));
 			}
 		}
 		else if (side == CLIENT) {
 			if(MCPConfig.runBuild) {
-				cpList.add(MCPConfig.BUILD_JAR_CLIENT);
+				cpList.add(Util.absolutePathString(MCPConfig.BUILD_JAR_CLIENT));
 			}
 			else {
-				cpList.add(MCPConfig.CLIENT_BIN);
-				cpList.add(Files.exists(Paths.get(MCPConfig.CLIENT_FIXED)) ? MCPConfig.CLIENT_FIXED : MCPConfig.CLIENT);
+				cpList.add(Util.absolutePathString(MCPConfig.CLIENT_BIN));
+				cpList.add(Util.absolutePathString(Files.exists(Paths.get(MCPConfig.CLIENT_FIXED)) ? MCPConfig.CLIENT_FIXED : MCPConfig.CLIENT));
 			}
-			cpList.add(MCPConfig.LWJGL);
-			cpList.add(MCPConfig.LWJGL_UTIL);
-			cpList.add(MCPConfig.JINPUT);
+			cpList.add(Util.absolutePathString(MCPConfig.LWJGL));
+			cpList.add(Util.absolutePathString(MCPConfig.LWJGL_UTIL));
+			cpList.add(Util.absolutePathString(MCPConfig.JINPUT));
 		}
 		
 		
 		String cp = String.join(";", cpList);
 		int exit = Util.runCommand(
-			String.join(" ",
+			new String[] {
 				java,
 				"-Xms1024M",
 				"-Xmx1024M",
@@ -54,10 +54,10 @@ public class TaskRun extends Task {
 				"-Dhttp.proxyPort=11702", // TODO Get proxy from properties
 				"-Dorg.lwjgl.librarypath=" + natives,
 				"-Dnet.java.games.input.librarypath=" + natives,
-				"-cp " + cp,
+				"-cp", cp,
 				//TODO Get start class from properties
 				side == SERVER ? "net.minecraft.server.MinecraftServer" : "net.minecraft.client.Minecraft"
-				), true);
+			}, Paths.get(MCPConfig.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}

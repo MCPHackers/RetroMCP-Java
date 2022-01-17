@@ -4,9 +4,9 @@ import codechicken.diffpatch.cli.PatchOperation;
 import net.fabricmc.tinyremapper.*;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.GLConstants;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.constants.GLConstants;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.mcinjector.MCInjector;
 

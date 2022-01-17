@@ -32,13 +32,13 @@ import java.util.zip.ZipOutputStream;
 
 public class Util {
 
-    public static int runCommand(String cmd) throws IOException, IllegalArgumentException {
-    	return runCommand(cmd, false);
-    }
-
-    public static int runCommand(String cmd, boolean doLog) throws IOException, IllegalArgumentException {
-        Process proc = Runtime.getRuntime().exec(cmd);
-        BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+    public static int runCommand(String[] cmd, Path dir, boolean doLog) throws IOException, IllegalArgumentException {
+        ProcessBuilder procBuilder = new ProcessBuilder(cmd);
+        if(dir != null) {
+        	procBuilder.directory(dir.toAbsolutePath().toFile());
+        }
+        Process proc = procBuilder.start();
+        BufferedReader input = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
         while (proc.isAlive()) {
         	String line;
         	if(doLog && (line = input.readLine()) != null) {
@@ -74,7 +74,8 @@ public class Util {
         }
     }
 
-    public static void unzip(final Path zipFile, final Path destDir, boolean deleteZip) throws IOException {
+    @SuppressWarnings("resource")
+	public static void unzip(final Path zipFile, final Path destDir, boolean deleteZip) throws IOException {
         if (Files.notExists(destDir)) {
             Files.createDirectories(destDir);
         }
@@ -128,6 +129,10 @@ public class Util {
     	linux,
     	macos,
     	unknown
+    }
+    
+    public static String absolutePathString(String path) {
+    	return Paths.get(path).toAbsolutePath().toString();
     }
     
     public static String time(long time) {
@@ -242,17 +247,6 @@ public class Util {
         }
         bs.close();
         return sb.toString();
-    }
-    
-    public static boolean setCurrentDirectory(Path directory) throws IOException {
-        boolean result = false;
-        Files.createDirectories(directory);
-        if (Files.exists(directory))
-        {
-            result = (System.setProperty("user.dir", directory.toAbsolutePath().toString()) != null);
-        }
-
-        return result;
     }
 
     public static void compress(Path sourceDir, Path target) throws IOException {

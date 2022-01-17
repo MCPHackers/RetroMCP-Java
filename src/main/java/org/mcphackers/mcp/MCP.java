@@ -26,7 +26,7 @@ public class MCP extends TerminalApp {
             .fgDefault();
 
     public MCP(Class<?> iclass, String[] args) {
-        super(iclass, args);
+        super(iclass, suggestAppId(iclass), "RetroMCP", VERSION, args);
     }
 
     public static void main(String[] args) {
