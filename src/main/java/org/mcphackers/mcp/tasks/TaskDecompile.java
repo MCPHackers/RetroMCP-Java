@@ -7,6 +7,7 @@ import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.constants.GLConstants;
+import org.mcphackers.mcp.tools.constants.MathConstants;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.mcinjector.MCInjector;
 
@@ -110,8 +111,9 @@ public class TaskDecompile extends Task {
 		    	}
 		    	break;
 		    case CONSTS:
+	    		new MathConstants().replace(ffOut);
 		    	if(hasLWJGL) {
-		    		GLConstants.replace(ffOut);
+		    		new GLConstants().replace(ffOut);
 		    	}
 		    	break;
 		    case COPYSRC:
@@ -181,7 +183,7 @@ public class TaskDecompile extends Task {
             return new ProgressInfo("Applying patches...", current, total);
 	    case CONSTS:
         	current = 86;
-            return new ProgressInfo("Replacing LWJGL constants...", current, total);
+            return new ProgressInfo("Replacing constants...", current, total);
 		case COPYSRC:
 			current = 87;
 			return new ProgressInfo("Copying sources...", current, total);

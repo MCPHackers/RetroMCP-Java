@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public abstract class Constants {
 	
-	public static void replace(Path src) throws IOException {
+	public void replace(Path src) throws IOException {
         Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
@@ -26,11 +26,9 @@ public abstract class Constants {
         });
 	}
 	
-	protected static String replace_constants(String code) {
-		return code;
-	}
+	protected abstract String replace_constants(String code);
 
-	public static String replaceTextOfMatchGroup(String sourceString, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
+	public String replaceTextOfMatchGroup(String sourceString, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
 	    Stack<MatchResult> startPositions = new Stack<>();
 	    Matcher matcher = pattern.matcher(sourceString);
 

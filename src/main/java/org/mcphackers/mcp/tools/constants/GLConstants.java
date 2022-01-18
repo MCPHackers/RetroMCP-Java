@@ -15,17 +15,29 @@ import org.mcphackers.mcp.tools.Util;
 
 public class GLConstants extends Constants {
 	
-	private static final JSONObject json = getJson();
+	private final JSONObject json;
 	
-	private static final List _PACKAGES = json.getJSONArray("PACKAGES").toList();
-	private static final Pattern _CALL_REGEX = Pattern.compile("(" + String.join("|", _PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
-	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
-	private static final Pattern _INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[\\);]))|new KeyBinding\\([ \\w\\\"]+, .+?\\))");
-	private static final Pattern _IMPORT = Pattern.compile("import [.*\\w]+;");
-	private static final Map _CONSTANTS_KEYBOARD = Util.jsonToMap(json.getJSONObject("CONSTANTS_KEYBOARD"));
-	private static final List _CONSTANTS = Util.jsonToList(json.getJSONArray("CONSTANTS"));
+	private final List _PACKAGES;
+	private final Pattern _CALL_REGEX;
+	private final Pattern _CONSTANT_REGEX;
+	private final Pattern _INPUT_REGEX;
+	private final Pattern _IMPORT;
+	private final Map _CONSTANTS_KEYBOARD;
+	private final List _CONSTANTS;
     
-    private static String updateImport(String code, String imp) {
+	public GLConstants() throws JSONException, IOException {
+		json = getJson();
+		
+		_PACKAGES = json.getJSONArray("PACKAGES").toList();
+		_CALL_REGEX = Pattern.compile("(" + String.join("|", _PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
+		_CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
+		_INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[\\);]))|new KeyBinding\\([ \\w\\\"]+, .+?\\))");
+		_IMPORT = Pattern.compile("import [.*\\w]+;");
+		_CONSTANTS_KEYBOARD = Util.jsonToMap(json.getJSONObject("CONSTANTS_KEYBOARD"));
+		_CONSTANTS = Util.jsonToList(json.getJSONArray("CONSTANTS"));
+	}
+	
+    private String updateImport(String code, String imp) {
 	    Matcher matcher = _IMPORT.matcher(code);
     	int lastIndex = -1;
 	    while (matcher.find()) {
@@ -38,7 +50,7 @@ public class GLConstants extends Constants {
         return code;
 	}
 
-	protected static String replace_constants(String code) {
+	protected String replace_constants(String code) {
 		Set<String> imports = new HashSet<String>();
 		code = replaceTextOfMatchGroup(code, _INPUT_REGEX, match1 -> {
 			String full_call = match1.group(0);
@@ -77,12 +89,7 @@ public class GLConstants extends Constants {
 		return code;
 	}
 	
-	private static JSONObject getJson() {
-		try {
-			return Util.parseJSONFile(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
-		} catch (JSONException | IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	private static JSONObject getJson() throws JSONException, IOException {
+		return Util.parseJSONFile(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
 	}
 }
