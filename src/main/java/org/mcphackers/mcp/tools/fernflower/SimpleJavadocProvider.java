@@ -12,13 +12,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SRGJavadocProvider implements IJavadocProvider {
+public class SimpleJavadocProvider implements IJavadocProvider {
 
     private static final Map<String, String> classes = new HashMap<>();
     private static final Map<String, String> methods = new HashMap<>();
     private static final Map<String, String> fields = new HashMap<>();
 
-    public SRGJavadocProvider(File javadocFile) throws IOException {
+    public SimpleJavadocProvider(File javadocFile) throws IOException {
         readMappings(javadocFile);
     }
 

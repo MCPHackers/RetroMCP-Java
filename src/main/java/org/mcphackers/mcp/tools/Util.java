@@ -219,13 +219,13 @@ public class Util {
             		break;
             	}
             }
-            if(doCopy)
-            	try {
-		        	Files.createDirectories(destination.getParent());
+            if(doCopy) {
+	        	try {
+					Files.createDirectories(destination.getParent());
 		            Files.copy(source, destination);
-		        } catch (IOException e) {
-		            e.printStackTrace();
-		        }
+				} catch (IOException e) {
+				}
+		    }
         });
     }
 
@@ -257,16 +257,12 @@ public class Util {
         final ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(target.toFile()));
         Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
-                try {
-                    Path targetFile = sourceDir.relativize(file);
-                    outputStream.putNextEntry(new ZipEntry(targetFile.toString()));
-                    byte[] bytes = Files.readAllBytes(file);
-                    outputStream.write(bytes, 0, bytes.length);
-                    outputStream.closeEntry();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
+                Path targetFile = sourceDir.relativize(file);
+                outputStream.putNextEntry(new ZipEntry(targetFile.toString()));
+                byte[] bytes = Files.readAllBytes(file);
+                outputStream.write(bytes, 0, bytes.length);
+                outputStream.closeEntry();
                 return FileVisitResult.CONTINUE;
             }
         });

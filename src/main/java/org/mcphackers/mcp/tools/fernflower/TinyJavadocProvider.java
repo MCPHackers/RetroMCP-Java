@@ -101,7 +101,7 @@ public class TinyJavadocProvider implements IJavadocProvider {
         return null;
     }
 
-    private static MappingTree readMappings(File input) {
+    private static MappingTree readMappings(File input) throws RuntimeException {
         try (BufferedReader reader = Files.newBufferedReader(input.toPath())) {
             MemoryMappingTree mappingTree = new MemoryMappingTree();
             MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(mappingTree, "named");
