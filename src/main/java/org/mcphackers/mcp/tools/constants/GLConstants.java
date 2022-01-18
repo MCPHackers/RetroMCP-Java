@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -15,26 +17,21 @@ import org.mcphackers.mcp.tools.Util;
 
 public class GLConstants extends Constants {
 	
-	private final JSONObject json;
+	private static final JSONObject json = getJson();
+	private static Exception cause;
 	
-	private final List _PACKAGES;
-	private final Pattern _CALL_REGEX;
-	private final Pattern _CONSTANT_REGEX;
-	private final Pattern _INPUT_REGEX;
-	private final Pattern _IMPORT;
-	private final Map _CONSTANTS_KEYBOARD;
-	private final List _CONSTANTS;
+	private static final List _PACKAGES = json == null ? new ArrayList() : json.getJSONArray("PACKAGES").toList();
+	private static final List _CONSTANTS = json == null ? new ArrayList() : Util.jsonToList(json.getJSONArray("CONSTANTS"));
+	private static final Map _CONSTANTS_KEYBOARD = json == null ? new HashMap() : Util.jsonToMap(json.getJSONObject("CONSTANTS_KEYBOARD"));
+	private static final Pattern _CALL_REGEX = Pattern.compile("(" + String.join("|", _PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
+	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
+	private static final Pattern _INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[\\);]))|new KeyBinding\\([ \\w\\\"]+, .+?\\))");
+	private static final Pattern _IMPORT = Pattern.compile("import [.*\\w]+;");
     
-	public GLConstants() throws JSONException, IOException {
-		json = getJson();
-		
-		_PACKAGES = json.getJSONArray("PACKAGES").toList();
-		_CALL_REGEX = Pattern.compile("(" + String.join("|", _PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
-		_CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
-		_INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[\\);]))|new KeyBinding\\([ \\w\\\"]+, .+?\\))");
-		_IMPORT = Pattern.compile("import [.*\\w]+;");
-		_CONSTANTS_KEYBOARD = Util.jsonToMap(json.getJSONObject("CONSTANTS_KEYBOARD"));
-		_CONSTANTS = Util.jsonToList(json.getJSONArray("CONSTANTS"));
+	public GLConstants() throws Exception {
+		if (cause != null) {
+			throw new Exception("Could not initialize constants", cause);
+		}
 	}
 	
     private String updateImport(String code, String imp) {
@@ -89,7 +86,14 @@ public class GLConstants extends Constants {
 		return code;
 	}
 	
-	private static JSONObject getJson() throws JSONException, IOException {
-		return Util.parseJSONFile(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
+	private static JSONObject getJson() {
+		Exception ex = null;
+		try {
+			return Util.parseJSONFile(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
+		} catch (JSONException | IOException e) {
+			ex = e;
+		}
+		cause = ex;
+		return null;
 	}
 }

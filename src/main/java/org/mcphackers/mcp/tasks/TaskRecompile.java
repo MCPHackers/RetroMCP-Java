@@ -31,6 +31,9 @@ public class TaskRecompile extends Task {
 	@Override
     public void doTask() throws Exception {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        if(compiler == null) {
+        	throw new RuntimeException("Could not find compiling API");
+        }
         DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
 
         Path binPath = Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));

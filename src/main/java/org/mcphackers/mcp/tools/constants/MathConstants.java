@@ -1,32 +1,49 @@
 package org.mcphackers.mcp.tools.constants;
 
+import java.util.regex.Pattern;
+
 public class MathConstants extends Constants {
 	
+	// Used to prevent strings from being captured, such as "2.0D"
+	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?![\\\"\\'][.\\w\\s]*)-*\\d+\\.*\\w*(?![.\\w\\s]*[\\\"\\'])");
+	
 	protected String replace_constants(String code) {
+		return replaceTextOfMatchGroup(code, _CONSTANT_REGEX, match1 -> {
+			String constant = match1.group(0);
 
-		code = replaceValue(code, Math.PI, "Math.PI");
-		code = replaceValue(code, (float)Math.PI, "(float)Math.PI");
-		code = replaceValue(code, (float)Math.PI / 2F, "(float)Math.PI / 2F");
-		code = replaceValue(code, (float)Math.PI / 4.5F, "(float)Math.PI / 4.5F");
-		code = replaceValue(code, (double)(float)Math.PI, "(double)(float)Math.PI");
-		code = replaceValue(code, Math.PI * 2D, "Math.PI * 2D");
-		code = replaceValue(code, Math.PI / 2D, "Math.PI / 2D");
-		for (int i = 1; i <= 100; i++) {
-			double d = i * 0.01D;
-			if(d != (double)(float)d) { // if imprecise
-				code = floatCastedToDouble(code, d);
+			constant = replaceValue(constant, Math.PI, "Math.PI");
+			constant = replaceValue(constant, (float)Math.PI, "(float)Math.PI");
+			constant = replaceValue(constant, (float)Math.PI / 2F, "(float)Math.PI / 2F");
+			constant = replaceValue(constant, (float)Math.PI / 4.5F, "(float)Math.PI / 4.5F");
+			constant = replaceValue(constant, (double)(float)Math.PI, "(double)(float)Math.PI");
+			constant = replaceValue(constant, Math.PI * 2D, "Math.PI * 2D");
+			constant = replaceValue(constant, Math.PI / 2D, "Math.PI / 2D");
+			for (int i = 1; i <= 100; i++) {
+				double d = i * 0.01D;
+				if(d != (double)(float)d) { // if imprecise
+					constant = floatCastedToDouble(constant, (float)d);
+				}
 			}
-		}
-		code = floatCastedToDouble(code, 0.0075D);
-		code = replaceValue(code, (double)0.999F, "(double)0.999F");
-		code = replaceValue(code, 1.0D / 128, "1.0D / 128");
-		code = replaceValue(code, (double)0.997F, "(double)0.997F");
-		code = replaceValue(code, (double)1.62F, "(double)1.62F");
-		return code;
+			constant = floatCastedToDouble(constant, 0.0075F);
+			constant = floatCastedToDouble(constant, 0.999F);
+			constant = floatCastedToDouble(constant, 0.997F);
+			constant = floatCastedToDouble(constant, 1.62F);
+			constant = replaceValue(constant, 0xFFFFFF, "0xFFFFFF"); // TODO Might do this in fernflower at some point
+			constant = replaceValue(constant, 0x20200000, "0x20200000");
+			constant = replaceValue(constant, 0x20400000, "0x20400000");
+			constant = replaceValue(constant, 0xFF000000, "0xFF000000");
+			//brugh
+			constant = replaceValue(constant, 2.0D / 256D, "2.0D / 256D");
+			constant = replaceValue(constant, 6.0D / 256D, "6.0D / 256D");
+			constant = replaceValue(constant, 7.0D / 256D, "7.0D / 256D");
+			constant = replaceValue(constant, 8.0D / 256D, "8.0D / 256D");
+			constant = replaceValue(constant, 9.0D / 256D, "9.0D / 256D");
+			return constant;
+		});
 	}
 	
-	private String floatCastedToDouble(String code, double value) {
-		return code.replace((double)(float)value + "D", "(double)" + (float)value + "F");
+	private String floatCastedToDouble(String code, float value) {
+		return code.replace((double)value + "D", "(double)" + value + "F");
 	}
 	
 	private String replaceValue(String code, double value, String replace) {
@@ -35,5 +52,13 @@ public class MathConstants extends Constants {
 	
 	private String replaceValue(String code, float value, String replace) {
 		return code.replace(value + "F", replace);
+	}
+	
+	private String replaceValue(String code, int value, String replace) {
+		return code.replace(value + "", replace);
+	}
+	
+	private String replaceValue(String code, long value, String replace) {
+		return code.replace(value + "L", replace);
 	}
 }
