@@ -18,7 +18,7 @@ import org.mcphackers.mcp.tools.Util;
 public class GLConstants extends Constants {
 	
 	private static final JSONObject json = getJson();
-	private static Exception cause;
+	private static Exception cause = null;
 	
 	private static final List _PACKAGES = json == null ? new ArrayList() : json.getJSONArray("PACKAGES").toList();
 	private static final List _CONSTANTS = json == null ? new ArrayList() : Util.jsonToList(json.getJSONArray("CONSTANTS"));
@@ -87,13 +87,11 @@ public class GLConstants extends Constants {
 	}
 	
 	private static JSONObject getJson() {
-		Exception ex = null;
 		try {
 			return Util.parseJSONFile(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
 		} catch (JSONException | IOException e) {
-			ex = e;
+			cause = e;
 		}
-		cause = ex;
 		return null;
 	}
 }

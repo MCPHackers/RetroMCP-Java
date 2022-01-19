@@ -9,8 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.fusesource.jansi.Ansi;
-import org.mcphackers.mcp.tools.ProgressInfo;
-import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.FileUtil;
 
 public class MCPLogger {
 	
@@ -19,7 +18,7 @@ public class MCPLogger {
 	
 	public MCPLogger() {
 		try {
-			Util.createDirectories(Paths.get("logs"));
+			FileUtil.createDirectories(Paths.get("logs"));
 			writer = new BufferedWriter(new FileWriter(new File("logs/mcp.log")));
 		} catch (IOException e) {}
 	}

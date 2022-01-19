@@ -1,11 +1,5 @@
 package org.mcphackers.mcp.tasks;
 
-import org.mcphackers.mcp.MCPConfig;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.ProgressInfo;
-import org.mcphackers.mcp.tools.Util;
-
-import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +8,18 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+
+import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.ProgressInfo;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tools.FileUtil;
 
 public class TaskRecompile extends Task {
 	private int total;
@@ -41,7 +47,7 @@ public class TaskRecompile extends Task {
 
         step();
         this.progress = 1;
-        Util.deleteDirectoryIfExists(binPath);
+        FileUtil.deleteDirectoryIfExists(binPath);
         Files.createDirectories(binPath);
         this.progress = 2;
 
@@ -65,7 +71,7 @@ public class TaskRecompile extends Task {
             this.progress = 50;
             // Copy assets from source folder
             step();
-            List<Path> assets = Util.listDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
+            List<Path> assets = FileUtil.listDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
             int i = 0;
             for(Path path : assets) {
             	if(srcPath.relativize(path).getParent() != null) {

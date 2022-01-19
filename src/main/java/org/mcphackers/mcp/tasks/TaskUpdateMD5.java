@@ -1,8 +1,8 @@
 package org.mcphackers.mcp.tasks;
 
 import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.ProgressInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.ProgressInfo;
 import org.mcphackers.mcp.tools.Util;
 
 import java.io.BufferedWriter;

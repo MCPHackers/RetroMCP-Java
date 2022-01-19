@@ -1,7 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import org.mcphackers.mcp.ProgressInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.ProgressInfo;
 
 public abstract class Task {
 	

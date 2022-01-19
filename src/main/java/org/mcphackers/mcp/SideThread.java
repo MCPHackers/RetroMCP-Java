@@ -1,7 +1,6 @@
 package org.mcphackers.mcp;
 
 import org.mcphackers.mcp.tasks.Task;
-import org.mcphackers.mcp.tools.ProgressInfo;
 
 public class SideThread extends Thread {
 

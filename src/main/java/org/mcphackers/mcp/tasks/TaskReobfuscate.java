@@ -1,24 +1,37 @@
 package org.mcphackers.mcp.tasks;
 
-import net.fabricmc.tinyremapper.OutputConsumerPath;
-import net.fabricmc.tinyremapper.TinyRemapper;
-import net.fabricmc.tinyremapper.TinyUtils;
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.model.FileHeader;
-
-import org.mcphackers.mcp.MCPConfig;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.ProgressInfo;
-import org.mcphackers.mcp.tools.Util;
-import org.objectweb.asm.*;
-
-import java.io.*;
-import java.nio.file.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.ProgressInfo;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.Util;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+
+import net.fabricmc.tinyremapper.OutputConsumerPath;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import net.fabricmc.tinyremapper.TinyUtils;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.FileHeader;
 
 public class TaskReobfuscate extends Task {
     private final Map<String, String> recompHashes = new HashMap<>();
@@ -52,7 +65,7 @@ public class TaskReobfuscate extends Task {
         md5Task.updateMD5(true);
 
         if (Files.exists(reobfBin)) {
-            Util.deleteDirectoryIfExists(reobfDir);
+            FileUtil.deleteDirectoryIfExists(reobfDir);
             step();
             gatherMD5Hashes(true, this.side);
             gatherMD5Hashes(false, this.side);

@@ -1,14 +1,15 @@
 package org.mcphackers.mcp.tasks;
 
-import org.mcphackers.mcp.MCPConfig;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.Util;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.Util;
 
 public class TaskRun extends Task {
     public TaskRun(int side, TaskInfo info) {
@@ -18,28 +19,28 @@ public class TaskRun extends Task {
 	@Override
 	public void doTask() throws Exception {
 		String java = System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-		String natives = Util.absolutePathString(MCPConfig.NATIVES);
+		String natives = FileUtil.absolutePathString(MCPConfig.NATIVES);
 		List<String> cpList = new LinkedList<String>();
 		if(side == SERVER) {
 			if(MCPConfig.runBuild) {
-				cpList.add(Util.absolutePathString(MCPConfig.BUILD_JAR_SERVER));
+				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_JAR_SERVER));
 			}
 			else {
-				cpList.add(Util.absolutePathString(MCPConfig.SERVER_BIN));
-				cpList.add(Util.absolutePathString(MCPConfig.SERVER));
+				cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER_BIN));
+				cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER));
 			}
 		}
 		else if (side == CLIENT) {
 			if(MCPConfig.runBuild) {
-				cpList.add(Util.absolutePathString(MCPConfig.BUILD_JAR_CLIENT));
+				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_JAR_CLIENT));
 			}
 			else {
-				cpList.add(Util.absolutePathString(MCPConfig.CLIENT_BIN));
-				cpList.add(Util.absolutePathString(Files.exists(Paths.get(MCPConfig.CLIENT_FIXED)) ? MCPConfig.CLIENT_FIXED : MCPConfig.CLIENT));
+				cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT_BIN));
+				cpList.add(FileUtil.absolutePathString(Files.exists(Paths.get(MCPConfig.CLIENT_FIXED)) ? MCPConfig.CLIENT_FIXED : MCPConfig.CLIENT));
 			}
-			cpList.add(Util.absolutePathString(MCPConfig.LWJGL));
-			cpList.add(Util.absolutePathString(MCPConfig.LWJGL_UTIL));
-			cpList.add(Util.absolutePathString(MCPConfig.JINPUT));
+			cpList.add(FileUtil.absolutePathString(MCPConfig.LWJGL));
+			cpList.add(FileUtil.absolutePathString(MCPConfig.LWJGL_UTIL));
+			cpList.add(FileUtil.absolutePathString(MCPConfig.JINPUT));
 		}
 		
 		

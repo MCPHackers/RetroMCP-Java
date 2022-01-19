@@ -6,9 +6,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.ProgressInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.ProgressInfo;
-import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.FileUtil;
 
 public class TaskBuild extends Task {
 
@@ -38,22 +38,22 @@ public class TaskBuild extends Task {
 			    this.reobfTask.doTask();
 		    	break;
 		    case BUILD:
-		    	Util.createDirectories(Paths.get(MCPConfig.BUILD));
+		    	FileUtil.createDirectories(Paths.get(MCPConfig.BUILD));
 		    	if(MCPConfig.fullBuild) {
 			    	Files.deleteIfExists(buildJar);
 		    		Files.copy(originalJar, buildJar);
-		    		List<Path> reobfClasses = Util.listDirectory(reobfDir, path -> !Files.isDirectory(path));
-		    		Util.packFilesToZip(buildJar, reobfClasses, reobfDir);
-			    	List<Path> assets = Util.listDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
-		    		Util.packFilesToZip(buildJar, assets, bin);
-		    		Util.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.DSA");
-		    		Util.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.SF");
+		    		List<Path> reobfClasses = FileUtil.listDirectory(reobfDir, path -> !Files.isDirectory(path));
+		    		FileUtil.packFilesToZip(buildJar, reobfClasses, reobfDir);
+			    	List<Path> assets = FileUtil.listDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
+		    		FileUtil.packFilesToZip(buildJar, assets, bin);
+		    		FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.DSA");
+		    		FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.SF");
 		    	}
 		    	else {
 			    	Files.deleteIfExists(buildZip);
-		    		Util.compress(reobfDir, buildZip);
-		    		List<Path> assets = Util.listDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
-		    		Util.packFilesToZip(buildZip, assets, bin);
+		    		FileUtil.compress(reobfDir, buildZip);
+		    		List<Path> assets = FileUtil.listDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
+		    		FileUtil.packFilesToZip(buildZip, assets, bin);
 		    	}
 		    	break;
 			}

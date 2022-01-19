@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tools;
+package org.mcphackers.mcp;
 
 public class ProgressInfo {
 

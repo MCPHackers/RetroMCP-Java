@@ -1,22 +1,27 @@
 package org.mcphackers.mcp.tasks;
 
-import codechicken.diffpatch.cli.PatchOperation;
-import net.fabricmc.tinyremapper.*;
-import org.mcphackers.mcp.MCPConfig;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.ProgressInfo;
-import org.mcphackers.mcp.tools.Util;
-import org.mcphackers.mcp.tools.constants.GLConstants;
-import org.mcphackers.mcp.tools.constants.MathConstants;
-import org.mcphackers.mcp.tools.fernflower.Decompiler;
-import org.mcphackers.mcp.tools.mcinjector.MCInjector;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
+
+import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.ProgressInfo;
+import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.constants.GLConstants;
+import org.mcphackers.mcp.tools.constants.MathConstants;
+import org.mcphackers.mcp.tools.fernflower.Decompiler;
+import org.mcphackers.mcp.tools.mcinjector.MCInjector;
+
+import codechicken.diffpatch.cli.PatchOperation;
+import net.fabricmc.tinyremapper.IMappingProvider;
+import net.fabricmc.tinyremapper.NonClassCopyMode;
+import net.fabricmc.tinyremapper.OutputConsumerPath;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import net.fabricmc.tinyremapper.TinyUtils;
 
 public class TaskDecompile extends Task {
 
@@ -57,7 +62,7 @@ public class TaskDecompile extends Task {
         Path patchesPath 	= Paths.get(chooseFromSide(MCPConfig.CLIENT_PATCHES, MCPConfig.SERVER_PATCHES));
         Path mappings		= Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS, MCPConfig.SERVER_MAPPINGS));
         
-        boolean hasLWJGL = side == 0;
+        boolean hasLWJGL = side == CLIENT;
         
         if (Files.exists(srcPath)) {
         	throw new IOException(chooseFromSide("Client", "Server") + " sources found! Aborting.");
@@ -65,7 +70,7 @@ public class TaskDecompile extends Task {
         for (Path path : new Path[] { Paths.get(tinyOut), Paths.get(excOut), Paths.get(srcZip)}) {
         	Files.deleteIfExists(path);
         }
-		Util.deleteDirectoryIfExists(ffOut);
+		FileUtil.deleteDirectoryIfExists(ffOut);
 		while(step < STEPS) {
 		    step();
 		    switch (step) {
@@ -93,8 +98,8 @@ public class TaskDecompile extends Task {
 				this.decompiler.decompile(excOut, srcZip, chooseFromSide(MCPConfig.JAVADOC_CLIENT, MCPConfig.JAVADOC_SERVER));
 		    	break;
 		    case EXTRACT:
-				Util.createDirectories(Paths.get(MCPConfig.SRC));
-				Util.unzipByExtension(Paths.get(srcZip), ffOut, ".java");
+				FileUtil.createDirectories(Paths.get(MCPConfig.SRC));
+				FileUtil.unzipByExtension(Paths.get(srcZip), ffOut, ".java");
 		    	break;
 		    case PATCH:
 		    	if(MCPConfig.patch && Files.exists(patchesPath)) {
@@ -111,13 +116,13 @@ public class TaskDecompile extends Task {
 		    	}
 		    	break;
 		    case CONSTS:
-	    		new MathConstants().replace(ffOut);
 		    	if(hasLWJGL) {
 		    		new GLConstants().replace(ffOut);
 		    	}
+	    		new MathConstants().replace(ffOut);
 		    	break;
 		    case COPYSRC:
-				Util.copyDirectory(ffOut, srcPath, MCPConfig.ignorePackages);
+				FileUtil.copyDirectory(ffOut, srcPath, MCPConfig.ignorePackages);
 		    	break;
 		    case RECOMPILE:
 		    	recompTask.doTask();
