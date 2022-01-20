@@ -97,6 +97,7 @@ public class FileUtil {
         }
     }
     
+    @Deprecated
     public static void downloadGitDir(URL url, Path output) throws IOException, URISyntaxException {
 		InputStream in = url.openStream();
 		JSONArray json = Util.parseJSONArray(in);

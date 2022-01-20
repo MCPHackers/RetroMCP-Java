@@ -10,6 +10,7 @@ import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.VersionsParser;
 
 public class TaskRun extends Task {
     public TaskRun(int side, TaskInfo info) {
@@ -45,6 +46,8 @@ public class TaskRun extends Task {
 		
 		
 		String cp = String.join(";", cpList);
+		
+		String version = new String(Files.readAllBytes(Paths.get(MCPConfig.VERSION)));
 		int exit = Util.runCommand(
 			new String[] {
 				java,
@@ -52,12 +55,11 @@ public class TaskRun extends Task {
 				"-Xmx1024M",
 				"-Djava.util.Arrays.useLegacyMergeSort=true",
 				"-Dhttp.proxyHost=betacraft.uk",
-				"-Dhttp.proxyPort=11702", // TODO Get proxy from properties
+				"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(version),
 				"-Dorg.lwjgl.librarypath=" + natives,
 				"-Dnet.java.games.input.librarypath=" + natives,
 				"-cp", cp,
-				//TODO Get start class from properties
-				side == SERVER ? "net.minecraft.server.MinecraftServer" : "net.minecraft.client.Minecraft"
+				side == SERVER ? "net.minecraft.server.MinecraftServer" : "Start"
 			}, Paths.get(MCPConfig.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);

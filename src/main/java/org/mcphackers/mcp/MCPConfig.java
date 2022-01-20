@@ -43,6 +43,7 @@ public class MCPConfig {
 	public static final String SERVER_BIN = 		 BIN + "minecraft_server";
 	public static final String CLIENT_REOBF = 		 REOBF + "minecraft";
 	public static final String SERVER_REOBF = 		 REOBF + "minecraft_server";
+	public static final String VERSION = 	 		 CONF + "version";
 	public static final String CLIENT_MAPPINGS = 	 CONF + "client.tiny";
 	public static final String SERVER_MAPPINGS = 	 CONF + "server.tiny";
 	public static final String EXC_CLIENT = 		 CONF + "client.exc";
@@ -51,8 +52,6 @@ public class MCPConfig {
 	public static final String SERVER_PATCHES = 	 CONF + "patches_server";
 	public static final String JAVADOC_CLIENT = 	 CONF + "client.javadoc";
 	public static final String JAVADOC_SERVER = 	 CONF + "server.javadoc";
-	public static final String PROPERTIES_CLIENT = 	 CONF + "client.properties";
-	public static final String PROPERTIES_SERVER = 	 CONF + "server.properties";
 	public static final String BUILD_ZIP_CLIENT = 	 BUILD + "minecraft.zip";
 	public static final String BUILD_ZIP_SERVER = 	 BUILD + "minecraft_server.zip";
 	public static final String BUILD_JAR_CLIENT = 	 BUILD + "minecraft.jar";

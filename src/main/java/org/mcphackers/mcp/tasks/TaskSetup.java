@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -67,20 +69,34 @@ public class TaskSetup extends Task {
             chosenVersion = MCP.input.nextLine().toLowerCase();
             MCP.logger.print(new Ansi().fgDefault());
         }
+        
+        FileUtil.createDirectories(Paths.get(MCPConfig.CONF));
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPConfig.VERSION))) {
+        	writer.write(chosenVersion);
+        }
+        
         long startTime = System.currentTimeMillis();
         MCP.logger.info(" Downloading mappings");
-        FileUtil.createDirectories(Paths.get(MCPConfig.CONF));
-        VersionsParser.downloadVersion(chosenVersion);
+        FileUtil.downloadFile(VersionsParser.downloadVersion(chosenVersion), Paths.get(MCPConfig.CONF, "conf.zip"));
+        FileUtil.unzip(Paths.get(MCPConfig.CONF, "conf.zip"), Paths.get(MCPConfig.CONF), true);
     	
         // Create Eclipse workspace
         MCP.logger.info(" Setting up workspace");
         FileUtil.deleteDirectoryIfExists(Paths.get("eclipse"));
-        int workspaceVersion = VersionsParser.getWorkspace(chosenVersion);
-        FileUtil.copyDirectory(Paths.get("versions", "workspace", "eclipse_" + workspaceVersion), Paths.get("eclipse"));
+        FileUtil.copyDirectory(Paths.get("versions", "workspace", "eclipse"), Paths.get("eclipse"));
 
         // Create Intellij workspace
         String[] projects = { "Client", "Server" };
         for (String project : projects) {
+            Path launch = Paths.get("eclipse", ".metadata", ".plugins", "org.eclipse.debug.core", ".launches", project + ".launch");
+            if (Files.exists(launch)) {
+                List<String> lines = Files.readAllLines(launch);
+                String replace = "-Dhttp.proxyPort=%s";
+                for (int i = 0; i < lines.size(); i++) {
+                    lines.set(i, lines.get(i).replace(replace, String.format(replace, VersionsParser.getProxyPort(chosenVersion))));
+                }
+                Files.write(launch, lines);
+            }
             Path imlPath = Paths.get("eclipse", project, project + ".iml");
             if (Files.exists(imlPath)) {
                 List<String> lines = Files.readAllLines(imlPath);

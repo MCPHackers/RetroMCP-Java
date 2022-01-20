@@ -4,20 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mcphackers.mcp.MCPConfig;
 
 public class VersionsParser {
 	
-	private static final String jsonURL = "https://raw.githubusercontent.com/MCPHackers/Vault/main/versions.json";
-	private static final String contentsURL = "https://api.github.com/repos/MCPHackers/Vault/contents";
+	private static final String jsonURL = "https://mcphackers.github.io/versions/versions.json";
 	private static Exception cause = null;
 	
 	public static final JSONObject json = getJson();
@@ -46,9 +42,9 @@ public class VersionsParser {
 		return null;
 	}
 
-	public static int getWorkspace(String chosenVersion) throws Exception {
+	public static int getProxyPort(String chosenVersion) throws Exception {
 		checkJson();
-		return json.getJSONObject(chosenVersion).getInt("workspace_version");
+		return json.getJSONObject(chosenVersion).getInt("proxy_port");
 	}
 
 	public static String getServerVersion(String chosenVersion) throws Exception {
@@ -73,17 +69,11 @@ public class VersionsParser {
 		return null;
 	}
 
-	public static void downloadVersion(String chosenVersion) throws Exception {
-		InputStream in = new URL(contentsURL).openStream();
-		JSONArray json = Util.parseJSONArray(in);
-		for(Object object : json) {
-			if(object instanceof JSONObject) {
-				JSONObject jsonObject = (JSONObject)object;
-				if(jsonObject.getString("type").equals("dir") && jsonObject.getString("name").equals(chosenVersion)) {
-					FileUtil.downloadGitDir(new URI(jsonObject.getString("url")).toURL(), Paths.get(MCPConfig.CONF));
-					break;
-				}
-			}
+	public static URL downloadVersion(String chosenVersion) throws Exception {
+		checkJson();
+		if(json.getJSONObject(chosenVersion).has("resources")) {
+			return new URI("https://mcphackers.github.io/versions/" + json.getJSONObject(chosenVersion).getString("resources")).toURL();
 		}
+		return null;
 	}
 }

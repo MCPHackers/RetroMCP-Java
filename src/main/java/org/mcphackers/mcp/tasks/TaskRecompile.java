@@ -75,9 +75,9 @@ public class TaskRecompile extends Task {
             int i = 0;
             for(Path path : assets) {
             	if(srcPath.relativize(path).getParent() != null) {
-            		Files.createDirectories(Paths.get(binPath.toString(), srcPath.relativize(path).getParent().toString()));
+            		Files.createDirectories(binPath.resolve(srcPath.relativize(path).getParent()));
             	}
-            	Files.copy(path, Paths.get(binPath.toString(), srcPath.relativize(path).toString()));
+            	Files.copy(path, binPath.resolve(srcPath.relativize(path)));
             	i++;
             	this.progress = 50 + (int)((double)i / assets.size() * 49);
             }
