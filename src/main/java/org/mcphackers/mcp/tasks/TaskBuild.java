@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.ProgressInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
@@ -39,7 +40,7 @@ public class TaskBuild extends Task {
 		    	break;
 		    case BUILD:
 		    	FileUtil.createDirectories(Paths.get(MCPConfig.BUILD));
-		    	if(MCPConfig.fullBuild) {
+		    	if(MCP.config.fullBuild) {
 			    	Files.deleteIfExists(buildJar);
 		    		Files.copy(originalJar, buildJar);
 		    		List<Path> reobfClasses = FileUtil.listDirectory(reobfDir, path -> !Files.isDirectory(path));

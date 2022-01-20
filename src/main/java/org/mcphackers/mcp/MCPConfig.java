@@ -57,21 +57,22 @@ public class MCPConfig {
 	public static final String BUILD_JAR_CLIENT = 	 BUILD + "minecraft.jar";
 	public static final String BUILD_JAR_SERVER = 	 BUILD + "minecraft_server.jar";
 	
-	public static boolean debug;
-	public static boolean patch;
-	public static boolean srcCleanup;
-	public static String[] ignorePackages;
-	public static int onlySide;
-	public static String indentionString;
-	public static boolean fullBuild;
-	public static boolean runBuild;
-	public static String setupVersion;
+	public boolean debug;
+	public boolean patch;
+	public boolean srcCleanup;
+	public String[] ignorePackages;
+	public int onlySide;
+	public String indentionString;
+	public boolean fullBuild;
+	public boolean runBuild;
+	public String setupVersion;
+	public String[] runArgs;
 
-    static {
+    public MCPConfig() {
         resetConfig();
     }
 
-    public static void resetConfig() {
+    public void resetConfig() {
         debug = false;
         patch = true;
         srcCleanup = false;
@@ -81,9 +82,10 @@ public class MCPConfig {
     	fullBuild = false;
     	runBuild = false;
     	setupVersion = null;
+    	runArgs = null;
     }
 
-    public static void setParameter(String name, int value) {
+    public void setParameter(String name, int value) {
         switch (name) {
         	case "side":
         		onlySide = value;
@@ -91,7 +93,7 @@ public class MCPConfig {
         }
     }
 
-    public static void setParameter(String name, String value) {
+    public void setParameter(String name, String value) {
         switch (name) {
 	        case "ind":
 	        case "indention":
@@ -106,7 +108,7 @@ public class MCPConfig {
         }
     }
 
-    public static void setParameter(String name, String[] value) {
+    public void setParameter(String name, String[] value) {
         switch (name) {
 	        case "ignore":
 	            ignorePackages = value;
@@ -114,7 +116,7 @@ public class MCPConfig {
         }
     }
 
-    public static void setParameter(String name, boolean value) {
+    public void setParameter(String name, boolean value) {
         switch (name) {
             case "debug":
                 debug = value;

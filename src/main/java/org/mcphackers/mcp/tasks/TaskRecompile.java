@@ -53,8 +53,12 @@ public class TaskRecompile extends Task {
 
         // Compile side
         if (Files.exists(srcPath)) {
-            Iterable<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-            Iterable<String> options = Arrays.asList(
+            List<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+            List<File> start = Files.walk(Paths.get(MCPConfig.CONF + "start")).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+            if(side == CLIENT) {
+            	src.addAll(start);
+            }
+            List<String> options = Arrays.asList(
             		"-d", MCPConfig.CLIENT_BIN,
             		"-cp", String.join(";", new String[] {
             				MCPConfig.CLIENT_FIXED,

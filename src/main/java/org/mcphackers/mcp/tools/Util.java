@@ -15,28 +15,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Util {
 
-    public static int runCommand(String[] cmd, Path dir, boolean doLog) throws IOException, IllegalArgumentException {
+    public static int runCommand(String[] cmd, Path dir, boolean doLog) throws IOException, InterruptedException {
         ProcessBuilder procBuilder = new ProcessBuilder(cmd);
         if(dir != null) {
         	procBuilder.directory(dir.toAbsolutePath().toFile());
         }
         Process proc = procBuilder.start();
-        BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        BufferedReader error = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-        while (proc.isAlive()) {
-        	String line;
-        	while(doLog && (line = input.readLine()) != null) {
-        	    MCP.logger.info(line);
-        	}
-        	while(doLog && (line = error.readLine()) != null) {
-        	    MCP.logger.info(line);
-        	}
-        }
-        input.close();
+    	new Thread() {
+    		public void run() {
+    			if(doLog) {
+	    			try(Scanner sc = new Scanner(proc.getInputStream())) {
+	    				while (sc.hasNextLine()) {
+	    					MCP.logger.info(sc.nextLine());
+	    				}
+	    			}
+    			}
+    		}
+    	}.start();
+    	while(proc.isAlive()) {
+			if(doLog) {
+	    		try(Scanner sc = new Scanner(proc.getErrorStream())) {
+					while (sc.hasNextLine()) {
+						MCP.logger.info(sc.nextLine());
+					}
+				}
+    		}
+    	}
         return proc.exitValue();
     }
 

@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.ProgressInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
@@ -102,7 +103,7 @@ public class TaskDecompile extends Task {
 				FileUtil.unzipByExtension(Paths.get(srcZip), ffOut, ".java");
 		    	break;
 		    case PATCH:
-		    	if(MCPConfig.patch && Files.exists(patchesPath)) {
+		    	if(MCP.config.patch && Files.exists(patchesPath)) {
 				    PatchOperation patchOperation = PatchOperation.builder()
 			            .verbose(true)
 			            .basePath(ffOut)
@@ -122,7 +123,7 @@ public class TaskDecompile extends Task {
 	    		new MathConstants().replace(ffOut);
 		    	break;
 		    case COPYSRC:
-				FileUtil.copyDirectory(ffOut, srcPath, MCPConfig.ignorePackages);
+				FileUtil.copyDirectory(ffOut, srcPath, MCP.config.ignorePackages);
 		    	break;
 		    case RECOMPILE:
 		    	recompTask.doTask();

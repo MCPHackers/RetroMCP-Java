@@ -1,19 +1,23 @@
 package org.mcphackers.mcp.tools.fernflower;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import org.mcphackers.mcp.MCP;
+
 import de.fernflower.main.decompiler.BaseDecompiler;
 import de.fernflower.main.decompiler.DirectoryResultSaver;
 import de.fernflower.main.decompiler.SingleFileSaver;
 import de.fernflower.main.extern.IBytecodeProvider;
 import de.fernflower.main.extern.IResultSaver;
 import de.fernflower.util.InterpreterUtil;
-
-import java.io.*;
-import java.util.*;
-import java.util.function.Function;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import org.mcphackers.mcp.MCPConfig;
 
 public class Decompiler implements IBytecodeProvider {
     public DecompileLogger log;
@@ -27,7 +31,7 @@ public class Decompiler implements IBytecodeProvider {
         mapOptions.put("rbr", "0");
         mapOptions.put("asc", "1");
         mapOptions.put("nco", "1");
-        mapOptions.put("ind", MCPConfig.indentionString);
+        mapOptions.put("ind", MCP.config.indentionString);
 
         SaveType saveType = SaveType.FOLDER;
         File destination = new File(out);

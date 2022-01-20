@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,8 +29,6 @@ import org.objectweb.asm.Opcodes;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.TinyUtils;
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.model.FileHeader;
 
 public class TaskReobfuscate extends Task {
     private final Map<String, String> recompHashes = new HashMap<>();
@@ -131,13 +128,14 @@ public class TaskReobfuscate extends Task {
                         @Override
                         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
                             className = name;
-                            if (!reobfClasses.containsKey(name)) {
+                            if (!reobfClasses.containsKey(name) && name.contains("Start")) {
                             	String key = name.lastIndexOf("/") >= 0 ? name.substring(0, name.lastIndexOf("/") + 1) : null;
                                 String obfPackage = reobfPackages.get(key);
-                                if(obfPackage != null) {
-                                	String clsName = name.lastIndexOf("/") >= 0 ? name.substring(name.lastIndexOf("/") + 1) : name;
-                                	reobfClasses.put(name, obfPackage + clsName);
+                                if(obfPackage == null) {
+                                	obfPackage = "";
                                 }
+                            	String clsName = name.lastIndexOf("/") >= 0 ? name.substring(name.lastIndexOf("/") + 1) : name;
+                            	reobfClasses.put(name, obfPackage + clsName);
                                 //extraReobfClasses.put(name, name.replace("net/minecraft/src/", ""));
                             }
                             super.visit(version, access, name, signature, superName, interfaces);
@@ -362,21 +360,11 @@ public class TaskReobfuscate extends Task {
     }
 
     private void unpack(final Path src, final Path destDir) throws IOException {
-        if (Files.notExists(destDir)) {
-            Files.createDirectories(destDir);
-        }
-
-        if (Files.exists(src)) {
-            ZipFile zipFile = new ZipFile(src.toFile());
-            List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-            for (FileHeader fileHeader : fileHeaders) {
-                String fileName = fileHeader.getFileName();
-                String deobfName = Util.getKey(reobfClasses, fileName.replace(".class", ""));
-                String hash = originalHashes.get(deobfName);
-                if (!fileHeader.isDirectory() && ( hash != null && !hash.equals(recompHashes.get(deobfName)) || hash == null)) {
-                    zipFile.extractFile(fileHeader, destDir.toString());
-                }
-            }
-        }
+    	FileUtil.unzip(src, destDir, entry -> {
+            String fileName = entry.getName();
+            String deobfName = Util.getKey(reobfClasses, fileName.replace(".class", ""));
+            String hash = originalHashes.get(deobfName);
+            return !entry.isDirectory() && ( hash != null && !hash.equals(recompHashes.get(deobfName)) || hash == null);
+    	});
     }
 }

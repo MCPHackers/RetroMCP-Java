@@ -47,7 +47,7 @@ public class TaskSetup extends Task {
             }
         }
 
-        MCPConfig.srcCleanup = false;
+        MCP.config.srcCleanup = false;
         new TaskCleanup(info).doTask();
         MCP.logger.info(" Setting up your workspace...");
         FileUtil.createDirectories(Paths.get(MCPConfig.JARS));
@@ -56,7 +56,7 @@ public class TaskSetup extends Task {
         MCP.logger.info(" Setting up Minecraft...");
         List<String> versions = VersionsParser.getVersionList();
         versions.sort(Comparator.naturalOrder());
-        String chosenVersion = MCPConfig.setupVersion;
+        String chosenVersion = MCP.config.setupVersion;
         if(!versions.contains(chosenVersion)) {
 	        MCP.logger.info(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
 	        MCP.logger.info(getTable(versions));

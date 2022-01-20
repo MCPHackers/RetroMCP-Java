@@ -3,9 +3,12 @@ package org.mcphackers.mcp.tasks;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.FileUtil;
@@ -23,7 +26,7 @@ public class TaskRun extends Task {
 		String natives = FileUtil.absolutePathString(MCPConfig.NATIVES);
 		List<String> cpList = new LinkedList<String>();
 		if(side == SERVER) {
-			if(MCPConfig.runBuild) {
+			if(MCP.config.runBuild) {
 				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_JAR_SERVER));
 			}
 			else {
@@ -32,7 +35,7 @@ public class TaskRun extends Task {
 			}
 		}
 		else if (side == CLIENT) {
-			if(MCPConfig.runBuild) {
+			if(MCP.config.runBuild) {
 				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_JAR_CLIENT));
 			}
 			else {
@@ -48,19 +51,28 @@ public class TaskRun extends Task {
 		String cp = String.join(";", cpList);
 		
 		String version = new String(Files.readAllBytes(Paths.get(MCPConfig.VERSION)));
-		int exit = Util.runCommand(
-			new String[] {
-				java,
-				"-Xms1024M",
-				"-Xmx1024M",
-				"-Djava.util.Arrays.useLegacyMergeSort=true",
-				"-Dhttp.proxyHost=betacraft.uk",
-				"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(version),
-				"-Dorg.lwjgl.librarypath=" + natives,
-				"-Dnet.java.games.input.librarypath=" + natives,
-				"-cp", cp,
-				side == SERVER ? "net.minecraft.server.MinecraftServer" : "Start"
-			}, Paths.get(MCPConfig.JARS), true);
+
+		List<String> args = new ArrayList<String>(
+			Arrays.asList(new String[] {
+					java,
+					"-Xms1024M",
+					"-Xmx1024M",
+					"-Djava.util.Arrays.useLegacyMergeSort=true",
+					"-Dhttp.proxyHost=betacraft.uk",
+					"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(version),
+					"-Dorg.lwjgl.librarypath=" + natives,
+					"-Dnet.java.games.input.librarypath=" + natives,
+					"-cp", cp,
+					side == SERVER ? "net.minecraft.server.MinecraftServer" : "Start"
+				}));
+		for(int i = 1; i < MCP.config.runArgs.length; i++) {
+			String arg = MCP.config.runArgs[i];
+			if(args.contains(arg)) {
+				args.remove(arg);
+			}
+			args.add(1, arg);
+		}
+		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPConfig.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}

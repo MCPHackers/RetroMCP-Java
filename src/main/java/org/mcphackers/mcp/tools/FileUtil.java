@@ -20,16 +20,15 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.model.FileHeader;
 
 public class FileUtil {
     
@@ -58,32 +57,35 @@ public class FileUtil {
         }
     }
 
-    @SuppressWarnings("resource")
-	public static void unzip(final Path zipFile, final Path destDir, boolean deleteZip) throws IOException {
-        if (Files.notExists(destDir)) {
-            Files.createDirectories(destDir);
-        }
-
-        new ZipFile(zipFile.toFile()).extractAll(destDir.toString());
-        if (deleteZip) Files.deleteIfExists(zipFile);
-    }
-
     public static void unzip(final Path zipFile, final Path destDir) throws IOException {
     	unzip(zipFile, destDir, false);
     }
 
-    public static void unzipByExtension(final Path src, final Path destDir, String extension) throws IOException {
+    public static void unzip(final Path zipFile, final Path destDir, boolean deleteZip) throws IOException {
+    	unzip(zipFile, destDir, entry -> true);
+        if (deleteZip) Files.deleteIfExists(zipFile);
+    }
+
+    public static void unzipByExtension(final Path zipFile, final Path destDir, String extension) throws IOException {
+    	unzip(zipFile, destDir, entry -> entry.toString().endsWith(extension));
+    }
+
+    public static void unzip(final Path zipFile, final Path destDir, Function<ZipEntry,Boolean> match) throws IOException {
         if (Files.notExists(destDir)) {
             Files.createDirectories(destDir);
         }
-
-        if (Files.exists(src)) {
-            ZipFile zipFile = new ZipFile(src.toFile());
-            List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-            for (FileHeader fileHeader : fileHeaders) {
-                String fileName = fileHeader.getFileName();
-                if (!fileHeader.isDirectory() && fileName.endsWith(extension)) {
-                    zipFile.extractFile(fileHeader, destDir.toString());
+        try (ZipInputStream zipInputStream = new ZipInputStream(Files.newInputStream(zipFile))) {
+            ZipEntry entry;
+            while ((entry = zipInputStream.getNextEntry()) != null) {
+                Path toPath = destDir.resolve(entry.getName());
+                if (match.apply(entry)) {
+                	if(!entry.isDirectory()) {
+	                    createDirectories(toPath.getParent());
+	                    Files.copy(zipInputStream, toPath);
+                	}
+                    else {
+                        createDirectories(toPath);
+                    }
                 }
             }
         }

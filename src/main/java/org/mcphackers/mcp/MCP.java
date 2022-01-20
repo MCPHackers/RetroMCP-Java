@@ -13,6 +13,7 @@ public class MCP {
     public static EnumMode mode = null;
     public static EnumMode helpCommand = null;
     public static MCPLogger logger;
+    public static MCPConfig config;
     public static Scanner input;
     private static final Ansi logo =
     		new Ansi()
@@ -28,6 +29,7 @@ public class MCP {
     	SelfCommandPrompt.runWithCMD(SelfCommandPrompt.suggestAppId(), "RetroMCP " + VERSION, args);
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
+        config = new MCPConfig();
         input = new Scanner(System.in);
         logger.log("Operating system: " + System.getProperty("os.name"));
         logger.log("RetroMCP " + VERSION);
@@ -58,6 +60,9 @@ public class MCP {
             }
             setParams(parsedArgs, mode);
             if (taskMode) {
+            	if(mode == EnumMode.startclient || mode == EnumMode.startserver) {
+                    config.runArgs = args;
+            	}
                 start();
             } else if (mode == EnumMode.help) {
             	if(helpCommand == null) {
@@ -88,7 +93,7 @@ public class MCP {
                 logger.println("Unknown command. Type 'help' for list of available commands");
             }
             args = new String[]{};
-            MCPConfig.resetConfig();
+            config.resetConfig();
             if (!startedWithNoParams || mode == EnumMode.exit)
                 exit = true;
             mode = null;
@@ -106,7 +111,7 @@ public class MCP {
     			switch (name) {
     			case "client":
                     case "server":
-                        MCPConfig.setParameter(name, true);
+                        config.setParameter(name, true);
         			break;
                 }
         		if(mode == EnumMode.help) {
@@ -116,20 +121,20 @@ public class MCP {
         			catch (IllegalArgumentException ignored) {}
         		}
         		if(mode == EnumMode.setup) {
-        			MCPConfig.setParameter("setupversion", name);
+        			config.setParameter("setupversion", name);
         		}
     		}
     		else if(value instanceof Integer) {
-    			MCPConfig.setParameter(name, (Integer)value);
+    			config.setParameter(name, (Integer)value);
     		}
     		else if(value instanceof Boolean) {
-    			MCPConfig.setParameter(name, (Boolean)value);
+    			config.setParameter(name, (Boolean)value);
     		}
     		else if(value instanceof String) {
-    			MCPConfig.setParameter(name, (String)value);
+    			config.setParameter(name, (String)value);
     		}
     		else if(value instanceof String[]) {
-    			MCPConfig.setParameter(name, (String[])value);
+    			config.setParameter(name, (String[])value);
     		}
     	}
 	}
@@ -159,7 +164,7 @@ public class MCP {
     		for(String error : errors) {
         		logger.info(" " + error.replace("\n", "\n "));
     		}
-            if (MCPConfig.debug) e.printStackTrace();
+            if (config.debug) e.printStackTrace();
             else {
             	String msg = e.getMessage();
             	if(msg != null) {
@@ -186,11 +191,11 @@ public class MCP {
     
     private static void processMultitasks(TaskInfo task) throws Exception {
         List<SideThread> threads = new ArrayList<>();
-		if(MCPConfig.onlySide < 0 || MCPConfig.onlySide == SideThread.CLIENT) {
+		if(config.onlySide < 0 || config.onlySide == SideThread.CLIENT) {
 			threads.add(new SideThread(SideThread.CLIENT, task.newTask(SideThread.CLIENT)));
 		}
 
-		if(MCPConfig.onlySide < 0 || MCPConfig.onlySide == SideThread.SERVER) {
+		if(config.onlySide < 0 || config.onlySide == SideThread.SERVER) {
 			threads.add(new SideThread(SideThread.SERVER, task.newTask(SideThread.SERVER)));
 		}
         logger.newLine();

@@ -31,7 +31,7 @@ public class TaskCleanup extends Task {
 	    		Paths.get(MCPConfig.BUILD),
 	    		Paths.get("eclipse")
 	    	};
-        if (MCPConfig.srcCleanup) pathsToDelete = new Path[] {
+        if (MCP.config.srcCleanup) pathsToDelete = new Path[] {
 	    		Paths.get(MCPConfig.SRC),
 	    		Paths.get(MCPConfig.BIN),
 	    		Paths.get(MCPConfig.REOBF),
