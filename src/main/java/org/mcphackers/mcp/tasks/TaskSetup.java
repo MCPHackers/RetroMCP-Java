@@ -17,7 +17,6 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.ResourceManager;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
@@ -83,10 +82,9 @@ public class TaskSetup extends Task {
     	
         // Create Eclipse workspace
         MCP.logger.info(" Setting up workspace");
-        FileUtil.deleteDirectoryIfExists(Paths.get("eclipse"));
-        ResourceManager.copyResource("/eclipse.zip", "eclipse.zip");
-        FileUtil.unzip(Paths.get("eclipse.zip"), Paths.get("eclipse"));
-        Files.delete(Paths.get("eclipse.zip"));
+        FileUtil.deleteDirectoryIfExists(Paths.get("workspace"));
+        FileUtil.copyResource(MCP.class.getClassLoader().getResourceAsStream("workspace.zip"), Paths.get("workspace.zip"));
+        FileUtil.unzip(Paths.get("workspace.zip"), Paths.get("workspace"), true);
 
         // Create Intellij workspace
         String[] projects = { "Client", "Server" };

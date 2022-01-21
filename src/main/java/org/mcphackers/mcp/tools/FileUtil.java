@@ -188,5 +188,9 @@ public class FileUtil {
         });
         outputStream.close();
     }
-
+    
+    public static void copyResource(InputStream is, Path out) throws IOException {
+    	byte[] data = Util.readAllBytes(is);
+    	Files.write(out, data);
+    }
 }

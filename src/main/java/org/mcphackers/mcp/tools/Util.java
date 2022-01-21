@@ -120,7 +120,7 @@ public class Util {
         return new JSONArray(content);
     }
     
-    private static byte[] readAllBytes(InputStream inputStream) throws IOException {
+    public static byte[] readAllBytes(InputStream inputStream) throws IOException {
         final int bufLen = 4 * 0x400; // 4KB
         byte[] buf = new byte[bufLen];
         int readLen;
