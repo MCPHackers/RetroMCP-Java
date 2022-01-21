@@ -4,7 +4,10 @@ import jredfox.selfcmd.SelfCommandPrompt;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tools.VersionsParser;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class MCP {
@@ -33,6 +36,15 @@ public class MCP {
         input = new Scanner(System.in);
         logger.log("Operating system: " + System.getProperty("os.name"));
         logger.log("RetroMCP " + VERSION);
+        
+        if(Files.exists(Paths.get(MCPConfig.VERSION)))
+        {
+			try {
+				VersionsParser.setCurrentVersion(new String(Files.readAllBytes(Paths.get(MCPConfig.VERSION))));
+			} catch (Exception e) {
+				logger.info(new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString());
+			}
+        }
 
         boolean startedWithNoParams = false;
         boolean exit = false;
@@ -40,8 +52,13 @@ public class MCP {
         if (args.length <= 0) {
             startedWithNoParams = true;
             logger.println(logo);
-            logger.println("Enter a command to execute:");
         }
+        if(Files.exists(Paths.get(MCPConfig.VERSION))) {
+        	logger.info(new Ansi().a("Current version: ").fgBrightCyan().a(VersionsParser.getCurrentVersion()).fgDefault().toString());
+        }
+        if (args.length <= 0) {
+	        logger.println("Enter a command to execute:");
+	    }
         int executeTimes = 0;
         while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
             while (args.length < 1) {
@@ -196,7 +213,9 @@ public class MCP {
 		}
 
 		if(config.onlySide < 0 || config.onlySide == SideThread.SERVER) {
-			threads.add(new SideThread(SideThread.SERVER, task.newTask(SideThread.SERVER)));
+			if(VersionsParser.hasServer()) {
+				threads.add(new SideThread(SideThread.SERVER, task.newTask(SideThread.SERVER)));
+			}
 		}
         logger.newLine();
         for (SideThread thread : threads) {

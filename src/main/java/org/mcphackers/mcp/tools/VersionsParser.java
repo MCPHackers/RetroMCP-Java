@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tools;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -10,10 +12,12 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mcphackers.mcp.MCPConfig;
 
 public class VersionsParser {
 	
 	private static final String jsonURL = "https://mcphackers.github.io/versions/versions.json";
+	private static String currentVersion = null;
 	private static Exception cause = null;
 	
 	public static final JSONObject json = getJson();
@@ -42,38 +46,52 @@ public class VersionsParser {
 		return null;
 	}
 
-	public static int getProxyPort(String chosenVersion) throws Exception {
+	public static int getProxyPort() throws Exception {
 		checkJson();
-		return json.getJSONObject(chosenVersion).getInt("proxy_port");
+		return json.getJSONObject(currentVersion).getInt("proxy_port");
 	}
 
-	public static String getServerVersion(String chosenVersion) throws Exception {
+	public static String getServerVersion() throws Exception {
 		checkJson();
-		if(json.getJSONObject(chosenVersion).has("server")) {
-			return json.getJSONObject(chosenVersion).getString("server");
+		if(json.getJSONObject(currentVersion).has("server")) {
+			return json.getJSONObject(currentVersion).getString("server");
 		}
 		return null;
 	}
 
-	public static boolean hasServer(String chosenVersion) throws Exception {
+	public static boolean hasServer() throws Exception {
 		checkJson();
-		return json.getJSONObject(chosenVersion).has("server");
+		return json.getJSONObject(currentVersion).has("server_url");
 	}
 
-	public static String getDownloadURL(String chosenVersion, int side) throws Exception {
+	public static String getDownloadURL(int side) throws Exception {
 		checkJson();
 		String url = side == 0 ? "client_url" : side == 1 ? "server_url" : null;
-		if(json.getJSONObject(chosenVersion).has(url)) {
-			return json.getJSONObject(chosenVersion).getString(url);
+		if(json.getJSONObject(currentVersion).has(url)) {
+			return json.getJSONObject(currentVersion).getString(url);
 		}
-		return null;
+		throw new JSONException("Could not get download link for " + (side == 0 ? "client" : "server"));
 	}
 
-	public static URL downloadVersion(String chosenVersion) throws Exception {
+	public static URL downloadVersion() throws Exception {
 		checkJson();
-		if(json.getJSONObject(chosenVersion).has("resources")) {
-			return new URI("https://mcphackers.github.io/versions/" + json.getJSONObject(chosenVersion).getString("resources")).toURL();
+		if(json.getJSONObject(currentVersion).has("resources")) {
+			return new URI("https://mcphackers.github.io/versions/" + json.getJSONObject(currentVersion).getString("resources")).toURL();
 		}
-		return null;
+		throw new JSONException("Could not get download link for mappings");
+	}
+
+	public static void setCurrentVersion(String version) throws Exception {
+		if(!json.has(version)) {
+			throw new Exception("Invalid version detected!");
+		}
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPConfig.VERSION))) {
+        	writer.write(version);
+        }
+        currentVersion = version;
+	}
+
+	public static String getCurrentVersion() {
+        return currentVersion;
 	}
 }

@@ -49,8 +49,6 @@ public class TaskRun extends Task {
 		
 		
 		String cp = String.join(";", cpList);
-		
-		String version = new String(Files.readAllBytes(Paths.get(MCPConfig.VERSION)));
 
 		List<String> args = new ArrayList<String>(
 			Arrays.asList(new String[] {
@@ -59,7 +57,7 @@ public class TaskRun extends Task {
 					"-Xmx1024M",
 					"-Djava.util.Arrays.useLegacyMergeSort=true",
 					"-Dhttp.proxyHost=betacraft.uk",
-					"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(version),
+					"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(),
 					"-Dorg.lwjgl.librarypath=" + natives,
 					"-Dnet.java.games.input.librarypath=" + natives,
 					"-cp", cp,

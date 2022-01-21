@@ -1,7 +1,5 @@
 package org.mcphackers.mcp.tasks;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,42 +69,19 @@ public class TaskSetup extends Task {
         }
         
         FileUtil.createDirectories(Paths.get(MCPConfig.CONF));
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPConfig.VERSION))) {
-        	writer.write(chosenVersion);
-        }
+        VersionsParser.setCurrentVersion(chosenVersion);
         
         long startTime = System.currentTimeMillis();
         MCP.logger.info(" Downloading mappings");
-        FileUtil.downloadFile(VersionsParser.downloadVersion(chosenVersion), Paths.get(MCPConfig.CONF, "conf.zip"));
+        FileUtil.downloadFile(VersionsParser.downloadVersion(), Paths.get(MCPConfig.CONF, "conf.zip"));
         FileUtil.unzip(Paths.get(MCPConfig.CONF, "conf.zip"), Paths.get(MCPConfig.CONF), true);
     	
-        // Create Eclipse workspace
         MCP.logger.info(" Setting up workspace");
         FileUtil.deleteDirectoryIfExists(Paths.get("workspace"));
         FileUtil.copyResource(MCP.class.getClassLoader().getResourceAsStream("workspace.zip"), Paths.get("workspace.zip"));
         FileUtil.unzip(Paths.get("workspace.zip"), Paths.get("workspace"), true);
-
-        // Create Intellij workspace
-        String[] projects = { "Client", "Server" };
-        for (String project : projects) {
-            Path launch = Paths.get("eclipse", ".metadata", ".plugins", "org.eclipse.debug.core", ".launches", project + ".launch");
-            if (Files.exists(launch)) {
-                List<String> lines = Files.readAllLines(launch);
-                String replace = "-Dhttp.proxyPort=%s";
-                for (int i = 0; i < lines.size(); i++) {
-                    lines.set(i, lines.get(i).replace(replace, String.format(replace, VersionsParser.getProxyPort(chosenVersion))));
-                }
-                Files.write(launch, lines);
-            }
-            Path imlPath = Paths.get("eclipse", project, project + ".iml");
-            if (Files.exists(imlPath)) {
-                List<String> lines = Files.readAllLines(imlPath);
-                for (int i = 0; i < lines.size(); i++) {
-                    lines.set(i, lines.get(i).replace("$MCP_LOC$", Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString().replace("\\", "/")));
-                }
-                Files.write(imlPath, lines);
-            }
-        }
+        
+        setWorkspace();
         MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
 
         // Delete Minecraft.jar and Minecraft_server.jar if they exist.
@@ -114,11 +89,12 @@ public class TaskSetup extends Task {
         Files.deleteIfExists(Paths.get(MCPConfig.SERVER));
 
         // Download Minecraft
-        if (!chosenVersion.equals("custom")) {
-		    for(int side = 0; side <= (VersionsParser.hasServer(chosenVersion) ? 1 : 0); side++) {
+        //if (!chosenVersion.equals("custom")) TODO
+        {
+		    for(int side = 0; side <= (VersionsParser.hasServer() ? 1 : 0); side++) {
 		        startTime = System.currentTimeMillis();
 		        MCP.logger.info(" Downloading Minecraft " + (side == CLIENT ? "client" : "server") + "...");
-		        String url = VersionsParser.getDownloadURL(chosenVersion, side);
+		        String url = VersionsParser.getDownloadURL(side);
 		        // TODO Classic server zips
 		        Path pathOut = Paths.get(side == CLIENT ? MCPConfig.CLIENT : MCPConfig.SERVER);
 		        FileUtil.downloadFile(new URI(url).toURL(), pathOut);
@@ -138,6 +114,47 @@ public class TaskSetup extends Task {
         FileUtil.unzip(Paths.get(MCPConfig.LIB + "libs.zip"), Paths.get(MCPConfig.LIB), true);
         FileUtil.unzip(Paths.get(MCPConfig.LIB + "natives.zip"), Paths.get(MCPConfig.NATIVES), true);
     }
+
+	private void setWorkspace() throws Exception {
+		String[] projects = { "Client", "Server" };
+	    for (String project : projects) {
+	        Path[] filetoRead = new Path[] {
+	        		Paths.get("workspace", ".metadata", ".plugins", "org.eclipse.debug.core", ".launches", project + ".launch"),
+	        		Paths.get("workspace", project, ".idea", "workspace.xml"),
+	        		Paths.get("workspace", project, project + ".iml"),
+	        		Paths.get("workspace", ".metadata", ".plugins", "org.eclipse.debug.ui", "launchConfigurationHistory.xml")};
+	        for(int j = 0; j < filetoRead.length; j++) {
+	            if (Files.exists(filetoRead[j])) {
+	                List<String> lines = Files.readAllLines(filetoRead[j]);
+	                String replace = "-Dhttp.proxyPort=%s";
+	                for (int i = 0; i < lines.size(); i++) {
+	                	switch (j) {
+	                	case 0:
+	                	case 1:
+	                		lines.set(i, lines.get(i).replace(replace, String.format(replace, VersionsParser.getProxyPort())));
+	                		break;
+	                	case 2:
+	                		lines.set(i, lines.get(i).replace("$MCP_LOC$", Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString().replace("\\", "/")));
+	                		break;
+	                	case 3:
+	                		if(!VersionsParser.hasServer() && lines.get(i).contains("path=&quot;Server&quot;")) {
+	                			lines.remove(i);
+	                		}
+	                		break;
+	                	}
+	                }
+	                Files.write(filetoRead[j], lines);
+	            }
+	        }
+	    }
+	    if(!VersionsParser.hasServer()) {
+	    	FileUtil.deleteDirectoryIfExists(Paths.get("workspace", "Server"));
+	    	FileUtil.deleteDirectoryIfExists(Paths.get("workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/Server"));
+	    	Files.deleteIfExists(Paths.get("workspace/.metadata/.plugins/org.eclipse.debug.core/.launches/Server.launch"));
+	    	Files.deleteIfExists(Paths.get("workspace/.metadata/.plugins/org.eclipse.core.resources/.root/0.tree"));
+	    	FileUtil.copyResource(MCP.class.getClassLoader().getResourceAsStream("0.tree"), Paths.get("workspace/.metadata/.plugins/org.eclipse.core.resources/.root/0.tree"));
+	    }
+	}
 
 	private static String getTable(List<String> versions) {
         int rows = (int)Math.ceil(versions.size() / 3D);
