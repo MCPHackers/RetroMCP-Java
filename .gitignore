@@ -8,7 +8,6 @@ build/
 
 # Ignore everything in testing folder
 test/*
-!test/versions
 
 # Ignore IDE-specific folders
 .idea
