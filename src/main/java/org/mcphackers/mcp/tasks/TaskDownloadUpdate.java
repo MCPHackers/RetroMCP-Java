@@ -38,7 +38,7 @@ public class TaskDownloadUpdate extends Task {
 					if(!assetObj.getString("name").endsWith(".jar")) {
 						continue;
 					}
-					FileUtil.downloadFile(new URL(assetObj.getString("browser_download_url")), Paths.get("update.jar"));
+					FileUtil.downloadFile(new URL(assetObj.getString("browser_download_url")), Paths.get(MCPConfig.UPDATE_JAR));
 				}
 			}
 			MCP.logger.info("Press return key to continue");
@@ -49,7 +49,6 @@ public class TaskDownloadUpdate extends Task {
 			          .getLocation()
 			          .toURI());
 			if(!Files.isDirectory(jarPath)) {
-				Files.copy(jarPath, Paths.get(MCPConfig.UPDATE_JAR));
 				Util.runCommand(new String[] {
 					Util.getJava(),
 					"-jar",
