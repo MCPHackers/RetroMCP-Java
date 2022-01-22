@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -109,10 +108,10 @@ public class FileUtil {
 				if(jsonObject.getString("type").equals("dir")) {
 					Path dir = output.resolve(jsonObject.getString("name"));
 					createDirectories(dir);
-					downloadGitDir(new URI(jsonObject.getString("url")).toURL(), dir);
+					downloadGitDir(new URL(jsonObject.getString("url")), dir);
 				}
 				else if (jsonObject.getString("type").equals("file")) {
-					downloadFile(new URI(jsonObject.getString("download_url")).toURL(), output.resolve(jsonObject.getString("name")));
+					downloadFile(new URL(jsonObject.getString("download_url")), output.resolve(jsonObject.getString("name")));
 				}
 			}
 		}

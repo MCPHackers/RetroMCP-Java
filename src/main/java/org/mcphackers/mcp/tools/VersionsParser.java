@@ -4,8 +4,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,8 +40,14 @@ public class VersionsParser {
 	
 	private static JSONObject getJson() {
 		try {
-			InputStream in = new URL(jsonURL).openStream();
-			return Util.parseJSONFile(in);
+			Path jsonPath = Paths.get("versions.json");
+			if(Files.exists(jsonPath) && !Files.isDirectory(jsonPath)) {
+				return Util.parseJSONFile(jsonPath);
+			}
+			else {
+				InputStream in = new URL(jsonURL).openStream();
+				return Util.parseJSONFile(in);
+			}
 		} catch (JSONException | IOException e) {
 			cause = e;
 		}
@@ -76,7 +84,7 @@ public class VersionsParser {
 	public static URL downloadVersion() throws Exception {
 		checkJson();
 		if(json.getJSONObject(currentVersion).has("resources")) {
-			return new URI("https://mcphackers.github.io/versions/" + json.getJSONObject(currentVersion).getString("resources")).toURL();
+			return new URL("https://mcphackers.github.io/versions/" + json.getJSONObject(currentVersion).getString("resources"));
 		}
 		throw new JSONException("Could not get download link for mappings");
 	}

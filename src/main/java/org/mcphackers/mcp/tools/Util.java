@@ -49,6 +49,11 @@ public class Util {
         return proc.exitValue();
     }
 
+    public static void runCommand(String[] cmd) throws IOException {
+        ProcessBuilder procBuilder = new ProcessBuilder(cmd);
+        procBuilder.start();
+    }
+
     public static OS getOperatingSystem() {
         String osName = System.getProperty("os.name").toLowerCase();
         return osName.contains("win") ? OS.windows
@@ -174,4 +179,8 @@ public class Util {
         }
         return null;
     }
+
+	public static String getJava() {
+		return System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+	}
 }

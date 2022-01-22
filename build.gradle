@@ -22,7 +22,7 @@ dependencies {
     // Required libraries
     implementation 'org.ow2.asm:asm:9.2'
 
-    implementation 'com.github.MCPHackers:RetroFernflower:65eb7e6ba3'
+    implementation 'com.github.MCPHackers:RetroFernflower:bb99af2076'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
     implementation 'net.fabricmc:tiny-remapper:0.6.0'
     // TODO: Don't gut MCInjector bundled ASM

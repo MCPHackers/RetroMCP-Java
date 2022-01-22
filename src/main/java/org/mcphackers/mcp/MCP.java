@@ -4,8 +4,10 @@ import jredfox.selfcmd.SelfCommandPrompt;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -28,7 +30,23 @@ public class MCP {
             .fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
             .fgDefault();
 
-    public static void main(String[] args) {
+    private static boolean checkIfUpdating(String[] args) throws IOException {
+    	if(args.length == 2) {
+			if(args[0].equals("update")) {
+				Util.runCommand(new String[] {
+					Util.getJava(),
+					"-jar",
+					args[1]
+				});
+				return true;
+			}
+    	}
+		return false;
+	}
+
+    public static void main(String[] args) throws Exception {
+    	if(checkIfUpdating(args)) return;
+		Files.deleteIfExists(Paths.get(MCPConfig.UPDATE_JAR));
     	SelfCommandPrompt.runWithCMD(SelfCommandPrompt.suggestAppId(), "RetroMCP " + VERSION, args);
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
@@ -39,20 +57,19 @@ public class MCP {
 
         boolean startedWithNoParams = false;
         boolean exit = false;
-
-        if (args.length <= 0) {
-            startedWithNoParams = true;
-            logger.println(logo);
-        }
+        String version = null;
         if(Files.exists(Paths.get(MCPConfig.VERSION))) {
 			try {
 				VersionsParser.setCurrentVersion(new String(Files.readAllBytes(Paths.get(MCPConfig.VERSION))));
 			} catch (Exception e) {
-				logger.info(new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString());
+				version = new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString();
 			}
-        	logger.info(new Ansi().a("Current version: ").fgBrightCyan().a(VersionsParser.getCurrentVersion()).fgDefault().toString());
+        	version = new Ansi().a("Current version: ").fgBrightCyan().a(VersionsParser.getCurrentVersion()).fgDefault().toString();
         }
         if (args.length <= 0) {
+            startedWithNoParams = true;
+            logger.println(logo);
+            if(version != null) logger.info(version);
 	        logger.println("Enter a command to execute:");
 	    }
         int executeTimes = 0;
@@ -116,7 +133,7 @@ public class MCP {
         shutdown();
     }
 
-    private static void setParams(Map<String, Object> parsedArgs, EnumMode mode) {
+	private static void setParams(Map<String, Object> parsedArgs, EnumMode mode) {
     	for (Map.Entry<String, Object> arg : parsedArgs.entrySet()) {
     		Object value = arg.getValue();
     		String name = arg.getKey();

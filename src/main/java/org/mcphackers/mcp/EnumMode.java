@@ -12,7 +12,7 @@ public enum EnumMode {
     recompile("Recompile Minecraft sources", new TaskInfoRecompile(), new String[] {"debug", "side", "client", "server"}),
     reobfuscate("Reobfuscate Minecraft classes", new TaskInfoReobfuscate(), new String[] {"debug", "side", "client", "server"}),
     updatemd5("Update md5 hash tables used for reobfuscation", new TaskInfoUpdateMD5(), new String[] {"debug", "side", "client", "server"}),
-    updatemcp("Download an update if available", null),
+    updatemcp("Download an update if available", new TaskInfoDownloadUpdate()),
     setup("Choose a version to setup", new TaskInfoSetup(), new String[] {"debug"}),
     cleanup("Delete all source and class folders", new TaskInfoCleanup(), new String[] {"debug", "src"}),
     startclient("Runs the client from compiled classes", new TaskInfoRun(0), new String[] {"runbuild"}),
@@ -23,7 +23,7 @@ public enum EnumMode {
 	public final String desc;
 	public final TaskInfo task;
 	public String[] params = new String[] {};
-	private static Map<String, String> paramDescs = new HashMap<String, String>();
+	private static final Map<String, String> paramDescs = new HashMap<String, String>();
     
     private EnumMode(String desc, TaskInfo task) {
     	this.desc = desc;

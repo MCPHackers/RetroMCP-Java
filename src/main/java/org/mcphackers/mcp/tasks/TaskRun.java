@@ -1,6 +1,5 @@
 package org.mcphackers.mcp.tasks;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class TaskRun extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		String java = System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		String java = Util.getJava();
 		String natives = FileUtil.absolutePathString(MCPConfig.NATIVES);
 		List<String> cpList = new LinkedList<String>();
 		if(side == SERVER) {

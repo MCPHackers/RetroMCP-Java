@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
-import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -59,7 +59,7 @@ public class TaskSetup extends Task {
 	        MCP.logger.info(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
 	        MCP.logger.info(getTable(versions));
 	        MCP.logger.info(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
-	        MCP.logger.info(new Ansi().fgYellow().a("If you wish to supply your own configuration, type \"custom\".").fgDefault().toString());
+	        //MCP.logger.info(new Ansi().fgYellow().a("If you wish to supply your own configuration, type \"custom\".").fgDefault().toString());
         }
         // Keep asking until they have a valid option
         while (!versions.contains(chosenVersion)) {
@@ -97,19 +97,19 @@ public class TaskSetup extends Task {
 		        String url = VersionsParser.getDownloadURL(side);
 		        // TODO Classic server zips
 		        Path pathOut = Paths.get(side == CLIENT ? MCPConfig.CLIENT : MCPConfig.SERVER);
-		        FileUtil.downloadFile(new URI(url).toURL(), pathOut);
+		        FileUtil.downloadFile(new URL(url), pathOut);
 		        MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
 		    }
         }
         
         MCP.logger.info(" Downloading libraries...");
         startTime = System.currentTimeMillis();
-        FileUtil.downloadFile(new URI(libsURL).toURL(), Paths.get(MCPConfig.LIB + "libs.zip"));
+        FileUtil.downloadFile(new URL(libsURL), Paths.get(MCPConfig.LIB + "libs.zip"));
         String nativesURL = natives.get(Util.getOperatingSystem());
         if(nativesURL == null) {
         	throw new Exception("Could not find natives for your operating system");
         }
-        FileUtil.downloadFile(new URI(nativesURL).toURL(), Paths.get(MCPConfig.LIB + "natives.zip"));
+        FileUtil.downloadFile(new URL(nativesURL), Paths.get(MCPConfig.LIB + "natives.zip"));
         MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
         FileUtil.unzip(Paths.get(MCPConfig.LIB + "libs.zip"), Paths.get(MCPConfig.LIB), true);
         FileUtil.unzip(Paths.get(MCPConfig.LIB + "natives.zip"), Paths.get(MCPConfig.NATIVES), true);

@@ -56,6 +56,7 @@ public class MCPConfig {
 	public static final String BUILD_ZIP_SERVER = 	 BUILD + "minecraft_server.zip";
 	public static final String BUILD_JAR_CLIENT = 	 BUILD + "minecraft.jar";
 	public static final String BUILD_JAR_SERVER = 	 BUILD + "minecraft_server.jar";
+	public static final String UPDATE_JAR 		= 	 "update.jar";
 	
 	public boolean debug;
 	public boolean patch;
