@@ -36,15 +36,6 @@ public class MCP {
         input = new Scanner(System.in);
         logger.log("Operating system: " + System.getProperty("os.name"));
         logger.log("RetroMCP " + VERSION);
-        
-        if(Files.exists(Paths.get(MCPConfig.VERSION)))
-        {
-			try {
-				VersionsParser.setCurrentVersion(new String(Files.readAllBytes(Paths.get(MCPConfig.VERSION))));
-			} catch (Exception e) {
-				logger.info(new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString());
-			}
-        }
 
         boolean startedWithNoParams = false;
         boolean exit = false;
@@ -54,6 +45,11 @@ public class MCP {
             logger.println(logo);
         }
         if(Files.exists(Paths.get(MCPConfig.VERSION))) {
+			try {
+				VersionsParser.setCurrentVersion(new String(Files.readAllBytes(Paths.get(MCPConfig.VERSION))));
+			} catch (Exception e) {
+				logger.info(new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString());
+			}
         	logger.info(new Ansi().a("Current version: ").fgBrightCyan().a(VersionsParser.getCurrentVersion()).fgDefault().toString());
         }
         if (args.length <= 0) {

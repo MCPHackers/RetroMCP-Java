@@ -71,24 +71,35 @@ public class TaskDecompile extends Task {
         for (Path path : new Path[] { Paths.get(tinyOut), Paths.get(excOut), Paths.get(srcZip)}) {
         	Files.deleteIfExists(path);
         }
+    	FileUtil.createDirectories(Paths.get(MCPConfig.TEMP));
 		FileUtil.deleteDirectoryIfExists(ffOut);
 		while(step < STEPS) {
 		    step();
 		    switch (step) {
 			case REMAP:
-		        TinyRemapper remapper = null;
-		
-		        try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(tinyOut)).build()) {
-		            remapper = remap(TinyUtils.createTinyMappingProvider(mappings, "official", "named"), originalJar, outputConsumer, getLibraryPaths(side));
-		            outputConsumer.addNonClassFiles(originalJar, NonClassCopyMode.FIX_META_INF, remapper);
-		        } finally {
-		            if (remapper != null) {
-		                remapper.finish();
-		            }
-		        }
+		    	if (Files.exists(mappings)) {
+			        TinyRemapper remapper = null;
+			
+			        try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(Paths.get(tinyOut)).build()) {
+			            remapper = remap(TinyUtils.createTinyMappingProvider(mappings, "official", "named"), originalJar, outputConsumer, getLibraryPaths(side));
+			            outputConsumer.addNonClassFiles(originalJar, NonClassCopyMode.FIX_META_INF, remapper);
+			        } finally {
+			            if (remapper != null) {
+			                remapper.finish();
+			            }
+			        }
+		    	}
+		    	else {
+		    		Files.copy(originalJar, Paths.get(tinyOut));
+		    	}
 		        break;
 		    case EXCEPTOR:
-			    MCInjector.process(tinyOut, excOut, exc, 0);
+		    	if (Files.exists(Paths.get(exc))) {
+		    		MCInjector.process(tinyOut, excOut, exc, 0);
+				}
+		    	else {
+		    		Files.copy(Paths.get(tinyOut), Paths.get(excOut));
+		    	}
 			    // Copying a fixed jar to libs
 			    if(side == CLIENT) {
 			    	Files.deleteIfExists(Paths.get(MCPConfig.CLIENT_FIXED));

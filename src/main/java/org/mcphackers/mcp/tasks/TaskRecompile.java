@@ -105,6 +105,7 @@ public class TaskRecompile extends Task {
                                   		diagnostic.getSource().getName(),
                                   		diagnostic.getMessage(null)));
         	}
+        mgr.close();
         if (!success) {
             throw new RuntimeException("Compilation error!");
         }
