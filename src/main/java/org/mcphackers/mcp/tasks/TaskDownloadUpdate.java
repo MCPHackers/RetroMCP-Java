@@ -14,6 +14,8 @@ import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 
+import jredfox.selfcmd.SelfCommandPrompt;
+
 public class TaskDownloadUpdate extends Task {
 
 	private static final String API = "https://api.github.com/repos/MCPHackers/RetroMCP-Java/releases/latest";
@@ -39,6 +41,7 @@ public class TaskDownloadUpdate extends Task {
 						continue;
 					}
 					FileUtil.downloadFile(new URL(assetObj.getString("browser_download_url")), Paths.get(MCPConfig.UPDATE_JAR));
+					//if(!Files.exists(Paths.get(MCPConfig.UPDATE_JAR)))Files.copy(Paths.get("test.jar"), Paths.get(MCPConfig.UPDATE_JAR));
 				}
 			}
 			MCP.logger.info("Press return key to continue");
@@ -49,14 +52,15 @@ public class TaskDownloadUpdate extends Task {
 			          .getLocation()
 			          .toURI());
 			if(!Files.isDirectory(jarPath)) {
-				Util.runCommand(new String[] {
+				String[] cmd = new String[] {
 					Util.getJava(),
 					"-jar",
 					MCPConfig.UPDATE_JAR,
 					"update",
 					jarPath.toString()
-				});
-				System.exit(0);
+				};
+				Util.runCommand(cmd);
+				SelfCommandPrompt.shutdown();
 			}
 			else {
 				throw new IOException("Running from a folder! Aborting");

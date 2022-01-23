@@ -51,7 +51,9 @@ public class Util {
 
     public static void runCommand(String[] cmd) throws IOException {
         ProcessBuilder procBuilder = new ProcessBuilder(cmd);
-        procBuilder.start();
+        Process proc = procBuilder.start();
+        while(proc.isAlive());
+        proc.exitValue();
     }
 
     public static OS getOperatingSystem() {
