@@ -4,18 +4,16 @@ import jredfox.selfcmd.SelfCommandPrompt;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
 public class MCP {
 	
-	public static final String VERSION = "Test";
+	public static final String VERSION = "v0.2";
     public static EnumMode mode = null;
     public static EnumMode helpCommand = null;
     public static MCPLogger logger;
@@ -31,31 +29,22 @@ public class MCP {
             .fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
             .fgDefault();
 
-    private static boolean checkIfUpdating(String[] args) throws URISyntaxException, IOException {
-    	System.out.println(Paths.get(MCP.class
-			          .getProtectionDomain()
-			          .getCodeSource()
-			          .getLocation()
-			          .toURI()));
-    	if(args.length >= 2) {
-			if(args[0].equals("update")) {
-				Files.deleteIfExists(Paths.get(args[1]));
-				Files.copy(Paths.get(MCPConfig.UPDATE_JAR), Paths.get(args[1]));
-				Util.runCommand(new String[] {
-					Util.getJava(),
-					"-jar",
-					args[1]
-				});
+	private static void attemptToDeleteUpdateJar() {
+		long startTime = System.currentTimeMillis();
+		boolean keepTrying = true;
+		while(keepTrying) {
+			try {
+				Files.deleteIfExists(Paths.get(MCPConfig.UPDATE_JAR));
+				keepTrying = false;
+			} catch (IOException e) {
+				keepTrying = System.currentTimeMillis() - startTime < 10000;
 			}
-			return true;
-    	}
-		return false;
+		}
 	}
 
     public static void main(String[] args) throws Exception {
     	SelfCommandPrompt.runWithCMD(SelfCommandPrompt.suggestAppId(), "RetroMCP " + VERSION, args);
-    	if(checkIfUpdating(args)) System.exit(0);
-		//Files.deleteIfExists(Paths.get(MCPConfig.UPDATE_JAR));
+		attemptToDeleteUpdateJar();
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
         config = new MCPConfig();

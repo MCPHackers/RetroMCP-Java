@@ -41,10 +41,9 @@ public class TaskDownloadUpdate extends Task {
 						continue;
 					}
 					FileUtil.downloadFile(new URL(assetObj.getString("browser_download_url")), Paths.get(MCPConfig.UPDATE_JAR));
-					//if(!Files.exists(Paths.get(MCPConfig.UPDATE_JAR)))Files.copy(Paths.get("test.jar"), Paths.get(MCPConfig.UPDATE_JAR));
 				}
 			}
-			MCP.logger.info("Press return key to continue");
+			MCP.logger.info("Press ENTER key to continue");
 			MCP.input.nextLine();
 			Path jarPath = Paths.get(MCP.class
 			          .getProtectionDomain()
@@ -54,9 +53,9 @@ public class TaskDownloadUpdate extends Task {
 			if(!Files.isDirectory(jarPath)) {
 				String[] cmd = new String[] {
 					Util.getJava(),
-					"-jar",
+					"-cp",
 					MCPConfig.UPDATE_JAR,
-					"update",
+					"org.mcphackers.mcp.Update",
 					jarPath.toString()
 				};
 				Util.runCommand(cmd);
