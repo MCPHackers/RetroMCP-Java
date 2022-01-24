@@ -72,9 +72,11 @@ public class TaskSetup extends Task {
         VersionsParser.setCurrentVersion(chosenVersion);
         
         long startTime = System.currentTimeMillis();
-        MCP.logger.info(" Downloading mappings");
-        FileUtil.downloadFile(VersionsParser.downloadVersion(), Paths.get(MCPConfig.CONF, "conf.zip"));
-        FileUtil.unzip(Paths.get(MCPConfig.CONF, "conf.zip"), Paths.get(MCPConfig.CONF), true);
+        if(Files.notExists(Paths.get("versions.json"))) {
+	        MCP.logger.info(" Downloading mappings");
+	        FileUtil.downloadFile(VersionsParser.downloadVersion(), Paths.get(MCPConfig.CONF, "conf.zip"));
+	        FileUtil.unzip(Paths.get(MCPConfig.CONF, "conf.zip"), Paths.get(MCPConfig.CONF), true);
+        }
     	
         MCP.logger.info(" Setting up workspace");
         FileUtil.deleteDirectoryIfExists(Paths.get("workspace"));
@@ -95,9 +97,17 @@ public class TaskSetup extends Task {
 		        startTime = System.currentTimeMillis();
 		        MCP.logger.info(" Downloading Minecraft " + (side == CLIENT ? "client" : "server") + "...");
 		        String url = VersionsParser.getDownloadURL(side);
-		        // TODO Classic server zips
-		        Path pathOut = Paths.get(side == CLIENT ? MCPConfig.CLIENT : MCPConfig.SERVER);
-		        FileUtil.downloadFile(new URL(url), pathOut);
+		        String out = side == CLIENT ? MCPConfig.CLIENT : MCPConfig.SERVER;
+		        Path pathOut = Paths.get(out);
+		        if(url.endsWith(".jar")) {
+		        	FileUtil.downloadFile(new URL(url), pathOut);
+		        }
+		        else {
+		        	Path zip = Paths.get(out.replace(".jar", ".zip"));
+		        	FileUtil.downloadFile(new URL(url), zip);
+		        	FileUtil.copyFileFromAZip(zip, "minecraft-server.jar", pathOut);
+		        	Files.deleteIfExists(zip);
+		        }
 		        MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
 		    }
         }
@@ -117,7 +127,9 @@ public class TaskSetup extends Task {
 
 	private void setWorkspace() throws Exception {
 		String[] projects = { "Client", "Server" };
-	    for (String project : projects) {
+	    for (int i2 = 0; i2 < projects.length; i2++) {
+	    	String project = projects[i2];
+            String startclass = VersionsParser.hasServer() && VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer";
 	        Path[] filetoRead = new Path[] {
 	        		Paths.get("workspace", ".metadata", ".plugins", "org.eclipse.debug.core", ".launches", project + ".launch"),
 	        		Paths.get("workspace", project, ".idea", "workspace.xml"),
@@ -126,18 +138,27 @@ public class TaskSetup extends Task {
 	        for(int j = 0; j < filetoRead.length; j++) {
 	            if (Files.exists(filetoRead[j])) {
 	                List<String> lines = Files.readAllLines(filetoRead[j]);
-	                String replace = "-Dhttp.proxyPort=%s";
 	                for (int i = 0; i < lines.size(); i++) {
 	                	switch (j) {
 	                	case 0:
+	                		if (i2 == SERVER) {
+		    	                String[] replace = new String[] {"value=\"/Server/src/%s.java\"", "key=\"org.eclipse.jdt.launching.MAIN_TYPE\" value=\"%s\""};
+		                		lines.set(i, lines.get(i).replace(replace[0], String.format(replace[0], startclass.replace(".", "/"))));
+		                		lines.set(i, lines.get(i).replace(replace[1], String.format(replace[1], startclass)));
+	                		}
 	                	case 1:
+	    	                String replace = "-Dhttp.proxyPort=%s";
 	                		lines.set(i, lines.get(i).replace(replace, String.format(replace, VersionsParser.getProxyPort())));
+	                		if (i2 == SERVER) {
+		    	                String replace2 = "name=\"MAIN_CLASS_NAME\" value=\"%s\"";
+		                		lines.set(i, lines.get(i).replace(replace2, String.format(replace2, startclass)));
+	                		}
 	                		break;
 	                	case 2:
 	                		lines.set(i, lines.get(i).replace("$MCP_LOC$", Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString().replace("\\", "/")));
 	                		break;
 	                	case 3:
-	                		if(!VersionsParser.hasServer() && lines.get(i).contains("path=&quot;Server&quot;")) {
+	                		if(i2 == SERVER && !VersionsParser.hasServer() && lines.get(i).contains("path=&quot;Server&quot;")) {
 	                			lines.remove(i);
 	                		}
 	                		break;

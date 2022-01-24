@@ -6,7 +6,7 @@ import org.mcphackers.mcp.tasks.TaskDownloadUpdate;
 public class TaskInfoDownloadUpdate extends TaskInfo {
     @Override
     public String title() {
-        return "Setting up";
+        return "Updating";
     }
 
     @Override
@@ -16,7 +16,7 @@ public class TaskInfoDownloadUpdate extends TaskInfo {
 
     @Override
     public String failMsg() {
-        return "COULD NOT FETCH LATEST RELEASE!";
+        return "COULD NOT UPDATE!";
     }
 
     @Override

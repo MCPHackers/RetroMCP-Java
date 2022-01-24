@@ -21,6 +21,9 @@ public class TaskRun extends Task {
 
 	@Override
 	public void doTask() throws Exception {
+		if(side == SERVER && !VersionsParser.hasServer()) {
+			throw new Exception("Server isn't available for this version!");
+		}
 		String java = Util.getJava();
 		String natives = FileUtil.absolutePathString(MCPConfig.NATIVES);
 		List<String> cpList = new LinkedList<String>();
@@ -60,7 +63,7 @@ public class TaskRun extends Task {
 					"-Dorg.lwjgl.librarypath=" + natives,
 					"-Dnet.java.games.input.librarypath=" + natives,
 					"-cp", cp,
-					side == SERVER ? "net.minecraft.server.MinecraftServer" : "Start"
+					side == SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer") : "Start"
 				}));
 		for(int i = 1; i < MCP.config.runArgs.length; i++) {
 			String arg = MCP.config.runArgs[i];

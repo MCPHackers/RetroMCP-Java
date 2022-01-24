@@ -13,7 +13,7 @@ import java.util.*;
 
 public class MCP {
 	
-	public static final String VERSION = "v0.1";
+	public static final String VERSION = "v0.2";
     public static EnumMode mode = null;
     public static EnumMode helpCommand = null;
     public static MCPLogger logger;
@@ -43,7 +43,7 @@ public class MCP {
 	}
 
     public static void main(String[] args) throws Exception {
-    	SelfCommandPrompt.runWithCMD(SelfCommandPrompt.suggestAppId(), "RetroMCP " + VERSION, args);
+    	SelfCommandPrompt.runWithCMD(SelfCommandPrompt.suggestAppId(), "RetroMCP " + VERSION, args, false, false);
 		attemptToDeleteUpdateJar();
     	AnsiConsole.systemInstall();
         logger = new MCPLogger();
@@ -93,27 +93,17 @@ public class MCP {
                 start();
             } else if (mode == EnumMode.help) {
             	if(helpCommand == null) {
-	                List<String[]> commands = new ArrayList<>();
 	                for (EnumMode mode : EnumMode.values()) {
-	                	commands.add(new String[]{mode.name(), mode.desc});
+                        logger.println(new Ansi()
+                        		.fgBrightMagenta().a(" - " + String.format("%-12s", mode.name())).fgDefault()
+                        		.fgGreen().a(" ").a(mode.desc).fgDefault());
 	            	}
-
-                    for (String[] command : commands) {
-                        for (int i2 = 0; i2 < command.length; i2++) {
-                            if (i2 == 0)
-                                logger.print(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", command[i2])).fgDefault());
-                            else
-                                logger.print(new Ansi().fgGreen().a(" ").a(command[i2]).fgDefault());
-                        }
-
-                        logger.newLine();
-                    }
             	}
             	else {
                     logger.println(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.name())).fgDefault().fgGreen().a(" ").a(helpCommand.desc).fgDefault());
                     if(helpCommand.params.length > 0) logger.println("Optional parameters:");
                     for(String param : helpCommand.params) {
-                		logger.println(new Ansi().a(" ").fgCyan().a(String.format("%-7s", param)).a(" - ").fgBrightYellow().a(EnumMode.getParamDesc(param)).fgDefault());
+                		logger.println(new Ansi().a(" ").fgCyan().a(String.format("%-10s", param)).a(" - ").fgBrightYellow().a(EnumMode.getParamDesc(param)).fgDefault());
                     }
             	}
             } else if (mode != EnumMode.exit) {
@@ -136,7 +126,7 @@ public class MCP {
     		String name = arg.getKey();
     		if(value == null) {
     			switch (name) {
-    			case "client":
+    				case "client":
                     case "server":
                         config.setParameter(name, true);
         			break;
@@ -243,6 +233,7 @@ public class MCP {
             	working = working || thread.isAlive();
             }
         }
+        logger.printProgressBars(threads);
         for(SideThread thread : threads) {
             if (thread.exception != null) {
             	ex = thread.exception;

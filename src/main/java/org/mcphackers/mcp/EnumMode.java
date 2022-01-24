@@ -8,7 +8,7 @@ import org.mcphackers.mcp.tasks.info.*;
 public enum EnumMode {
 
     help("Displays command usage", null),
-    decompile("Start decompiling Minecraft", new TaskInfoDecompile(), new String[] {"debug", "ignore", "patch", "side", "client", "server"}),
+    decompile("Start decompiling Minecraft", new TaskInfoDecompile(), new String[] {"debug", "ignore", "indention", "patch", "side", "client", "server"}),
     recompile("Recompile Minecraft sources", new TaskInfoRecompile(), new String[] {"debug", "side", "client", "server"}),
     reobfuscate("Reobfuscate Minecraft classes", new TaskInfoReobfuscate(), new String[] {"debug", "side", "client", "server"}),
     updatemd5("Update md5 hash tables used for reobfuscation", new TaskInfoUpdateMD5(), new String[] {"debug", "side", "client", "server"}),
@@ -44,6 +44,7 @@ public enum EnumMode {
     }
     
     static {
+    	paramDescs.put("indention", "Indention character used for sources");
     	paramDescs.put("ignore", "List of packages to ignore");
     	paramDescs.put("debug", "Show exception stack trace");
     	paramDescs.put("patch", "Apply patches");

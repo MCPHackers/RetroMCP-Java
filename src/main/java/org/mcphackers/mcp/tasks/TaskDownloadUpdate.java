@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.fusesource.jansi.Ansi;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
@@ -32,8 +33,8 @@ public class TaskDownloadUpdate extends Task {
 		String latestVersion = releaseJson.getString("tag_name");
 		String notes = releaseJson.getString("body");
 		if(!latestVersion.equals(MCP.VERSION)) {
-			MCP.logger.info("New version found: " + latestVersion);
-			MCP.logger.info(notes);
+			MCP.logger.info(new Ansi().a("New version found: ").fgBrightYellow().a(latestVersion).fgDefault().toString());
+			MCP.logger.info(new Ansi().fgRgb(255,255,255).a("=========================").newline().a(notes).newline().a("=========================").fgDefault().toString());
 			for(Object obj : releaseJson.getJSONArray("assets")) {
 				if(obj instanceof JSONObject) {
 					JSONObject assetObj = (JSONObject)obj;
@@ -41,9 +42,10 @@ public class TaskDownloadUpdate extends Task {
 						continue;
 					}
 					FileUtil.downloadFile(new URL(assetObj.getString("browser_download_url")), Paths.get(MCPConfig.UPDATE_JAR));
+					break;
 				}
 			}
-			MCP.logger.info("Press ENTER key to continue");
+			MCP.logger.print("Press ENTER key to continue");
 			MCP.input.nextLine();
 			Path jarPath = Paths.get(MCP.class
 			          .getProtectionDomain()

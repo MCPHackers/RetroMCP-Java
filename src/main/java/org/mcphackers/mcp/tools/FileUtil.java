@@ -55,6 +55,13 @@ public class FileUtil {
         	Files.deleteIfExists(fileInsideZipPath);
         }
     }
+    
+    public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
+        try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+        	Path fileInsideZipPath = fs.getPath(file);
+        	Files.copy(fileInsideZipPath, out);
+        }
+    }
 
     public static void unzip(final Path zipFile, final Path destDir) throws IOException {
     	unzip(zipFile, destDir, false);
