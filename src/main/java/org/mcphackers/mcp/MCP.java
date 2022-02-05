@@ -58,10 +58,10 @@ public class MCP {
         if(Files.exists(Paths.get(MCPConfig.VERSION))) {
 			try {
 				VersionsParser.setCurrentVersion(new String(Files.readAllBytes(Paths.get(MCPConfig.VERSION))));
+	        	version = new Ansi().a("Current version: ").fgBrightCyan().a(VersionsParser.getCurrentVersion()).fgDefault().toString();
 			} catch (Exception e) {
 				version = new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString();
 			}
-        	version = new Ansi().a("Current version: ").fgBrightCyan().a(VersionsParser.getCurrentVersion()).fgDefault().toString();
         }
         if (args.length <= 0) {
             startedWithNoParams = true;

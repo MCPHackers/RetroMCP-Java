@@ -150,6 +150,7 @@ public class TaskDecompile extends Task {
         TinyRemapper remapper = TinyRemapper.newRemapper()
                 .renameInvalidLocals(false)
                 .rebuildSourceFilenames(true)
+                .skipLocalVariableMapping(true)
                 .invalidLvNamePattern(MC_LV_PATTERN)
                 .withMappings(mappings)
                 .fixPackageAccess(false)

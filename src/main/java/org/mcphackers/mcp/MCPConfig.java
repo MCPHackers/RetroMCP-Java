@@ -91,6 +91,8 @@ public class MCPConfig {
         	case "side":
         		onlySide = value;
         		break;
+	        default:
+	        	// TODO: Cancel task
         }
     }
 
@@ -106,6 +108,8 @@ public class MCPConfig {
 	        case "setupversion":
 	        	setupVersion = value;
 	            break;
+	        default:
+	        	// TODO: Cancel task
         }
     }
 
@@ -114,6 +118,8 @@ public class MCPConfig {
 	        case "ignore":
 	            ignorePackages = value;
 	            break;
+	        default:
+	        	// TODO: Cancel task
         }
     }
 
@@ -140,6 +146,8 @@ public class MCPConfig {
 	        case "runbuild":
 	        	runBuild = value;
 	            break;
+	        default:
+	        	// TODO: Cancel task
         }
     }
 

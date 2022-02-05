@@ -19,7 +19,7 @@ import org.mcphackers.mcp.MCPConfig;
 public class VersionsParser {
 	
 	private static final String jsonURL = "https://mcphackers.github.io/versions/versions.json";
-	private static String currentVersion = null;
+	private static String currentVersion = "unknown";
 	private static Exception cause = null;
 	
 	public static final JSONObject json = getJson();
