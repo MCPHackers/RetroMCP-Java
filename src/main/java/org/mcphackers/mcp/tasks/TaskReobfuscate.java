@@ -1,36 +1,26 @@
 package org.mcphackers.mcp.tasks;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import net.fabricmc.mappingio.MappingUtil;
+import net.fabricmc.mappingio.adapter.FlatAsRegularMappingVisitor;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import net.fabricmc.tinyremapper.OutputConsumerPath;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import net.fabricmc.tinyremapper.TinyUtils;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.ProgressInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
 
-import net.fabricmc.tinyremapper.OutputConsumerPath;
-import net.fabricmc.tinyremapper.TinyRemapper;
-import net.fabricmc.tinyremapper.TinyUtils;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TaskReobfuscate extends Task {
     private final Map<String, String> recompHashes = new HashMap<>();
@@ -66,12 +56,12 @@ public class TaskReobfuscate extends Task {
         if (Files.exists(reobfBin)) {
             FileUtil.deleteDirectoryIfExists(reobfDir);
             step();
-            gatherMD5Hashes(true, this.side);
-            gatherMD5Hashes(false, this.side);
+            gatherMD5Hashes(true);
+            gatherMD5Hashes(false);
 
             step();
-            readDeobfuscationMappings(this.side);
-            writeReobfuscationMappings(this.side);
+            readDeobfuscationMappings();
+            writeReobfuscationMappings();
             
             Files.deleteIfExists(reobfJar);
             TinyRemapper remapper = null;
@@ -115,7 +105,7 @@ public class TaskReobfuscate extends Task {
     }
 
     // Utility methods
-    private void writeReobfuscationMappings(int side) throws IOException {
+    private void writeReobfuscationMappings() throws IOException {
     	
         Path reobfBin = Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, 			MCPConfig.SERVER_BIN));
     	Path mappings = Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS_RO, 	MCPConfig.SERVER_MAPPINGS_RO));
@@ -145,18 +135,11 @@ public class TaskReobfuscate extends Task {
 
                         @Override
                         public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-                            if (!reobfFields.containsKey(className + "/" + name) && !name.equals("$VALUES")) {
-                                //extraReobfFields.put(className + "/" + name, className + "/" + name);
-                                //System.out.println("Class-name: " + className + ", Field: " + name + ", Signature: " + descriptor);
-                            }
                             return super.visitField(access, name, descriptor, signature, value);
                         }
 
                         @Override
                         public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-                            if (!reobfMethods.containsKey(className + "/" + name) && !name.equals("<init>") && !name.equals("<clinit>")) {
-                                //System.out.println("Class-name: " + className + ", Method name: " + name);
-                            }
                             return super.visitMethod(access, name, descriptor, signature, exceptions);
                         }
                     };
@@ -169,6 +152,10 @@ public class TaskReobfuscate extends Task {
 
         try (BufferedWriter writer = Files.newBufferedWriter(mappings)) {
             writer.write("tiny\t2\t0\tnamed\tofficial\n");
+
+            Map<String, String> flippedReobfClasses = reobfClasses.entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 
             for (Map.Entry<String, String> classKeyPair : reobfClasses.entrySet()) {
                 String deobfuscatedClassName = classKeyPair.getKey();
@@ -183,9 +170,7 @@ public class TaskReobfuscate extends Task {
 
                         // 	m	(Lho;IIIII)V	a	renderQuad
                         String signature = reobfuscatedMethodName.substring(reobfuscatedMethodName.lastIndexOf("("));
-                        String remappedSignature = MappingUtil.mapDesc(signature, reobfClasses.entrySet()
-                                .stream()
-                                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
+                        String remappedSignature = MappingUtil.mapDesc(signature, flippedReobfClasses);
                         writer.write("\tm\t" + remappedSignature + "\t" + deobfuscatedMethodName + "\t" + reobfuscatedMethodName.replace(signature, "") + "\n");
                     }
                 }
@@ -199,9 +184,7 @@ public class TaskReobfuscate extends Task {
 
                         // 	m	(Lho;IIIII)V	a	renderQuad
                         String signature = reobfuscatedFieldName.substring(reobfuscatedFieldName.lastIndexOf("(") + 1, reobfuscatedFieldName.length() - 1);
-                        String remappedSignature = MappingUtil.mapDesc(signature, reobfClasses.entrySet()
-                                .stream()
-                                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
+                        String remappedSignature = MappingUtil.mapDesc(signature, flippedReobfClasses);
                         writer.write("\tf\t" + remappedSignature + "\t" + deobfuscatedFieldName + "\t" + reobfuscatedFieldName.substring(0, reobfuscatedFieldName.indexOf("(")) + "\n");
                     }
                 }
@@ -210,7 +193,7 @@ public class TaskReobfuscate extends Task {
         }
     }
 
-    private void readDeobfuscationMappings(int side) throws IOException {
+    private void readDeobfuscationMappings() throws IOException {
     	Path mappings = Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS, 	MCPConfig.SERVER_MAPPINGS));
     	
         try (BufferedReader reader = Files.newBufferedReader(mappings)) {
@@ -246,11 +229,11 @@ public class TaskReobfuscate extends Task {
         }
     }
 
-    private void gatherMD5Hashes(boolean reobf, int side) throws IOException {
+    private void gatherMD5Hashes(boolean reobf) throws IOException {
         Path md5 = Paths.get(reobf ? chooseFromSide(MCPConfig.CLIENT_MD5_RO, MCPConfig.SERVER_MD5_RO)
         							  : chooseFromSide(MCPConfig.CLIENT_MD5, MCPConfig.SERVER_MD5));
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(md5.toFile()))) {
+        try (BufferedReader reader = Files.newBufferedReader(md5)) {
             String line = reader.readLine();
             while (line != null) {
                 String[] tokens = line.split(" ");
