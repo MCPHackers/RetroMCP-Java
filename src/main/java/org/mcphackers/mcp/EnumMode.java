@@ -23,14 +23,14 @@ public enum EnumMode {
 	public final String desc;
 	public final TaskInfo task;
 	public String[] params = new String[] {};
-	private static final Map<String, String> paramDescs = new HashMap<String, String>();
+	private static final Map<String, String> paramDescs = new HashMap<>();
     
-    private EnumMode(String desc, TaskInfo task) {
+    EnumMode(String desc, TaskInfo task) {
     	this.desc = desc;
     	this.task = task;
     }
     
-    private EnumMode(String desc, TaskInfo task, String[] params) {
+    EnumMode(String desc, TaskInfo task, String[] params) {
     	this(desc, task);
     	this.params = params;
     	

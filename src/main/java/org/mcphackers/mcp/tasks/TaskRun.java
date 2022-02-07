@@ -1,11 +1,13 @@
 package org.mcphackers.mcp.tasks;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
@@ -26,7 +28,7 @@ public class TaskRun extends Task {
 		}
 		String java = Util.getJava();
 		String natives = FileUtil.absolutePathString(MCPConfig.NATIVES);
-		List<String> cpList = new LinkedList<String>();
+		List<String> cpList = new LinkedList<>();
 		if(side == SERVER) {
 			if(MCP.config.runBuild) {
 				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_JAR_SERVER));
@@ -44,27 +46,24 @@ public class TaskRun extends Task {
 				cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT_BIN));
 				cpList.add(FileUtil.absolutePathString(Files.exists(Paths.get(MCPConfig.CLIENT_FIXED)) ? MCPConfig.CLIENT_FIXED : MCPConfig.CLIENT));
 			}
-			cpList.add(FileUtil.absolutePathString(MCPConfig.LWJGL));
-			cpList.add(FileUtil.absolutePathString(MCPConfig.LWJGL_UTIL));
-			cpList.add(FileUtil.absolutePathString(MCPConfig.JINPUT));
+			// P.S. I hate streams
+			cpList.addAll(Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library)).map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 		}
 		
 		
 		String cp = String.join(";", cpList);
 
-		List<String> args = new ArrayList<String>(
-			Arrays.asList(new String[] {
-					java,
-					"-Xms1024M",
-					"-Xmx1024M",
-					"-Djava.util.Arrays.useLegacyMergeSort=true",
-					"-Dhttp.proxyHost=betacraft.uk",
-					"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(),
-					"-Dorg.lwjgl.librarypath=" + natives,
-					"-Dnet.java.games.input.librarypath=" + natives,
-					"-cp", cp,
-					side == SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer") : "Start"
-				}));
+		List<String> args = new ArrayList<>(
+				Arrays.asList(java,
+						"-Xms1024M",
+						"-Xmx1024M",
+						"-Djava.util.Arrays.useLegacyMergeSort=true",
+						"-Dhttp.proxyHost=betacraft.uk",
+						"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(),
+						"-Dorg.lwjgl.librarypath=" + natives,
+						"-Dnet.java.games.input.librarypath=" + natives,
+						"-cp", cp,
+						side == SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer") : "Start"));
 		for(int i = 1; i < MCP.config.runArgs.length; i++) {
 			String arg = MCP.config.runArgs[i];
 			if(args.contains(arg)) {
@@ -72,6 +71,7 @@ public class TaskRun extends Task {
 			}
 			args.add(1, arg);
 		}
+		MCP.logger.println(args);
 		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPConfig.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
