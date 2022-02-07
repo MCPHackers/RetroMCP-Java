@@ -22,7 +22,7 @@ dependencies {
     // Required libraries
     implementation 'org.ow2.asm:asm:9.2'
 
-    implementation 'com.github.MCPHackers:RetroFernflower:bb99af2076'
+    implementation 'com.github.MCPHackers:RetroFernflower:a8edb85c7c'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
     implementation 'net.fabricmc:tiny-remapper:0.6.0'
     // TODO: Don't gut MCInjector bundled ASM
@@ -109,4 +109,14 @@ task setup(type: JavaExec) {
     main = mainClassName
     workingDir 'test'
     args 'setup', '-debug'
+}
+
+task cleanup(type: JavaExec) {
+    group = 'RetroMCP-Java'
+    standardInput = System.in
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+    workingDir 'test'
+    args 'cleanup', '-debug'
 }
