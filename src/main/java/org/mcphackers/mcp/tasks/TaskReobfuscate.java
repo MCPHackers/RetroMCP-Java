@@ -14,7 +14,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import net.fabricmc.mappingio.MappingUtil;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.ProgressInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
@@ -75,7 +77,7 @@ public class TaskReobfuscate extends Task {
             TinyRemapper remapper = null;
 
             try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(reobfJar).build()) {
-                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(mappings, "official", "named"), reobfBin, outputConsumer, TaskDecompile.getLibraryPaths(side));
+                remapper = TaskDecompile.remap(TinyUtils.createTinyMappingProvider(mappings, "named", "official"), reobfBin, outputConsumer, TaskDecompile.getLibraryPaths(side));
             } finally {
                 if (remapper != null) {
                     remapper.finish();
@@ -165,8 +167,8 @@ public class TaskReobfuscate extends Task {
             }
         });
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(mappings.toFile()))) {
-            writer.write("tiny\t2\t0\tofficial\tnamed\n");
+        try (BufferedWriter writer = Files.newBufferedWriter(mappings)) {
+            writer.write("tiny\t2\t0\tnamed\tofficial\n");
 
             for (Map.Entry<String, String> classKeyPair : reobfClasses.entrySet()) {
                 String deobfuscatedClassName = classKeyPair.getKey();
@@ -181,7 +183,9 @@ public class TaskReobfuscate extends Task {
 
                         // 	m	(Lho;IIIII)V	a	renderQuad
                         String signature = reobfuscatedMethodName.substring(reobfuscatedMethodName.lastIndexOf("("));
-                        String remappedSignature = remapSignature(signature);
+                        String remappedSignature = MappingUtil.mapDesc(signature, reobfClasses.entrySet()
+                                .stream()
+                                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
                         writer.write("\tm\t" + remappedSignature + "\t" + deobfuscatedMethodName + "\t" + reobfuscatedMethodName.replace(signature, "") + "\n");
                     }
                 }
@@ -195,7 +199,9 @@ public class TaskReobfuscate extends Task {
 
                         // 	m	(Lho;IIIII)V	a	renderQuad
                         String signature = reobfuscatedFieldName.substring(reobfuscatedFieldName.lastIndexOf("(") + 1, reobfuscatedFieldName.length() - 1);
-                        String remappedSignature = remapSignature(signature);
+                        String remappedSignature = MappingUtil.mapDesc(signature, reobfClasses.entrySet()
+                                .stream()
+                                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
                         writer.write("\tf\t" + remappedSignature + "\t" + deobfuscatedFieldName + "\t" + reobfuscatedFieldName.substring(0, reobfuscatedFieldName.indexOf("(")) + "\n");
                     }
                 }
@@ -204,21 +210,10 @@ public class TaskReobfuscate extends Task {
         }
     }
 
-    private String remapSignature(String signature) {
-        String remappedSignature = "";
-        StringBuilder builder = new StringBuilder();
-        if (remapSignature(builder, signature, 0, signature.length())) {
-            remappedSignature = builder.toString();
-            builder.setLength(0);
-        }
-        if (remappedSignature.equals("") || remappedSignature.equals("()")) remappedSignature = signature;
-        return remappedSignature;
-    }
-
     private void readDeobfuscationMappings(int side) throws IOException {
     	Path mappings = Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS, 	MCPConfig.SERVER_MAPPINGS));
     	
-        try (BufferedReader reader = new BufferedReader(new FileReader(mappings.toFile()))) {
+        try (BufferedReader reader = Files.newBufferedReader(mappings)) {
             String line = reader.readLine();
             String currentClassName = "";
             while (line != null) {
@@ -251,94 +246,6 @@ public class TaskReobfuscate extends Task {
         }
     }
 
-    private boolean remapSignature(StringBuilder signatureOut, String signature, int start, int end) {
-        if (start == end) {
-            return false;
-        }
-        int type = signature.codePointAt(start++);
-        switch (type) {
-            case 'T':
-                // generics type parameter
-                // fall-through intended as they are similar enough in format compared to objects
-            case 'L':
-                // object
-                // find the end of the internal name of the object
-                int endObject = start;
-                while(true) {
-                    // this will skip a character, but this is not interesting as class names have to be at least 1 character long
-                    int codepoint = signature.codePointAt(++endObject);
-                    if (codepoint == ';') {
-                        String name = signature.substring(start, endObject);
-                        String newName = getKeyByValue(reobfClasses, name);
-                        boolean modified = false;
-                        if (newName != null) {
-                            name = newName;
-                            modified = true;
-                        }
-                        signatureOut.appendCodePoint(type);
-                        signatureOut.append(name);
-                        signatureOut.append(';');
-                        modified |= remapSignature(signatureOut, signature, ++endObject, end);
-                        return modified;
-                    } else if (codepoint == '<') {
-                        // generics - please no
-                        // post scriptum: well, that was a bit easier than expected
-                        int openingBrackets = 1;
-                        int endGenerics = endObject;
-                        while(true) {
-                            codepoint = signature.codePointAt(++endGenerics);
-                            if (codepoint == '>' ) {
-                                if (--openingBrackets == 0) {
-                                    break;
-                                }
-                            } else if (codepoint == '<') {
-                                openingBrackets++;
-                            }
-                        }
-                        String name = signature.substring(start, endObject);
-                        String newName = getKeyByValue(reobfClasses, name);
-                        boolean modified = false;
-                        if (newName != null) {
-                            name = newName;
-                            modified = true;
-                        }
-                        signatureOut.append('L');
-                        signatureOut.append(name);
-                        signatureOut.append('<');
-                        modified |= remapSignature(signatureOut, signature, endObject + 1, endGenerics++);
-                        signatureOut.append('>');
-                        // apparently that can be rarely be a '.', don't ask when or why exactly this occours
-                        signatureOut.appendCodePoint(signature.codePointAt(endGenerics));
-                        modified |= remapSignature(signatureOut, signature, ++endGenerics, end);
-                        return modified;
-                    }
-                }
-            case '+':
-                // idk what this one does - but it appears that it works good just like it does right now
-            case '*':
-                // wildcard - this can also be read like a regular primitive
-                // fall-through intended
-            case '(':
-            case ')':
-                // apparently our method does not break even in these cases, so we will consider them raw primitives
-            case '[':
-                // array - fall through intended as in this case they behave the same
-            default:
-                // primitive
-                signatureOut.appendCodePoint(type);
-                return remapSignature(signatureOut, signature, start, end); // Did not modify the signature - but following operations could
-        }
-    }
-
-    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
-        for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
     private void gatherMD5Hashes(boolean reobf, int side) throws IOException {
         Path md5 = Paths.get(reobf ? chooseFromSide(MCPConfig.CLIENT_MD5_RO, MCPConfig.SERVER_MD5_RO)
         							  : chooseFromSide(MCPConfig.CLIENT_MD5, MCPConfig.SERVER_MD5));
@@ -364,7 +271,7 @@ public class TaskReobfuscate extends Task {
             String fileName = entry.getName();
             String deobfName = Util.getKey(reobfClasses, fileName.replace(".class", ""));
             String hash = originalHashes.get(deobfName);
-            return !entry.isDirectory() && ( hash != null && !hash.equals(recompHashes.get(deobfName)) || hash == null);
+            return !entry.isDirectory() && (hash == null || !hash.equals(recompHashes.get(deobfName)));
     	});
     }
 }
