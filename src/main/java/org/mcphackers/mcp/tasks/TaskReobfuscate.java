@@ -1,8 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
 import net.fabricmc.mappingio.MappingUtil;
-import net.fabricmc.mappingio.adapter.FlatAsRegularMappingVisitor;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.TinyUtils;
@@ -30,16 +28,11 @@ public class TaskReobfuscate extends Task {
     private final Map<String, String> reobfPackages = new HashMap<>();
     private final Map<String, String> reobfMethods = new HashMap<>();
     private final Map<String, String> reobfFields = new HashMap<>();
-
-    //private final Map<String, String> extraReobfClasses = new HashMap<>();
-    //private final Map<String, String> extraReobfMethods = new HashMap<>();
-    //private final Map<String, String> extraReobfFields = new HashMap<>();
     
-	private TaskUpdateMD5 md5Task;
+	private final TaskUpdateMD5 md5Task = new TaskUpdateMD5(side, info);
 
     public TaskReobfuscate(int side, TaskInfo info) {
         super(side, info);
-        md5Task = new TaskUpdateMD5(side, info);
     }
 
     @Override
@@ -83,24 +76,24 @@ public class TaskReobfuscate extends Task {
     @Override
     public ProgressInfo getProgress() {
     	int total = 100;
-    	int current = 0;
+    	int current;
     	switch (step) {
-	    case 1: {
-	    	current = 1;
-	    	ProgressInfo info = md5Task.getProgress();
-	    	int percent = (int)((double)info.getCurrent() / info.getTotal() * 50);
-	        return new ProgressInfo(info.getMessage(), current + percent, total); }
-	    case 2:
-        	current = 51;
-            return new ProgressInfo("Gathering MD5 hashes...", current, total);
-	    case 3:
-        	current = 52;
-            return new ProgressInfo("Reobfuscating...", current, total);
-	    case 4:
-        	current = 54;
-            return new ProgressInfo("Unpacking...", current, total);
-	    default:
-	    	return super.getProgress();
+	        case 1: {
+	    	    current = 1;
+	    	    ProgressInfo info = md5Task.getProgress();
+	    	    int percent = info.getCurrent() / info.getTotal() * 50;
+	            return new ProgressInfo(info.getMessage(), current + percent, total); }
+	        case 2:
+        	    current = 51;
+                return new ProgressInfo("Gathering MD5 hashes...", current, total);
+	        case 3:
+        	    current = 52;
+                return new ProgressInfo("Reobfuscating...", current, total);
+	        case 4:
+        	    current = 54;
+                return new ProgressInfo("Unpacking...", current, total);
+	        default:
+	    	    return super.getProgress();
 	    }
     }
 
