@@ -58,13 +58,10 @@ public class TaskRecompile extends Task {
             if(side == CLIENT) {
             	src.addAll(start);
             }
+            List<String> libraries = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).map(Path::toString).collect(Collectors.toList());
             List<String> options = Arrays.asList(
             		"-d", MCPConfig.CLIENT_BIN,
-            		"-cp", String.join(";", new String[] {
-            				MCPConfig.CLIENT_FIXED,
-            				MCPConfig.LWJGL,
-            				MCPConfig.LWJGL_UTIL,
-            				MCPConfig.JINPUT}));
+            		"-cp", String.join(";", libraries.toArray(new String[0])));
             if(side == SERVER) {
             	options = Arrays.asList(
             			"-d", MCPConfig.SERVER_BIN,
