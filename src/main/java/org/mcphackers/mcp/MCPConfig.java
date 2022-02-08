@@ -50,8 +50,8 @@ public class MCPConfig {
 	public static final String EXC_SERVER = 		 CONF + "server.exc";
 	public static final String CLIENT_PATCHES = 	 CONF + "patches_client";
 	public static final String SERVER_PATCHES = 	 CONF + "patches_server";
-	public static final String JAVADOC_CLIENT = 	 CONF + "client.javadoc";
-	public static final String JAVADOC_SERVER = 	 CONF + "server.javadoc";
+	public static final String JAVADOC_CLIENT = 	 CLIENT_MAPPINGS;
+	public static final String JAVADOC_SERVER = 	 SERVER_MAPPINGS;
 	public static final String BUILD_ZIP_CLIENT = 	 BUILD + "minecraft.zip";
 	public static final String BUILD_ZIP_SERVER = 	 BUILD + "minecraft_server.zip";
 	public static final String BUILD_JAR_CLIENT = 	 BUILD + "minecraft.jar";
