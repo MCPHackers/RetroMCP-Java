@@ -17,7 +17,7 @@ public enum EnumMode {
 	cleanup("Delete all source and class folders", new TaskInfoCleanup(), new String[] {"debug", "src"}),
 	startclient("Runs the client from compiled classes", new TaskInfoRun(0), new String[] {"runbuild"}),
 	startserver("Runs the server from compiled classes", new TaskInfoRun(1), new String[] {"runbuild"}),
-	build("Builds the final jar or zip", new TaskInfoBuild(), new String[] {"debug", "fullbuild", "side", "client", "server"}),
+	createpatch("Creates patch", new TaskInfoCreatePatch(), new String[]{}),
 	exit("Exit the program", null);
 	
 	public final String desc;

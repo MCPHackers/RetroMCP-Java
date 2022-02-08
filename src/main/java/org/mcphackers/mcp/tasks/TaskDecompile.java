@@ -69,7 +69,7 @@ public class TaskDecompile extends Task {
 			switch (step) {
 			case REMAP:
 				if (Files.exists(mappings)) {
-					Remapper.remap(mappings, originalJar, Paths.get(tinyOut), getLibraryPaths(side));
+					Remapper.remap(mappings, originalJar, Paths.get(tinyOut), true, getLibraryPaths(side));
 				}
 				else {
 					Files.copy(originalJar, Paths.get(tinyOut));
@@ -97,16 +97,7 @@ public class TaskDecompile extends Task {
 				break;
 			case PATCH:
 				if(MCP.config.patch && Files.exists(patchesPath)) {
-					PatchOperation patchOperation = PatchOperation.builder()
-						.verbose(true)
-						.basePath(ffOut)
-						.patchesPath(patchesPath)
-						.outputPath(ffOut)
-						.build();
-					int code = patchOperation.operate().exit;
-					if (code != 0) {
-						info.addInfo("Patching failed!");
-					}
+					patch(ffOut, ffOut, patchesPath, info);
 				}
 				break;
 			case CONSTS:
@@ -128,6 +119,19 @@ public class TaskDecompile extends Task {
 		}
 	}
 	
+	private static void patch(Path base, Path out, Path patches, TaskInfo info) throws IOException {
+		PatchOperation patchOperation = PatchOperation.builder()
+				.verbose(true)
+				.basePath(base)
+				.patchesPath(patches)
+				.outputPath(out)
+				.build();
+		int code = patchOperation.operate().exit;
+		if (code != 0) {
+			info.addInfo("Patching failed!");
+		}
+	}
+
 	public static Path[] getLibraryPaths(int side) {
 		if(side == CLIENT) {
 			return new Path[] {

@@ -21,12 +21,12 @@ public class MCP {
 	public static Scanner input;
 	private static final Ansi logo =
 			new Ansi()
-			.fgCyan().a("  _____	  _			 ").fgYellow().a("__  __  _____ _____  ").a('\n')
-			.fgCyan().a(" |  __ \\	| |		   ").fgYellow().a("|  \\/  |/ ____|  __ \\ ").a('\n')
-			.fgCyan().a(" | |__) |___| |_ _ __ ___ ").fgYellow().a("| \\  / | |	| |__) |").a('\n')
-			.fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |	|  ___/ ").a('\n')
-			.fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |	 ").a('\n')
-			.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|	 ").a('\n')
+			.fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____  ").a('\n')
+			.fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\ ").a('\n')
+			.fgCyan().a(" | |__) |___| |_ _ __ ___ ").fgYellow().a("| \\  / | |    | |__) |").a('\n')
+			.fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |    |  ___/ ").a('\n')
+			.fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |     ").a('\n')
+			.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
 			.fgDefault();
 
 	private static void attemptToDeleteUpdateJar() {

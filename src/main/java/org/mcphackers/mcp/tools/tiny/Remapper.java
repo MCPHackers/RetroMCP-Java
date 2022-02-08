@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 import net.fabricmc.tinyremapper.IMappingProvider;
+import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.TinyUtils;
@@ -15,10 +16,20 @@ public class Remapper {
 	private static final Pattern MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+");
 	
 	public static void remap(Path mappings, Path input, Path output, Path... cp) throws IOException {
+		remap(mappings, input, output, false, cp);
+	}
+	
+	public static void remap(Path mappings, Path input, Path output, boolean deobf, Path... cp) throws IOException {
 		TinyRemapper remapper = null;
+		String[] names = new String[] {"official", "named"};
+		
+		if(!deobf) {
+			names = new String[] {"named", "official"};
+		}
 
 		try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(output).build()) {
-			remapper = getRemapper(TinyUtils.createTinyMappingProvider(mappings, "named", "official"), input, outputConsumer, cp);
+			remapper = getRemapper(TinyUtils.createTinyMappingProvider(mappings, names[0], names[1]), input, outputConsumer, cp);
+			if(deobf) outputConsumer.addNonClassFiles(input, NonClassCopyMode.FIX_META_INF, remapper);
 		} finally {
 			if (remapper != null) {
 				remapper.finish();
