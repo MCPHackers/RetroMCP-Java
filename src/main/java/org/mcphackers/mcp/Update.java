@@ -9,10 +9,10 @@ import org.mcphackers.mcp.tools.Util;
 public class Update {
 	
 	public static void main(String[] args) {
-    	if(args.length >= 1) {
-    		boolean keepTrying = true;
-    		long startTime = System.currentTimeMillis();
-    		while(keepTrying) {
+		if(args.length >= 1) {
+			boolean keepTrying = true;
+			long startTime = System.currentTimeMillis();
+			while(keepTrying) {
 				try {
 					Files.deleteIfExists(Paths.get(args[0]));
 					Files.copy(Paths.get(MCPConfig.UPDATE_JAR), Paths.get(args[0]));
@@ -25,7 +25,7 @@ public class Update {
 				} catch (IOException e) {
 					keepTrying = System.currentTimeMillis() - startTime < 10000;
 				}
-    		}
-    	}
+			}
+		}
 	}
 }

@@ -17,9 +17,9 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public class TaskRun extends Task {
-    public TaskRun(int side, TaskInfo info) {
-        super(side, info);
-    }
+	public TaskRun(int side, TaskInfo info) {
+		super(side, info);
+	}
 
 	@Override
 	public void doTask() throws Exception {
@@ -44,9 +44,12 @@ public class TaskRun extends Task {
 			}
 			else {
 				cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT_BIN));
-				cpList.add(FileUtil.absolutePathString(Files.exists(Paths.get(MCPConfig.CLIENT_FIXED)) ? MCPConfig.CLIENT_FIXED : MCPConfig.CLIENT));
+				if(!Files.exists(Paths.get(MCPConfig.CLIENT_FIXED))) {
+					cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT));
+				}
 			}
 			// P.S. I hate streams
+			// Me too
 			cpList.addAll(Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library)).map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 		}
 		
@@ -66,8 +69,17 @@ public class TaskRun extends Task {
 						side == SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer") : "Start"));
 		for(int i = 1; i < MCP.config.runArgs.length; i++) {
 			String arg = MCP.config.runArgs[i];
-			if(args.contains(arg)) {
-				args.remove(arg);
+			for(String arg2 : args) {
+				if(arg.indexOf("=") > 0 && arg2.indexOf("=") > 0) {
+					if(arg2.substring(0, arg2.indexOf("=")).equals(arg.substring(0, arg.indexOf("=")))) {
+						args.remove(arg2);
+						break;
+					}
+				}
+				else if(arg2.equals(arg)) {
+					args.remove(arg2);
+					break;
+				}
 			}
 			args.add(1, arg);
 		}

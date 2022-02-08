@@ -2,14 +2,14 @@ package org.mcphackers.mcp;
 
 public class ProgressInfo {
 
-    private String msg;
-    private int[] progress = new int[2];
+	private String msg;
+	private int[] progress = new int[2];
 
-    public ProgressInfo(String currentMessage, int current, int total) {
-        msg = currentMessage;
-        progress[0] = current;
-        progress[1] = total;
-    }
+	public ProgressInfo(String currentMessage, int current, int total) {
+		msg = currentMessage;
+		progress[0] = current;
+		progress[1] = total;
+	}
 
 	public String getMessage() {
 		return this.msg;

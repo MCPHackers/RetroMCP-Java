@@ -93,13 +93,13 @@ public class VersionsParser {
 		if(!json.has(version)) {
 			throw new Exception("Invalid version detected!");
 		}
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPConfig.VERSION))) {
-        	writer.write(version);
-        }
-        currentVersion = version;
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPConfig.VERSION))) {
+			writer.write(version);
+		}
+		currentVersion = version;
 	}
 
 	public static String getCurrentVersion() {
-        return currentVersion;
+		return currentVersion;
 	}
 }

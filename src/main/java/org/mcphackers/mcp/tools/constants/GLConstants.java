@@ -27,24 +27,24 @@ public class GLConstants extends Constants {
 	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
 	private static final Pattern _INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[\\);]))|new KeyBinding\\([ \\w\\\"]+, .+?\\))");
 	private static final Pattern _IMPORT = Pattern.compile("import [.*\\w]+;");
-    
+	
 	public GLConstants() throws Exception {
 		if (cause != null) {
 			throw new Exception("Could not initialize constants", cause);
 		}
 	}
 	
-    private String updateImport(String code, String imp) {
-	    Matcher matcher = _IMPORT.matcher(code);
-    	int lastIndex = -1;
-	    while (matcher.find()) {
-	        lastIndex = matcher.end();
-	    }
-	    String impString = "import " + imp + ";";
-	    if(lastIndex >= 0 && !code.contains(impString)) {
-	    	code = code.substring(0, lastIndex) + System.lineSeparator() + impString + code.substring(lastIndex);
-	    }
-        return code;
+	private String updateImport(String code, String imp) {
+		Matcher matcher = _IMPORT.matcher(code);
+		int lastIndex = -1;
+		while (matcher.find()) {
+			lastIndex = matcher.end();
+		}
+		String impString = "import " + imp + ";";
+		if(lastIndex >= 0 && !code.contains(impString)) {
+			code = code.substring(0, lastIndex) + System.lineSeparator() + impString + code.substring(lastIndex);
+		}
+		return code;
 	}
 
 	protected String replace_constants(String code) {
@@ -56,7 +56,7 @@ public class GLConstants extends Constants {
 				if(replaceConst == null) {
 					return match2.group();
 				}
-        		imports.add("org.lwjgl.input.Keyboard");
+				imports.add("org.lwjgl.input.Keyboard");
 				return "Keyboard." + replaceConst;
 			});
 		});
@@ -65,19 +65,19 @@ public class GLConstants extends Constants {
 			String pkg = match1.group(1);
 			String method = match1.group(2);
 			return replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
-	            String full_match = match2.group(0);
-                for (Object groupg : _CONSTANTS) {
-                	List group = (List)groupg;
-                    if (((Map<String, List>)group.get(0)).containsKey(pkg) && ((List<Map<String, List>>)group).get(0).get(pkg).contains(method)) {
-                        for (Entry entry : ((Map<String, List<String>>)group.get(1)).entrySet()) {
-                            if(((Map)entry.getValue()).containsKey(full_match)) {
-        	            		imports.add("org.lwjgl.opengl." + entry.getKey());
-                                return String.format("%s.%s", entry.getKey(), ((Map)entry.getValue()).get(full_match));
-                            }
-                        }
-                    }
-                }
-                return full_match;
+				String full_match = match2.group(0);
+				for (Object groupg : _CONSTANTS) {
+					List group = (List)groupg;
+					if (((Map<String, List>)group.get(0)).containsKey(pkg) && ((List<Map<String, List>>)group).get(0).get(pkg).contains(method)) {
+						for (Entry entry : ((Map<String, List<String>>)group.get(1)).entrySet()) {
+							if(((Map)entry.getValue()).containsKey(full_match)) {
+								imports.add("org.lwjgl.opengl." + entry.getKey());
+								return String.format("%s.%s", entry.getKey(), ((Map)entry.getValue()).get(full_match));
+							}
+						}
+					}
+				}
+				return full_match;
 			});
 		});
 		for(String imp : imports) {

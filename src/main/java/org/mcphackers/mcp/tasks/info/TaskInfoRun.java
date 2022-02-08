@@ -10,28 +10,28 @@ public class TaskInfoRun extends TaskInfo {
 		this.side = side;
 	}
 	
-    @Override
-    public String title() {
-        return "Running " + (side == 1 ? "Server" : "Client");
-    }
+	@Override
+	public String title() {
+		return "Running " + (side == 1 ? "Server" : "Client");
+	}
 
-    @Override
-    public String successMsg() {
-        return null;
-    }
+	@Override
+	public String successMsg() {
+		return null;
+	}
 
-    @Override
-    public String failMsg() {
-        return "CRASH DETECTED!";
-    }
+	@Override
+	public String failMsg() {
+		return "CRASH DETECTED!";
+	}
 
-    @Override
-    public Task newTask(int side) {
-        return new TaskRun(this.side, this);
-    }
+	@Override
+	public Task newTask(int side) {
+		return new TaskRun(this.side, this);
+	}
 
-    @Override
-    public boolean isMultiThreaded() {
-        return false;
-    }
+	@Override
+	public boolean isMultiThreaded() {
+		return false;
+	}
 }

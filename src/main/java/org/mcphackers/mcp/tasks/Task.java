@@ -19,18 +19,18 @@ public abstract class Task {
 
 	public abstract void doTask() throws Exception;
 
-    public ProgressInfo getProgress() {
-    	return new ProgressInfo("Idle", (step > 0 ? 1 : 0), 1);
-    }
-    
-    protected void step() {
-    	step++;
-    }
-    
-    protected String chooseFromSide(String... strings) {
-    	if(side < strings.length) {
-    		return strings[side];
-    	}
-    	return null;
-    }
+	public ProgressInfo getProgress() {
+		return new ProgressInfo("Idle", (step > 0 ? 1 : 0), 1);
+	}
+	
+	protected void step() {
+		step++;
+	}
+	
+	protected String chooseFromSide(String... strings) {
+		if(side < strings.length) {
+			return strings[side];
+		}
+		return null;
+	}
 }

@@ -21,12 +21,12 @@ public class TaskDownloadUpdate extends Task {
 
 	private static final String API = "https://api.github.com/repos/MCPHackers/RetroMCP-Java/releases/latest";
 	
-    public TaskDownloadUpdate(TaskInfo info) {
+	public TaskDownloadUpdate(TaskInfo info) {
 		super(-1 , info);
 	}
 
-    @Override
-    public void doTask() throws Exception {
+	@Override
+	public void doTask() throws Exception {
 		URL updateURL = new URL(API);
 		InputStream in = updateURL.openStream();
 		JSONObject releaseJson = Util.parseJSONFile(in);
@@ -48,10 +48,10 @@ public class TaskDownloadUpdate extends Task {
 			MCP.logger.print("Press ENTER key to continue");
 			MCP.input.nextLine();
 			Path jarPath = Paths.get(MCP.class
-			          .getProtectionDomain()
-			          .getCodeSource()
-			          .getLocation()
-			          .toURI());
+					  .getProtectionDomain()
+					  .getCodeSource()
+					  .getLocation()
+					  .toURI());
 			if(!Files.isDirectory(jarPath)) {
 				String[] cmd = new String[] {
 					Util.getJava(),
@@ -67,5 +67,5 @@ public class TaskDownloadUpdate extends Task {
 				throw new IOException("Running from a folder! Aborting");
 			}
 		}
-    }
+	}
 }

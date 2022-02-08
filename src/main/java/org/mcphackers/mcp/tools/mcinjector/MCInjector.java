@@ -11,14 +11,14 @@ public class MCInjector extends MCInjectorImpl {
 		super(index);
 	}
 
-    public static void process(String inFile, String outFile, String mapFile, int index)
-        throws IOException
-    {
-        MCInjectorImpl.log.setUseParentHandlers(false);
-        MCInjectorImpl.log.setLevel(Level.ALL);
-        MCInjectorImpl mci = new MCInjector(index);
-        mci.loadMap(mapFile);
-        mci.processJar(inFile, outFile);
-    }
+	public static void process(String inFile, String outFile, String mapFile, int index)
+		throws IOException
+	{
+		MCInjectorImpl.log.setUseParentHandlers(false);
+		MCInjectorImpl.log.setLevel(Level.ALL);
+		MCInjectorImpl mci = new MCInjector(index);
+		mci.loadMap(mapFile);
+		mci.processJar(inFile, outFile);
+	}
 
 }

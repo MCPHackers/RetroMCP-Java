@@ -28,94 +28,94 @@ public class TaskRecompile extends Task {
 	private static final int RECOMPILE = 1;
 	private static final int COPYRES = 2;
 
-    public TaskRecompile(int side, TaskInfo info) {
-        super(side, info);
-        this.total = 100;
-        this.progress = 0;
+	public TaskRecompile(int side, TaskInfo info) {
+		super(side, info);
+		this.total = 100;
+		this.progress = 0;
 	}
 
 	@Override
-    public void doTask() throws Exception {
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        if(compiler == null) {
-        	throw new RuntimeException("Could not find compiling API");
-        }
-        DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
+	public void doTask() throws Exception {
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		if(compiler == null) {
+			throw new RuntimeException("Could not find compiling API");
+		}
+		DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
 
-        Path binPath = Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));
-        Path srcPath = Paths.get(chooseFromSide(MCPConfig.CLIENT_SOURCES, 	MCPConfig.SERVER_SOURCES));
+		Path binPath = Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, 		MCPConfig.SERVER_BIN));
+		Path srcPath = Paths.get(chooseFromSide(MCPConfig.CLIENT_SOURCES, 	MCPConfig.SERVER_SOURCES));
 
-        step();
-        this.progress = 1;
-        FileUtil.deleteDirectoryIfExists(binPath);
-        Files.createDirectories(binPath);
-        this.progress = 2;
+		step();
+		this.progress = 1;
+		FileUtil.deleteDirectoryIfExists(binPath);
+		Files.createDirectories(binPath);
+		this.progress = 2;
 
-        // Compile side
-        if (Files.exists(srcPath)) {
-            List<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-            List<File> start = Files.walk(Paths.get(MCPConfig.CONF + "start")).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-            if(side == CLIENT) {
-            	src.addAll(start);
-            }
-            List<String> libraries = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library)).map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
-            List<String> options = Arrays.asList(
-            		"-d", MCPConfig.CLIENT_BIN,
-            		"-cp", String.join(";", libraries));
-            if(side == SERVER) {
-            	options = Arrays.asList(
-            			"-d", MCPConfig.SERVER_BIN,
-            			"-cp", MCPConfig.SERVER);
-            }
-            this.progress = 3;
-            recompile(compiler, ds, src, options);
-            this.progress = 50;
-            // Copy assets from source folder
-            step();
-            List<Path> assets = FileUtil.listDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
-            int i = 0;
-            for(Path path : assets) {
-            	if(srcPath.relativize(path).getParent() != null) {
-            		Files.createDirectories(binPath.resolve(srcPath.relativize(path).getParent()));
-            	}
-            	Files.copy(path, binPath.resolve(srcPath.relativize(path)));
-            	i++;
-            	this.progress = 50 + (int)((double)i / assets.size() * 49);
-            }
-            this.progress = 99;
-        } else {
-        	throw new IOException(chooseFromSide("Client", "Server") + " sources not found!");
-        }
-    }
+		// Compile side
+		if (Files.exists(srcPath)) {
+			List<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+			List<File> start = Files.walk(Paths.get(MCPConfig.CONF + "start")).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+			if(side == CLIENT) {
+				src.addAll(start);
+			}
+			List<String> libraries = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library)).map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
+			List<String> options = Arrays.asList(
+					"-d", MCPConfig.CLIENT_BIN,
+					"-cp", String.join(";", libraries));
+			if(side == SERVER) {
+				options = Arrays.asList(
+						"-d", MCPConfig.SERVER_BIN,
+						"-cp", MCPConfig.SERVER);
+			}
+			this.progress = 3;
+			recompile(compiler, ds, src, options);
+			this.progress = 50;
+			// Copy assets from source folder
+			step();
+			List<Path> assets = FileUtil.listDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
+			int i = 0;
+			for(Path path : assets) {
+				if(srcPath.relativize(path).getParent() != null) {
+					Files.createDirectories(binPath.resolve(srcPath.relativize(path).getParent()));
+				}
+				Files.copy(path, binPath.resolve(srcPath.relativize(path)));
+				i++;
+				this.progress = 50 + (int)((double)i / assets.size() * 49);
+			}
+			this.progress = 99;
+		} else {
+			throw new IOException(chooseFromSide("Client", "Server") + " sources not found!");
+		}
+	}
 
 	public void recompile(JavaCompiler compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> src, Iterable<String> recompileOptions) throws IOException, RuntimeException {
-        StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null);
-        Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(src);
-        JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, recompileOptions, null, sources);
-        mgr.close();
-        boolean success = task.call();
-        for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
-        	if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
-        		String kind = diagnostic.getKind() == Diagnostic.Kind.ERROR ? "Error" : "Warning";
-            	info.addInfo(kind + String.format(" on line %d in %s%n%s%n",
-                                  		diagnostic.getLineNumber(),
-                                  		diagnostic.getSource().getName(),
-                                  		diagnostic.getMessage(null)));
-        	}
-        mgr.close();
-        if (!success) {
-            throw new RuntimeException("Compilation error!");
-        }
-    }
+		StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null);
+		Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(src);
+		JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, recompileOptions, null, sources);
+		mgr.close();
+		boolean success = task.call();
+		for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
+			if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
+				String kind = diagnostic.getKind() == Diagnostic.Kind.ERROR ? "Error" : "Warning";
+				info.addInfo(kind + String.format(" on line %d in %s%n%s%n",
+								  		diagnostic.getLineNumber(),
+								  		diagnostic.getSource().getName(),
+								  		diagnostic.getMessage(null)));
+			}
+		mgr.close();
+		if (!success) {
+			throw new RuntimeException("Compilation error!");
+		}
+	}
 
-    @Override
-    public ProgressInfo getProgress() {
-        if(step == RECOMPILE) {
-        	return new ProgressInfo("Recompiling...", progress, total);
-        }
-        if(step == COPYRES) {
-        	return new ProgressInfo("Copying resources...", progress, total);
-        }
-        return super.getProgress();
-    }
+	@Override
+	public ProgressInfo getProgress() {
+		if(step == RECOMPILE) {
+			return new ProgressInfo("Recompiling...", progress, total);
+		}
+		if(step == COPYRES) {
+			return new ProgressInfo("Copying resources...", progress, total);
+		}
+		return super.getProgress();
+	}
 }

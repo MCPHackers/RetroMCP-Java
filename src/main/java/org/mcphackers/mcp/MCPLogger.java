@@ -37,41 +37,41 @@ public class MCPLogger {
 	
 	public void printProgressBars(List<SideThread> threads) {
 		StringBuilder s = new StringBuilder(new Ansi().cursorUp(threads.size() + 1).a('\n').toString());
-        for (int i = 0; i < threads.size(); i++) {
-            ProgressInfo dinfo = threads.get(i).getInfo();
-            String side = threads.get(i).getSideName();
-            s.append(progressString(dinfo.getTotal(), dinfo.getCurrent(), dinfo.getMessage(), side + ":"));
-        }
-        s.append(new Ansi().reset().toString());
-        String progressBar = s.toString();
-        if(!progressBar.equals(cachedProgressBar)) print(progressBar);
-        cachedProgressBar = progressBar;
+		for (int i = 0; i < threads.size(); i++) {
+			ProgressInfo dinfo = threads.get(i).getInfo();
+			String side = threads.get(i).getSideName();
+			s.append(progressString(dinfo.getTotal(), dinfo.getCurrent(), dinfo.getMessage(), side + ":"));
+		}
+		s.append(new Ansi().reset().toString());
+		String progressBar = s.toString();
+		if(!progressBar.equals(cachedProgressBar)) print(progressBar);
+		cachedProgressBar = progressBar;
 	}
 
-    private static String progressString(long total, long current, String progressMsg, String prefix) {
-        Ansi string = new Ansi(100);
-        if (total != 0) {
-            int percent = (int) (current * 100 / total);
-            string
-                    .a(" ")
-                    .a(String.format("%-7s", prefix))
-                    .a(String.join("", Collections.nCopies(percent == 0 ? 2 : 2 - (int) (Math.log10(percent)), " ")))
-                    .a(String.format(" %d%% [", percent))
-                    .fgGreen()
-                    .a(String.join("", Collections.nCopies(percent / 10, "=")))
-                    .fgDefault()
-                    .a(String.join("", Collections.nCopies(10 - percent / 10, "-")))
-                    .a("] ")
-                    .a(progressMsg)
-                    .a(String.join("", Collections.nCopies(100, " ")));
-        }
+	private static String progressString(long total, long current, String progressMsg, String prefix) {
+		Ansi string = new Ansi(100);
+		if (total != 0) {
+			int percent = (int) (current * 100 / total);
+			string
+					.a(" ")
+					.a(String.format("%-7s", prefix))
+					.a(String.join("", Collections.nCopies(percent == 0 ? 2 : 2 - (int) (Math.log10(percent)), " ")))
+					.a(String.format(" %d%% [", percent))
+					.fgGreen()
+					.a(String.join("", Collections.nCopies(percent / 10, "=")))
+					.fgDefault()
+					.a(String.join("", Collections.nCopies(10 - percent / 10, "-")))
+					.a("] ")
+					.a(progressMsg)
+					.a(String.join("", Collections.nCopies(100, " ")));
+		}
 
-        return string.a("\n").toString();
-    }
-    
-    public void resetProgressString() {
-    	cachedProgressBar = null;
-    }
+		return string.a("\n").toString();
+	}
+	
+	public void resetProgressString() {
+		cachedProgressBar = null;
+	}
 	
 	public void info(String msg) {
 		log(msg);

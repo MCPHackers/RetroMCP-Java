@@ -69,86 +69,86 @@ public class MCPConfig {
 	public String setupVersion;
 	public String[] runArgs;
 
-    public MCPConfig() {
-        resetConfig();
-    }
+	public MCPConfig() {
+		resetConfig();
+	}
 
-    public void resetConfig() {
-        debug = false;
-        patch = true;
-        srcCleanup = false;
-    	onlySide = -1;
-    	ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
-    	indentionString = "\t";
-    	fullBuild = false;
-    	runBuild = false;
-    	setupVersion = null;
-    	runArgs = null;
-    }
+	public void resetConfig() {
+		debug = false;
+		patch = true;
+		srcCleanup = false;
+		onlySide = -1;
+		ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
+		indentionString = "\t";
+		fullBuild = false;
+		runBuild = false;
+		setupVersion = null;
+		runArgs = null;
+	}
 
-    public void setParameter(String name, int value) {
-        switch (name) {
-        	case "side":
-        		onlySide = value;
-        		break;
-	        default:
-	        	// TODO: Cancel task
-        }
-    }
+	public void setParameter(String name, int value) {
+		switch (name) {
+			case "side":
+				onlySide = value;
+				break;
+			default:
+				// TODO: Cancel task
+		}
+	}
 
-    public void setParameter(String name, String value) {
-        switch (name) {
-	        case "ind":
-	        case "indention":
-	        	indentionString = value;
-	            break;
-	        case "ignore":
-	            ignorePackages = new String[] {value};
-	            break;
-	        case "setupversion":
-	        	setupVersion = value;
-	            break;
-	        default:
-	        	// TODO: Cancel task
-        }
-    }
+	public void setParameter(String name, String value) {
+		switch (name) {
+			case "ind":
+			case "indention":
+				indentionString = value;
+				break;
+			case "ignore":
+				ignorePackages = new String[] {value};
+				break;
+			case "setupversion":
+				setupVersion = value;
+				break;
+			default:
+				// TODO: Cancel task
+		}
+	}
 
-    public void setParameter(String name, String[] value) {
-        switch (name) {
-	        case "ignore":
-	            ignorePackages = value;
-	            break;
-	        default:
-	        	// TODO: Cancel task
-        }
-    }
+	public void setParameter(String name, String[] value) {
+		switch (name) {
+			case "ignore":
+				ignorePackages = value;
+				break;
+			default:
+				// TODO: Cancel task
+		}
+	}
 
-    public void setParameter(String name, boolean value) {
-        switch (name) {
-            case "debug":
-                debug = value;
-                break;
-            case "patch":
-                patch = value;
-                break;
-        	case "client":
-        		onlySide = value ? 0 : onlySide;
-        		break;
-        	case "server":
-        		onlySide = value ? 1 : onlySide;
-        		break;
-	        case "src":
-	            srcCleanup = value;
-	            break;
-	        case "fullbuild":
-	        	fullBuild = value;
-	            break;
-	        case "runbuild":
-	        	runBuild = value;
-	            break;
-	        default:
-	        	// TODO: Cancel task
-        }
-    }
+	public void setParameter(String name, boolean value) {
+		switch (name) {
+			case "debug":
+				debug = value;
+				break;
+			case "patch":
+				patch = value;
+				break;
+			case "client":
+				onlySide = value ? 0 : onlySide;
+				break;
+			case "server":
+				onlySide = value ? 1 : onlySide;
+				break;
+			case "src":
+				srcCleanup = value;
+				break;
+			case "fullbuild":
+				fullBuild = value;
+				break;
+			case "runbuild":
+				runBuild = value;
+				break;
+			default:
+				// TODO: Cancel task
+		}
+	}
 
 }
