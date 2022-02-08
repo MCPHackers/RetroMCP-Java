@@ -27,8 +27,8 @@ public class TaskDecompile extends Task {
 	private static final int EXCEPTOR = 2;
 	private static final int DECOMPILE = 3;
 	private static final int EXTRACT = 4;
-	private static final int PATCH = 5;
-	private static final int CONSTS = 6;
+	private static final int CONSTS = 5;
+	private static final int PATCH = 6;
 	private static final int COPYSRC = 7;
 	private static final int RECOMPILE = 8;
 	private static final int MD5 = 9;
@@ -95,16 +95,16 @@ public class TaskDecompile extends Task {
 				FileUtil.createDirectories(Paths.get(MCPConfig.SRC));
 				FileUtil.unzipByExtension(Paths.get(srcZip), ffOut, ".java");
 				break;
-			case PATCH:
-				if(MCP.config.patch && Files.exists(patchesPath)) {
-					patch(ffOut, ffOut, patchesPath, info);
-				}
-				break;
 			case CONSTS:
 				if(hasLWJGL) {
 					new GLConstants().replace(ffOut);
 				}
 				new MathConstants().replace(ffOut);
+				break;
+			case PATCH:
+				if(MCP.config.patch && Files.exists(patchesPath)) {
+					patch(ffOut, ffOut, patchesPath, info);
+				}
 				break;
 			case COPYSRC:
 				FileUtil.copyDirectory(ffOut, srcPath, MCP.config.ignorePackages);
