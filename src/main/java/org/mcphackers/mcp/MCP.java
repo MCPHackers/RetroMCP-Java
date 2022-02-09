@@ -4,8 +4,11 @@ import jredfox.selfcmd.SelfCommandPrompt;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -66,8 +69,14 @@ public class MCP {
 		if (args.length <= 0) {
 			startedWithNoParams = true;
 			logger.println(logo);
+			JavaCompiler c = ToolProvider.getSystemJavaCompiler();
+			if (c == null) {
+				// Likely a JRE
+				logger.println(new Ansi().fgBrightRed().a("Error: Java Development Kit not detected! Compilation will fail!").toString());
+				logger.println("Using Java from " + Paths.get(Util.getJava()).toAbsolutePath());
+			}
 			if(version != null) logger.info(version);
-			logger.println("Enter a command to execute:");
+			logger.println(new Ansi().fgDefault().a("Enter a command to execute:").toString());
 		}
 		int executeTimes = 0;
 		while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
