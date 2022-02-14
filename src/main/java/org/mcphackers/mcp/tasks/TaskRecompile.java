@@ -61,7 +61,7 @@ public class TaskRecompile extends Task {
 			List<String> libraries = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library)).map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
 			List<String> options = Arrays.asList(
 					"-d", MCPConfig.CLIENT_BIN,
-					"-cp", String.join(";", libraries));
+					"-cp", String.join(System.getProperty("path.separator"), libraries));
 			if(side == SERVER) {
 				options = Arrays.asList(
 						"-d", MCPConfig.SERVER_BIN,
