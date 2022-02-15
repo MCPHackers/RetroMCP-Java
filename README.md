@@ -6,9 +6,12 @@ RetroMCP-Java is a complete re-design of RetroMCP in Java.
 # Using
 
 Using RetroMCP-Java is simple!
-1. Download and install the latest version of java from this link https://www.azul.com/downloads/?version=java-8-lts&package=jdk (You may use a newer version of OpenJDK
-2. Run the jarfile either from the command line or a file explorer. If runnning from a file explorer works make sure your PATH is properly configured.
-3. Run the setup command and choose the version you wish to decompile (up to release 1.2.5 is supported right now, however newer versions such as 1.5.2 might get support in the near future)
+1. Download and install the latest version of Java from OpenJDK. MCPHackers recommend (Azul Zulu)[https://www.azul.com/downloads/?version=java-8-lts&package=jdk]
+> Oracle JDK isn't suggested as not only does Oracle require signing up for the latest Java 8, but Oracle JDK tries to advertise
+scams inside the installer, the JDK is of poor quality in comparison to OpenJDK, and unilaterally breaks JAR file associations.
+2. Run the latest release from the command line or via double click. If you run it via double click and RMCP errors, make sure your PATH
+and your JAR file associations are properly configured
+3. Run the setup command and choose the version you wish to decompile.
 4. Run the decompile command
 5. Mod away! Now it's Yourcraft!
 
@@ -21,10 +24,6 @@ Using RetroMCP-Java is simple!
 * A Start class for applet-only versions
 * Reobfuscation for all available versions
 
-# Roadmap
-
-* Separate versions folder from RetroMCP and use Github API to download from the Vault
-
 # Licensing
 
 MCP Version 4.3 __did not__ ship with a license, therefore it is allowed to be reuploaded and modified here.
@@ -34,8 +33,6 @@ With that in mind, all credit towards MCP goes to the original creators. Read do
 # Contributing
 
 If you enounter any issues or bugs with RetroMCP, please create an issue and explain it in detail!
-
-NOTE: ORACLE JDK PROBABY WON'T BE SUPPORTED ANYMORE! USE AZUL ZULU JDK, ECLIPSE ADOPTIUM, OR SOME OTHER OPENJDK DISTRIBUTION INSTEAD!
 
 If you want to contribute, please keep pull requests about one topic instead of one huge pull request.
 
