@@ -104,7 +104,7 @@ public class TaskRecompile extends Task {
 				String kind = diagnostic.getKind() == Diagnostic.Kind.ERROR ? "Error" : "Warning";
 				info.addInfo(kind + String.format(" on line %d in %s%n%s%n",
 								  		diagnostic.getLineNumber(),
-								  		"something",
+								  		diagnostic.getSource().getName(),
 								  		diagnostic.getMessage(null)));
 			}
 		mgr.close();
