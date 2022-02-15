@@ -20,7 +20,7 @@ RetroMCP-Java is a complete re-design of RetroMCP in Java.
 
 MCP Version 4.3 __did not__ ship with a license, therefore it is allowed to be reuploaded and modified here.
 
-With that in mind, all credit towards MCP goes to the original creators. Read docs/README-MCP.txt for credits.
+With that in mind, all credit towards MCP goes to the original creators. Read docs/MCP43-CREDITS.txt for a list of people who worked on the original MCP.
 
 # Contributing
 
