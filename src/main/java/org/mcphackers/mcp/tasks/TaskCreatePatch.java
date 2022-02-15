@@ -4,6 +4,7 @@ import codechicken.diffpatch.cli.DiffOperation;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,14 +32,17 @@ public class TaskCreatePatch extends Task {
 	}
 
 	public void createDiffOperation(Path aPath, Path bPath, Path outputPath) throws Exception {
+		ByteArrayOutputStream logger = new ByteArrayOutputStream();
 		DiffOperation diffOperation = DiffOperation.builder()
 				.aPath(aPath)
 				.bPath(bPath)
 				.outputPath(outputPath)
 				.verbose(true)
+				.logTo(logger)
 				.summary(true).build();
-		if(diffOperation.operate().exit != 0) {
-			//throw new Exception("Patches could not be created!");
+		if (diffOperation.operate().exit != 0) {
+			info.addInfo(logger.toString());
+			throw new Exception("Patches could not be created!");
 		}
 	}
 }

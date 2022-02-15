@@ -1,10 +1,14 @@
 package org.mcphackers.mcp.tasks;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import codechicken.diffpatch.cli.CliOperation;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.ProgressInfo;
@@ -120,14 +124,17 @@ public class TaskDecompile extends Task {
 	}
 	
 	private static void patch(Path base, Path out, Path patches, TaskInfo info) throws IOException {
+		ByteArrayOutputStream logger = new ByteArrayOutputStream();
 		PatchOperation patchOperation = PatchOperation.builder()
 				.verbose(true)
 				.basePath(base)
 				.patchesPath(patches)
 				.outputPath(out)
+				.logTo(logger)
 				.build();
-		int code = patchOperation.operate().exit;
-		if (code != 0) {
+		CliOperation.Result<PatchOperation.PatchesSummary> result = patchOperation.operate();
+		if (result.exit != 0) {
+			info.addInfo(logger.toString());
 			info.addInfo("Patching failed!");
 			throw new IOException("Could not apply patches!");
 		}
