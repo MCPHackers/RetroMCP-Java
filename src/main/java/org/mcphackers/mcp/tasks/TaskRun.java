@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
@@ -48,9 +49,11 @@ public class TaskRun extends Task {
 					cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT));
 				}
 			}
-			// P.S. I hate streams
-			// Me too
-			cpList.addAll(Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library)).map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
+			List<String> libraries = new ArrayList();
+			try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+				libraries = stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
+			}
+			cpList.addAll(libraries);
 		}
 		
 		
@@ -83,7 +86,7 @@ public class TaskRun extends Task {
 			}
 			args.add(1, arg);
 		}
-		MCP.logger.println(args);
+		//MCP.logger.println(args);
 		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPConfig.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);

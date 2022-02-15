@@ -187,7 +187,7 @@ public class TaskSetup extends Task {
 		String table = "";
 		int index = 0;
 		for (String ver : versions) {
-			tableList[index % rows].add(new Ansi().fgBrightCyan().a(" - ").fgDefault().fgCyan().a(String.format("%-12s", ver)).fgDefault().toString());
+			tableList[index % rows].add(new Ansi().fgBrightCyan().a(" - ").fgDefault().fgCyan().a(String.format("%-16s", ver)).fgDefault().toString());
 			index++;
 		}
 		for (int i = 0; i < tableList.length; i++)

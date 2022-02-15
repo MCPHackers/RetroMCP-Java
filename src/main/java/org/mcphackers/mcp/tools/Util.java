@@ -74,7 +74,7 @@ public class Util {
 	
 	public static String time(long time) {
 		long seconds = TimeUnit.MILLISECONDS.toSeconds(time);
-		long milliseconds = TimeUnit.MILLISECONDS.toMillis(time);
+		long milliseconds = TimeUnit.MILLISECONDS.toMillis(time) - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(time));
 		return seconds + "s " + milliseconds + "ms";
 	}
 	
@@ -173,7 +173,7 @@ public class Util {
 	
 	public static <K, V> K getKey(Map<K, V> map, V value) {
 		for (Entry<K, V> entry : map.entrySet()) {
-			if (entry.getValue().equals(value)) {
+			if (entry.getValue() != null && entry.getValue().equals(value)) {
 				return entry.getKey();
 			}
 		}

@@ -129,6 +129,7 @@ public class TaskDecompile extends Task {
 		int code = patchOperation.operate().exit;
 		if (code != 0) {
 			info.addInfo("Patching failed!");
+			throw new IOException("Could not apply patches!");
 		}
 	}
 

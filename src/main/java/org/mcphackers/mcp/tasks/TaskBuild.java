@@ -43,9 +43,9 @@ public class TaskBuild extends Task {
 				if(MCP.config.fullBuild) {
 					Files.deleteIfExists(buildJar);
 					Files.copy(originalJar, buildJar);
-					List<Path> reobfClasses = FileUtil.listDirectory(reobfDir, path -> !Files.isDirectory(path));
+					List<Path> reobfClasses = FileUtil.walkDirectory(reobfDir, path -> !Files.isDirectory(path));
 					FileUtil.packFilesToZip(buildJar, reobfClasses, reobfDir);
-					List<Path> assets = FileUtil.listDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
+					List<Path> assets = FileUtil.walkDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
 					FileUtil.packFilesToZip(buildJar, assets, bin);
 					FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.DSA");
 					FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.SF");
@@ -53,7 +53,7 @@ public class TaskBuild extends Task {
 				else {
 					Files.deleteIfExists(buildZip);
 					FileUtil.compress(reobfDir, buildZip);
-					List<Path> assets = FileUtil.listDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
+					List<Path> assets = FileUtil.walkDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
 					FileUtil.packFilesToZip(buildZip, assets, bin);
 				}
 				break;

@@ -28,7 +28,7 @@ public class Remapper {
 		}
 
 		try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(output).build()) {
-			remapper = getRemapper(TinyUtils.createTinyMappingProvider(mappings, names[0], names[1]), input, outputConsumer, cp);
+			remapper = applyMappings(TinyUtils.createTinyMappingProvider(mappings, names[0], names[1]), input, outputConsumer, cp);
 			if(deobf) outputConsumer.addNonClassFiles(input, NonClassCopyMode.FIX_META_INF, remapper);
 		} finally {
 			if (remapper != null) {
@@ -37,7 +37,7 @@ public class Remapper {
 		}
 	}
 
-	private static TinyRemapper getRemapper(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
+	private static TinyRemapper applyMappings(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
 		TinyRemapper remapper = TinyRemapper.newRemapper()
 				.renameInvalidLocals(false)
 				.rebuildSourceFilenames(true)

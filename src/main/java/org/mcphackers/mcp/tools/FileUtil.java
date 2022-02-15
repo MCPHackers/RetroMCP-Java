@@ -141,14 +141,14 @@ public class FileUtil {
 		.forEach(File::delete);
 	}
 
-	public static List<Path> listDirectory(Path path) throws IOException {
+	public static List<Path> walkDirectory(Path path) throws IOException {
 		if(!Files.isDirectory(path)) {
 			throw new IOException(path + "is not a directory");
 		}
 		return Files.walk(path).collect(Collectors.toList());
 	}
 
-	public static List<Path> listDirectory(Path path, Predicate<Path> predicate) throws IOException {
+	public static List<Path> walkDirectory(Path path, Predicate<Path> predicate) throws IOException {
 		if(!Files.isDirectory(path)) {
 			throw new IOException(path + "is not a directory");
 		}

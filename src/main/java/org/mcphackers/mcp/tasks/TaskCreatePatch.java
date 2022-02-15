@@ -15,18 +15,18 @@ public class TaskCreatePatch extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		Path srcPath = Paths.get(chooseFromSide(MCPConfig.CLIENT_SOURCES, MCPConfig.SERVER_SOURCES));
-		Path srcPathPatched = Paths.get(chooseFromSide(MCPConfig.SRC + "minecraft_patched", MCPConfig.SRC + "minecraft_server_patched"));
-		Path patchesOut = Paths.get(chooseFromSide("patches/client", "patches/server"));
-		if (Files.exists(srcPath)) {
+		Path srcPathUnpatched = Paths.get(chooseFromSide(MCPConfig.SRC + "minecraft_unpatched", MCPConfig.SRC + "minecraft_server_unpatched"));
+		Path srcPathPatched = Paths.get(chooseFromSide(MCPConfig.CLIENT_SOURCES, MCPConfig.SERVER_SOURCES));
+		Path patchesOut = Paths.get(chooseFromSide("patches/patches_client", "patches/patches_server"));
+		if (Files.exists(srcPathUnpatched)) {
 			if(Files.exists(srcPathPatched)) {
-				createDiffOperation(srcPath, srcPathPatched, patchesOut);
+				createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);
 			}
 			else {
 				throw new Exception("Patched " + chooseFromSide("client", "server") + " sources cannot be found!");
 			}
 		} else {
-			throw new Exception(chooseFromSide("Client", "Server") + " sources cannot be found!");
+			throw new Exception("Unpatched " + chooseFromSide("client", "server") + " sources cannot be found!");
 		}
 	}
 

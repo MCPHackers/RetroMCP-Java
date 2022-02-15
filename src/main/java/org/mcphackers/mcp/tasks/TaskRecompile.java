@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -58,10 +60,13 @@ public class TaskRecompile extends Task {
 			if(side == CLIENT) {
 				src.addAll(start);
 			}
-			List<String> libraries = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library)).map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
+			List<String> libraries = new ArrayList();
+			try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+				libraries = stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
+			}
 			List<String> options = Arrays.asList(
 					"-d", MCPConfig.CLIENT_BIN,
-					"-cp", String.join(";", libraries));
+					"-cp", String.join(System.getProperty("path.separator"), libraries));
 			if(side == SERVER) {
 				options = Arrays.asList(
 						"-d", MCPConfig.SERVER_BIN,
@@ -72,7 +77,7 @@ public class TaskRecompile extends Task {
 			this.progress = 50;
 			// Copy assets from source folder
 			step();
-			List<Path> assets = FileUtil.listDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
+			List<Path> assets = FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
 			int i = 0;
 			for(Path path : assets) {
 				if(srcPath.relativize(path).getParent() != null) {
@@ -99,7 +104,7 @@ public class TaskRecompile extends Task {
 				String kind = diagnostic.getKind() == Diagnostic.Kind.ERROR ? "Error" : "Warning";
 				info.addInfo(kind + String.format(" on line %d in %s%n%s%n",
 								  		diagnostic.getLineNumber(),
-								  		diagnostic.getSource().getName(),
+								  		"something",
 								  		diagnostic.getMessage(null)));
 			}
 		mgr.close();

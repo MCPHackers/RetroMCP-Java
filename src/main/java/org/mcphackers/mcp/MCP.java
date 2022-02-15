@@ -146,7 +146,7 @@ public class MCP {
 					}
 					catch (IllegalArgumentException ignored) {}
 				}
-				if(mode == EnumMode.setup) {
+				if(mode == EnumMode.setup || mode == EnumMode.test) {
 					config.setParameter("setupversion", name);
 				}
 			}
