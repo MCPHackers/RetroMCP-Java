@@ -1,0 +1,81 @@
+Credits:
+========
+Searge
+* Creator of MCP
+* Fixes all compile errors in the decompiled sourcecode
+* Created the MCP Mod Framework system and API
+* Created the new RetroGuard deobfuscation module for MCP 3.x
+* Created the Exceptor tool for MCP 4.x
+* Created the Eclipse workspace for MCP 4.x
+ProfMobius
+* Creator of the renaming codes and re-obfuscation procedures
+* Helped to port scripts to Linux
+* Developer and maintainer of the MCP chan bot
+* Is now bald after working too much with java constant pool and re-obfuscation
+* Created the new workflow scripts and renamer for MCP 3.0
+IngisKahn
+* Creator of the bytecode compare tool that helps us to update the name mappings quickly for new minecraft versions
+* Contributed to the de-obfuscation spreadsheet
+* Working hard on creating better internal tools for mapping updates and decompiling
+Fesh0r
+* php/sql code monkey
+* Uses his magic to create the mappings, patches, and general release work
+* Has Searge's approval to make official MCP releases ;)
+* Makes sure we get proper patches for the sourcecode that JAD generates
+ZeuX
+* Helps out in the IRC channels - Head of HR
+* Did server patches for the most recent versions - if you run into any (patch-related) problems, it's his fault :P
+303
+* Wiki contributor
+* Tries to help out newbies in the IRC channels
+* Created some scripts for mod loader support
+Mr_okushama
+* Wiki contributor
+* Public Support Manager
+* IRC Operator
+* Savior of the 2011 April fools prank
+Generic
+* Works on improving IngisKahn's bytecode compare tool
+* Added some important features to retroguard
+Risugami
+* The guy who created the first mods I (Searge) ever used in Minecraft
+* The creator of modloader who gave us permission to include files from his system in MCP
+fotoply
+* Helped to improve the batch files
+ScottyDoesKnow
+* obfuscathonCharmer, the obfuscathon GUI
+Cadde
+* Community manager and Wiki manager
+* Works on the de-obfuscation spreadsheet
+* Mod support (making old mods work with MCP)
+* All round handyman
+Vaprtek
+* Works on the de-obfuscation spreadsheet
+* Knows how to make pet creepers
+gronk
+* Script support
+n00bish
+* Linux script maintenance
+Sage Pourpre
+* His thread in the forums inspired me (Searge) to create this toolpack in the first place
+Tei
+* Supported the MCP project since the first version was released
+spec10
+* The new linux scripts guy
+Head
+* Wiki contributor / Administrator
+* Explains classes and their members on the Wiki
+MissLil
+* Various scripting stuff
+* Lots of reverse engineering
+* OpenGL constants annoting
+Chase
+* MCP Launcher Work
+* External jar loading
+* Scrollable mod list.
+
+and of course:
+- Everybody who contributed to the great google spreadsheet or who created some mods (I've got them all :).
+- NOTCH for creating a game that is just awesome, I hope he does not feel offended by our decompiling efforts.
+        Please, Notch, support our ambitions to mod your game. I know people who bought it just because of
+        some great mods.

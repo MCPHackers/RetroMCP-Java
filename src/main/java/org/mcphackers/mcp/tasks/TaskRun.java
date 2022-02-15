@@ -57,7 +57,7 @@ public class TaskRun extends Task {
 		}
 		
 		
-		String cp = String.join(";", cpList);
+		String cp = String.join(System.getProperty("path.separator"), cpList);
 
 		List<String> args = new ArrayList<>(
 				Arrays.asList(java,
