@@ -6,7 +6,7 @@ RetroMCP-Java is a complete re-design of RetroMCP in Java.
 # Using
 
 Using RetroMCP-Java is simple!
-1. Download and install the latest version of java from this link https://www.azul.com/downloads/?version=java-8-lts&package=jdk (You may use a newer version of OpenJDK
+1. Download and install the latest version of java from this link https://www.azul.com/downloads/?version=java-8-lts&package=jdk (You may use a newer version of OpenJDK)
 2. Run the jarfile either from the command line or a file explorer. If runnning from a file explorer works make sure your PATH is properly configured.
 3. Run the setup command and choose the version you wish to decompile (up to release 1.2.5 is supported right now, however newer versions such as 1.5.2 might get support in the near future)
 4. Run the decompile command
