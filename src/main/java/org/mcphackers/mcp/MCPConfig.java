@@ -21,8 +21,8 @@ public class MCPConfig {
 	public static final String LWJGL_UTIL = 		 LIB + "lwjgl_util.jar";
 	public static final String JINPUT = 	 		 LIB + "jinput.jar";
 	public static final String NATIVES = 			 LIB + "natives";
-	public static final String CLIENT_TINY_OUT = 	 TEMP + "client_remapped.jar";
-	public static final String SERVER_TINY_OUT = 	 TEMP + "server_remapped.jar";
+	public static final String CLIENT_TINY_OUT = 	 TEMP + "client_deobf.jar";
+	public static final String SERVER_TINY_OUT = 	 TEMP + "server_deobf.jar";
 	public static final String CLIENT_EXC_OUT = 	 TEMP + "client_exc.jar";
 	public static final String SERVER_EXC_OUT = 	 TEMP + "server_exc.jar";
 	public static final String CLIENT_SRC = 		 TEMP + "client_src.zip";
@@ -37,6 +37,8 @@ public class MCPConfig {
 	public static final String SERVER_REOBF_JAR = 	 TEMP + "server_reobf.jar";
 	public static final String CLIENT_MAPPINGS_RO =  TEMP + "client_reobf.tiny";
 	public static final String SERVER_MAPPINGS_RO =  TEMP + "server_reobf.tiny";
+	public static final String CLIENT_MAPPINGS_DO =  TEMP + "client_deobf.tiny";
+	public static final String SERVER_MAPPINGS_DO =  TEMP + "server_deobf.tiny";
 	public static final String CLIENT_SOURCES = 	 SRC + "minecraft";
 	public static final String SERVER_SOURCES = 	 SRC + "minecraft_server";
 	public static final String CLIENT_BIN = 		 BIN + "minecraft";

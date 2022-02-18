@@ -2,13 +2,11 @@ package org.mcphackers.mcp.tasks;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import codechicken.diffpatch.cli.CliOperation;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.ProgressInfo;
@@ -17,15 +15,19 @@ import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.constants.GLConstants;
 import org.mcphackers.mcp.tools.constants.MathConstants;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
+import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.mcp.tools.mcinjector.MCInjector;
-import org.mcphackers.mcp.tools.tiny.Remapper;
+
+import codechicken.diffpatch.cli.CliOperation;
 import codechicken.diffpatch.cli.PatchOperation;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public class TaskDecompile extends Task {
 
 	private final Decompiler decompiler;
 	private TaskUpdateMD5 md5Task;
 	private TaskRecompile recompTask;
+	private MemoryMappingTree mappingTree = new MemoryMappingTree();
 	
 	private static final int REMAP = 1;
 	private static final int EXCEPTOR = 2;
@@ -57,6 +59,7 @@ public class TaskDecompile extends Task {
 		Path srcPath 		= Paths.get(chooseFromSide(MCPConfig.CLIENT_SOURCES, MCPConfig.SERVER_SOURCES));
 		Path patchesPath 	= Paths.get(chooseFromSide(MCPConfig.CLIENT_PATCHES, MCPConfig.SERVER_PATCHES));
 		Path mappings		= Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS, MCPConfig.SERVER_MAPPINGS));
+		Path deobfMappings	= Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS_DO, MCPConfig.SERVER_MAPPINGS_DO));
 		
 		boolean hasLWJGL = side == CLIENT;
 		
@@ -73,7 +76,17 @@ public class TaskDecompile extends Task {
 			switch (step) {
 			case REMAP:
 				if (Files.exists(mappings)) {
-					Remapper.remap(mappings, originalJar, Paths.get(tinyOut), true, getLibraryPaths(side));
+					MappingUtil.readMappings(mappings, mappingTree);
+					MappingUtil.modifyMappings(mappingTree, FileSystems.newFileSystem(originalJar, null).getPath("/"), className -> {
+						if (mappingTree.getClass(className) == null) {
+							if(className.lastIndexOf("/") < 0) {
+								return "net/minecraft/src/" + className;
+							}
+						}
+						return null;
+					});
+					MappingUtil.writeMappings(deobfMappings, mappingTree);
+					MappingUtil.remap(mappings, originalJar, Paths.get(tinyOut), true, getLibraryPaths(side));
 				}
 				else {
 					Files.copy(originalJar, Paths.get(tinyOut));
@@ -122,7 +135,7 @@ public class TaskDecompile extends Task {
 			}
 		}
 	}
-	
+
 	private static void patch(Path base, Path out, Path patches, TaskInfo info) throws IOException {
 		ByteArrayOutputStream logger = new ByteArrayOutputStream();
 		PatchOperation patchOperation = PatchOperation.builder()
@@ -135,8 +148,7 @@ public class TaskDecompile extends Task {
 		CliOperation.Result<PatchOperation.PatchesSummary> result = patchOperation.operate();
 		if (result.exit != 0) {
 			info.addInfo(logger.toString());
-			info.addInfo("Patching failed!");
-			throw new IOException("Could not apply patches!");
+			throw new IOException("Patching failed!");
 		}
 	}
 
