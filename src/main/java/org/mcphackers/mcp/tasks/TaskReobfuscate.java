@@ -85,7 +85,7 @@ public class TaskReobfuscate extends Task {
     }
 
     private void flipMappingTree() throws IOException {
-        ((MappingTree) mappingTree).getClasses().stream().forEach(classEntry -> {
+        ((MappingTree) mappingTree).getClasses().forEach(classEntry -> {
             String obfName = classEntry.getName("official");
             String deobfName = classEntry.getName("named");
             if (deobfName != null) {
