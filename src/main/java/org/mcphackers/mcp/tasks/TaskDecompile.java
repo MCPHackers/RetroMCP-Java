@@ -77,7 +77,7 @@ public class TaskDecompile extends Task {
 			case REMAP:
 				if (Files.exists(mappings)) {
 					MappingUtil.readMappings(mappings, mappingTree);
-					MappingUtil.modifyMappings(mappingTree, FileSystems.newFileSystem(originalJar, null).getPath("/"), className -> {
+					MappingUtil.modifyClasses(mappingTree, FileSystems.newFileSystem(originalJar, null).getPath("/"), className -> {
 						if (mappingTree.getClass(className) == null) {
 							if(className.lastIndexOf("/") < 0) {
 								return "net/minecraft/src/" + className;
@@ -86,7 +86,7 @@ public class TaskDecompile extends Task {
 						return null;
 					});
 					MappingUtil.writeMappings(deobfMappings, mappingTree);
-					MappingUtil.remap(mappings, originalJar, Paths.get(tinyOut), true, getLibraryPaths(side));
+					MappingUtil.remap(deobfMappings, originalJar, Paths.get(tinyOut), getLibraryPaths(side), "official", "named");
 				}
 				else {
 					Files.copy(originalJar, Paths.get(tinyOut));

@@ -8,10 +8,16 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+import org.mcphackers.mcp.TriFunction;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.format.Tiny2Reader;
@@ -38,8 +44,19 @@ public class MappingUtil {
 			mappingTree.accept(writer);
 		}
 	}
+	public static void modifyClasses(MemoryMappingTree mappingTree, Path classPath, Function<String, String> getDstName) throws IOException {
+		modifyMappings(mappingTree, classPath, MappedElementKind.CLASS, getDstName);
+	}
 	
-	public static void modifyMappings(MemoryMappingTree mappingTree, Path classPath, Function<String, String> getDstName) throws IOException {
+	public static void modifyFields(MemoryMappingTree mappingTree, Path classPath, TriFunction<String, String, String, String> getDstName) throws IOException {
+		modifyMappings(mappingTree, classPath, MappedElementKind.FIELD, getDstName);
+	}
+	
+	public static void modifyMethods(MemoryMappingTree mappingTree, Path classPath, TriFunction<String, String, String, String> getDstName) throws IOException {
+		modifyMappings(mappingTree, classPath, MappedElementKind.METHOD, getDstName);
+	}
+	
+	private static void modifyMappings(MemoryMappingTree mappingTree, Path classPath, MappedElementKind kind, Object getDstName) throws IOException {
 		do {
 			if (mappingTree.visitHeader()) mappingTree.visitNamespaces(mappingTree.getSrcNamespace(), mappingTree.getDstNamespaces());
 
@@ -48,14 +65,55 @@ public class MappingUtil {
 					@Override
 					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 						if (file.toString().endsWith(".class")) {
-							ClassReader classReader = new ClassReader(Files.readAllBytes(file));
-							String className = classReader.getClassName();
-							if (mappingTree.visitClass(className)) {
-								String dstName = getDstName.apply(className);
-								if(dstName != null) {
-									mappingTree.visitDstName(MappedElementKind.CLASS, 0, dstName);
+							ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9) {
+								private String currentClass;
+								
+								@Override
+								public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {	
+									currentClass = name;
+									if (kind == MappedElementKind.CLASS) {
+										String dstName = ((Function<String, String>)getDstName).apply(name);
+										if(dstName != null) {
+											if (mappingTree.visitClass(name)) {
+												mappingTree.visitDstName(MappedElementKind.CLASS, 0, dstName);
+											}
+										}
+									}
+									super.visit(version, access, name, signature, superName, interfaces);
 								}
-							}
+
+								//TODO Figure out why it doesn't work
+								@Override
+								public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
+									if (kind == MappedElementKind.FIELD) {
+										String dstName = ((TriFunction<String, String, String, String>)getDstName).apply(currentClass, name, descriptor);
+										if(dstName != null) {
+											mappingTree.visitClass(currentClass);
+											if (mappingTree.visitField(name, descriptor)) {
+												mappingTree.visitDstName(MappedElementKind.FIELD, 0, dstName);
+											}
+										}
+									}
+									return super.visitField(access, name, descriptor, signature, value);
+								}
+
+								//TODO Figure out why it doesn't work
+								@Override
+								public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+									if (kind == MappedElementKind.METHOD) {
+										String dstName = ((TriFunction<String, String, String, String>)getDstName).apply(currentClass, name, descriptor);
+										if(dstName != null) {
+											mappingTree.visitClass(currentClass);
+											if (mappingTree.visitMethod(name, descriptor)) {
+												mappingTree.visitDstName(MappedElementKind.METHOD, 0, dstName);
+											}
+										}
+									}
+									return super.visitMethod(access, name, descriptor, signature, exceptions);
+								}
+							};
+							ClassReader reader = new ClassReader(Files.readAllBytes(file));
+							reader.accept(visitor, 0);
 						}
 						return super.visitFile(file, attrs);
 					}
@@ -64,21 +122,12 @@ public class MappingUtil {
 		} while (!mappingTree.visitEnd());
 	}
 	
-	public static void remap(Path mappings, Path input, Path output, Path... cp) throws IOException {
-		remap(mappings, input, output, false, cp);
-	}
-	
-	public static void remap(Path mappings, Path input, Path output, boolean deobf, Path... cp) throws IOException {
+	public static void remap(Path mappings, Path input, Path output, Path[] cp, String srcNamespace, String dstNamespace) throws IOException {
 		TinyRemapper remapper = null;
-		String[] names = new String[] {"official", "named"};
-		
-		if(!deobf) {
-			names = new String[] {"named", "official"};
-		}
 
 		try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(output).build()) {
-			remapper = applyMappings(TinyUtils.createTinyMappingProvider(mappings, names[0], names[1]), input, outputConsumer, cp);
-			if(deobf) outputConsumer.addNonClassFiles(input, NonClassCopyMode.FIX_META_INF, remapper);
+			remapper = applyMappings(TinyUtils.createTinyMappingProvider(mappings, srcNamespace, dstNamespace), input, outputConsumer, cp);
+			outputConsumer.addNonClassFiles(input, NonClassCopyMode.FIX_META_INF, remapper);
 		} finally {
 			if (remapper != null) {
 				remapper.finish();
