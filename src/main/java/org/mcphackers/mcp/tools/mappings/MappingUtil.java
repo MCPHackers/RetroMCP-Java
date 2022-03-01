@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -82,7 +81,6 @@ public class MappingUtil {
 									super.visit(version, access, name, signature, superName, interfaces);
 								}
 
-								//TODO Figure out why it doesn't work
 								@Override
 								public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
 									if (kind == MappedElementKind.FIELD) {
@@ -97,7 +95,6 @@ public class MappingUtil {
 									return super.visitField(access, name, descriptor, signature, value);
 								}
 
-								//TODO Figure out why it doesn't work
 								@Override
 								public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
 									if (kind == MappedElementKind.METHOD) {

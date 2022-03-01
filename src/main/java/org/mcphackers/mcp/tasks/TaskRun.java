@@ -32,22 +32,18 @@ public class TaskRun extends Task {
 		List<String> cpList = new LinkedList<>();
 		if(side == SERVER) {
 			if(MCP.config.runBuild) {
-				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_JAR_SERVER));
+				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_ZIP_SERVER));
 			}
-			else {
-				cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER_BIN));
-				cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER));
-			}
+			cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER_BIN));
+			cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER));
 		}
 		else if (side == CLIENT) {
 			if(MCP.config.runBuild) {
-				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_JAR_CLIENT));
+				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_ZIP_CLIENT));
 			}
-			else {
-				cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT_BIN));
-				if(!Files.exists(Paths.get(MCPConfig.CLIENT_FIXED))) {
-					cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT));
-				}
+			cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT_BIN));
+			if(!Files.exists(Paths.get(MCPConfig.CLIENT_FIXED))) {
+				cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT));
 			}
 			List<String> libraries = new ArrayList();
 			try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
@@ -69,24 +65,26 @@ public class TaskRun extends Task {
 						"-Dorg.lwjgl.librarypath=" + natives,
 						"-Dnet.java.games.input.librarypath=" + natives,
 						"-cp", cp,
-						side == SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer") : "Start"));
+						side == SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
+																	  : MCP.config.runBuild ? "net.minecraft.client.Minecraft" : "Start"));
 		for(int i = 1; i < MCP.config.runArgs.length; i++) {
 			String arg = MCP.config.runArgs[i];
-			for(String arg2 : args) {
-				if(arg.indexOf("=") > 0 && arg2.indexOf("=") > 0) {
-					if(arg2.substring(0, arg2.indexOf("=")).equals(arg.substring(0, arg.indexOf("=")))) {
+			if(!arg.equals("-runbuild")) {
+				for(String arg2 : args) {
+					if(arg.indexOf("=") > 0 && arg2.indexOf("=") > 0) {
+						if(arg2.substring(0, arg2.indexOf("=")).equals(arg.substring(0, arg.indexOf("=")))) {
+							args.remove(arg2);
+							break;
+						}
+					}
+					else if(arg2.equals(arg)) {
 						args.remove(arg2);
 						break;
 					}
 				}
-				else if(arg2.equals(arg)) {
-					args.remove(arg2);
-					break;
-				}
+				args.add(1, arg);
 			}
-			args.add(1, arg);
 		}
-		//MCP.logger.println(args);
 		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPConfig.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
