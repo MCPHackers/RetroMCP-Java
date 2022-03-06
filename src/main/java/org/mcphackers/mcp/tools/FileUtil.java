@@ -179,7 +179,6 @@ public class FileUtil {
 		copyDirectory(sourceFolder, targetFolder, new String[] {});
 	}
 
-	//FIXME: Path separators are broken on Linux
 	public static void compress(Path sourceDir, Path target) throws IOException {
 		final ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(target.toFile()));
 		Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {

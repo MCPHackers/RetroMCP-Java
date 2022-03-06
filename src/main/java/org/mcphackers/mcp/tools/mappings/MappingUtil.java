@@ -73,9 +73,7 @@ public class MappingUtil {
 									if (kind == MappedElementKind.CLASS) {
 										String dstName = ((Function<String, String>)getDstName).apply(name);
 										if(dstName != null) {
-											if (mappingTree.visitClass(name)) {
-												mappingTree.visitDstName(MappedElementKind.CLASS, 0, dstName);
-											}
+											modifyClass(mappingTree, name, dstName);
 										}
 									}
 									super.visit(version, access, name, signature, superName, interfaces);
@@ -86,10 +84,7 @@ public class MappingUtil {
 									if (kind == MappedElementKind.FIELD) {
 										String dstName = ((TriFunction<String, String, String, String>)getDstName).apply(currentClass, name, descriptor);
 										if(dstName != null) {
-											mappingTree.visitClass(currentClass);
-											if (mappingTree.visitField(name, descriptor)) {
-												mappingTree.visitDstName(MappedElementKind.FIELD, 0, dstName);
-											}
+											modifyField(mappingTree, currentClass, name, descriptor, dstName);
 										}
 									}
 									return super.visitField(access, name, descriptor, signature, value);
@@ -100,10 +95,7 @@ public class MappingUtil {
 									if (kind == MappedElementKind.METHOD) {
 										String dstName = ((TriFunction<String, String, String, String>)getDstName).apply(currentClass, name, descriptor);
 										if(dstName != null) {
-											mappingTree.visitClass(currentClass);
-											if (mappingTree.visitMethod(name, descriptor)) {
-												mappingTree.visitDstName(MappedElementKind.METHOD, 0, dstName);
-											}
+											modifyMethod(mappingTree, currentClass, name, descriptor, dstName);
 										}
 									}
 									return super.visitMethod(access, name, descriptor, signature, exceptions);
@@ -117,6 +109,26 @@ public class MappingUtil {
 				});
 			}
 		} while (!mappingTree.visitEnd());
+	}
+	
+	public static void modifyClass(MemoryMappingTree mappingTree, String name, String dstName) {
+		if (mappingTree.visitClass(name)) {
+			mappingTree.visitDstName(MappedElementKind.CLASS, 0, dstName);
+		}
+	}
+	
+	public static void modifyMethod(MemoryMappingTree mappingTree, String className, String name, String descriptor, String dstName) {
+		if (mappingTree.visitClass(className))
+		if (mappingTree.visitMethod(name, descriptor)) {
+			mappingTree.visitDstName(MappedElementKind.METHOD, 0, dstName);
+		}
+	}
+	
+	public static void modifyField(MemoryMappingTree mappingTree, String className, String name, String descriptor, String dstName) {
+		if (mappingTree.visitClass(className))
+		if (mappingTree.visitField(name, descriptor)) {
+			mappingTree.visitDstName(MappedElementKind.FIELD, 0, dstName);
+		}
 	}
 	
 	public static void remap(Path mappings, Path input, Path output, Path[] cp, String srcNamespace, String dstNamespace) throws IOException {

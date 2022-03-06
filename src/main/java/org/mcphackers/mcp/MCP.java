@@ -16,7 +16,7 @@ import java.util.*;
 
 public class MCP {
 	
-	public static final String VERSION = "v0.2";
+	public static final String VERSION = "v0.3";
 	public static EnumMode mode = null;
 	public static EnumMode helpCommand = null;
 	public static MCPLogger logger;
