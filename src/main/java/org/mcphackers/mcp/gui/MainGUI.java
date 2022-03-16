@@ -74,7 +74,7 @@ public class MainGUI implements MCP {
 		frame = new JFrame("RetroMCP " + MCP.VERSION);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
-            URL resource = frame.getClass().getResource("/rmcp.png");
+            URL resource = this.getClass().getResource("/rmcp.png");
             BufferedImage image = ImageIO.read(resource);
             frame.setIconImage(image);
         } catch (IOException e) {

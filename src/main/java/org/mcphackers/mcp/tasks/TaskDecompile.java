@@ -73,7 +73,7 @@ public class TaskDecompile extends Task {
 			case REMAP:
 				if (Files.exists(mappings)) {
 					MappingUtil.readMappings(mappings, mappingTree);
-					MappingUtil.modifyClasses(mappingTree, FileSystems.newFileSystem(originalJar, null).getPath("/"), className -> {
+					MappingUtil.modifyClasses(mappingTree, FileSystems.newFileSystem(originalJar, (ClassLoader) null).getPath("/"), className -> {
 						if (mappingTree.getClass(className) == null) {
 							if(className.lastIndexOf("/") < 0) {
 								return "net/minecraft/src/" + className;

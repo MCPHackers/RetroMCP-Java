@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TinyJavadocProvider implements IJavadocProvider {
-	private final MappingTree mappingTree;
+	public final MappingTree mappingTree;
 
 	public TinyJavadocProvider(File tinyFile) {
 		mappingTree = readMappings(tinyFile);

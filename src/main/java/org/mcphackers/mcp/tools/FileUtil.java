@@ -38,7 +38,7 @@ public class FileUtil {
 	}
 	
 	public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			for(Path file : files) {
 				Path fileInsideZipPath = fs.getPath(relativeTo.relativize(file).toString());
 				Files.deleteIfExists(fileInsideZipPath);
@@ -50,14 +50,14 @@ public class FileUtil {
 	}
 	
 	public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.deleteIfExists(fileInsideZipPath);
 		}
 	}
 	
 	public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.copy(fileInsideZipPath, out);
 		}
