@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.ProgressListener;
 
 import de.fernflower.main.decompiler.BaseDecompiler;
 import de.fernflower.main.decompiler.DirectoryResultSaver;
@@ -22,16 +22,16 @@ import de.fernflower.util.InterpreterUtil;
 public class Decompiler implements IBytecodeProvider {
 	public DecompileLogger log;
 
-	public Decompiler() {
-		this.log = new DecompileLogger();
+	public Decompiler(ProgressListener listener) {
+		this.log = new DecompileLogger(listener);
 	}
 
-	public void decompile(String source, String out, String javadocs) throws IOException {
+	public void decompile(String source, String out, String javadocs, String ind) throws IOException {
 		Map<String, Object> mapOptions = new HashMap<>();
 		mapOptions.put("rbr", "0");
 		mapOptions.put("asc", "1");
 		mapOptions.put("nco", "1");
-		mapOptions.put("ind", MCP.config.indentionString);
+		mapOptions.put("ind", ind);
 
 		SaveType saveType = SaveType.FOLDER;
 		File destination = new File(out);

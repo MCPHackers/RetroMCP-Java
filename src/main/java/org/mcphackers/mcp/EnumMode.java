@@ -3,37 +3,32 @@ package org.mcphackers.mcp;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mcphackers.mcp.tasks.info.*;
-
 public enum EnumMode {
 
-	help("Displays command usage", null),
-	decompile("Start decompiling Minecraft", new TaskInfoDecompile(), new String[] {"debug", "ignore", "indention", "patch", "side", "client", "server"}),
-	recompile("Recompile Minecraft sources", new TaskInfoRecompile(), new String[] {"debug", "side", "client", "server"}),
-	reobfuscate("Reobfuscate Minecraft classes", new TaskInfoReobfuscate(), new String[] {"debug", "side", "client", "server"}),
-	updatemd5("Update md5 hash tables used for reobfuscation", new TaskInfoUpdateMD5(), new String[] {"debug", "side", "client", "server"}),
-	updatemcp("Download an update if available", new TaskInfoDownloadUpdate()),
-	setup("Choose a version to setup", new TaskInfoSetup(), new String[] {"debug"}),
-	cleanup("Delete all source and class folders", new TaskInfoCleanup(), new String[] {"debug", "src"}),
-	startclient("Runs the client from compiled classes", new TaskInfoRun(0), new String[] {"runbuild"}),
-	startserver("Runs the server from compiled classes", new TaskInfoRun(1), new String[] {"runbuild"}),
-	build("Builds the final jar or zip", new TaskInfoBuild(), new String[] {"debug", "fullbuild", "side", "client", "server"}),
-	createpatch("Creates patch", new TaskInfoCreatePatch(), new String[]{}),
-	test("Test", new TaskInfoTest(), new String[]{}),
+	help("Displays command usage"),
+	decompile("Start decompiling Minecraft", new String[] {"debug", "ignore", "indention", "patch", "side", "client", "server"}),
+	recompile("Recompile Minecraft sources", new String[] {"debug", "side", "client", "server"}),
+	reobfuscate("Reobfuscate Minecraft classes", new String[] {"debug", "side", "client", "server"}),
+	updatemd5("Update md5 hash tables used for reobfuscation", new String[] {"debug", "side", "client", "server"}),
+	updatemcp("Download an update if available"),
+	setup("Choose a version to setup", new String[] {"debug"}),
+	cleanup("Delete all source and class folders", new String[] {"debug", "src"}),
+	startclient("Runs the client from compiled classes", new String[] {"runbuild"}),
+	startserver("Runs the server from compiled classes", new String[] {"runbuild"}),
+	build("Builds the final jar or zip", new String[] {"debug", "fullbuild", "side", "client", "server"}),
+	createpatch("Creates patch", new String[]{}),
 	exit("Exit the program", null);
 	
 	public final String desc;
-	public final TaskInfo task;
 	public String[] params = new String[] {};
 	private static final Map<String, String> paramDescs = new HashMap<>();
 	
-	EnumMode(String desc, TaskInfo task) {
+	EnumMode(String desc) {
 		this.desc = desc;
-		this.task = task;
 	}
 	
-	EnumMode(String desc, TaskInfo task, String[] params) {
-		this(desc, task);
+	EnumMode(String desc, String[] params) {
+		this(desc);
 		this.params = params;
 		
 	}

@@ -1,8 +1,8 @@
 package org.mcphackers.mcp.tasks;
 
-import org.mcphackers.mcp.MCPConfig;
-import org.mcphackers.mcp.ProgressInfo;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.ProgressListener;
 import org.mcphackers.mcp.tools.Util;
 
 import java.io.BufferedWriter;
@@ -13,21 +13,19 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.NoSuchAlgorithmException;
 
 public class TaskUpdateMD5 extends Task {
-	private int total;
-	private int progress;
 	public boolean recompile;
-	private TaskRecompile recompTask;
+	public int progress = 0;
 	
 	private static final int RECOMPILE = 1;
 	private static final int MD5 = 2;
-	
-	
-	public TaskUpdateMD5(int side, TaskInfo info) {
-		super(side, info);
-		this.total = 1;
-		this.progress = 0;
+
+	public TaskUpdateMD5(int side, MCP mcp) {
+		super(side, mcp);
 		this.recompile = true;
-		this.recompTask = new TaskRecompile(side, info);
+	}
+
+	public TaskUpdateMD5(int side, MCP mcp, ProgressListener listener) {
+		super(side, mcp, listener);
 	}
 
 	@Override
@@ -36,17 +34,18 @@ public class TaskUpdateMD5 extends Task {
 	}
 
 	public void updateMD5(boolean reobf) throws Exception {
-		Path binPath 	= Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN));
-		Path md5 = Paths.get(reobf ? chooseFromSide(MCPConfig.CLIENT_MD5_RO, MCPConfig.SERVER_MD5_RO)
-				  				   : chooseFromSide(MCPConfig.CLIENT_MD5, 	 MCPConfig.SERVER_MD5));
+		Path binPath 	= Paths.get(chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN));
+		Path md5 = Paths.get(reobf ? chooseFromSide(MCPPaths.CLIENT_MD5_RO, MCPPaths.SERVER_MD5_RO)
+				  				   : chooseFromSide(MCPPaths.CLIENT_MD5, 	 MCPPaths.SERVER_MD5));
 		step();
 		if(recompile) {
-			new TaskRecompile(side, info).doTask();
+			new TaskRecompile(side, mcp, this).doTask();
 		}
 		step();
 		if (Files.exists(binPath)) {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(md5.toFile()));
-			this.total = (int)Files.walk(binPath)
+			progress = 0;
+			int total = (int)Files.walk(binPath)
 					.parallel()
 					.filter(p -> !p.toFile().isDirectory())
 					.count();
@@ -55,9 +54,10 @@ public class TaskUpdateMD5 extends Task {
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					try {
 						String md5_hash = Util.getMD5OfFile(file.toFile());
-						String fileName = Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
+						String fileName = Paths.get(chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
 						writer.append(fileName).append(" ").append(md5_hash).append("\n");
 						progress++;
+						setProgress(50 + (int)((double)progress/(double)total * 50));
 					} catch (NoSuchAlgorithmException ex) {
 						ex.printStackTrace();
 					}
@@ -69,21 +69,31 @@ public class TaskUpdateMD5 extends Task {
 			throw new IOException(chooseFromSide("Client", "Server") + " classes not found!");
 		}
 	}
-
-	@Override
-	public ProgressInfo getProgress() {
-		int total = 100;
-		int current = 0;
-		switch(step) {
+	
+	public void setProgress(int progress) {
+		switch (step) {
 		case RECOMPILE: {
-			current = 1;
-			ProgressInfo info = recompTask.getProgress();
-			int percent = (int) ((double)info.getCurrent() / info.getTotal() * 2);
-			return new ProgressInfo(info.getMessage(), current + percent, total); }
-		case MD5:
-			current = 50 + (int)((double)progress / this.total * 50);
-			return new ProgressInfo("Updating MD5...", current, total);
+			int percent = (int)((double)progress * 0.50D);
+			super.setProgress(0 + percent);
+			break;
 		}
-		return super.getProgress();
+		default:
+			super.setProgress(progress);
+			break;
+		}
+	}
+
+	protected void updateProgress() {
+		switch (step) {
+		case RECOMPILE:
+			setProgress("Recompiling");
+			break;
+		case MD5:
+			setProgress("Updating MD5...", 50);
+			break;
+		default:
+			super.updateProgress();
+			break;
+		}
 	}
 }

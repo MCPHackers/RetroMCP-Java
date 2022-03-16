@@ -27,7 +27,6 @@ dependencies {
     implementation 'net.fabricmc:tiny-remapper:0.6.0'
     // TODO: Don't gut MCInjector bundled ASM
     implementation name: 'mcinjector'
-    implementation name: 'SelfCommandPrompt-2.2.1'
     implementation 'org.json:json:20211205'
     implementation 'com.github.MCPHackers:DiffPatch:e2473fdba3'
     implementation 'net.fabricmc:mapping-io:0.3.0'
@@ -35,7 +34,7 @@ dependencies {
 
 application {
     // Redirect all execution into the testing folder
-    mainClass = 'org.mcphackers.mcp.MCP'
+    mainClass = 'org.mcphackers.mcp.gui.MainGUI'
     executableDir = 'test'
 }
 

@@ -9,12 +9,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mcphackers.mcp.MCPConfig;
+import org.mcphackers.mcp.MCPPaths;
 
 public class VersionsParser {
 	
@@ -29,6 +30,7 @@ public class VersionsParser {
 		List<String> verList = new ArrayList<String>();
 		Iterator<String> iterator = json.keys();
 		iterator.forEachRemaining(verList::add);
+		verList.sort(Comparator.naturalOrder());
 		return verList;
 	}
 	
@@ -93,7 +95,7 @@ public class VersionsParser {
 		if(!json.has(version)) {
 			throw new Exception("Invalid version detected!");
 		}
-		try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPConfig.VERSION))) {
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPPaths.VERSION))) {
 			writer.write(version);
 		}
 		currentVersion = version;

@@ -1,16 +1,5 @@
 package org.mcphackers.mcp.tasks;
 
-import net.fabricmc.mappingio.adapter.MappingNsCompleter;
-import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.tree.MappingTree;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-import org.mcphackers.mcp.MCPConfig;
-import org.mcphackers.mcp.ProgressInfo;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
-import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.Util;
-import org.mcphackers.mcp.tools.mappings.MappingUtil;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +7,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.ProgressListener;
+import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.mappings.MappingUtil;
+
+import net.fabricmc.mappingio.adapter.MappingNsCompleter;
+import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.tree.MappingTree;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public class TaskReobfuscate extends Task {
 	private final Map<String, String> recompHashes = new HashMap<>();
@@ -27,23 +28,25 @@ public class TaskReobfuscate extends Task {
 
 	private final Map<String, String> reobfPackages = new HashMap<>();
 
-	private final TaskUpdateMD5 md5Task = new TaskUpdateMD5(side, info);
+	public TaskReobfuscate(int side, MCP mcp) {
+		super(side, mcp);
+	}
 
-	public TaskReobfuscate(int side, TaskInfo info) {
-		super(side, info);
+	public TaskReobfuscate(int side, MCP mcp, ProgressListener listener) {
+		super(side, mcp, listener);
 	}
 
 	@Override
 	public void doTask() throws Exception {
 
-		Path reobfJar = Paths.get(chooseFromSide(MCPConfig.CLIENT_REOBF_JAR, MCPConfig.SERVER_REOBF_JAR));
-		Path reobfBin = Paths.get(chooseFromSide(MCPConfig.CLIENT_BIN, MCPConfig.SERVER_BIN));
-		Path reobfDir = Paths.get(chooseFromSide(MCPConfig.CLIENT_REOBF, MCPConfig.SERVER_REOBF));
-		Path reobfMappings = Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS_RO, MCPConfig.SERVER_MAPPINGS_RO));
-		Path deobfMappings = Paths.get(chooseFromSide(MCPConfig.CLIENT_MAPPINGS_DO, MCPConfig.SERVER_MAPPINGS_DO));
+		Path reobfJar = Paths.get(chooseFromSide(MCPPaths.CLIENT_REOBF_JAR, MCPPaths.SERVER_REOBF_JAR));
+		Path reobfBin = Paths.get(chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN));
+		Path reobfDir = Paths.get(chooseFromSide(MCPPaths.CLIENT_REOBF, MCPPaths.SERVER_REOBF));
+		Path reobfMappings = Paths.get(chooseFromSide(MCPPaths.CLIENT_MAPPINGS_RO, MCPPaths.SERVER_MAPPINGS_RO));
+		Path deobfMappings = Paths.get(chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
 
 		step();
-		md5Task.updateMD5(true);
+		new TaskUpdateMD5(side, mcp, this).updateMD5(true);
 
 		if (Files.exists(reobfBin)) {
 			boolean hasMappings = Files.exists(deobfMappings);
@@ -106,34 +109,33 @@ public class TaskReobfuscate extends Task {
 		mappingTree = namedTree;
 	}
 
-	@Override
-	public ProgressInfo getProgress() {
-		int total = 100;
-		int current;
-		switch (step) {
-			case 1: {
-				current = 1;
-				ProgressInfo info = md5Task.getProgress();
-				int percent = info.getCurrent() / info.getTotal() * 50;
-				return new ProgressInfo(info.getMessage(), current + percent, total);
-			}
-			case 2:
-				current = 51;
-				return new ProgressInfo("Gathering MD5 hashes...", current, total);
-			case 3:
-				current = 52;
-				return new ProgressInfo("Reobfuscating...", current, total);
-			case 4:
-				current = 54;
-				return new ProgressInfo("Unpacking...", current, total);
-			default:
-				return super.getProgress();
-		}
-	}
+//	private ProgressInfo getProgress(int step) {
+//		int total = 100;
+//		int current;
+//		switch (step) {
+//			case 1: {
+//				current = 1;
+//				ProgressInfo info = md5Task.getProgress();
+//				int percent = info.getCurrent() / info.getTotal() * 50;
+//				return new ProgressInfo(info.getMessage(), current + percent, total);
+//			}
+//			case 2:
+//				current = 51;
+//				return new ProgressInfo("Gathering MD5 hashes...", current, total);
+//			case 3:
+//				current = 52;
+//				return new ProgressInfo("Reobfuscating...", current, total);
+//			case 4:
+//				current = 54;
+//				return new ProgressInfo("Unpacking...", current, total);
+//			default:
+//				return new ProgressInfo("Idle", 0, total);
+//		}
+//	}
 
 	private void gatherMD5Hashes(boolean reobf) throws IOException {
-		Path md5 = Paths.get(reobf ? chooseFromSide(MCPConfig.CLIENT_MD5_RO, MCPConfig.SERVER_MD5_RO)
-				: chooseFromSide(MCPConfig.CLIENT_MD5, MCPConfig.SERVER_MD5));
+		Path md5 = Paths.get(reobf ? chooseFromSide(MCPPaths.CLIENT_MD5_RO, MCPPaths.SERVER_MD5_RO)
+				: chooseFromSide(MCPPaths.CLIENT_MD5, MCPPaths.SERVER_MD5));
 
 		try (BufferedReader reader = Files.newBufferedReader(md5)) {
 			String line = reader.readLine();

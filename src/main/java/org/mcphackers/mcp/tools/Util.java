@@ -3,7 +3,6 @@ package org.mcphackers.mcp.tools;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mcphackers.mcp.MCP;
 
 import java.io.*;
 import java.nio.file.*;
@@ -20,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Util {
 
+	// FIXME
 	public static int runCommand(String[] cmd, Path dir, boolean doLog) throws IOException, InterruptedException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
 		if(dir != null) {
@@ -31,7 +31,7 @@ public class Util {
 				if(doLog) {
 					try(Scanner sc = new Scanner(proc.getInputStream())) {
 						while (sc.hasNextLine()) {
-							MCP.logger.info(sc.nextLine());
+							//MCP.logger.info(sc.nextLine());
 						}
 					}
 				}
@@ -41,7 +41,7 @@ public class Util {
 			if(doLog) {
 				try(Scanner sc = new Scanner(proc.getErrorStream())) {
 					while (sc.hasNextLine()) {
-						MCP.logger.info(sc.nextLine());
+						//MCP.logger.info(sc.nextLine());
 					}
 				}
 			}

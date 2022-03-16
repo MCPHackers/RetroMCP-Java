@@ -15,7 +15,7 @@ public class Update {
 			while(keepTrying) {
 				try {
 					Files.deleteIfExists(Paths.get(args[0]));
-					Files.copy(Paths.get(MCPConfig.UPDATE_JAR), Paths.get(args[0]));
+					Files.copy(Paths.get(MCPPaths.UPDATE_JAR), Paths.get(args[0]));
 					Util.runCommand(new String[] {
 						Util.getJava(),
 						"-jar",

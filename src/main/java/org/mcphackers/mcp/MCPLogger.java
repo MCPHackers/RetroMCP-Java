@@ -6,14 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.List;
 
 import org.fusesource.jansi.Ansi;
 import org.mcphackers.mcp.tools.FileUtil;
 
 public class MCPLogger {
 	
-	private String cachedProgressBar;
 	private BufferedWriter writer;
 	
 	public MCPLogger() {
@@ -35,18 +33,18 @@ public class MCPLogger {
 		System.out.println(msg);
 	}
 	
-	public void printProgressBars(List<SideThread> threads) {
-		StringBuilder s = new StringBuilder(new Ansi().cursorUp(threads.size() + 1).a('\n').toString());
-		for (int i = 0; i < threads.size(); i++) {
-			ProgressInfo dinfo = threads.get(i).getInfo();
-			String side = threads.get(i).getSideName();
-			s.append(progressString(dinfo.getTotal(), dinfo.getCurrent(), dinfo.getMessage(), side + ":"));
-		}
-		s.append(new Ansi().reset().toString());
-		String progressBar = s.toString();
-		if(!progressBar.equals(cachedProgressBar)) print(progressBar);
-		cachedProgressBar = progressBar;
-	}
+//	public void printProgressBars(List<SideThread> threads) {
+//		StringBuilder s = new StringBuilder(new Ansi().cursorUp(threads.size() + 1).a('\n').toString());
+//		for (int i = 0; i < threads.size(); i++) {
+//			ProgressInfo dinfo = threads.get(i).getInfo();
+//			String side = threads.get(i).getSideName();
+//			s.append(progressString(dinfo.getTotal(), dinfo.getCurrent(), dinfo.getMessage(), side + ":"));
+//		}
+//		s.append(new Ansi().reset().toString());
+//		String progressBar = s.toString();
+//		if(!progressBar.equals(cachedProgressBar)) print(progressBar);
+//		cachedProgressBar = progressBar;
+//	}
 
 	private static String progressString(long total, long current, String progressMsg, String prefix) {
 		Ansi string = new Ansi(100);
@@ -67,10 +65,6 @@ public class MCPLogger {
 		}
 
 		return string.a("\n").toString();
-	}
-	
-	public void resetProgressString() {
-		cachedProgressBar = null;
 	}
 	
 	public void info(String msg) {

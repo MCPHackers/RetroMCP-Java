@@ -1,23 +1,15 @@
 package org.mcphackers.mcp.tools.fernflower;
 
-import org.mcphackers.mcp.ProgressInfo;
+import org.mcphackers.mcp.ProgressListener;
 
 import de.fernflower.main.extern.IFernflowerLogger;
 
 public class DecompileLogger extends IFernflowerLogger {
 
-	private int numberOfClasses;
-	private int currentClassNumber;
-	private String currentMessage;
+	private ProgressListener listener;
 
-	public DecompileLogger() {
-		numberOfClasses = 1;
-		currentClassNumber = 0;
-		currentMessage = "Decompiling...";
-	}
-
-	public ProgressInfo initInfo() {
-		return new ProgressInfo(currentMessage, currentClassNumber, numberOfClasses);
+	public DecompileLogger(ProgressListener listener) {
+		this.listener = listener;
 	}
 
 	public void writeMessage(String message, Severity severity) {
@@ -27,12 +19,11 @@ public class DecompileLogger extends IFernflowerLogger {
 	}
 
 	public void startReadingClass(String className) {
-		currentMessage = "Decompiling class " + className;
+		listener.setProgress("Decompiling class " + className);
 	}
 
 	public void updateCounters(int i, int i2) {
-		currentClassNumber = i;
-		numberOfClasses = i2;
+		listener.setProgress((int)((double)i/(double)i2 * 100));
 	}
 
 }

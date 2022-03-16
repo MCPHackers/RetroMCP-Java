@@ -11,42 +11,43 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPConfig;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public class TaskRun extends Task {
-	public TaskRun(int side, TaskInfo info) {
-		super(side, info);
+	public TaskRun(int side, MCP mcp) {
+		super(side, mcp);
 	}
 
 	@Override
 	public void doTask() throws Exception {
+		boolean runBuild = mcp.getBooleanParam(TaskParameter.RUN_BUILD);
 		if(side == SERVER && !VersionsParser.hasServer()) {
 			throw new Exception("Server isn't available for this version!");
 		}
 		String java = Util.getJava();
-		String natives = FileUtil.absolutePathString(MCPConfig.NATIVES);
+		String natives = FileUtil.absolutePathString(MCPPaths.NATIVES);
 		List<String> cpList = new LinkedList<>();
 		if(side == SERVER) {
-			if(MCP.config.runBuild) {
-				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_ZIP_SERVER));
+			if(runBuild) {
+				cpList.add(FileUtil.absolutePathString(MCPPaths.BUILD_ZIP_SERVER));
 			}
-			cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER_BIN));
-			cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER));
+			cpList.add(FileUtil.absolutePathString(MCPPaths.SERVER_BIN));
+			cpList.add(FileUtil.absolutePathString(MCPPaths.SERVER));
 		}
 		else if (side == CLIENT) {
-			if(MCP.config.runBuild) {
-				cpList.add(FileUtil.absolutePathString(MCPConfig.BUILD_ZIP_CLIENT));
+			if(runBuild) {
+				cpList.add(FileUtil.absolutePathString(MCPPaths.BUILD_ZIP_CLIENT));
 			}
-			cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT_BIN));
-			if(!Files.exists(Paths.get(MCPConfig.CLIENT_FIXED))) {
-				cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT));
+			cpList.add(FileUtil.absolutePathString(MCPPaths.CLIENT_BIN));
+			if(!Files.exists(Paths.get(MCPPaths.CLIENT_FIXED))) {
+				cpList.add(FileUtil.absolutePathString(MCPPaths.CLIENT));
 			}
 			List<String> libraries = new ArrayList();
-			try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				libraries = stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
 			}
 			cpList.addAll(libraries);
@@ -66,9 +67,9 @@ public class TaskRun extends Task {
 						"-Dnet.java.games.input.librarypath=" + natives,
 						"-cp", cp,
 						side == SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
-																	  : MCP.config.runBuild ? "net.minecraft.client.Minecraft" : "Start"));
-		for(int i = 1; i < MCP.config.runArgs.length; i++) {
-			String arg = MCP.config.runArgs[i];
+																	  : runBuild ? "net.minecraft.client.Minecraft" : "Start"));
+		for(int i = 1; i < mcp.getStringArrayParam(TaskParameter.RUN_ARGS).length; i++) {
+			String arg = mcp.getStringArrayParam(TaskParameter.RUN_ARGS)[i];
 			if(!arg.equals("-runbuild")) {
 				for(String arg2 : args) {
 					if(arg.indexOf("=") > 0 && arg2.indexOf("=") > 0) {
@@ -85,7 +86,7 @@ public class TaskRun extends Task {
 				args.add(1, arg);
 			}
 		}
-		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPConfig.JARS), true);
+		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPPaths.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}

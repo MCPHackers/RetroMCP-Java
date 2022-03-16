@@ -5,23 +5,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.fusesource.jansi.Ansi;
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPConfig;
-import org.mcphackers.mcp.tasks.info.TaskInfo;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public class TaskSetup extends Task {
 
-	public TaskSetup(TaskInfo info) {
-		super(-1 , info);
+	public TaskSetup(MCP mcp) {
+		super(0, mcp);
 	}
 
 	private static final Map<Util.OS, String> natives = new HashMap<>();
@@ -35,69 +34,70 @@ public class TaskSetup extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		if (Files.exists(Paths.get(MCPConfig.SRC))) {
-			MCP.logger.println(new Ansi().a("Sources folder found! Type \"yes\" if you want to continue setup").fgRgb(255,255,255));
-			String confirm = MCP.input.nextLine().toLowerCase();
-			MCP.logger.print(new Ansi().fgDefault());
-			if(!confirm.toLowerCase().equals("yes")) {
-				info.addInfo("Setup aborted!");
-				return;
-			}
+		if (Files.exists(Paths.get(MCPPaths.SRC))) {
+			//mcp.log(new Ansi().a("Sources folder found! Type \"yes\" if you want to continue setup").fgRgb(255,255,255).toString());
+			// FIXME
+//			String confirm = MCP.input.nextLine().toLowerCase();
+//			MCP.logger.print(new Ansi().fgDefault());
+//			if(!confirm.toLowerCase().equals("yes")) {
+//				//info.addInfo("Setup aborted!");
+//				return;
+//			}
 		}
 
-		MCP.config.srcCleanup = false;
-		new TaskCleanup(info).doTask();
-		MCP.logger.info(" Setting up your workspace...");
-		FileUtil.createDirectories(Paths.get(MCPConfig.JARS));
-		FileUtil.createDirectories(Paths.get(MCPConfig.NATIVES));
+		//MCP.config.srcCleanup = false;
+		new TaskCleanup(mcp).doTask();
+		mcp.log(" Setting up your workspace...");
+		FileUtil.createDirectories(Paths.get(MCPPaths.JARS));
+		FileUtil.createDirectories(Paths.get(MCPPaths.NATIVES));
 		
-		MCP.logger.info(" Setting up Minecraft...");
+		mcp.log(" Setting up Minecraft...");
 		List<String> versions = VersionsParser.getVersionList();
-		versions.sort(Comparator.naturalOrder());
-		String chosenVersion = MCP.config.setupVersion;
+		String chosenVersion = mcp.getStringParam(TaskParameter.SETUP_VERSION);
 		if(!versions.contains(chosenVersion)) {
-			MCP.logger.info(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
-			MCP.logger.info(getTable(versions));
-			MCP.logger.info(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
-			//MCP.logger.info(new Ansi().fgYellow().a("If you wish to supply your own configuration, type \"custom\".").fgDefault().toString());
+			mcp.log(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
+			mcp.log(getTable(versions));
+			mcp.log(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
+			//mcp.log(new Ansi().fgYellow().a("If you wish to supply your own configuration, type \"custom\".").fgDefault().toString());
 		}
+		//FIXME
 		// Keep asking until they have a valid option
-		while (!versions.contains(chosenVersion)) {
-			MCP.logger.print(new Ansi().a("Select version: ").fgBrightGreen());
-			chosenVersion = MCP.input.nextLine().toLowerCase();
-			MCP.logger.print(new Ansi().fgDefault());
-		}
+//		while (!versions.contains(chosenVersion)) {
+//			MCP.logger.print(new Ansi().a("Select version: ").fgBrightGreen());
+//			chosenVersion = MCP.input.nextLine().toLowerCase();
+//			MCP.logger.print(new Ansi().fgDefault());
+//		}
 		
-		FileUtil.createDirectories(Paths.get(MCPConfig.CONF));
+		FileUtil.createDirectories(Paths.get(MCPPaths.CONF));
 		VersionsParser.setCurrentVersion(chosenVersion);
 		
 		long startTime = System.currentTimeMillis();
 		if(Files.notExists(Paths.get("versions.json"))) {
-			MCP.logger.info(" Downloading mappings");
-			FileUtil.downloadFile(VersionsParser.downloadVersion(), Paths.get(MCPConfig.CONF, "conf.zip"));
-			FileUtil.unzip(Paths.get(MCPConfig.CONF, "conf.zip"), Paths.get(MCPConfig.CONF), true);
+			mcp.log(" Downloading mappings");
+			FileUtil.downloadFile(VersionsParser.downloadVersion(), Paths.get(MCPPaths.CONF, "conf.zip"));
+			FileUtil.unzip(Paths.get(MCPPaths.CONF, "conf.zip"), Paths.get(MCPPaths.CONF), true);
 		}
 		
-		MCP.logger.info(" Setting up workspace");
+		mcp.log(" Setting up workspace");
 		FileUtil.deleteDirectoryIfExists(Paths.get("workspace"));
 		FileUtil.copyResource(MCP.class.getClassLoader().getResourceAsStream("workspace.zip"), Paths.get("workspace.zip"));
 		FileUtil.unzip(Paths.get("workspace.zip"), Paths.get("workspace"), true);
 		
 		setWorkspace();
-		MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
+		mcp.log(" Done in " + Util.time(System.currentTimeMillis() - startTime));
 
 		// Delete Minecraft.jar and Minecraft_server.jar if they exist.
-		Files.deleteIfExists(Paths.get(MCPConfig.CLIENT));
-		Files.deleteIfExists(Paths.get(MCPConfig.SERVER));
+		Files.deleteIfExists(Paths.get(MCPPaths.CLIENT));
+		Files.deleteIfExists(Paths.get(MCPPaths.SERVER));
 
 		// Download Minecraft
 		//if (!chosenVersion.equals("custom")) TODO
 		{
 			for(int side = 0; side <= (VersionsParser.hasServer() ? 1 : 0); side++) {
 				startTime = System.currentTimeMillis();
-				MCP.logger.info(" Downloading Minecraft " + (side == CLIENT ? "client" : "server") + "...");
+				mcp.log(" Downloading Minecraft " + (side == CLIENT ? "client" : "server") + "...");
 				String url = VersionsParser.getDownloadURL(side);
-				String out = side == CLIENT ? MCPConfig.CLIENT : MCPConfig.SERVER;
+				String out = side == CLIENT ? MCPPaths.CLIENT : MCPPaths.SERVER;
 				Path pathOut = Paths.get(out);
 				if(url.endsWith(".jar")) {
 					FileUtil.downloadFile(new URL(url), pathOut);
@@ -108,21 +108,21 @@ public class TaskSetup extends Task {
 					FileUtil.copyFileFromAZip(zip, "minecraft-server.jar", pathOut);
 					Files.deleteIfExists(zip);
 				}
-				MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
+				mcp.log(" Done in " + Util.time(System.currentTimeMillis() - startTime));
 			}
 		}
 		
-		MCP.logger.info(" Downloading libraries...");
+		mcp.log(" Downloading libraries...");
 		startTime = System.currentTimeMillis();
-		FileUtil.downloadFile(new URL(libsURL), Paths.get(MCPConfig.LIB + "libs.zip"));
+		FileUtil.downloadFile(new URL(libsURL), Paths.get(MCPPaths.LIB + "libs.zip"));
 		String nativesURL = natives.get(Util.getOperatingSystem());
 		if(nativesURL == null) {
 			throw new Exception("Could not find natives for your operating system");
 		}
-		FileUtil.downloadFile(new URL(nativesURL), Paths.get(MCPConfig.LIB + "natives.zip"));
-		MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
-		FileUtil.unzip(Paths.get(MCPConfig.LIB + "libs.zip"), Paths.get(MCPConfig.LIB), true);
-		FileUtil.unzip(Paths.get(MCPConfig.LIB + "natives.zip"), Paths.get(MCPConfig.NATIVES), true);
+		FileUtil.downloadFile(new URL(nativesURL), Paths.get(MCPPaths.LIB + "natives.zip"));
+		mcp.log(" Done in " + Util.time(System.currentTimeMillis() - startTime));
+		FileUtil.unzip(Paths.get(MCPPaths.LIB + "libs.zip"), Paths.get(MCPPaths.LIB), true);
+		FileUtil.unzip(Paths.get(MCPPaths.LIB + "natives.zip"), Paths.get(MCPPaths.NATIVES), true);
 	}
 
 	private void setWorkspace() throws Exception {
