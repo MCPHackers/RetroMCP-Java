@@ -4,7 +4,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.Desktop;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,28 +53,33 @@ public class Util {
 		}
 		return proc.exitValue();
 	}
+	
+    public static void copyToClipboard(String text) {
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+    }
+
+    public static void openUrl(String url) {
+        try {
+            switch (Os.getOs()) {
+                case LINUX:
+                    new ProcessBuilder("/usr/bin/env", "xdg-open", url).start();
+                    break;
+                default:
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop desktop = Desktop.getDesktop();
+                        desktop.browse(new URI(url));
+                    }
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
 
 	public static void runCommand(String[] cmd) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
 		procBuilder.start();
-	}
-
-	public static OS getOperatingSystem() {
-		String osName = System.getProperty("os.name").toLowerCase();
-		return osName.contains("win") ? OS.windows
-			: (osName.contains("mac") ? OS.macos
-			: (osName.contains("solaris") ? OS.linux
-			: (osName.contains("sunos") ? OS.linux
-			: (osName.contains("linux") ? OS.linux
-			: (osName.contains("unix") ? OS.linux
-			: OS.unknown)))));
-	}
-	
-	public enum OS {
-		windows,
-		linux,
-		macos,
-		unknown
 	}
 	
 	public static String time(long time) {

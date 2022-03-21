@@ -28,15 +28,17 @@ public interface MCP {
 	String[] getStringArrayParam(TaskParameter param);
 
 	String getStringParam(TaskParameter param);
+
+	int getIntParam(TaskParameter param);
 	
-	void setProgressBarActive(int side, boolean active);
+	void setProgressBarActive(int barIndex, boolean active);
 	
-	void setProgress(int side, String progressMessage);
+	void setProgress(int barIndex, String progressMessage);
 	
-	void setProgress(int side, int progress);
+	void setProgress(int barIndex, int progress);
 	
-	default void setProgress(int side, String progressMessage, int progress) {
-		setProgress(side, progress);
-		setProgress(side, progressMessage);
+	default void setProgress(int barIndex, String progressMessage, int progress) {
+		setProgress(barIndex, progress);
+		setProgress(barIndex, progressMessage);
 	}
 }

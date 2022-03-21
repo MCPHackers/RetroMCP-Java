@@ -18,27 +18,27 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public class TaskRun extends Task {
-	public TaskRun(int side, MCP mcp) {
-		super(side, mcp);
+	public TaskRun(Side side, MCP instance) {
+		super(side, instance);
 	}
 
 	@Override
 	public void doTask() throws Exception {
 		boolean runBuild = mcp.getBooleanParam(TaskParameter.RUN_BUILD);
-		if(side == SERVER && !VersionsParser.hasServer()) {
+		if(side == Side.SERVER && !VersionsParser.hasServer()) {
 			throw new Exception("Server isn't available for this version!");
 		}
 		String java = Util.getJava();
 		String natives = FileUtil.absolutePathString(MCPPaths.NATIVES);
 		List<String> cpList = new LinkedList<>();
-		if(side == SERVER) {
+		if(side == Side.SERVER) {
 			if(runBuild) {
 				cpList.add(FileUtil.absolutePathString(MCPPaths.BUILD_ZIP_SERVER));
 			}
 			cpList.add(FileUtil.absolutePathString(MCPPaths.SERVER_BIN));
 			cpList.add(FileUtil.absolutePathString(MCPPaths.SERVER));
 		}
-		else if (side == CLIENT) {
+		else if (side == Side.CLIENT) {
 			if(runBuild) {
 				cpList.add(FileUtil.absolutePathString(MCPPaths.BUILD_ZIP_CLIENT));
 			}
@@ -66,7 +66,7 @@ public class TaskRun extends Task {
 						"-Dorg.lwjgl.librarypath=" + natives,
 						"-Dnet.java.games.input.librarypath=" + natives,
 						"-cp", cp,
-						side == SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
+						side == Side.SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
 																	  : runBuild ? "net.minecraft.client.Minecraft" : "Start"));
 		for(int i = 1; i < mcp.getStringArrayParam(TaskParameter.RUN_ARGS).length; i++) {
 			String arg = mcp.getStringArrayParam(TaskParameter.RUN_ARGS)[i];
@@ -90,5 +90,10 @@ public class TaskRun extends Task {
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "Run game";
 	}
 }

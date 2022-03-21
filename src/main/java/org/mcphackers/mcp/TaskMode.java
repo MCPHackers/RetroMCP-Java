@@ -3,8 +3,9 @@ package org.mcphackers.mcp;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum EnumMode {
+public enum TaskMode {
 
+	//TODO
 	help("Displays command usage"),
 	decompile("Start decompiling Minecraft", new String[] {"debug", "ignore", "indention", "patch", "side", "client", "server"}),
 	recompile("Recompile Minecraft sources", new String[] {"debug", "side", "client", "server"}),
@@ -21,13 +22,13 @@ public enum EnumMode {
 	
 	public final String desc;
 	public String[] params = new String[] {};
-	private static final Map<String, String> paramDescs = new HashMap<>();
+	private static final Map<String, TaskParameter> paramDescs = new HashMap<>();
 	
-	EnumMode(String desc) {
+	TaskMode(String desc) {
 		this.desc = desc;
 	}
 	
-	EnumMode(String desc, String[] params) {
+	TaskMode(String desc, String[] params) {
 		this(desc);
 		this.params = params;
 		
@@ -35,21 +36,22 @@ public enum EnumMode {
 	
 	public static String getParamDesc(String param) {
 		if(paramDescs.containsKey(param)) {
-			return paramDescs.get(param);
+			return paramDescs.get(param).name;
 		}
 		return "No description provided";
 	}
 	
+	//TODO
 	static {
-		paramDescs.put("indention", "Indention character used for sources");
-		paramDescs.put("ignore", "List of packages to ignore");
-		paramDescs.put("debug", "Show exception stack trace");
-		paramDescs.put("patch", "Apply patches");
-		paramDescs.put("side", "Performs operation only for specified side");
-		paramDescs.put("client", "Performs operation only for client");
-		paramDescs.put("server", "Performs operation only for server");
-		paramDescs.put("src", "Only clear sources and classes folders");
-		paramDescs.put("fullbuild", "Builds a runnable jar");
-		paramDescs.put("runbuild", "Runs the built jar");
+		paramDescs.put("indention", TaskParameter.INDENTION_STRING);
+		paramDescs.put("ignore", TaskParameter.IGNORED_PACKAGES);
+		paramDescs.put("debug", TaskParameter.DEBUG);
+		paramDescs.put("patch", TaskParameter.PATCHES);
+		paramDescs.put("side", TaskParameter.SIDE);
+		paramDescs.put("client", TaskParameter.SIDE);
+		paramDescs.put("server", TaskParameter.SIDE);
+		paramDescs.put("src", null);
+		paramDescs.put("fullbuild", TaskParameter.FULL_BUILD);
+		paramDescs.put("runbuild", TaskParameter.RUN_BUILD);
 	}
 }

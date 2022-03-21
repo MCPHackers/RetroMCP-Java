@@ -34,14 +34,14 @@ public class TaskDecompile extends Task {
 	private static final int COPYSRC = 7;
 	private static final int RECOMPILE = 8;
 	private static final int MD5 = 9;
-	private static final int STEPS = 9;
+	private static final int STEPS = MD5;
 
-	public TaskDecompile(int side, MCP mcp) {
-		super(side, mcp);
+	public TaskDecompile(Side side, MCP instance) {
+		super(side, instance);
 	}
 
-	public TaskDecompile(int side, MCP mcp, ProgressListener listener) {
-		super(side, mcp, listener);
+	public TaskDecompile(Side side, MCP instance, ProgressListener listener) {
+		super(side, instance, listener);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class TaskDecompile extends Task {
 		Path mappings		= Paths.get(chooseFromSide(MCPPaths.CLIENT_MAPPINGS, MCPPaths.SERVER_MAPPINGS));
 		Path deobfMappings	= Paths.get(chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
 		
-		boolean hasLWJGL = side == CLIENT;
+		boolean hasLWJGL = side == Side.CLIENT;
 		
 		if (Files.exists(srcPath)) {
 			throw new IOException(chooseFromSide("Client", "Server") + " sources found! Aborting.");
@@ -96,7 +96,7 @@ public class TaskDecompile extends Task {
 					Files.copy(Paths.get(tinyOut), Paths.get(excOut));
 				}
 				// Copying a fixed jar to libs
-				if(side == CLIENT) {
+				if(side == Side.CLIENT) {
 					Files.deleteIfExists(Paths.get(MCPPaths.CLIENT_FIXED));
 					Files.copy(Paths.get(excOut), Paths.get(MCPPaths.CLIENT_FIXED));
 				}
@@ -134,6 +134,11 @@ public class TaskDecompile extends Task {
 		}
 	}
 
+	@Override
+	public String getName() {
+		return "Decompile";
+	}
+
 	private void patch(Path base, Path out, Path patches) throws IOException {
 		ByteArrayOutputStream logger = new ByteArrayOutputStream();
 		PatchOperation patchOperation = PatchOperation.builder()
@@ -151,8 +156,8 @@ public class TaskDecompile extends Task {
 		}
 	}
 
-	public static Path[] getLibraryPaths(int side) {
-		if(side == CLIENT) {
+	public static Path[] getLibraryPaths(Side side) {
+		if(side == Side.CLIENT) {
 			return new Path[] {
 				Paths.get(MCPPaths.LWJGL),
 				Paths.get(MCPPaths.LWJGL_UTIL),

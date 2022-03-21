@@ -16,8 +16,8 @@ public class TaskBuild extends Task {
 	private static final int BUILD = 2;
 	private static final int STEPS = 2;
 
-	public TaskBuild(int side, MCP mcp) {
-		super(side, mcp);
+	public TaskBuild(Side side, MCP instance) {
+		super(side, instance);
 	}
 
 	@Override
@@ -57,20 +57,34 @@ public class TaskBuild extends Task {
 		}
 	}
 
-//	private ProgressInfo getProgress(int step) {
-//		int total = 100;
-//		int current = 0;
-//		switch (step) {
-//		case REOBF: {
-//			current = 1;
-//			ProgressInfo info = reobfTask.getProgress();
-//			int percent = (int) ((double)info.getCurrent() / info.getTotal() * 49);
-//			return new ProgressInfo(info.getMessage(), current + percent, total); }
-//		case BUILD:
-//			current = 52;
-//			return new ProgressInfo("Building...", current, total);
-//		default:
-//			return new ProgressInfo("Idle", current, total);
-//		}
-//	}
+	@Override
+	public String getName() {
+		return "Build";
+	}
+	
+	public void setProgress(int progress) {
+		switch (step) {
+		case 1: {
+			int percent = (int)((double)progress * 0.49D);
+			super.setProgress(1 + percent);
+			break;
+		}
+		default:
+			super.setProgress(progress);
+			break;
+		}
+	}
+
+	protected void updateProgress() {
+		switch (step) {
+		case REOBF:
+			break;
+		case BUILD:
+			setProgress("Building...", 52);
+			break;
+		default:
+			super.updateProgress();
+			break;
+		}
+	}
 }

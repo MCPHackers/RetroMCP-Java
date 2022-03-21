@@ -27,13 +27,13 @@ public class TaskRecompile extends Task {
 	
 	private static final int RECOMPILE = 1;
 	private static final int COPYRES = 2;
-
-	public TaskRecompile(int side, MCP mcp) {
-		super(side, mcp);
+	
+	public TaskRecompile(Side side, MCP instance) {
+		super(side, instance);
 	}
 
-	public TaskRecompile(int side, MCP mcp, ProgressListener listener) {
-		super(side, mcp, listener);
+	public TaskRecompile(Side side, MCP instance, ProgressListener listener) {
+		super(side, instance, listener);
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class TaskRecompile extends Task {
 		if (Files.exists(srcPath)) {
 			List<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
 			List<File> start = Files.walk(Paths.get(MCPPaths.CONF + "start")).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-			if(side == CLIENT) {
+			if(side == Side.CLIENT) {
 				src.addAll(start);
 			}
 			List<String> libraries = new ArrayList();
@@ -66,7 +66,7 @@ public class TaskRecompile extends Task {
 			List<String> options = Arrays.asList(
 					"-d", MCPPaths.CLIENT_BIN,
 					"-cp", String.join(System.getProperty("path.separator"), libraries));
-			if(side == SERVER) {
+			if(side == Side.SERVER) {
 				options = Arrays.asList(
 						"-d", MCPPaths.SERVER_BIN,
 						"-cp", MCPPaths.SERVER);
@@ -99,17 +99,24 @@ public class TaskRecompile extends Task {
 		boolean success = task.call();
 		for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
 			if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
-				String kind = diagnostic.getKind() == Diagnostic.Kind.ERROR ? "Error" : "Warning";
-				System.out.println(kind + String.format(" on line %d in %s%n%s%n",
+				String[] kindString = new String[] {"Info", "Warning", "Error"};
+				byte kind = (byte) (diagnostic.getKind() == Diagnostic.Kind.ERROR ? 2 : 1);
+				addMessage(kindString[kind] + String.format(" on line %d in %s%n%s",
 								  		diagnostic.getLineNumber(),
 								  		diagnostic.getSource().getName(),
-								  		diagnostic.getMessage(null)));
+								  		diagnostic.getMessage(null)),
+										kind);
 			
 			}
 		mgr.close();
 		if (!success) {
 			throw new RuntimeException("Compilation error!");
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "Recompile";
 	}
 
 	protected void updateProgress() {

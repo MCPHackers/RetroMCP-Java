@@ -1,18 +1,18 @@
 package org.mcphackers.mcp.tasks;
 
-import codechicken.diffpatch.cli.DiffOperation;
-
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
-
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+
+import codechicken.diffpatch.cli.DiffOperation;
+
 public class TaskCreatePatch extends Task {
-	public TaskCreatePatch(int side, MCP mcp) {
-		super(side, mcp);
+	public TaskCreatePatch(Side side, MCP instance) {
+		super(side, instance);
 	}
 
 	@Override
@@ -46,5 +46,10 @@ public class TaskCreatePatch extends Task {
 			//info.addInfo(logger.toString());
 			throw new Exception("Patches could not be created!");
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "Patch creation";
 	}
 }

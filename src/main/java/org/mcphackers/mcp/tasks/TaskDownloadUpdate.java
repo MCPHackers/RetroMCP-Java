@@ -18,8 +18,8 @@ public class TaskDownloadUpdate extends Task {
 
 	private static final String API = "https://api.github.com/repos/MCPHackers/RetroMCP-Java/releases/latest";
 	
-	public TaskDownloadUpdate(MCP mcp) {
-		super(-1 , mcp);
+	public TaskDownloadUpdate(MCP instance) {
+		super(Side.NONE , instance);
 	}
 
 	@Override
@@ -30,8 +30,8 @@ public class TaskDownloadUpdate extends Task {
 		String latestVersion = releaseJson.getString("tag_name");
 		String notes = releaseJson.getString("body");
 		if(!latestVersion.equals(MCP.VERSION)) {
-			mcp.log(new Ansi().a("New version found: ").fgBrightYellow().a(latestVersion).fgDefault().toString());
-			mcp.log(new Ansi().fgRgb(255,255,255).a("=========================").newline().a(notes).newline().a("=========================").fgDefault().toString());
+			log(new Ansi().a("New version found: ").fgBrightYellow().a(latestVersion).fgDefault().toString());
+			log(new Ansi().fgRgb(255,255,255).a("=========================").newline().a(notes).newline().a("=========================").fgDefault().toString());
 			for(Object obj : releaseJson.getJSONArray("assets")) {
 				if(obj instanceof JSONObject) {
 					JSONObject assetObj = (JSONObject)obj;
@@ -42,7 +42,7 @@ public class TaskDownloadUpdate extends Task {
 					break;
 				}
 			}
-			mcp.log("Press ENTER key to continue");
+			log("Press ENTER key to continue");
 			// FIXME
 			//MCP.input.nextLine();
 			Path jarPath = Paths.get(MCP.class
@@ -64,5 +64,10 @@ public class TaskDownloadUpdate extends Task {
 				throw new IOException("Running from a folder! Aborting");
 			}
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "Update";
 	}
 }

@@ -28,12 +28,12 @@ public class TaskReobfuscate extends Task {
 
 	private final Map<String, String> reobfPackages = new HashMap<>();
 
-	public TaskReobfuscate(int side, MCP mcp) {
-		super(side, mcp);
+	public TaskReobfuscate(Side side, MCP instance) {
+		super(side, instance);
 	}
 
-	public TaskReobfuscate(int side, MCP mcp, ProgressListener listener) {
-		super(side, mcp, listener);
+	public TaskReobfuscate(Side side, MCP instance, ProgressListener listener) {
+		super(side, instance, listener);
 	}
 
 	@Override
@@ -87,6 +87,11 @@ public class TaskReobfuscate extends Task {
 		}
 	}
 
+	@Override
+	public String getName() {
+		return "Reobfuscate";
+	}
+
 	private void flipMappingTree() throws IOException {
 		((MappingTree) mappingTree).getClasses().forEach(classEntry -> {
 			String obfName = classEntry.getName("official");
@@ -108,30 +113,39 @@ public class TaskReobfuscate extends Task {
 		mappingTree.accept(nsSwitch);
 		mappingTree = namedTree;
 	}
+	
+	public void setProgress(int progress) {
+		switch (step) {
+		case 1: {
+			int percent = (int)((double)progress * 0.5D);
+			super.setProgress(1 + percent);
+			break;
+		}
+		default:
+			super.setProgress(progress);
+			break;
+		}
+	}
 
-//	private ProgressInfo getProgress(int step) {
-//		int total = 100;
-//		int current;
-//		switch (step) {
-//			case 1: {
-//				current = 1;
-//				ProgressInfo info = md5Task.getProgress();
-//				int percent = info.getCurrent() / info.getTotal() * 50;
-//				return new ProgressInfo(info.getMessage(), current + percent, total);
-//			}
-//			case 2:
-//				current = 51;
-//				return new ProgressInfo("Gathering MD5 hashes...", current, total);
-//			case 3:
-//				current = 52;
-//				return new ProgressInfo("Reobfuscating...", current, total);
-//			case 4:
-//				current = 54;
-//				return new ProgressInfo("Unpacking...", current, total);
-//			default:
-//				return new ProgressInfo("Idle", 0, total);
-//		}
-//	}
+	protected void updateProgress() {
+		switch (step) {
+		case 1:
+			setProgress("Recompiling...");
+			break;
+		case 2:
+			setProgress("Gathering MD5 hashes...", 51);
+			break;
+		case 3:
+			setProgress("Reobfuscating...", 52);
+			break;
+		case 4:
+			setProgress("Unpacking...", 54);
+			break;
+		default:
+			super.updateProgress();
+			break;
+		}
+	}
 
 	private void gatherMD5Hashes(boolean reobf) throws IOException {
 		Path md5 = Paths.get(reobf ? chooseFromSide(MCPPaths.CLIENT_MD5_RO, MCPPaths.SERVER_MD5_RO)

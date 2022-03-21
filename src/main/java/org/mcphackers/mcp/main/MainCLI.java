@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.cli;
+package org.mcphackers.mcp.main;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,12 +14,11 @@ import javax.tools.ToolProvider;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
-import org.mcphackers.mcp.EnumMode;
+import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.MCPLogger;
 import org.mcphackers.mcp.TaskParameter;
-import org.mcphackers.mcp.gui.MainGUI;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
@@ -35,8 +34,8 @@ public class MainCLI implements MCP {
 			.fgDefault();
 	private static MCPLogger logger;
 	private static Scanner input;
-	private static EnumMode mode;
-	private static EnumMode helpCommand;
+	private static TaskMode mode;
+	private static TaskMode helpCommand;
 
 	public static void main(String[] args) throws Exception {
 		if(System.console() != null) {
@@ -100,13 +99,13 @@ public class MainCLI implements MCP {
 			}
 			setParams(parsedArgs, mode);
 			if (taskMode) {
-				if(mode == EnumMode.startclient || mode == EnumMode.startserver) {
+				if(mode == TaskMode.startclient || mode == TaskMode.startserver) {
 					runArgs = args;
 				}
 				start();
-			} else if (mode == EnumMode.help) {
+			} else if (mode == TaskMode.help) {
 				if(helpCommand == null) {
-					for (EnumMode mode : EnumMode.values()) {
+					for (TaskMode mode : TaskMode.values()) {
 						logger.println(new Ansi()
 								.fgBrightMagenta().a(" - " + String.format("%-12s", mode.name())).fgDefault()
 								.fgGreen().a(" ").a(mode.desc).fgDefault());
@@ -116,15 +115,15 @@ public class MainCLI implements MCP {
 					logger.println(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.name())).fgDefault().fgGreen().a(" ").a(helpCommand.desc).fgDefault());
 					if(helpCommand.params.length > 0) logger.println("Optional parameters:");
 					for(String param : helpCommand.params) {
-						logger.println(new Ansi().a(" ").fgCyan().a(String.format("%-10s", param)).a(" - ").fgBrightYellow().a(EnumMode.getParamDesc(param)).fgDefault());
+						logger.println(new Ansi().a(" ").fgCyan().a(String.format("%-10s", param)).a(" - ").fgBrightYellow().a(TaskMode.getParamDesc(param)).fgDefault());
 					}
 				}
-			} else if (mode != EnumMode.exit) {
+			} else if (mode != TaskMode.exit) {
 				logger.println("Unknown command. Type 'help' for list of available commands");
 			}
 			args = new String[]{};
 			resetConfig();
-			if (!startedWithNoParams || mode == EnumMode.exit)
+			if (!startedWithNoParams || mode == TaskMode.exit)
 				exit = true;
 			mode = null;
 			helpCommand = null;
@@ -133,7 +132,7 @@ public class MainCLI implements MCP {
 		shutdown();
 	}
 
-	private void setParams(Map<String, Object> parsedArgs, EnumMode mode) {
+	private void setParams(Map<String, Object> parsedArgs, TaskMode mode) {
 		for (Map.Entry<String, Object> arg : parsedArgs.entrySet()) {
 			Object value = arg.getValue();
 			String name = arg.getKey();
@@ -144,13 +143,13 @@ public class MainCLI implements MCP {
 						setParameter(name, true);
 					break;
 				}
-				if(mode == EnumMode.help) {
+				if(mode == TaskMode.help) {
 					try {
-						helpCommand = EnumMode.valueOf(name);
+						helpCommand = TaskMode.valueOf(name);
 					}
 					catch (IllegalArgumentException ignored) {}
 				}
-				if(mode == EnumMode.setup) {
+				if(mode == TaskMode.setup) {
 					setParameter("setupversion", name);
 				}
 			}
@@ -360,6 +359,12 @@ public class MainCLI implements MCP {
 	public String getStringParam(TaskParameter param) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getIntParam(TaskParameter param) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override

@@ -1,31 +1,35 @@
 package org.mcphackers.mcp.tasks;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.security.NoSuchAlgorithmException;
+
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
 import org.mcphackers.mcp.tools.Util;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.security.NoSuchAlgorithmException;
-
 public class TaskUpdateMD5 extends Task {
 	public boolean recompile;
-	public int progress = 0;
+	private int progress = 0;
 	
 	private static final int RECOMPILE = 1;
 	private static final int MD5 = 2;
 
-	public TaskUpdateMD5(int side, MCP mcp) {
-		super(side, mcp);
+	public TaskUpdateMD5(Side side, MCP instance) {
+		super(side, instance);
 		this.recompile = true;
 	}
 
-	public TaskUpdateMD5(int side, MCP mcp, ProgressListener listener) {
-		super(side, mcp, listener);
+	public TaskUpdateMD5(Side side, MCP instance, ProgressListener listener) {
+		super(side, instance, listener);
 	}
 
 	@Override
@@ -95,5 +99,10 @@ public class TaskUpdateMD5 extends Task {
 			super.updateProgress();
 			break;
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "Update MD5";
 	}
 }

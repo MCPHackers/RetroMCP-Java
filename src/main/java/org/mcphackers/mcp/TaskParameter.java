@@ -1,23 +1,28 @@
 package org.mcphackers.mcp;
 
 public enum TaskParameter {
+
+	//TODO
+	DEBUG("Display additional info", true),
+	SIDE("Perform operation for side"),
+	PATCHES("Apply patches", true),
+	IGNORED_PACKAGES("Ignored packages"),
+	INDENTION_STRING("Indention string"),
+	FULL_BUILD("Full build", true),
+	RUN_BUILD("Run build", true),
+	RUN_ARGS("Run arguments"),
+	SETUP_VERSION("Setup version");
 	
-	// decompile
-	PATCHES,
-	IGNORED_PACKAGES,
-	INDENTION_STRING,
+	public final String name;
+	public boolean isToggle;
 	
-	// cleanup
-	SRC_CLEANUP,
+	private TaskParameter(String name) {
+		this.name = name;
+		isToggle = false;
+	}
 	
-	// build
-	FULL_BUILD,
-	
-	// run
-	RUN_BUILD,
-	RUN_ARGS,
-	
-	// setup
-	SETUP_VERSION
-	
+	private TaskParameter(String name, boolean toggle) {
+		this(name);
+		isToggle = toggle;
+	}
 }

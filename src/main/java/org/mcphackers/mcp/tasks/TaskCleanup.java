@@ -6,18 +6,21 @@ import java.nio.file.Paths;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 
 public class TaskCleanup extends Task {
 
-	public TaskCleanup(MCP mcp) {
-		super(0, mcp);
+	public TaskCleanup(MCP instance) {
+		super(Side.NONE, instance);
 	}
 
 	@Override
 	public void doTask() throws Exception {
+		cleanup(false);
+	}
+	
+	public void cleanup(boolean srcCleanup) throws Exception {
 		long startTime = System.currentTimeMillis();
 		int foldersDeleted = 0;
 		Path[] pathsToDelete = new Path[] {
@@ -31,7 +34,7 @@ public class TaskCleanup extends Task {
 				Paths.get(MCPPaths.BUILD),
 				Paths.get("workspace")
 			};
-		if (mcp.getBooleanParam(TaskParameter.SRC_CLEANUP)) pathsToDelete = new Path[] {
+		if (srcCleanup) pathsToDelete = new Path[] {
 				Paths.get(MCPPaths.SRC),
 				Paths.get(MCPPaths.BIN),
 				Paths.get(MCPPaths.REOBF),
@@ -40,16 +43,21 @@ public class TaskCleanup extends Task {
 		for (Path path : pathsToDelete) {
 			if (Files.exists(path)) {
 				foldersDeleted++;
-				mcp.log(" Deleting " + path + "...");
+				log(" Deleting " + path + "...");
 				FileUtil.deleteDirectory(path);
 			}
 		}
 
 		if(foldersDeleted > 0) {
-			mcp.log(" Done in " + Util.time(System.currentTimeMillis() - startTime));
+			log(" Done in " + Util.time(System.currentTimeMillis() - startTime));
 		}
 		else {
-			mcp.log(" Nothing to clear!");
+			log(" Nothing to clear!");
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "Cleanup";
 	}
 }
