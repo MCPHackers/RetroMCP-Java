@@ -1,6 +1,6 @@
 plugins {
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
 }
 
@@ -51,7 +51,7 @@ task decompile(type: JavaExec) {
     group 'RetroMCP-Java'
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'decompile', '-debug'
 }
@@ -60,7 +60,7 @@ task startClient(type: JavaExec) {
     group 'RetroMCP-Java'
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'startclient', '-debug'
 }
@@ -69,7 +69,7 @@ task startServer(type: JavaExec) {
     group 'RetroMCP-Java'
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'startserver', '-debug'
 }
@@ -78,7 +78,7 @@ task recompile(type: JavaExec) {
     group 'RetroMCP-Java'
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'recompile', '-debug'
 }
@@ -87,7 +87,7 @@ task reobfuscate(type: JavaExec) {
     group 'RetroMCP-Java'
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'reobfuscate', '-debug'
 }
@@ -96,7 +96,7 @@ task update_md5(type: JavaExec) {
     group 'RetroMCP-Java'
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'updatemd5', '-debug'
 }
@@ -106,7 +106,7 @@ task setup(type: JavaExec) {
     standardInput = System.in
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'setup', '-debug'
 }
@@ -116,7 +116,7 @@ task cleanup(type: JavaExec) {
     standardInput = System.in
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'cleanup', '-debug'
 }
@@ -126,7 +126,7 @@ task createpatch(type: JavaExec) {
     standardInput = System.in
 
     classpath = sourceSets.main.runtimeClasspath
-    main = mainClassName
+    mainClass.set(mainClassName)
     workingDir 'test'
     args 'createpatch', '-debug'
 }
