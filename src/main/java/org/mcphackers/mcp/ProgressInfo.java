@@ -2,8 +2,8 @@ package org.mcphackers.mcp;
 
 public class ProgressInfo {
 
-	private String msg;
-	private int[] progress = new int[2];
+	private final String msg;
+	private final int[] progress = new int[2];
 
 	public ProgressInfo(String currentMessage, int current, int total) {
 		msg = currentMessage;

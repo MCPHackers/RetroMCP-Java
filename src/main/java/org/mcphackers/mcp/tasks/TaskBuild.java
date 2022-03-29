@@ -13,7 +13,7 @@ import org.mcphackers.mcp.tools.FileUtil;
 
 public class TaskBuild extends Task {
 
-	private TaskReobfuscate reobfTask;
+	private final TaskReobfuscate reobfTask;
 
 	private static final int REOBF = 1;
 	private static final int BUILD = 2;
@@ -63,7 +63,7 @@ public class TaskBuild extends Task {
 
 	public ProgressInfo getProgress() {
 		int total = 100;
-		int current = 0;
+		int current;
 		switch (step) {
 		case REOBF: {
 			current = 1;

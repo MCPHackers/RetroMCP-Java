@@ -45,7 +45,7 @@ public class MCP {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		SelfCommandPrompt.runWithCMD(SelfCommandPrompt.suggestAppId(), "RetroMCP " + VERSION, args, false, false);
 		attemptToDeleteUpdateJar();
 		AnsiConsole.systemInstall();

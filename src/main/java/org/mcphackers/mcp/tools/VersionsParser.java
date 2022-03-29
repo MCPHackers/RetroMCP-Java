@@ -26,7 +26,7 @@ public class VersionsParser {
 	
 	public static List<String> getVersionList() throws Exception {
 		checkJson();
-		List<String> verList = new ArrayList<String>();
+		List<String> verList = new ArrayList<>();
 		Iterator<String> iterator = json.keys();
 		iterator.forEachRemaining(verList::add);
 		return verList;

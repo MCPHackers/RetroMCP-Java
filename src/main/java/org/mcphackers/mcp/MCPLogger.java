@@ -1,7 +1,6 @@
 package org.mcphackers.mcp;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -19,8 +18,8 @@ public class MCPLogger {
 	public MCPLogger() {
 		try {
 			FileUtil.createDirectories(Paths.get("logs"));
-			writer = new BufferedWriter(new FileWriter(new File("logs/mcp.log")));
-		} catch (IOException e) {}
+			writer = new BufferedWriter(new FileWriter("logs/mcp.log"));
+		} catch (IOException ignored) {}
 	}
 	
 	public void newLine() {
@@ -37,9 +36,9 @@ public class MCPLogger {
 	
 	public void printProgressBars(List<SideThread> threads) {
 		StringBuilder s = new StringBuilder(new Ansi().cursorUp(threads.size() + 1).a('\n').toString());
-		for (int i = 0; i < threads.size(); i++) {
-			ProgressInfo dinfo = threads.get(i).getInfo();
-			String side = threads.get(i).getSideName();
+		for (SideThread thread : threads) {
+			ProgressInfo dinfo = thread.getInfo();
+			String side = thread.getSideName();
 			s.append(progressString(dinfo.getTotal(), dinfo.getCurrent(), dinfo.getMessage(), side + ":"));
 		}
 		s.append(new Ansi().reset().toString());
@@ -83,12 +82,12 @@ public class MCPLogger {
 		try {
 			writer.write(msgNoAnsi + "\n");
 			writer.flush();
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 	}
 
 	public void close() {
 		try {
 			writer.close();
-		} catch (IOException e) {}	
+		} catch (IOException ignored) {}
 	}
 }

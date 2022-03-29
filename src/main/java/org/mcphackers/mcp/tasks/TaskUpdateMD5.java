@@ -16,7 +16,7 @@ public class TaskUpdateMD5 extends Task {
 	private int total;
 	private int progress;
 	public boolean recompile;
-	private TaskRecompile recompTask;
+	private final TaskRecompile recompTask;
 	
 	private static final int RECOMPILE = 1;
 	private static final int MD5 = 2;
@@ -73,7 +73,7 @@ public class TaskUpdateMD5 extends Task {
 	@Override
 	public ProgressInfo getProgress() {
 		int total = 100;
-		int current = 0;
+		int current;
 		switch(step) {
 		case RECOMPILE: {
 			current = 1;

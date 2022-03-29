@@ -36,6 +36,9 @@ public class TaskRun extends Task {
 			}
 			cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER_BIN));
 			cpList.add(FileUtil.absolutePathString(MCPConfig.SERVER));
+			try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.DEPS_S)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
+			}
 		}
 		else if (side == CLIENT) {
 			if(MCP.config.runBuild) {
@@ -45,11 +48,12 @@ public class TaskRun extends Task {
 			if(!Files.exists(Paths.get(MCPConfig.CLIENT_FIXED))) {
 				cpList.add(FileUtil.absolutePathString(MCPConfig.CLIENT));
 			}
-			List<String> libraries = new ArrayList();
 			try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
-				libraries = stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
+				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
-			cpList.addAll(libraries);
+			try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.DEPS_C)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
+			}
 		}
 		
 		

@@ -6,7 +6,7 @@ import java.util.List;
 import org.mcphackers.mcp.tasks.Task;
 
 public abstract class TaskInfo {
-	private List<String> completionInfo = new ArrayList<String>();
+	private final List<String> completionInfo = new ArrayList<>();
 
 	public abstract String title();
 

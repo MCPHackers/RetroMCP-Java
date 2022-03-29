@@ -25,9 +25,9 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree;
 public class TaskDecompile extends Task {
 
 	private final Decompiler decompiler;
-	private TaskUpdateMD5 md5Task;
-	private TaskRecompile recompTask;
-	private MemoryMappingTree mappingTree = new MemoryMappingTree();
+	private final TaskUpdateMD5 md5Task;
+	private final TaskRecompile recompTask;
+	private final MemoryMappingTree mappingTree = new MemoryMappingTree();
 	
 	private static final int REMAP = 1;
 	private static final int EXCEPTOR = 2;
@@ -167,7 +167,7 @@ public class TaskDecompile extends Task {
 
 	public ProgressInfo getProgress() {
 		int total = 100;
-		int current = 0;
+		int current;
 		switch (step) {
 		case REMAP:
 			current = 1;

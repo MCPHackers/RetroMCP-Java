@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -106,7 +105,7 @@ public class FileUtil {
 	}
 	
 	@Deprecated
-	public static void downloadGitDir(URL url, Path output) throws IOException, URISyntaxException {
+	public static void downloadGitDir(URL url, Path output) throws IOException {
 		InputStream in = url.openStream();
 		JSONArray json = Util.parseJSONArray(in);
 		for(Object object : json) {
@@ -169,7 +168,7 @@ public class FileUtil {
 				try {
 					Files.createDirectories(destination.getParent());
 					Files.copy(source, destination);
-				} catch (IOException e) {
+				} catch (IOException ignored) {
 				}
 			}
 		});

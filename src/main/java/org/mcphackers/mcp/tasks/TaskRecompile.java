@@ -24,7 +24,7 @@ import org.mcphackers.mcp.tasks.info.TaskInfo;
 import org.mcphackers.mcp.tools.FileUtil;
 
 public class TaskRecompile extends Task {
-	private int total;
+	private final int total;
 	private int progress;
 	
 	private static final int RECOMPILE = 1;
