@@ -28,7 +28,7 @@ dependencies {
     // TODO: Don't gut MCInjector bundled ASM
     implementation name: 'mcinjector'
     implementation name: 'SelfCommandPrompt-2.2.1'
-    implementation 'org.json:json:20211205'
+    implementation 'org.json:json:20220320'
     implementation 'com.github.MCPHackers:DiffPatch:e2473fdba3'
     implementation 'net.fabricmc:mapping-io:0.3.0'
 }
