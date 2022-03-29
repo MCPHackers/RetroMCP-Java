@@ -24,6 +24,8 @@ public class TaskCleanup extends Task {
 				Paths.get(MCPConfig.CONF),
 				Paths.get(MCPConfig.JARS),
 				Paths.get(MCPConfig.LIB),
+				Paths.get(MCPConfig.DEPS_C),
+				Paths.get(MCPConfig.DEPS_S),
 				Paths.get(MCPConfig.TEMP),
 				Paths.get(MCPConfig.SRC),
 				Paths.get(MCPConfig.BIN),

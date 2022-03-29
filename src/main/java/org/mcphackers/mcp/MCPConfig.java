@@ -6,6 +6,8 @@ public class MCPConfig {
 	//Directories
 	public static final String JARS = 	"jars/";
 	public static final String LIB = 	"lib/";
+	public static final String DEPS_C = "deps_client/";
+	public static final String DEPS_S = "deps_server/";
 	public static final String TEMP = 	"temp/";
 	public static final String SRC = 	"src/";
 	public static final String BIN = 	"bin/";

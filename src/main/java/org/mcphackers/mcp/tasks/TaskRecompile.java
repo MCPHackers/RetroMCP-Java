@@ -60,17 +60,29 @@ public class TaskRecompile extends Task {
 			if(side == CLIENT) {
 				src.addAll(start);
 			}
-			List<String> libraries = new ArrayList();
+
+			List<String> libraries;
+			List<String> options = new ArrayList<>();
+
 			try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				libraries = stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
 			}
-			List<String> options = Arrays.asList(
-					"-d", MCPConfig.CLIENT_BIN,
-					"-cp", String.join(System.getProperty("path.separator"), libraries));
+
 			if(side == SERVER) {
+				libraries.add(0, MCPConfig.SERVER);
+				try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.DEPS_S)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+					libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
+				}
 				options = Arrays.asList(
 						"-d", MCPConfig.SERVER_BIN,
-						"-cp", MCPConfig.SERVER);
+						"-cp", String.join(System.getProperty("path.separator"), libraries));
+			} else if (side == CLIENT) {
+				try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.DEPS_C)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+					libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
+				}
+				options = Arrays.asList(
+					    "-d", MCPConfig.CLIENT_BIN,
+					    "-cp", String.join(System.getProperty("path.separator"), libraries));
 			}
 			this.progress = 3;
 			recompile(compiler, ds, src, options);

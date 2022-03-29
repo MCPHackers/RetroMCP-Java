@@ -123,6 +123,9 @@ public class TaskSetup extends Task {
 		MCP.logger.info(" Done in " + Util.time(System.currentTimeMillis() - startTime));
 		FileUtil.unzip(Paths.get(MCPConfig.LIB + "libs.zip"), Paths.get(MCPConfig.LIB), true);
 		FileUtil.unzip(Paths.get(MCPConfig.LIB + "natives.zip"), Paths.get(MCPConfig.NATIVES), true);
+
+		FileUtil.createDirectories(Paths.get(MCPConfig.DEPS_C));
+		FileUtil.createDirectories(Paths.get(MCPConfig.DEPS_S));
 	}
 
 	private void setWorkspace() throws Exception {
