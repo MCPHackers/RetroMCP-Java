@@ -84,7 +84,7 @@ public class MCP {
 				logger.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
 				String str = "";
 				try {
-					str = input.nextLine();
+					str = input.nextLine().trim();
 				} catch (NoSuchElementException ignored) {}
 				logger.print(new Ansi().fgDefault());
 				args = str.split(" ");
