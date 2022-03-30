@@ -61,7 +61,7 @@ public class TaskReobfuscate extends Task {
 						String packageName = className.lastIndexOf("/") >= 0 ? className.substring(0, className.lastIndexOf("/") + 1) : null;
 						String obfPackage = reobfPackages.get(packageName);
 						if (obfPackage == null) {
-							obfPackage = "";
+							return null;
 						}
 						return obfPackage + (className.lastIndexOf("/") >= 0 ? className.substring(className.lastIndexOf("/") + 1) : className);
 					}
