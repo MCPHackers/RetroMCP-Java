@@ -30,6 +30,7 @@ public class TaskDownloadUpdate extends Task {
 		String latestVersion = releaseJson.getString("tag_name");
 		String notes = releaseJson.getString("body");
 		if(!latestVersion.equals(MCP.VERSION)) {
+			//TODO no Ansi plz
 			log(new Ansi().a("New version found: ").fgBrightYellow().a(latestVersion).fgDefault().toString());
 			log(new Ansi().fgRgb(255,255,255).a("=========================").newline().a(notes).newline().a("=========================").fgDefault().toString());
 			for(Object obj : releaseJson.getJSONArray("assets")) {

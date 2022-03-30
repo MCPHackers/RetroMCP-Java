@@ -26,7 +26,8 @@ public abstract class Task implements ProgressListener {
 	public static final byte WARNING = 1;
 	public static final byte ERROR = 2;
 	
-	protected final Side side;
+	public final Side side;
+	private int progressBarIndex = -1; 
 	protected final MCP mcp;
 	protected int step;
 	private byte result = INFO;
@@ -77,8 +78,7 @@ public abstract class Task implements ProgressListener {
 
 	public void setProgress(String progressString) {
 		if(progressListener == null) {
-			// FIXME Somehow get the index of the bar
-			mcp.setProgress(side.index, progressString);
+			mcp.setProgress(progressBarIndex, progressString);
 		}
 		else {
 			progressListener.setProgress(progressString);
@@ -87,8 +87,7 @@ public abstract class Task implements ProgressListener {
 
 	public void setProgress(int progress) {
 		if(progressListener == null) {
-			// FIXME Somehow get the index of the bar
-			mcp.setProgress(side.index, progress);
+			mcp.setProgress(progressBarIndex, progress);
 		}
 		else {
 			progressListener.setProgress(progress);
@@ -99,8 +98,12 @@ public abstract class Task implements ProgressListener {
 		mcp.log(msg);
 	}
 	
+	public void setProgressBarIndex(int i) {
+		progressBarIndex = i;
+	}
+	
 	protected String chooseFromSide(String... strings) {
-		if(side.index < strings.length) {
+		if(side.index >= 0 && side.index < strings.length) {
 			return strings[side.index];
 		}
 		return null;

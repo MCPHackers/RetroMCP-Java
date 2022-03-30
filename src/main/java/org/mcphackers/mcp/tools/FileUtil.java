@@ -155,9 +155,13 @@ public class FileUtil {
 		return Files.walk(path).filter(predicate).collect(Collectors.toList());
 	}
 
+	@Deprecated
+	/**
+	 * @see #deletePackages(Path, Path)
+	 */
 	public static void copyDirectory(Path sourceFolder, Path targetFolder, String[] excludedFolders) throws IOException {
 		Files.walk(sourceFolder).filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
-			Path destination = Paths.get(targetFolder.toString(), source.toString().substring(sourceFolder.toString().length()));
+			Path destination = targetFolder.resolve(sourceFolder.relativize(source));
 			boolean doCopy = true;
 			for (String excludedFolder : excludedFolders) {
 				if(targetFolder.relativize(destination).startsWith(Paths.get(excludedFolder))) {
@@ -170,13 +174,22 @@ public class FileUtil {
 					Files.createDirectories(destination.getParent());
 					Files.copy(source, destination);
 				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		});
 	}
 
 	public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
-		copyDirectory(sourceFolder, targetFolder, new String[] {});
+		Files.walk(sourceFolder)
+        .forEach(source -> {
+        	Path destination = targetFolder.resolve(sourceFolder.relativize(source));
+            try {
+                Files.copy(source, destination);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 	}
 
 	public static void compress(Path sourceDir, Path target) throws IOException {
@@ -198,5 +211,29 @@ public class FileUtil {
 	public static void copyResource(InputStream is, Path out) throws IOException {
 		byte[] data = Util.readAllBytes(is);
 		Files.write(out, data);
+	}
+
+	public static void deleteEmptyFolders(Path path) throws IOException {
+		Files.walk(path)
+        .sorted(Comparator.reverseOrder())
+        .map(Path::toFile)
+        .filter(File::isDirectory)
+        .forEach(File::delete);
+	}
+
+	public static void deletePackages(Path sourceFolder, String[] excludedFolders) throws IOException {
+		Files.walk(sourceFolder).filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
+			for (String excludedFolder : excludedFolders) {
+				if(sourceFolder.relativize(source).startsWith(Paths.get(excludedFolder))) {
+					try {
+						Files.deleteIfExists(source);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					break;
+				}
+			}
+		});
+		deleteEmptyFolders(sourceFolder);
 	}
 }

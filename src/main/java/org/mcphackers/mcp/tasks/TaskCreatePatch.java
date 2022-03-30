@@ -17,7 +17,7 @@ public class TaskCreatePatch extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		Path srcPathUnpatched = Paths.get(chooseFromSide(MCPPaths.SRC + "minecraft_unpatched", MCPPaths.SRC + "minecraft_server_unpatched"));
+		Path srcPathUnpatched = Paths.get(chooseFromSide(MCPPaths.CLIENT_TEMP_SOURCES, MCPPaths.SERVER_TEMP_SOURCES));
 		Path srcPathPatched = Paths.get(chooseFromSide(MCPPaths.CLIENT_SOURCES, MCPPaths.SERVER_SOURCES));
 		Path patchesOut = Paths.get(chooseFromSide("patches/patches_client", "patches/patches_server"));
 		if (Files.exists(srcPathUnpatched)) {

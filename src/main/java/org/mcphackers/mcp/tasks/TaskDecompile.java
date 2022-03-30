@@ -6,12 +6,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.constants.Constants;
 import org.mcphackers.mcp.tools.constants.GLConstants;
 import org.mcphackers.mcp.tools.constants.MathConstants;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
@@ -109,10 +112,11 @@ public class TaskDecompile extends Task {
 				FileUtil.unzipByExtension(Paths.get(srcZip), ffOut, ".java");
 				break;
 			case CONSTS:
-				if(hasLWJGL) {
-					new GLConstants().replace(ffOut);
-				}
-				new MathConstants().replace(ffOut);
+				List<Constants> constants = new ArrayList<>();
+				if(hasLWJGL)
+				constants.add(new GLConstants());
+				constants.add(new MathConstants());
+				Constants.replace(ffOut, constants);
 				break;
 			case PATCH:
 				if(mcp.getBooleanParam(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
@@ -120,7 +124,8 @@ public class TaskDecompile extends Task {
 				}
 				break;
 			case COPYSRC:
-				FileUtil.copyDirectory(ffOut, srcPath, mcp.getStringArrayParam(TaskParameter.IGNORED_PACKAGES));
+				FileUtil.deletePackages(ffOut, mcp.getStringArrayParam(TaskParameter.IGNORED_PACKAGES));
+				FileUtil.copyDirectory(ffOut, srcPath);
 				break;
 			case RECOMPILE:
 				new TaskRecompile(side, mcp, this).doTask();

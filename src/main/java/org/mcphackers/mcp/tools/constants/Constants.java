@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.regex.MatchResult;
@@ -14,12 +15,14 @@ import java.util.regex.Pattern;
 
 public abstract class Constants {
 	
-	public void replace(Path src) throws IOException {
+	public static void replace(Path src, List<Constants> constants) throws IOException {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
 				String code = new String(Files.readAllBytes(file));
-				code = replace_constants(code);
+				for(Constants constantReplacer : constants) {
+					code = constantReplacer.replace_constants(code);
+				}
 				Files.write(file, code.getBytes());
 				return FileVisitResult.CONTINUE;
 			}
