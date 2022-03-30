@@ -67,6 +67,9 @@ public class MCPConfig {
 	public boolean srcCleanup;
 	public String[] ignorePackages;
 	public int onlySide;
+	public int source;
+	public int target;
+	public String bootclasspath;
 	public String indentionString;
 	public boolean fullBuild;
 	public boolean runBuild;
@@ -82,6 +85,9 @@ public class MCPConfig {
 		patch = true;
 		srcCleanup = false;
 		onlySide = -1;
+		source = -1;
+		target = -1;
+		bootclasspath = null;
 		ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
 		indentionString = "\t";
 		fullBuild = false;
@@ -94,6 +100,12 @@ public class MCPConfig {
 		switch (name) {
 			case "side":
 				onlySide = value;
+				break;
+			case "source":
+				source = value;
+				break;
+			case "target":
+				target = value;
 				break;
 			default:
 				// TODO: Cancel task
@@ -111,6 +123,9 @@ public class MCPConfig {
 				break;
 			case "setupversion":
 				setupVersion = value;
+				break;
+			case "bootclasspath":
+				bootclasspath = value;
 				break;
 			default:
 				// TODO: Cancel task

@@ -18,6 +18,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPConfig;
 import org.mcphackers.mcp.ProgressInfo;
 import org.mcphackers.mcp.tasks.info.TaskInfo;
@@ -73,17 +74,27 @@ public class TaskRecompile extends Task {
 				try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.DEPS_S)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 					libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 				}
-				options = Arrays.asList(
-						"-d", MCPConfig.SERVER_BIN,
-						"-cp", String.join(System.getProperty("path.separator"), libraries));
+				options.addAll(Arrays.asList("-d", MCPConfig.SERVER_BIN));
 			} else if (side == CLIENT) {
 				try(Stream<Path> stream = Files.list(Paths.get(MCPConfig.DEPS_C)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 					libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 				}
-				options = Arrays.asList(
-					    "-d", MCPConfig.CLIENT_BIN,
-					    "-cp", String.join(System.getProperty("path.separator"), libraries));
+				options.addAll(Arrays.asList("-d", MCPConfig.CLIENT_BIN));
 			}
+
+            if (MCP.config.source >= 0) {
+                options.addAll(Arrays.asList("-source", Integer.toString(MCP.config.source)));
+            }
+            if (MCP.config.target >= 0) {
+                options.addAll(Arrays.asList("-target", Integer.toString(MCP.config.target)));
+            }
+
+            if (MCP.config.bootclasspath != null) {
+                options.addAll(Arrays.asList("-bootclasspath", MCP.config.bootclasspath));
+            }
+
+            options.addAll(Arrays.asList("-cp", String.join(System.getProperty("path.separator"), libraries)));
+
 			this.progress = 3;
 			recompile(compiler, ds, src, options);
 			this.progress = 50;
