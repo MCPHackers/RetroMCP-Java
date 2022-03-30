@@ -114,10 +114,16 @@ public class TaskRecompile extends Task {
 		for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
 			if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
 				String kind = diagnostic.getKind() == Diagnostic.Kind.ERROR ? "Error" : "Warning";
-				info.addInfo(kind + String.format(" on line %d in %s%n%s%n",
-								  		diagnostic.getLineNumber(),
-								  		diagnostic.getSource().getName(),
-								  		diagnostic.getMessage(null)));
+                JavaFileObject source = diagnostic.getSource();
+                if (source == null) {
+                    info.addInfo(kind + String.format("%n%s%n",
+                            diagnostic.getMessage(null)));
+                } else {
+                    info.addInfo(kind + String.format(" on line %d in %s%n%s%n",
+                            diagnostic.getLineNumber(),
+                            source.getName(),
+                            diagnostic.getMessage(null)));
+                }
 			}
 		mgr.close();
 		if (!success) {
