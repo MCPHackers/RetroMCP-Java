@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 public class MathConstants extends Constants {
 	
 	// Used to prevent strings from being captured, such as "2.0D"
-	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?![\\\"\\'][.\\w\\s]*)-*\\d+\\.*\\w*(?![.\\w\\s]*[\\\"\\'])");
-	private static final Map<String, String> _CONSTANTS = new HashMap<String, String>();
+	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?![\"'][.\\w\\s]*)-*\\d+\\.*\\w*(?![.\\w\\s]*[\"'])");
+	private static final Map<String, String> _CONSTANTS = new HashMap<>();
 	
 	static {
 		for (int i = 1; i <= 100; i++) {
@@ -42,7 +42,7 @@ public class MathConstants extends Constants {
 	protected String replace_constants(String code) {
 		return replaceTextOfMatchGroup(code, _CONSTANT_REGEX, match1 -> {
 			String constant = match1.group(0);
-			return _CONSTANTS.containsKey(constant) ? _CONSTANTS.get(constant) : constant;
+			return _CONSTANTS.getOrDefault(constant, constant);
 		});
 	}
 	

@@ -20,12 +20,12 @@ public class GLConstants extends Constants {
 	private static final JSONObject json = getJson();
 	private static Exception cause = null;
 	
-	private static final List _PACKAGES = json == null ? new ArrayList() : json.getJSONArray("PACKAGES").toList();
-	private static final List _CONSTANTS = json == null ? new ArrayList() : Util.jsonToList(json.getJSONArray("CONSTANTS"));
-	private static final Map _CONSTANTS_KEYBOARD = json == null ? new HashMap() : Util.jsonToMap(json.getJSONObject("CONSTANTS_KEYBOARD"));
+	private static final List _PACKAGES = json == null ? new ArrayList<>() : json.getJSONArray("PACKAGES").toList();
+	private static final List _CONSTANTS = json == null ? new ArrayList<>() : Util.jsonToList(json.getJSONArray("CONSTANTS"));
+	private static final Map _CONSTANTS_KEYBOARD = json == null ? new HashMap<>() : Util.jsonToMap(json.getJSONObject("CONSTANTS_KEYBOARD"));
 	private static final Pattern _CALL_REGEX = Pattern.compile("(" + String.join("|", _PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
 	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
-	private static final Pattern _INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[\\);]))|new KeyBinding\\([ \\w\\\"]+, .+?\\))");
+	private static final Pattern _INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[);]))|new KeyBinding\\([ \\w\"]+, .+?\\))");
 	private static final Pattern _IMPORT = Pattern.compile("import [.*\\w]+;");
 	
 	public GLConstants() throws Exception {
@@ -48,7 +48,7 @@ public class GLConstants extends Constants {
 	}
 
 	protected String replace_constants(String code) {
-		Set<String> imports = new HashSet<String>();
+		Set<String> imports = new HashSet<>();
 		code = replaceTextOfMatchGroup(code, _INPUT_REGEX, match1 -> {
 			String full_call = match1.group(0);
 			return replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {

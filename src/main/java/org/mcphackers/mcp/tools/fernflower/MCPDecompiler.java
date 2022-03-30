@@ -11,8 +11,6 @@ import de.fernflower.main.providers.IJavadocProvider;
 import de.fernflower.modules.renamer.IdentifierConverter;
 import de.fernflower.struct.StructContext;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Map;
 
 public class MCPDecompiler extends BaseDecompiler {

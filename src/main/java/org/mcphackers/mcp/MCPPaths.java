@@ -6,6 +6,8 @@ public class MCPPaths {
 	//Directories
 	public static final String JARS = 	"jars/";
 	public static final String LIB = 	"lib/";
+	public static final String DEPS_C =	LIB + "client/";
+	public static final String DEPS_S =	LIB + "server/";
 	public static final String TEMP = 	"temp/";
 	public static final String SRC = 	"src/";
 	public static final String BIN = 	"bin/";
