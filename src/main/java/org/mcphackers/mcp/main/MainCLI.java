@@ -391,4 +391,10 @@ public class MainCLI implements MCP {
 		
 	}
 
+	@Override
+	public int askForInput(String title, String msg) {
+		log(msg);
+		return input.nextLine().toLowerCase().equals("yes") ? 0 : 1;
+	}
+
 }

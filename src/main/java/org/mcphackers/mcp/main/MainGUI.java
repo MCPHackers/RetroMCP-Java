@@ -281,7 +281,7 @@ public class MainGUI extends JFrame implements MCP {
 		}
 	}
 	
-	private void performTasks(Task[] tasks) {
+	public void performTasks(Task[] tasks) {
 		if(tasks.length == 0) {
 			System.err.println("Performing 0 tasks wtf?");
 			return;
@@ -344,17 +344,8 @@ public class MainGUI extends JFrame implements MCP {
 		}
 		log("");
 		
-		switch (result) {
-		case Task.INFO:
-			JOptionPane.showMessageDialog(this, "Finished successfully!", tasks[0].getName(), JOptionPane.INFORMATION_MESSAGE);
-			break;
-		case Task.WARNING:
-			JOptionPane.showMessageDialog(this, "Finished with warnings!", tasks[0].getName(), JOptionPane.WARNING_MESSAGE);
-			break;
-		case Task.ERROR:
-			JOptionPane.showMessageDialog(this, "Finished with errors!", tasks[0].getName(), JOptionPane.ERROR_MESSAGE);
-			break;
-		}
+		String[] msgs2 = new String[] {"Finished successfully!", "Finished with warnings!", "Finished with errors!"};
+		showPopup(tasks[0].getName(), msgs2[result], result);
 
 		for(int i = 0; i < tasks.length; i++) {
 			setProgressBarActive(i, false);
@@ -380,10 +371,11 @@ public class MainGUI extends JFrame implements MCP {
 		patchButton.setEnabled(Files.exists(Paths.get(MCPPaths.SRC)) && Files.exists(Paths.get(MCPPaths.TEMP + "src")));
 		verList.setEnabled(true);
 		verLabel.setEnabled(true);
-		menuBar.getOptions().setEnabled(true);
+		menuBar.menuOptions.setEnabled(true);
+		menuBar.mcpMenu.setEnabled(true);
 	}
 	
-	private void setAllButtonsActive(boolean active) {
+	public void setAllButtonsActive(boolean active) {
 		if(active) {
 			updateButtonState();
 		}
@@ -401,7 +393,8 @@ public class MainGUI extends JFrame implements MCP {
 		patchButton.setEnabled(false);
 		verList.setEnabled(false);
 		verLabel.setEnabled(false);
-		menuBar.getOptions().setEnabled(false);
+		menuBar.menuOptions.setEnabled(false);
+		menuBar.mcpMenu.setEnabled(false);
 	}
 
 	@Override
@@ -474,5 +467,25 @@ public class MainGUI extends JFrame implements MCP {
 	@Override
 	public void setProgress(int side, int progress) {
 		progressBars[side].setValue(progress);
+	}
+
+	@Override
+	public int askForInput(String title, String msg) {
+		return JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION);
+	}
+
+	public void showPopup(String title, String msg, int type) {
+		switch (type) {
+		case Task.INFO:
+			type = JOptionPane.INFORMATION_MESSAGE;
+			break;
+		case Task.WARNING:
+			type = JOptionPane.WARNING_MESSAGE;
+			break;
+		case Task.ERROR:
+			type = JOptionPane.ERROR_MESSAGE;
+			break;
+		}
+		JOptionPane.showMessageDialog(this, msg, title, type);
 	}
 }

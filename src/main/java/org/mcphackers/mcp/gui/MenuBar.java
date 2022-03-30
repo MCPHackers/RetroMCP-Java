@@ -9,10 +9,12 @@ import javax.swing.JRadioButtonMenuItem;
 
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tasks.TaskDownloadUpdate;
 import org.mcphackers.mcp.tools.Util;
 
 public class MenuBar extends JMenuBar {
-	private final JMenu menuOptions = new JMenu("Options");
+	public final JMenu menuOptions = new JMenu("Options");
+	public final JMenu mcpMenu = new JMenu("MCP");
 	private final JMenu helpMenu = new JMenu("Help");
 	private final JMenuItem[] sideItems = new JMenuItem[3];
 	private final JMenuItem githubItem = new JMenuItem("Github Page");
@@ -24,6 +26,20 @@ public class MenuBar extends JMenuBar {
 		this.helpMenu.setMnemonic(KeyEvent.VK_H);
 		initOptions();
 		reloadOptions(owner);
+		JMenuItem update = new JMenuItem("Check for updates");
+		update.addActionListener(a -> {
+			owner.operateOnThread(() -> {
+				owner.setAllButtonsActive(false);
+    			try {
+					new TaskDownloadUpdate(owner).doTask();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+    			owner.setAllButtonsActive(true);
+			});
+		});
+		mcpMenu.add(update);
+		add(mcpMenu);
 		add(menuOptions);
 		this.githubItem.addActionListener(e -> this.onGithubClicked());
 		this.helpMenu.add(this.githubItem);
@@ -61,9 +77,5 @@ public class MenuBar extends JMenuBar {
 
 	private void onGithubClicked() {
 		Util.openUrl("https://github.com/MCPHackers/RetroMCP-Java");
-	}
-
-	public JMenu getOptions() {
-		return menuOptions;
 	}
 }

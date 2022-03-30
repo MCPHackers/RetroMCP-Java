@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 
 public interface MCP {
 	
-	String VERSION = "v0.3";
+	String VERSION = "v0.4";
 
 	default void attemptToDeleteUpdateJar() {
 		long startTime = System.currentTimeMillis();
@@ -36,6 +36,8 @@ public interface MCP {
 	void setProgress(int barIndex, String progressMessage);
 	
 	void setProgress(int barIndex, int progress);
+
+	int askForInput(String title, String msg);
 	
 	default void setProgress(int barIndex, String progressMessage, int progress) {
 		setProgress(barIndex, progress);

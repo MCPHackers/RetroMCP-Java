@@ -42,8 +42,7 @@ public class TaskCreatePatch extends Task {
 				.logTo(logger)
 				.summary(true).build();
 		if (diffOperation.operate().exit != 0) {
-			// TODO
-			//info.addInfo(logger.toString());
+			addMessage(logger.toString(), Task.ERROR);
 			throw new Exception("Patches could not be created!");
 		}
 	}
