@@ -112,6 +112,9 @@ public class TaskSetup extends Task {
 		log(" Done in " + Util.time(System.currentTimeMillis() - startTime));
 		FileUtil.unzip(Paths.get(MCPPaths.LIB + "libs.zip"), Paths.get(MCPPaths.LIB), true);
 		FileUtil.unzip(Paths.get(MCPPaths.LIB + "natives.zip"), Paths.get(MCPPaths.NATIVES), true);
+
+		FileUtil.createDirectories(Paths.get(MCPPaths.DEPS_C));
+		FileUtil.createDirectories(Paths.get(MCPPaths.DEPS_S));
 	}
 
 	private void setWorkspace() throws Exception {
@@ -168,12 +171,13 @@ public class TaskSetup extends Task {
 
 	private static String getTable(List<String> versions) {
 		int rows = (int)Math.ceil(versions.size() / 3D);
-		List<String>[] tableList = new List[rows];
+		@SuppressWarnings("unchecked")
+		List<String>[] tableList = (List<String>[]) new List[rows];
 		for (int i = 0; i < tableList.length; i++)
 		{
-			tableList[i] = new ArrayList();
+			tableList[i] = new ArrayList<>();
 		}
-		String table = "";
+		StringBuilder table = new StringBuilder();
 		int index = 0;
 		for (String ver : versions) {
 			tableList[index % rows].add(new Ansi().fgBrightCyan().a(" - ").fgDefault().fgCyan().a(String.format("%-16s", ver)).fgDefault().toString());
@@ -182,11 +186,11 @@ public class TaskSetup extends Task {
 		for (int i = 0; i < tableList.length; i++)
 		{
 			for (String ver : tableList[i]) {
-				table += ver;
+				table.append(ver);
 			}
-			if(i < tableList.length - 1) table += "\n";
+			if(i < tableList.length - 1) table.append("\n");
 		}
-		return table;
+		return table.toString();
 	}
 
 	@Override

@@ -16,10 +16,8 @@ import de.fernflower.struct.StructMethod;
 import de.fernflower.struct.attr.StructLocalVariableTableAttribute;
 import de.fernflower.struct.gen.MethodDescriptor;
 import de.fernflower.util.InterpreterUtil;
-import net.fabricmc.mappingio.MappingUtil;
 import net.fabricmc.mappingio.tree.MappingTree;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -34,7 +32,7 @@ public class MCPClassWrapper extends ClassWrapper {
     }
 
     @Override
-    public void init() throws IOException {
+    public void init() {
         DecompilerContext.setProperty("CURRENT_CLASS", this.getClassStruct());
         DecompilerContext.setProperty("CURRENT_CLASS_WRAPPER", this);
         DecompilerContext.getLogger().startClass(this.getClassStruct().qualifiedName);

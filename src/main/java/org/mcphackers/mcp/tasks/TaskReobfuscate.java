@@ -64,7 +64,7 @@ public class TaskReobfuscate extends Task {
 						String packageName = className.lastIndexOf("/") >= 0 ? className.substring(0, className.lastIndexOf("/") + 1) : null;
 						String obfPackage = reobfPackages.get(packageName);
 						if (obfPackage == null) {
-							obfPackage = "";
+							return null;
 						}
 						return obfPackage + (className.lastIndexOf("/") >= 0 ? className.substring(className.lastIndexOf("/") + 1) : className);
 					}
@@ -99,7 +99,7 @@ public class TaskReobfuscate extends Task {
 			if (deobfName != null) {
 				String obfPackage = obfName.lastIndexOf("/") >= 0 ? obfName.substring(0, obfName.lastIndexOf("/") + 1) : "";
 				String deobfPackage = deobfName.lastIndexOf("/") >= 0 ? deobfName.substring(0, deobfName.lastIndexOf("/") + 1) : "";
-				if (!reobfPackages.containsKey(deobfPackage) && deobfPackage != obfPackage) {
+				if (!reobfPackages.containsKey(deobfPackage) && !deobfPackage.equals(obfPackage)) {
 					reobfPackages.put(deobfPackage, obfPackage);
 				}
 			}
@@ -169,9 +169,7 @@ public class TaskReobfuscate extends Task {
 
 	private void unpack(final Path src, final Path destDir) throws IOException {
 		Map<String, String> reobfClasses = new HashMap<>();
-		((MappingTree) mappingTree).getClasses().forEach(classEntry -> {
-			reobfClasses.put(classEntry.getName("named"), classEntry.getDstName(0));
-		});
+		((MappingTree) mappingTree).getClasses().forEach(classEntry -> reobfClasses.put(classEntry.getName("named"), classEntry.getDstName(0)));
 		FileUtil.unzip(src, destDir, entry -> {
 			String name = entry.getName().replace(".class", "");
 			String deobfName = Util.getKey(reobfClasses, name);

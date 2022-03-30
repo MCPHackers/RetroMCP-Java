@@ -57,11 +57,11 @@ public class MainGUI extends JFrame implements MCP {
 	private JButton buildButton;
 	private JButton patchButton;
 	private JButton md5Button;
-	private JComboBox verList;
+	private JComboBox<String> verList;
 	private JLabel verLabel;
 	private JPanel topRightContainer;
-	private JProgressBar[] progressBars = new JProgressBar[2];
-	private JLabel[] progressLabels = new JLabel[2];
+	private final JProgressBar[] progressBars = new JProgressBar[2];
+	private final JLabel[] progressLabels = new JLabel[2];
 	private MenuBar menuBar;
 	
 	public int side = 2;
@@ -210,10 +210,10 @@ public class MainGUI extends JFrame implements MCP {
 
 		try {
 			MainGUI mcp = this;
-			this.verList = new JComboBox(VersionsParser.getVersionList().toArray()) {
+			this.verList = new JComboBox<String>(VersionsParser.getVersionList().toArray(new String[0])) {
 				public void firePopupMenuWillBecomeInvisible() {
 					super.firePopupMenuWillBecomeInvisible();
-			        if (!VersionsParser.getCurrentVersion().equals((String)getSelectedItem())) {
+			        if (!VersionsParser.getCurrentVersion().equals(getSelectedItem())) {
 			        	int response = JOptionPane.showConfirmDialog(mcp, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
 			        	switch (response) {
 			        		case 0:
@@ -253,7 +253,7 @@ public class MainGUI extends JFrame implements MCP {
 		}
 	}
 	
-	public class TaskRunner {
+	public static class TaskRunner {
 		private final Task task;
 		private final String name;
 		
@@ -294,18 +294,16 @@ public class MainGUI extends JFrame implements MCP {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		for(int i = 0; i < tasks.length; i++) {
-			if(side == 2) {
-				if(tasks[i].side == Side.SERVER && !hasServer) {
+		for (Task value : tasks) {
+			if (side == 2) {
+				if (value.side == Side.SERVER && !hasServer) {
 					continue;
 				}
-				runners.add(new TaskRunner(tasks[i]));
-			}
-			else if(side == 0 && tasks[i].side == Side.CLIENT) {
-				runners.add(new TaskRunner(tasks[i]));
-			}
-			else if(side == 1 && tasks[i].side == Side.SERVER) {
-				runners.add(new TaskRunner(tasks[i]));
+				runners.add(new TaskRunner(value));
+			} else if (side == 0 && value.side == Side.CLIENT) {
+				runners.add(new TaskRunner(value));
+			} else if (side == 1 && value.side == Side.SERVER) {
+				runners.add(new TaskRunner(value));
 			}
 		}
 		ExecutorService pool = Executors.newFixedThreadPool(2);
@@ -330,7 +328,7 @@ public class MainGUI extends JFrame implements MCP {
 
 		byte result = result1.byteValue();
 		
-		List<String> msgs = new ArrayList<String>();
+		List<String> msgs = new ArrayList<>();
 		for(Task task : tasks) {
 			msgs.addAll(task.getMessageList());
 			byte retresult = task.getResult();

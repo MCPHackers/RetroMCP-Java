@@ -2,9 +2,7 @@ package org.mcphackers.mcp.main;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -87,8 +85,10 @@ public class MainCLI implements MCP {
 				logger.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
 				String str = "";
 				try {
-					str = input.nextLine();
-				} catch (NoSuchElementException ignored) {}
+					str = input.nextLine().trim();
+				} catch (NoSuchElementException ignored) {
+					mode = TaskMode.exit;
+				}
 				logger.print(new Ansi().fgDefault());
 				args = str.split(" ");
 			}
@@ -253,6 +253,9 @@ public class MainCLI implements MCP {
 	public boolean srcCleanup;
 	public String[] ignorePackages;
 	public int onlySide;
+	public int source;
+	public int target;
+	public String bootclasspath;
 	public String indentionString;
 	public boolean fullBuild;
 	public boolean runBuild;
@@ -263,8 +266,11 @@ public class MainCLI implements MCP {
 		debug = false;
 		patch = true;
 		srcCleanup = false;
-		onlySide = -1;
 		ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
+		onlySide = -1;
+		source = -1;
+		target = -1;
+		bootclasspath = null;
 		indentionString = "\t";
 		fullBuild = false;
 		runBuild = false;
@@ -276,6 +282,12 @@ public class MainCLI implements MCP {
 		switch (name) {
 			case "side":
 				onlySide = value;
+				break;
+			case "source":
+				source = value;
+				break;
+			case "target":
+				target = value;
 				break;
 			default:
 				// TODO: Cancel task
@@ -293,6 +305,9 @@ public class MainCLI implements MCP {
 				break;
 			case "setupversion":
 				setupVersion = value;
+				break;
+			case "bootclasspath":
+				bootclasspath = value;
 				break;
 			default:
 				// TODO: Cancel task
@@ -345,26 +360,58 @@ public class MainCLI implements MCP {
 
 	@Override
 	public boolean getBooleanParam(TaskParameter param) {
-		// TODO Auto-generated method stub
-		return false;
+		switch (param) {
+		case DEBUG:
+			return debug;
+		case PATCHES:
+			return patch;
+		case FULL_BUILD:
+			return fullBuild;
+		case RUN_BUILD:
+			return runBuild;
+		default:
+			return false;
+		}
 	}
 
 	@Override
 	public String[] getStringArrayParam(TaskParameter param) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (param) {
+		case IGNORED_PACKAGES:
+			return ignorePackages;
+		case RUN_ARGS:
+			return runArgs;
+		default:
+			return new String[0];
+		}
 	}
 
 	@Override
 	public String getStringParam(TaskParameter param) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (param) {
+		case BOOT_CLASS_PATH:
+			return bootclasspath;
+		case INDENTION_STRING:
+			return indentionString;
+		case SETUP_VERSION:
+			return setupVersion;
+		default:
+			return null;
+		}
 	}
 
 	@Override
 	public int getIntParam(TaskParameter param) {
-		// TODO Auto-generated method stub
-		return 0;
+		switch (param) {
+		case SIDE:
+			return onlySide;
+		case SOURCE_VERSION:
+			return source;
+		case TARGET_VERSION:
+			return target;
+		default:
+			return 0;
+		}
 	}
 
 	@Override

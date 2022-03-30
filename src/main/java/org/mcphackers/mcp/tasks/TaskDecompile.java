@@ -26,7 +26,7 @@ import codechicken.diffpatch.cli.PatchOperation;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public class TaskDecompile extends Task {
-	private MemoryMappingTree mappingTree = new MemoryMappingTree();
+	private final MemoryMappingTree mappingTree = new MemoryMappingTree();
 	
 	private static final int REMAP = 1;
 	private static final int EXCEPTOR = 2;
@@ -76,7 +76,7 @@ public class TaskDecompile extends Task {
 			case REMAP:
 				if (Files.exists(mappings)) {
 					MappingUtil.readMappings(mappings, mappingTree);
-					MappingUtil.modifyClasses(mappingTree, FileSystems.newFileSystem(originalJar, (ClassLoader) null).getPath("/"), className -> {
+					MappingUtil.modifyClasses(mappingTree, FileSystems.newFileSystem(originalJar, null).getPath("/"), className -> {
 						if (mappingTree.getClass(className) == null) {
 							if(className.lastIndexOf("/") < 0) {
 								return "net/minecraft/src/" + className;

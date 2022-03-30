@@ -47,8 +47,8 @@ public class MenuBar extends JMenuBar {
 	}
 
 	private void reloadOptions(MainGUI mainGUI) {
-		for(int i = 0; i < sideItems.length; i++) {
-			sideItems[i].setSelected(false);
+		for (JMenuItem sideItem : sideItems) {
+			sideItem.setSelected(false);
 		}
 		sideItems[mainGUI.side].setSelected(true);
 	}

@@ -25,23 +25,21 @@ import java.util.concurrent.TimeUnit;
 public class Util {
 
 	// FIXME
-	public static int runCommand(String[] cmd, Path dir, boolean doLog) throws IOException, InterruptedException {
+	public static int runCommand(String[] cmd, Path dir, boolean doLog) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
 		if(dir != null) {
 			procBuilder.directory(dir.toAbsolutePath().toFile());
 		}
 		Process proc = procBuilder.start();
-		new Thread() {
-			public void run() {
-				if(doLog) {
-					try(Scanner sc = new Scanner(proc.getInputStream())) {
-						while (sc.hasNextLine()) {
-							//MCP.logger.info(sc.nextLine());
-						}
+		new Thread(() -> {
+			if(doLog) {
+				try(Scanner sc = new Scanner(proc.getInputStream())) {
+					while (sc.hasNextLine()) {
+						//MCP.logger.info(sc.nextLine());
 					}
 				}
 			}
-		}.start();
+		}).start();
 		while(proc.isAlive()) {
 			if(doLog) {
 				try(Scanner sc = new Scanner(proc.getErrorStream())) {
@@ -89,7 +87,7 @@ public class Util {
 	}
 	
 	public static Map<String, Object> jsonToMap(JSONObject jsonobj)  throws JSONException {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		Iterator<String> keys = jsonobj.keys();
 		while(keys.hasNext()) {
 			String key = keys.next();
@@ -104,7 +102,7 @@ public class Util {
 	}
 
 	public static List<Object> jsonToList(JSONArray array) throws JSONException {
-		List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<>();
 		for(int i = 0; i < array.length(); i++) {
 			Object value = array.get(i);
 			if (value instanceof JSONArray) {

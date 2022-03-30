@@ -11,17 +11,20 @@ public enum TaskParameter {
 	FULL_BUILD("Full build", true),
 	RUN_BUILD("Run build", true),
 	RUN_ARGS("Run arguments"),
-	SETUP_VERSION("Setup version");
+	SETUP_VERSION("Setup version"),
+	SOURCE_VERSION("Set a specific source version"),
+	TARGET_VERSION("Set a specific target version"),
+	BOOT_CLASS_PATH("Set a specific bootstrap class path");
 	
 	public final String name;
 	public boolean isToggle;
 	
-	private TaskParameter(String name) {
+	TaskParameter(String name) {
 		this.name = name;
 		isToggle = false;
 	}
 	
-	private TaskParameter(String name, boolean toggle) {
+	TaskParameter(String name, boolean toggle) {
 		this(name);
 		isToggle = toggle;
 	}

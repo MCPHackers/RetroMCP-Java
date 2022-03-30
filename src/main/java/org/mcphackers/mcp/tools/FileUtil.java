@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -38,7 +37,7 @@ public class FileUtil {
 	}
 	
 	public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
+		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
 			for(Path file : files) {
 				Path fileInsideZipPath = fs.getPath(relativeTo.relativize(file).toString());
 				Files.deleteIfExists(fileInsideZipPath);
@@ -50,14 +49,14 @@ public class FileUtil {
 	}
 	
 	public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
+		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.deleteIfExists(fileInsideZipPath);
 		}
 	}
 	
 	public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
+		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.copy(fileInsideZipPath, out);
 		}
@@ -106,7 +105,7 @@ public class FileUtil {
 	}
 	
 	@Deprecated
-	public static void downloadGitDir(URL url, Path output) throws IOException, URISyntaxException {
+	public static void downloadGitDir(URL url, Path output) throws IOException {
 		InputStream in = url.openStream();
 		JSONArray json = Util.parseJSONArray(in);
 		for(Object object : json) {
@@ -155,10 +154,10 @@ public class FileUtil {
 		return Files.walk(path).filter(predicate).collect(Collectors.toList());
 	}
 
-	@Deprecated
 	/**
-	 * @see #deletePackages(Path, Path)
+	 * @see #deletePackages(Path, String[])
 	 */
+	@Deprecated
 	public static void copyDirectory(Path sourceFolder, Path targetFolder, String[] excludedFolders) throws IOException {
 		Files.walk(sourceFolder).filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
 			Path destination = targetFolder.resolve(sourceFolder.relativize(source));

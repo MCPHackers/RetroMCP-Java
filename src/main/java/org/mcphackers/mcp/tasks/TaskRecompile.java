@@ -21,6 +21,7 @@ import javax.tools.ToolProvider;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
+import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 
 public class TaskRecompile extends Task {
@@ -59,18 +60,44 @@ public class TaskRecompile extends Task {
 			if(side == Side.CLIENT) {
 				src.addAll(start);
 			}
-			List<String> libraries = new ArrayList();
+
+			List<String> libraries;
+			List<String> options = new ArrayList<>();
+
 			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				libraries = stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
 			}
-			List<String> options = Arrays.asList(
-					"-d", MCPPaths.CLIENT_BIN,
-					"-cp", String.join(System.getProperty("path.separator"), libraries));
+
 			if(side == Side.SERVER) {
-				options = Arrays.asList(
-						"-d", MCPPaths.SERVER_BIN,
-						"-cp", MCPPaths.SERVER);
+				libraries.add(0, MCPPaths.SERVER);
+				try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.DEPS_S)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+					libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
+				}
+				options.addAll(Arrays.asList("-d", MCPPaths.SERVER_BIN));
+			} else if(side == Side.CLIENT) {
+				try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.DEPS_C)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+					libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
+				}
+				options.addAll(Arrays.asList("-d", MCPPaths.CLIENT_BIN));
 			}
+
+			int sourceVersion = mcp.getIntParam(TaskParameter.SOURCE_VERSION);
+			if (sourceVersion >= 0) {
+				options.addAll(Arrays.asList("-source", Integer.toString(sourceVersion)));
+			}
+
+			int targetVersion = mcp.getIntParam(TaskParameter.TARGET_VERSION);
+			if (targetVersion >= 0) {
+				options.addAll(Arrays.asList("-target", Integer.toString(targetVersion)));
+			}
+
+			String bootclasspath = mcp.getStringParam(TaskParameter.BOOT_CLASS_PATH);
+			if (bootclasspath != null) {
+				options.addAll(Arrays.asList("-bootclasspath", bootclasspath));
+			}
+
+			options.addAll(Arrays.asList("-cp", String.join(System.getProperty("path.separator"), libraries)));
+
 			setProgress(3);
 			recompile(compiler, ds, src, options);
 			setProgress(50);
@@ -101,11 +128,18 @@ public class TaskRecompile extends Task {
 			if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
 				String[] kindString = new String[] {"Info", "Warning", "Error"};
 				byte kind = (byte) (diagnostic.getKind() == Diagnostic.Kind.ERROR ? 2 : 1);
-				addMessage(kindString[kind] + String.format(" on line %d in %s%n%s",
-								  		diagnostic.getLineNumber(),
-								  		diagnostic.getSource().getName(),
-								  		diagnostic.getMessage(null)),
-										kind);
+				JavaFileObject source = diagnostic.getSource();
+				if (source == null) {
+					addMessage(kindString[kind] + String.format("%n%s%n",
+							diagnostic.getMessage(null)),
+							kind);
+				} else {
+					addMessage(kindString[kind] + String.format(" on line %d in %s%n%s%n",
+							diagnostic.getLineNumber(),
+							source.getName(),
+							diagnostic.getMessage(null)),
+							kind);
+				}
 			
 			}
 		mgr.close();
