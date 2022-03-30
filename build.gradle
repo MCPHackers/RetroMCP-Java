@@ -19,8 +19,14 @@ repositories {
 }
 
 dependencies {
+    def ASMVersion = '9.2'
+
     // Required libraries
-    implementation 'org.ow2.asm:asm:9.2'
+    implementation 'org.ow2.asm:asm:' + ASMVersion
+    implementation 'org.ow2.asm:asm-analysis:' + ASMVersion
+    implementation 'org.ow2.asm:asm-commons:' + ASMVersion
+    implementation 'org.ow2.asm:asm-tree:' + ASMVersion
+    implementation 'org.ow2.asm:asm-util:' + ASMVersion
 
     implementation 'com.github.MCPHackers:RetroFernflower:43254d0b4787e515c1fb387ccb82952421ce846b'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
