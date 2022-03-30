@@ -52,6 +52,7 @@ public class MCPLogger {
 		if (total != 0) {
 			int percent = (int) (current * 100 / total);
 			string
+					.eraseLine()
 					.a(" ")
 					.a(String.format("%-7s", prefix))
 					.a(String.join("", Collections.nCopies(percent == 0 ? 2 : 2 - (int) (Math.log10(percent)), " ")))
@@ -61,8 +62,7 @@ public class MCPLogger {
 					.fgDefault()
 					.a(String.join("", Collections.nCopies(10 - percent / 10, "-")))
 					.a("] ")
-					.a(progressMsg)
-					.a(String.join("", Collections.nCopies(100, " ")));
+					.a(progressMsg);
 		}
 
 		return string.a("\n").toString();
