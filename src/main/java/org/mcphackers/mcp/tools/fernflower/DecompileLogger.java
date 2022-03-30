@@ -6,7 +6,7 @@ import de.fernflower.main.extern.IFernflowerLogger;
 
 public class DecompileLogger extends IFernflowerLogger {
 
-	private ProgressListener listener;
+	private final ProgressListener listener;
 
 	public DecompileLogger(ProgressListener listener) {
 		this.listener = listener;

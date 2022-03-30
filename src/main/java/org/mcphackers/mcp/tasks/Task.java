@@ -16,7 +16,7 @@ public abstract class Task implements ProgressListener {
 		public final int index;
 		public final String name;
 		
-		private Side(int index, String name) {
+		Side(int index, String name) {
 			this.index = index;
 			this.name = name;
 		}
@@ -32,7 +32,7 @@ public abstract class Task implements ProgressListener {
 	protected int step;
 	private byte result = INFO;
 	private ProgressListener progressListener;
-	private List<String> logMessages = new ArrayList();
+	private final List<String> logMessages = new ArrayList<>();
 	
 	protected Task(Side side, MCP instance, ProgressListener listener) {
 		this(side, instance);

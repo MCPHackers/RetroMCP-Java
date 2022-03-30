@@ -78,7 +78,7 @@ public class TaskUpdateMD5 extends Task {
 		switch (step) {
 		case RECOMPILE: {
 			int percent = (int)((double)progress * 0.50D);
-			super.setProgress(0 + percent);
+			super.setProgress(percent);
 			break;
 		}
 		default:
