@@ -85,7 +85,10 @@ public class MCP {
 				String str = "";
 				try {
 					str = input.nextLine().trim();
-				} catch (NoSuchElementException ignored) {}
+				} catch (NoSuchElementException ignored) {
+					mode = EnumMode.exit;
+					exit = true;
+				}
 				logger.print(new Ansi().fgDefault());
 				args = str.split(" ");
 			}
