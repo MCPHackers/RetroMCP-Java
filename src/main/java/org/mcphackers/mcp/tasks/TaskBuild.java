@@ -36,7 +36,7 @@ public class TaskBuild extends Task {
 				break;
 			case BUILD:
 				FileUtil.createDirectories(Paths.get(MCPPaths.BUILD));
-				if(mcp.getBooleanParam(TaskParameter.FULL_BUILD)) {
+				if(mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD)) {
 					Files.deleteIfExists(buildJar);
 					Files.copy(originalJar, buildJar);
 					List<Path> reobfClasses = FileUtil.walkDirectory(reobfDir, path -> !Files.isDirectory(path));

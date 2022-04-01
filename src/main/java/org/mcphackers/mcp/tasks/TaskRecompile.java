@@ -45,8 +45,10 @@ public class TaskRecompile extends Task {
 		}
 		DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
 
-		Path binPath = Paths.get(chooseFromSide(MCPPaths.CLIENT_BIN, 		MCPPaths.SERVER_BIN));
+		String bin = chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN);
+		Path binPath = Paths.get(bin);
 		Path srcPath = Paths.get(chooseFromSide(MCPPaths.CLIENT_SOURCES, 	MCPPaths.SERVER_SOURCES));
+		Path libPath = Paths.get(chooseFromSide(MCPPaths.LIB_CLIENT, 		MCPPaths.LIB_SERVER));
 
 		step();
 		FileUtil.deleteDirectoryIfExists(binPath);
@@ -61,37 +63,28 @@ public class TaskRecompile extends Task {
 				src.addAll(start);
 			}
 
-			List<String> libraries;
+			List<String> libraries = new ArrayList<>();
 			List<String> options = new ArrayList<>();
 
-			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
-				libraries = stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList());
-			}
-
 			if(side == Side.SERVER) {
-				libraries.add(0, MCPPaths.SERVER);
-				try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.DEPS_S)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
-					libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
-				}
-				options.addAll(Arrays.asList("-d", MCPPaths.SERVER_BIN));
-			} else if(side == Side.CLIENT) {
-				try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.DEPS_C)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
-					libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
-				}
-				options.addAll(Arrays.asList("-d", MCPPaths.CLIENT_BIN));
+				libraries.add(MCPPaths.SERVER);
 			}
+			try(Stream<Path> stream = Files.list(libPath).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+				libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
+			}
+			options.addAll(Arrays.asList("-d", bin));
 
-			int sourceVersion = mcp.getIntParam(TaskParameter.SOURCE_VERSION);
+			int sourceVersion = mcp.getOptions().getIntParameter(TaskParameter.SOURCE_VERSION);
 			if (sourceVersion >= 0) {
 				options.addAll(Arrays.asList("-source", Integer.toString(sourceVersion)));
 			}
 
-			int targetVersion = mcp.getIntParam(TaskParameter.TARGET_VERSION);
+			int targetVersion = mcp.getOptions().getIntParameter(TaskParameter.TARGET_VERSION);
 			if (targetVersion >= 0) {
 				options.addAll(Arrays.asList("-target", Integer.toString(targetVersion)));
 			}
 
-			String bootclasspath = mcp.getStringParam(TaskParameter.BOOT_CLASS_PATH);
+			String bootclasspath = mcp.getOptions().getStringParameter(TaskParameter.BOOT_CLASS_PATH);
 			if (bootclasspath != null) {
 				options.addAll(Arrays.asList("-bootclasspath", bootclasspath));
 			}

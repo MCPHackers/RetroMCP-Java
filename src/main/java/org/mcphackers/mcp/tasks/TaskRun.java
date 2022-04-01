@@ -24,7 +24,7 @@ public class TaskRun extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		boolean runBuild = mcp.getBooleanParam(TaskParameter.RUN_BUILD);
+		boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
 		if(side == Side.SERVER && !VersionsParser.hasServer()) {
 			throw new Exception("Server isn't available for this version!");
 		}
@@ -37,7 +37,7 @@ public class TaskRun extends Task {
 			}
 			cpList.add(FileUtil.absolutePathString(MCPPaths.SERVER_BIN));
 			cpList.add(FileUtil.absolutePathString(MCPPaths.SERVER));
-			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.DEPS_S)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB_SERVER)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
 		}
@@ -52,7 +52,7 @@ public class TaskRun extends Task {
 			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
-			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.DEPS_C)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB_CLIENT)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
 		}
@@ -72,8 +72,8 @@ public class TaskRun extends Task {
 						"-cp", cp,
 						side == Side.SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
 																	  : runBuild ? "net.minecraft.client.Minecraft" : "Start"));
-		for(int i = 1; i < mcp.getStringArrayParam(TaskParameter.RUN_ARGS).length; i++) {
-			String arg = mcp.getStringArrayParam(TaskParameter.RUN_ARGS)[i];
+		for(int i = 1; i < mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS).length; i++) {
+			String arg = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS)[i];
 			if(!arg.equals("-runbuild")) {
 				for(String arg2 : args) {
 					if(arg.indexOf("=") > 0 && arg2.indexOf("=") > 0) {

@@ -22,14 +22,8 @@ public interface MCP {
 	}
 
 	void log(String msg);
-
-	boolean getBooleanParam(TaskParameter param);
-
-	String[] getStringArrayParam(TaskParameter param);
-
-	String getStringParam(TaskParameter param);
-
-	int getIntParam(TaskParameter param);
+	
+	Options getOptions();
 	
 	void setProgressBarActive(int barIndex, boolean active);
 	
@@ -37,7 +31,11 @@ public interface MCP {
 	
 	void setProgress(int barIndex, int progress);
 
-	int askForInput(String title, String msg);
+	boolean yesNoInput(String title, String msg);
+	
+	String inputString(String title, String msg);
+	
+	void showPopup(String title, String msg, int type);
 	
 	default void setProgress(int barIndex, String progressMessage, int progress) {
 		setProgress(barIndex, progress);

@@ -20,18 +20,6 @@ public class MCPLogger {
 		} catch (IOException ignored) {}
 	}
 	
-	public void newLine() {
-		System.out.println();
-	}
-	
-	public void print(Object msg) {
-		System.out.print(msg);
-	}
-	
-	public void println(Object msg) {
-		System.out.println(msg);
-	}
-	
 //	public void printProgressBars(List<SideThread> threads) {
 //		StringBuilder s = new StringBuilder(new Ansi().cursorUp(threads.size() + 1).a('\n').toString());
 //		for (SideThread thread : threads) {
@@ -64,11 +52,6 @@ public class MCPLogger {
 		}
 
 		return string.a("\n").toString();
-	}
-	
-	public void info(String msg) {
-		log(msg);
-		System.out.println(msg);
 	}
 
 	public void log(String msg) {

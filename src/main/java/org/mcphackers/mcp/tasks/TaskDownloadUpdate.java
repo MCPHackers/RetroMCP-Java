@@ -29,9 +29,9 @@ public class TaskDownloadUpdate extends Task {
 		String latestVersion = releaseJson.getString("tag_name");
 		String notes = releaseJson.getString("body");
 		if(!latestVersion.equals(MCP.VERSION)) {
-			int input = mcp.askForInput("New version found: " + latestVersion,
+			boolean confirmed = mcp.yesNoInput("New version found: " + latestVersion,
 					notes + "\n\nAre you sure you want to update?");
-			if(input == 0) {
+			if(confirmed) {
 				log("Downloading update...");
 				for(Object obj : releaseJson.getJSONArray("assets")) {
 					if(obj instanceof JSONObject) {

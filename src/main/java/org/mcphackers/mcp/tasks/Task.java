@@ -27,11 +27,11 @@ public abstract class Task implements ProgressListener {
 	public static final byte ERROR = 2;
 	
 	public final Side side;
-	private int progressBarIndex = -1; 
 	protected final MCP mcp;
 	protected int step;
 	private byte result = INFO;
 	private ProgressListener progressListener;
+	private int progressBarIndex = -1; 
 	private final List<String> logMessages = new ArrayList<>();
 	
 	protected Task(Side side, MCP instance, ProgressListener listener) {

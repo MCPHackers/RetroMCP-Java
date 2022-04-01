@@ -1,60 +1,109 @@
 package org.mcphackers.mcp;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mcphackers.mcp.tasks.*;
+import org.mcphackers.mcp.tasks.Task.Side;
 
 public enum TaskMode {
+	help("Displays command usage", null),
+	decompile("Start decompiling Minecraft", TaskDecompile.class, new TaskParameter[]{
+			TaskParameter.DEBUG,
+			TaskParameter.SOURCE_VERSION,
+			TaskParameter.TARGET_VERSION,
+			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.IGNORED_PACKAGES,
+			TaskParameter.INDENTION_STRING,
+			TaskParameter.PATCHES,
+			TaskParameter.SIDE
+			}),
+	recompile("Recompile Minecraft sources", TaskRecompile.class, new TaskParameter[] {
+			TaskParameter.DEBUG,
+			TaskParameter.SOURCE_VERSION,
+			TaskParameter.TARGET_VERSION,
+			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.SIDE
+			}),
+	reobfuscate("Reobfuscate Minecraft classes", TaskReobfuscate.class, new TaskParameter[] {
+			TaskParameter.DEBUG,
+			TaskParameter.SOURCE_VERSION,
+			TaskParameter.TARGET_VERSION,
+			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.SIDE
+			}),
+	updatemd5("Update md5 hash tables used for reobfuscation", TaskUpdateMD5.class, new TaskParameter[] {
+			TaskParameter.DEBUG,
+			TaskParameter.SOURCE_VERSION,
+			TaskParameter.TARGET_VERSION,
+			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.SIDE
+			}),
+	updatemcp("Download an update if available", TaskDownloadUpdate.class),
 
-	//TODO
-	help("Displays command usage"),
-	decompile("Start decompiling Minecraft", new String[] {"debug", "source", "target", "bootclasspath", "ignore", "indention", "patch", "side", "client", "server"}),
-	recompile("Recompile Minecraft sources", new String[] {"debug", "source", "target", "bootclasspath", "side", "client", "server"}),
-	reobfuscate("Reobfuscate Minecraft classes", new String[] {"debug", "source", "target", "bootclasspath", "side", "client", "server"}),
-	updatemd5("Update md5 hash tables used for reobfuscation", new String[] {"debug", "source", "target", "bootclasspath", "side", "client", "server"}),
-	updatemcp("Download an update if available"),
-	setup("Choose a version to setup", new String[] {"debug"}),
-	cleanup("Delete all source and class folders", new String[] {"debug", "src"}),
-	startclient("Runs the client from compiled classes", new String[] {"runbuild"}),
-	startserver("Runs the server from compiled classes", new String[] {"runbuild"}),
-	build("Builds the final jar or zip", new String[] {"debug", "source", "target", "bootclasspath", "fullbuild", "side", "client", "server"}),
-	createpatch("Creates patch", new String[]{}),
+	setup("Choose a version to setup", TaskSetup.class, new TaskParameter[] {
+			TaskParameter.DEBUG,
+			}),
+	cleanup("Delete all source and class folders", TaskCleanup.class, new TaskParameter[] {
+			TaskParameter.DEBUG,
+			TaskParameter.SRC
+			}),
+	startclient("Runs the client from compiled classes", TaskRun.class, new TaskParameter[] {
+			TaskParameter.RUN_BUILD
+			}),
+	startserver("Runs the server from compiled classes", TaskRun.class, new TaskParameter[] {
+			TaskParameter.RUN_BUILD
+			}),
+	build("Builds the final jar or zip", TaskBuild.class, new TaskParameter[] {
+			TaskParameter.DEBUG,
+			TaskParameter.SOURCE_VERSION,
+			TaskParameter.TARGET_VERSION,
+			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.FULL_BUILD,
+			TaskParameter.SIDE
+			}),
+	createpatch("Creates patch", TaskCreatePatch.class),
 	exit("Exit the program", null);
 	
 	public final String desc;
-	public String[] params = new String[] {};
-	private static final Map<String, TaskParameter> paramDescs = new HashMap<>();
+	public final Class<? extends Task> taskClass;
+	public TaskParameter[] params = new TaskParameter[] {};
 	
-	TaskMode(String desc) {
+	TaskMode(String desc, Class<? extends Task> taskClass) {
 		this.desc = desc;
+		this.taskClass = taskClass;
 	}
 	
-	TaskMode(String desc, String[] params) {
-		this(desc);
+	TaskMode(String desc, Class<? extends Task> taskClass, TaskParameter[] params) {
+		this(desc, taskClass);
 		this.params = params;
-		
 	}
 	
-	public static String getParamDesc(String param) {
-		if(paramDescs.containsKey(param)) {
-			return paramDescs.get(param).name;
+	public List<Task> getTasks(MCP mcp) {
+		List<Task> tasks = new ArrayList<>();
+		if(taskClass != null) {
+			Constructor<? extends Task> constructor;
+			try {
+				constructor = taskClass.getConstructor(Side.class, MCP.class);
+				try {
+					tasks.add(constructor.newInstance(Side.CLIENT, mcp));
+					tasks.add(constructor.newInstance(Side.SERVER, mcp));
+				} catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+					e.printStackTrace();
+				}
+			} catch (NoSuchMethodException ignored) {
+				try {
+					constructor = taskClass.getConstructor(MCP.class);
+					try {
+						tasks.add(constructor.newInstance(mcp));
+					} catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+						e.printStackTrace();
+					}
+				} catch (NoSuchMethodException ignored2) {}
+			}
 		}
-		return "No description provided";
-	}
-	
-	//TODO
-	static {
-		paramDescs.put("indention", TaskParameter.INDENTION_STRING);
-		paramDescs.put("ignore", TaskParameter.IGNORED_PACKAGES);
-		paramDescs.put("debug", TaskParameter.DEBUG);
-		paramDescs.put("patch", TaskParameter.PATCHES);
-		paramDescs.put("source", TaskParameter.SOURCE_VERSION);
-		paramDescs.put("target", TaskParameter.TARGET_VERSION);
-		paramDescs.put("bootclasspath", TaskParameter.BOOT_CLASS_PATH);
-		paramDescs.put("side", TaskParameter.SIDE);
-		paramDescs.put("client", TaskParameter.SIDE);
-		paramDescs.put("server", TaskParameter.SIDE);
-		paramDescs.put("src", null);
-		paramDescs.put("fullbuild", TaskParameter.FULL_BUILD);
-		paramDescs.put("runbuild", TaskParameter.RUN_BUILD);
+		return tasks;
 	}
 }

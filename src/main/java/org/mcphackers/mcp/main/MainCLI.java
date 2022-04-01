@@ -1,11 +1,11 @@
 package org.mcphackers.mcp.main;
 
+import java.io.Console;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -15,8 +15,10 @@ import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.MCPLogger;
 import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
@@ -30,10 +32,11 @@ public class MainCLI implements MCP {
 			.fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |     ").a('\n')
 			.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
 			.fgDefault();
-	private static MCPLogger logger;
-	private static Scanner input;
-	private static TaskMode mode;
-	private static TaskMode helpCommand;
+	private MCPLogger logger;
+	private TaskMode mode;
+	private TaskMode helpCommand;
+	private Console console = System.console();
+	private Options options = new Options();
 
 	public static void main(String[] args) throws Exception {
 		if(System.console() != null) {
@@ -49,10 +52,9 @@ public class MainCLI implements MCP {
 	
 	public MainCLI(String[] args) {
 
-		resetConfig();
+		options.resetDefaults();
 		attemptToDeleteUpdateJar();
 		logger = new MCPLogger();
-		input = new Scanner(System.in);
 		logger.log("Operating system: " + System.getProperty("os.name"));
 		logger.log("RetroMCP " + MCP.VERSION);
 
@@ -69,27 +71,27 @@ public class MainCLI implements MCP {
 		}
 		if (args.length <= 0) {
 			startedWithNoParams = true;
-			logger.println(logo);
+			log(logo.toString());
 			JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 			if (c == null) {
 				// Likely a JRE
-				logger.println(new Ansi().fgBrightRed().a("Error: Java Development Kit not detected! Compilation will fail!").toString());
-				logger.println("Using Java from " + Paths.get(Util.getJava()).toAbsolutePath());
+				log(new Ansi().fgBrightRed().a("Error: Java Development Kit not detected! Compilation will fail!").toString());
+				log("Using Java from " + Paths.get(Util.getJava()).toAbsolutePath());
 			}
-			if(version != null) logger.info(version);
-			logger.println(new Ansi().fgDefault().a("Enter a command to execute:").toString());
+			if(version != null) log(version);
+			log(new Ansi().fgDefault().a("Enter a command to execute:").toString());
 		}
 		int executeTimes = 0;
 		while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
 			while (args.length < 1) {
-				logger.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
+				System.out.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
 				String str = "";
 				try {
-					str = input.nextLine().trim();
+					str = console.readLine().trim();
 				} catch (NoSuchElementException ignored) {
 					mode = TaskMode.exit;
 				}
-				logger.print(new Ansi().fgDefault());
+				System.out.print(new Ansi().fgDefault());
 				args = str.split(" ");
 			}
 			boolean taskMode = setMode(args[0]);
@@ -100,29 +102,29 @@ public class MainCLI implements MCP {
 			setParams(parsedArgs, mode);
 			if (taskMode) {
 				if(mode == TaskMode.startclient || mode == TaskMode.startserver) {
-					runArgs = args;
+					options.setParameter(TaskParameter.RUN_ARGS, args);
 				}
 				start();
 			} else if (mode == TaskMode.help) {
 				if(helpCommand == null) {
 					for (TaskMode mode : TaskMode.values()) {
-						logger.println(new Ansi()
+						log(new Ansi()
 								.fgBrightMagenta().a(" - " + String.format("%-12s", mode.name())).fgDefault()
-								.fgGreen().a(" ").a(mode.desc).fgDefault());
+								.fgGreen().a(" ").a(mode.desc).fgDefault().toString());
 					}
 				}
 				else {
-					logger.println(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.name())).fgDefault().fgGreen().a(" ").a(helpCommand.desc).fgDefault());
-					if(helpCommand.params.length > 0) logger.println("Optional parameters:");
-					for(String param : helpCommand.params) {
-						logger.println(new Ansi().a(" ").fgCyan().a(String.format("%-10s", param)).a(" - ").fgBrightYellow().a(TaskMode.getParamDesc(param)).fgDefault());
+					log(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.name())).fgDefault().fgGreen().a(" ").a(helpCommand.desc).fgDefault().toString());
+					if(helpCommand.params.length > 0) log("Optional parameters:");
+					for(TaskParameter param : helpCommand.params) {
+						log(new Ansi().a(" ").fgCyan().a(String.format("%-10s", param)).a(" - ").fgBrightYellow().a(param.desc).fgDefault().toString());
 					}
 				}
 			} else if (mode != TaskMode.exit) {
-				logger.println("Unknown command. Type 'help' for list of available commands");
+				log("Unknown command. Type 'help' for list of available commands");
 			}
 			args = new String[]{};
-			resetConfig();
+			options.resetDefaults();
 			if (!startedWithNoParams || mode == TaskMode.exit)
 				exit = true;
 			mode = null;
@@ -140,7 +142,7 @@ public class MainCLI implements MCP {
 				switch (name) {
 					case "client":
 					case "server":
-						setParameter(name, true);
+						//setParameter(name, true);
 					break;
 				}
 				if(mode == TaskMode.help) {
@@ -150,35 +152,34 @@ public class MainCLI implements MCP {
 					catch (IllegalArgumentException ignored) {}
 				}
 				if(mode == TaskMode.setup) {
-					setParameter("setupversion", name);
+					//setParameter("setupversion", name);
 				}
 			}
 			else if(value instanceof Integer) {
-				setParameter(name, (Integer)value);
+				//setParameter(name, (Integer)value);
 			}
 			else if(value instanceof Boolean) {
-				setParameter(name, (Boolean)value);
+				//setParameter(name, (Boolean)value);
 			}
 			else if(value instanceof String) {
-				setParameter(name, (String)value);
+				//setParameter(name, (String)value);
 			}
 			else if(value instanceof String[]) {
-				setParameter(name, (String[])value);
+				//setParameter(name, (String[])value);
 			}
 		}
 	}
 
-	private static void shutdown() {
-		input.close();
+	private void shutdown() {
 		logger.close();
 	}
 
-	private static boolean setMode(String name) {
-//		try {
-//			mode = EnumMode.valueOf(name);
-//			return mode.task != null;
-//		}
-//		catch (IllegalArgumentException ignored) {}
+	private boolean setMode(String name) {
+		try {
+			mode = TaskMode.valueOf(name);
+			//return mode.task != null;
+		}
+		catch (IllegalArgumentException ignored) {}
 		return false;
 	}
 
@@ -248,170 +249,15 @@ public class MainCLI implements MCP {
 //		task.clearInfoList();
 	}
 	
-	public boolean debug;
-	public boolean patch;
-	public boolean srcCleanup;
-	public String[] ignorePackages;
-	public int onlySide;
-	public int source;
-	public int target;
-	public String bootclasspath;
-	public String indentionString;
-	public boolean fullBuild;
-	public boolean runBuild;
-	public String setupVersion;
-	public String[] runArgs;
-
-	public void resetConfig() {
-		debug = false;
-		patch = true;
-		srcCleanup = false;
-		ignorePackages = new String[]{"paulscode", "com/jcraft", "isom"};
-		onlySide = -1;
-		source = -1;
-		target = -1;
-		bootclasspath = null;
-		indentionString = "\t";
-		fullBuild = false;
-		runBuild = false;
-		setupVersion = null;
-		runArgs = null;
-	}
-
-	public void setParameter(String name, int value) {
-		switch (name) {
-			case "side":
-				onlySide = value;
-				break;
-			case "source":
-				source = value;
-				break;
-			case "target":
-				target = value;
-				break;
-			default:
-				// TODO: Cancel task
-		}
-	}
-
-	public void setParameter(String name, String value) {
-		switch (name) {
-			case "ind":
-			case "indention":
-				indentionString = value;
-				break;
-			case "ignore":
-				ignorePackages = new String[] {value};
-				break;
-			case "setupversion":
-				setupVersion = value;
-				break;
-			case "bootclasspath":
-				bootclasspath = value;
-				break;
-			default:
-				// TODO: Cancel task
-		}
-	}
-
-	public void setParameter(String name, String[] value) {
-		switch (name) {
-			case "ignore":
-				ignorePackages = value;
-				break;
-			default:
-				// TODO: Cancel task
-		}
-	}
-
-	public void setParameter(String name, boolean value) {
-		switch (name) {
-			case "debug":
-				debug = value;
-				break;
-			case "patch":
-				patch = value;
-				break;
-			case "client":
-				onlySide = value ? 0 : onlySide;
-				break;
-			case "server":
-				onlySide = value ? 1 : onlySide;
-				break;
-			case "src":
-				srcCleanup = value;
-				break;
-			case "fullbuild":
-				fullBuild = value;
-				break;
-			case "runbuild":
-				runBuild = value;
-				break;
-			default:
-				// TODO: Cancel task
-		}
-	}
 
 	@Override
 	public void log(String msg) {
-		// TODO Auto-generated method stub
-		
+		System.out.println(msg);
 	}
 
 	@Override
-	public boolean getBooleanParam(TaskParameter param) {
-		switch (param) {
-		case DEBUG:
-			return debug;
-		case PATCHES:
-			return patch;
-		case FULL_BUILD:
-			return fullBuild;
-		case RUN_BUILD:
-			return runBuild;
-		default:
-			return false;
-		}
-	}
-
-	@Override
-	public String[] getStringArrayParam(TaskParameter param) {
-		switch (param) {
-		case IGNORED_PACKAGES:
-			return ignorePackages;
-		case RUN_ARGS:
-			return runArgs;
-		default:
-			return new String[0];
-		}
-	}
-
-	@Override
-	public String getStringParam(TaskParameter param) {
-		switch (param) {
-		case BOOT_CLASS_PATH:
-			return bootclasspath;
-		case INDENTION_STRING:
-			return indentionString;
-		case SETUP_VERSION:
-			return setupVersion;
-		default:
-			return null;
-		}
-	}
-
-	@Override
-	public int getIntParam(TaskParameter param) {
-		switch (param) {
-		case SIDE:
-			return onlySide;
-		case SOURCE_VERSION:
-			return source;
-		case TARGET_VERSION:
-			return target;
-		default:
-			return 0;
-		}
+	public Options getOptions() {
+		return options;
 	}
 
 	@Override
@@ -439,9 +285,28 @@ public class MainCLI implements MCP {
 	}
 
 	@Override
-	public int askForInput(String title, String msg) {
+	public boolean yesNoInput(String title, String msg) {
 		log(msg);
-		return input.nextLine().toLowerCase().equals("yes") ? 0 : 1;
+		return console.readLine().toLowerCase().equals("yes");
+	}
+
+	@Override
+	public String inputString(String title, String msg) {
+		log(msg);
+		return console.readLine().toLowerCase();
+	}
+
+	public void showPopup(String title, String msg, int type) {
+		String typeName = "INFO";
+		switch (type) {
+		case Task.WARNING:
+			typeName = "WARNING";
+			break;
+		case Task.ERROR:
+			typeName = "ERROR";
+			break;
+		}
+		log("[" + typeName + "]: " + msg);
 	}
 
 }

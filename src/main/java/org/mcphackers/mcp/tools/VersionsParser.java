@@ -20,6 +20,7 @@ import org.mcphackers.mcp.MCPPaths;
 public class VersionsParser {
 	
 	private static final String jsonURL = "https://mcphackers.github.io/versions/versions.json";
+	//TODO current version can be unique for each MCP instance
 	private static String currentVersion = "unknown";
 	private static Exception cause = null;
 	

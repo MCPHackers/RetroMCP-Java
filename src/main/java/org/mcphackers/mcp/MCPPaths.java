@@ -6,8 +6,6 @@ public class MCPPaths {
 	//Directories
 	public static final String JARS = 	"jars/";
 	public static final String LIB = 	"lib/";
-	public static final String DEPS_C =	LIB + "client/";
-	public static final String DEPS_S =	LIB + "server/";
 	public static final String TEMP = 	"temp/";
 	public static final String SRC = 	"src/";
 	public static final String BIN = 	"bin/";
@@ -18,11 +16,13 @@ public class MCPPaths {
 	//Files and subdirectories
 	public static final String CLIENT = 			 JARS + "minecraft.jar";
 	public static final String SERVER = 			 JARS + "minecraft_server.jar";
-	public static final String CLIENT_FIXED = 		 LIB + "minecraft.jar";
-	public static final String LWJGL = 				 LIB + "lwjgl.jar";
-	public static final String LWJGL_UTIL = 		 LIB + "lwjgl_util.jar";
-	public static final String JINPUT = 	 		 LIB + "jinput.jar";
-	public static final String NATIVES = 			 LIB + "natives";
+	public static final String LIB_CLIENT =			 LIB + "client/";
+	public static final String LIB_SERVER =			 LIB + "server/";
+	public static final String CLIENT_FIXED = 		 LIB_CLIENT + "minecraft.jar";
+	public static final String LWJGL = 				 LIB_CLIENT + "lwjgl.jar";
+	public static final String LWJGL_UTIL = 		 LIB_CLIENT + "lwjgl_util.jar";
+	public static final String JINPUT = 	 		 LIB_CLIENT + "jinput.jar";
+	public static final String NATIVES = 			 LIB_CLIENT + "natives";
 	public static final String CLIENT_TINY_OUT = 	 TEMP + "client_deobf.jar";
 	public static final String SERVER_TINY_OUT = 	 TEMP + "server_deobf.jar";
 	public static final String CLIENT_EXC_OUT = 	 TEMP + "client_exc.jar";

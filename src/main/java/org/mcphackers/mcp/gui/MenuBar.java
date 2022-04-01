@@ -7,6 +7,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
+import org.mcphackers.mcp.Options;
+import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.TaskDownloadUpdate;
@@ -19,13 +21,14 @@ public class MenuBar extends JMenuBar {
 	private final JMenuItem[] sideItems = new JMenuItem[3];
 	private final JMenuItem githubItem = new JMenuItem("Github Page");
 	private final MainGUI owner;
+	public Options options = new Options();
 
 	public MenuBar(MainGUI mainGUI) {
 		owner = mainGUI;
 		this.menuOptions.setMnemonic(KeyEvent.VK_O);
 		this.helpMenu.setMnemonic(KeyEvent.VK_H);
 		initOptions();
-		reloadOptions(owner);
+		reloadOptions();
 		JMenuItem update = new JMenuItem("Check for updates");
 		update.addActionListener(a -> {
 			owner.operateOnThread(() -> {
@@ -46,16 +49,20 @@ public class MenuBar extends JMenuBar {
 		add(helpMenu);
 	}
 
-	private void reloadOptions(MainGUI mainGUI) {
+	private void reloadOptions() {
 		for (JMenuItem sideItem : sideItems) {
 			sideItem.setSelected(false);
 		}
-		sideItems[mainGUI.side].setSelected(true);
+		int itemNumber = options.getIntParameter(TaskParameter.SIDE);
+		if(itemNumber == -1) {
+			itemNumber = 2;
+		}
+		sideItems[itemNumber].setSelected(true);
 	}
 	
 	private void setSide(int i) {
-		owner.side = i;
-		reloadOptions(owner);
+		options.setParameter(TaskParameter.SIDE, i);
+		reloadOptions();
 	}
 
 	private void initOptions() {

@@ -38,11 +38,12 @@ public class TaskSetup extends Task {
 		new TaskCleanup(mcp).doTask();
 		log(" Setting up your workspace...");
 		FileUtil.createDirectories(Paths.get(MCPPaths.JARS));
+		FileUtil.createDirectories(Paths.get(MCPPaths.LIB));
 		FileUtil.createDirectories(Paths.get(MCPPaths.NATIVES));
 		
 		log(" Setting up Minecraft...");
 		List<String> versions = VersionsParser.getVersionList();
-		String chosenVersion = mcp.getStringParam(TaskParameter.SETUP_VERSION);
+		String chosenVersion = mcp.getOptions().getStringParameter(TaskParameter.SETUP_VERSION);
 		if(!versions.contains(chosenVersion)) {
 			log(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
 			log(getTable(versions));
@@ -84,6 +85,7 @@ public class TaskSetup extends Task {
 		{
 			for(int side = 0; side <= (VersionsParser.hasServer() ? 1 : 0); side++) {
 				startTime = System.currentTimeMillis();
+				FileUtil.createDirectories(Paths.get(side == Side.CLIENT.index ? MCPPaths.LIB_CLIENT : MCPPaths.LIB_SERVER));
 				log(" Downloading Minecraft " + (side == Side.CLIENT.index ? "client" : "server") + "...");
 				String url = VersionsParser.getDownloadURL(side);
 				String out = side == Side.CLIENT.index ? MCPPaths.CLIENT : MCPPaths.SERVER;
@@ -103,18 +105,15 @@ public class TaskSetup extends Task {
 		
 		log(" Downloading libraries...");
 		startTime = System.currentTimeMillis();
-		FileUtil.downloadFile(new URL(libsURL), Paths.get(MCPPaths.LIB + "libs.zip"));
+		FileUtil.downloadFile(new URL(libsURL), Paths.get(MCPPaths.LIB_CLIENT + "libs.zip"));
 		String nativesURL = natives.get(Os.getOs());
 		if(nativesURL == null) {
 			throw new Exception("Could not find natives for your operating system");
 		}
-		FileUtil.downloadFile(new URL(nativesURL), Paths.get(MCPPaths.LIB + "natives.zip"));
+		FileUtil.downloadFile(new URL(nativesURL), Paths.get(MCPPaths.LIB_CLIENT + "natives.zip"));
 		log(" Done in " + Util.time(System.currentTimeMillis() - startTime));
-		FileUtil.unzip(Paths.get(MCPPaths.LIB + "libs.zip"), Paths.get(MCPPaths.LIB), true);
-		FileUtil.unzip(Paths.get(MCPPaths.LIB + "natives.zip"), Paths.get(MCPPaths.NATIVES), true);
-
-		FileUtil.createDirectories(Paths.get(MCPPaths.DEPS_C));
-		FileUtil.createDirectories(Paths.get(MCPPaths.DEPS_S));
+		FileUtil.unzip(Paths.get(MCPPaths.LIB_CLIENT + "libs.zip"), Paths.get(MCPPaths.LIB_CLIENT), true);
+		FileUtil.unzip(Paths.get(MCPPaths.LIB_CLIENT + "natives.zip"), Paths.get(MCPPaths.NATIVES), true);
 	}
 
 	private void setWorkspace() throws Exception {
@@ -171,7 +170,6 @@ public class TaskSetup extends Task {
 
 	private static String getTable(List<String> versions) {
 		int rows = (int)Math.ceil(versions.size() / 3D);
-		@SuppressWarnings("unchecked")
 		List<String>[] tableList = (List<String>[]) new List[rows];
 		for (int i = 0; i < tableList.length; i++)
 		{

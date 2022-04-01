@@ -105,7 +105,7 @@ public class TaskDecompile extends Task {
 				}
 				break;
 			case DECOMPILE:
-				 new Decompiler(this).decompile(excOut, srcZip, chooseFromSide(MCPPaths.JAVADOC_CLIENT, MCPPaths.JAVADOC_SERVER), mcp.getStringParam(TaskParameter.INDENTION_STRING));
+				 new Decompiler(this).decompile(excOut, srcZip, chooseFromSide(MCPPaths.JAVADOC_CLIENT, MCPPaths.JAVADOC_SERVER), mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING));
 				break;
 			case EXTRACT:
 				FileUtil.createDirectories(Paths.get(MCPPaths.SRC));
@@ -119,12 +119,12 @@ public class TaskDecompile extends Task {
 				Constants.replace(ffOut, constants);
 				break;
 			case PATCH:
-				if(mcp.getBooleanParam(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
+				if(mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
 					patch(ffOut, ffOut, patchesPath);
 				}
 				break;
 			case COPYSRC:
-				FileUtil.deletePackages(ffOut, mcp.getStringArrayParam(TaskParameter.IGNORED_PACKAGES));
+				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
 				break;
 			case RECOMPILE:
