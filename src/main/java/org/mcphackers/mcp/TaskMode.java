@@ -9,8 +9,8 @@ import org.mcphackers.mcp.tasks.*;
 import org.mcphackers.mcp.tasks.Task.Side;
 
 public enum TaskMode {
-	help("Displays command usage", null),
-	decompile("Start decompiling Minecraft", TaskDecompile.class, new TaskParameter[]{
+	help("Help", "Displays command usage", null),
+	decompile("Decompile", "Start decompiling Minecraft", TaskDecompile.class, new TaskParameter[]{
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
@@ -20,43 +20,40 @@ public enum TaskMode {
 			TaskParameter.PATCHES,
 			TaskParameter.SIDE
 			}),
-	recompile("Recompile Minecraft sources", TaskRecompile.class, new TaskParameter[] {
+	recompile("Recompile", "Recompile Minecraft sources", TaskRecompile.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
 			TaskParameter.BOOT_CLASS_PATH,
 			TaskParameter.SIDE
 			}),
-	reobfuscate("Reobfuscate Minecraft classes", TaskReobfuscate.class, new TaskParameter[] {
+	reobfuscate("Reobfuscate", "Reobfuscate Minecraft classes", TaskReobfuscate.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
 			TaskParameter.BOOT_CLASS_PATH,
 			TaskParameter.SIDE
 			}),
-	updatemd5("Update md5 hash tables used for reobfuscation", TaskUpdateMD5.class, new TaskParameter[] {
+	updatemd5("Update MD5 Hashes", "Update md5 hash tables used for reobfuscation", TaskUpdateMD5.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
 			TaskParameter.BOOT_CLASS_PATH,
 			TaskParameter.SIDE
 			}),
-	updatemcp("Download an update if available", TaskDownloadUpdate.class),
+	updatemcp("Update", "Download an update if available", TaskDownloadUpdate.class),
 
-	setup("Choose a version to setup", TaskSetup.class, new TaskParameter[] {
+	setup("Setup", "Choose a version to setup", TaskSetup.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			}),
-	cleanup("Delete all source and class folders", TaskCleanup.class, new TaskParameter[] {
+	cleanup("Cleanup", "Delete all source and class folders", TaskCleanup.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
-			TaskParameter.SRC
+			TaskParameter.SRC_CLEANUP
 			}),
-	startclient("Runs the client from compiled classes", TaskRun.class, new TaskParameter[] {
+	start("Start", "Runs the client or the server from compiled classes", TaskRun.class, new TaskParameter[] {
 			TaskParameter.RUN_BUILD
 			}),
-	startserver("Runs the server from compiled classes", TaskRun.class, new TaskParameter[] {
-			TaskParameter.RUN_BUILD
-			}),
-	build("Builds the final jar or zip", TaskBuild.class, new TaskParameter[] {
+	build("Build", "Builds the final jar or zip", TaskBuild.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
@@ -64,20 +61,22 @@ public enum TaskMode {
 			TaskParameter.FULL_BUILD,
 			TaskParameter.SIDE
 			}),
-	createpatch("Creates patch", TaskCreatePatch.class),
-	exit("Exit the program", null);
+	createpatch("Create patch", "Creates patch", TaskTest.class),
+	exit("Exit", "Exit the program", null);
 	
+	public final String name;
 	public final String desc;
 	public final Class<? extends Task> taskClass;
 	public TaskParameter[] params = new TaskParameter[] {};
 	
-	TaskMode(String desc, Class<? extends Task> taskClass) {
+	TaskMode(String name, String desc, Class<? extends Task> taskClass) {
+		this.name = name;
 		this.desc = desc;
 		this.taskClass = taskClass;
 	}
 	
-	TaskMode(String desc, Class<? extends Task> taskClass, TaskParameter[] params) {
-		this(desc, taskClass);
+	TaskMode(String name, String desc, Class<? extends Task> taskClass, TaskParameter[] params) {
+		this(name, desc, taskClass);
 		this.params = params;
 	}
 	

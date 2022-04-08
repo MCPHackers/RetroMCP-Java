@@ -100,9 +100,4 @@ public class TaskUpdateMD5 extends Task {
 			break;
 		}
 	}
-
-	@Override
-	public String getName() {
-		return "Update MD5";
-	}
 }

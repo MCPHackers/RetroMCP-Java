@@ -3,6 +3,7 @@ package org.mcphackers.mcp.tools;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mcphackers.mcp.MCP;
 
 import java.awt.Desktop;
 import java.awt.Toolkit;
@@ -24,32 +25,40 @@ import java.util.concurrent.TimeUnit;
 
 public class Util {
 
-	// FIXME
-	public static int runCommand(String[] cmd, Path dir, boolean doLog) throws IOException {
+	public static int runCommand(MCP mcp, String[] cmd, Path dir, boolean killOnShutdown) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
 		if(dir != null) {
 			procBuilder.directory(dir.toAbsolutePath().toFile());
 		}
 		Process proc = procBuilder.start();
 		new Thread(() -> {
-			if(doLog) {
-				try(Scanner sc = new Scanner(proc.getInputStream())) {
-					while (sc.hasNextLine()) {
-						//MCP.logger.info(sc.nextLine());
-					}
+			try(Scanner sc = new Scanner(proc.getInputStream())) {
+				while (sc.hasNextLine()) {
+					mcp.log(sc.nextLine());
 				}
 			}
 		}).start();
-		while(proc.isAlive()) {
-			if(doLog) {
-				try(Scanner sc = new Scanner(proc.getErrorStream())) {
-					while (sc.hasNextLine()) {
-						//MCP.logger.info(sc.nextLine());
-					}
+		new Thread(() -> {
+			try(Scanner sc = new Scanner(proc.getErrorStream())) {
+				while (sc.hasNextLine()) {
+					mcp.log(sc.nextLine());
 				}
 			}
+		});
+		Thread hook = new Thread(() -> proc.destroy());
+		if(killOnShutdown) {
+			Runtime.getRuntime().addShutdownHook(hook);
+		}
+		while(proc.isAlive()) {};
+		if(killOnShutdown) {
+			Runtime.getRuntime().removeShutdownHook(hook);
 		}
 		return proc.exitValue();
+	}
+
+	public static void runCommand(String[] cmd) throws IOException {
+		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
+		procBuilder.start();
 	}
 	
     public static void copyToClipboard(String text) {
@@ -74,11 +83,6 @@ public class Util {
             throw new IllegalArgumentException(ex);
         }
     }
-
-	public static void runCommand(String[] cmd) throws IOException {
-		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
-		procBuilder.start();
-	}
 	
 	public static String time(long time) {
 		long seconds = TimeUnit.MILLISECONDS.toSeconds(time);

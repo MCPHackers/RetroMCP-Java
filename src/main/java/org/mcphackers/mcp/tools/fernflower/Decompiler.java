@@ -53,7 +53,7 @@ public class Decompiler implements IBytecodeProvider {
 		}
 		File jdFile = new File(javadocs);
 		tinyJavadocProvider = jdFile.exists() ? new TinyJavadocProvider(jdFile) : null;
-		BaseDecompiler decompiler = new MCPDecompiler(this, saveType.getSaver().apply(destination), mapOptions, log, tinyJavadocProvider);
+		BaseDecompiler decompiler = new BaseDecompiler(this, saveType.getSaver().apply(destination), mapOptions, log, tinyJavadocProvider);
 		try {
 			for (File source2 : lstSources) {
 				decompiler.addSpace(source2, true);

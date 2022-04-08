@@ -5,20 +5,15 @@ import org.mcphackers.mcp.MCP;
 public class TaskTest extends Task {
 
 	public TaskTest(MCP instance) {
-		super(Side.NONE, instance);
+		super(Side.ANY, instance);
 	}
 
 	@Override
 	public void doTask() throws Exception {
 		step();
-		log(mcp.inputString(getName(), "Input something"));
+		log(mcp.inputString("Test", "Input something"));
 		setProgress("Input accepted", 50);
-		mcp.showPopup(getName(), "Something happened!", INFO);
-	}
-
-	@Override
-	public String getName() {
-		return "Test";
+		mcp.showMessage("Test", "Something happened!", INFO);
 	}
 
 }

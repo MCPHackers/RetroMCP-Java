@@ -46,9 +46,4 @@ public class TaskCreatePatch extends Task {
 			throw new Exception("Patches could not be created!");
 		}
 	}
-
-	@Override
-	public String getName() {
-		return "Patch creation";
-	}
 }

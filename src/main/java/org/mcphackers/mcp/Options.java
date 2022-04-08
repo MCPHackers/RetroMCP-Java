@@ -17,17 +17,14 @@ public class Options {
 		case DEBUG:
 			value = false;
 			break;
-		case SIDE:
-			value = -1;
-			break;
-		case SRC:
+		case SRC_CLEANUP:
 			value = false;
 			break;
 		case PATCHES:
 			value = true;
 			break;
 		case IGNORED_PACKAGES:
-			value = new String[]{"paulscode", "com/jcraft", "isom"};
+			value = new String[] {"paulscode", "com/jcraft", "isom"};
 			break;
 		case INDENTION_STRING:
 			value = "\t";
@@ -59,8 +56,13 @@ public class Options {
 		options.put(param, value);
 	}
 	
-	public void setParameter(TaskParameter param, Object value) {
-		options.put(param, value);
+	public void setParameter(TaskParameter param, Object value) throws IllegalArgumentException {
+		if(value == null || param.type.isInstance(value)) {
+			options.put(param, value);
+		}
+		else {
+			throw new IllegalArgumentException("Type mismatch");
+		}
 	}
 
 	public boolean getBooleanParameter(TaskParameter param) throws IllegalArgumentException {
@@ -73,7 +75,7 @@ public class Options {
 
 	public String[] getStringArrayParameter(TaskParameter param) throws IllegalArgumentException {
 		Object value = options.get(param);
-		if(value instanceof String[] || value == null) {
+		if(value == null || value instanceof String[]) {
 			return (String[])value;
 		}
 		throw new IllegalArgumentException("Type mismatch");
@@ -81,7 +83,7 @@ public class Options {
 
 	public String getStringParameter(TaskParameter param) throws IllegalArgumentException {
 		Object value = options.get(param);
-		if(value instanceof String || value == null) {
+		if(value == null || value instanceof String) {
 			return (String)value;
 		}
 		throw new IllegalArgumentException("Type mismatch");

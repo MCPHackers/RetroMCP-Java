@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tools.constants;
+package org.mcphackers.mcp.tools.source;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +40,7 @@ public class MathConstants extends Constants {
 	}
 	
 	protected String replace_constants(String code) {
-		return replaceTextOfMatchGroup(code, _CONSTANT_REGEX, match1 -> {
+		return Source.replaceTextOfMatchGroup(code, _CONSTANT_REGEX, match1 -> {
 			String constant = match1.group(0);
 			return _CONSTANTS.getOrDefault(constant, constant);
 		});

@@ -9,6 +9,7 @@ import java.util.Collections;
 import org.fusesource.jansi.Ansi;
 import org.mcphackers.mcp.tools.FileUtil;
 
+//FIXME unused class
 public class MCPLogger {
 	
 	private BufferedWriter writer;

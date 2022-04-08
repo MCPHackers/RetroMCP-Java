@@ -6,18 +6,19 @@ import java.nio.file.Paths;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 
 public class TaskCleanup extends Task {
 
 	public TaskCleanup(MCP instance) {
-		super(Side.NONE, instance);
+		super(Side.ANY, instance);
 	}
 
 	@Override
 	public void doTask() throws Exception {
-		cleanup(false);
+		cleanup(mcp.getOptions().getBooleanParameter(TaskParameter.SRC_CLEANUP));
 	}
 	
 	public void cleanup(boolean srcCleanup) throws Exception {
@@ -45,21 +46,16 @@ public class TaskCleanup extends Task {
 		for (Path path : pathsToDelete) {
 			if (Files.exists(path)) {
 				foldersDeleted++;
-				log(" Deleting " + path + "...");
+				log("Deleting " + path + "...");
 				FileUtil.deleteDirectory(path);
 			}
 		}
 
 		if(foldersDeleted > 0) {
-			log(" Done in " + Util.time(System.currentTimeMillis() - startTime));
+			log("Done in " + Util.time(System.currentTimeMillis() - startTime));
 		}
 		else {
-			log(" Nothing to clear!");
+			log("Nothing to clear!");
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "Cleanup";
 	}
 }

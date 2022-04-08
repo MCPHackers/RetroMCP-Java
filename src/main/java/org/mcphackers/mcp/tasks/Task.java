@@ -1,7 +1,9 @@
 package org.mcphackers.mcp.tasks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mcphackers.mcp.ProgressListener;
 import org.mcphackers.mcp.MCP;
@@ -9,7 +11,7 @@ import org.mcphackers.mcp.MCP;
 public abstract class Task implements ProgressListener {
 	
 	public enum Side {
-		NONE(-1, "None"),
+		ANY(-1, "Any"),
 		CLIENT(0, "Client"),
 		SERVER(1, "Server");
 		
@@ -19,8 +21,11 @@ public abstract class Task implements ProgressListener {
 		Side(int index, String name) {
 			this.index = index;
 			this.name = name;
+			sides.put(index, this);
 		}
 	}
+	
+	public static final Map<Integer, Side> sides = new HashMap<>();
 	
 	public static final byte INFO = 0;
 	public static final byte WARNING = 1;
@@ -51,8 +56,6 @@ public abstract class Task implements ProgressListener {
 		updateProgress();
 	}
 	
-	public abstract String getName();
-	
 	protected void addMessage(String msg, byte logLevel) {
 		if(progressListener != null) {
 			if(progressListener instanceof Task) {
@@ -77,20 +80,20 @@ public abstract class Task implements ProgressListener {
 	}
 
 	public void setProgress(String progressString) {
-		if(progressListener == null) {
-			mcp.setProgress(progressBarIndex, progressString);
-		}
-		else {
+		if(progressListener != null) {
 			progressListener.setProgress(progressString);
+		}
+		else if(progressBarIndex >= 0) {
+			mcp.setProgress(progressBarIndex, progressString);
 		}
 	}
 
 	public void setProgress(int progress) {
-		if(progressListener == null) {
-			mcp.setProgress(progressBarIndex, progress);
-		}
-		else {
+		if(progressListener != null) {
 			progressListener.setProgress(progress);
+		}
+		else if(progressBarIndex >= 0) {
+			mcp.setProgress(progressBarIndex, progress);
 		}
 	}
 	

@@ -25,7 +25,8 @@ public class TaskRun extends Task {
 	@Override
 	public void doTask() throws Exception {
 		boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
-		if(side == Side.SERVER && !VersionsParser.hasServer()) {
+		String currentVersion = mcp.getCurrentVersion();
+		if(side == Side.SERVER && !VersionsParser.hasServer(currentVersion)) {
 			throw new Exception("Server isn't available for this version!");
 		}
 		String java = Util.getJava();
@@ -66,38 +67,31 @@ public class TaskRun extends Task {
 						"-Xmx1024M",
 						"-Djava.util.Arrays.useLegacyMergeSort=true",
 						"-Dhttp.proxyHost=betacraft.uk",
-						"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(),
+						"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(currentVersion),
 						"-Dorg.lwjgl.librarypath=" + natives,
 						"-Dnet.java.games.input.librarypath=" + natives,
 						"-cp", cp,
-						side == Side.SERVER ? (VersionsParser.getServerVersion().startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
+						side == Side.SERVER ? (VersionsParser.getServerVersion(currentVersion).startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
 																	  : runBuild ? "net.minecraft.client.Minecraft" : "Start"));
 		for(int i = 1; i < mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS).length; i++) {
 			String arg = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS)[i];
-			if(!arg.equals("-runbuild")) {
-				for(String arg2 : args) {
-					if(arg.indexOf("=") > 0 && arg2.indexOf("=") > 0) {
-						if(arg2.substring(0, arg2.indexOf("=")).equals(arg.substring(0, arg.indexOf("=")))) {
-							args.remove(arg2);
-							break;
-						}
-					}
-					else if(arg2.equals(arg)) {
+			for(String arg2 : args) {
+				if(arg.indexOf("=") > 0 && arg2.indexOf("=") > 0) {
+					if(arg2.substring(0, arg2.indexOf("=")).equals(arg.substring(0, arg.indexOf("=")))) {
 						args.remove(arg2);
 						break;
 					}
 				}
-				args.add(1, arg);
+				else if(arg2.equals(arg)) {
+					args.remove(arg2);
+					break;
+				}
 			}
+			args.add(1, arg);
 		}
-		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPPaths.JARS), true);
+		int exit = Util.runCommand(mcp, args.toArray(new String[0]), Paths.get(MCPPaths.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "Run game";
 	}
 }

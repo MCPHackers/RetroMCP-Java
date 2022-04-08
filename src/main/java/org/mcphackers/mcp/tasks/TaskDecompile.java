@@ -14,12 +14,12 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.constants.Constants;
-import org.mcphackers.mcp.tools.constants.GLConstants;
-import org.mcphackers.mcp.tools.constants.MathConstants;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.mcp.tools.mcinjector.MCInjector;
+import org.mcphackers.mcp.tools.source.Constants;
+import org.mcphackers.mcp.tools.source.GLConstants;
+import org.mcphackers.mcp.tools.source.MathConstants;
 
 import codechicken.diffpatch.cli.CliOperation;
 import codechicken.diffpatch.cli.PatchOperation;
@@ -139,11 +139,6 @@ public class TaskDecompile extends Task {
 		}
 	}
 
-	@Override
-	public String getName() {
-		return "Decompile";
-	}
-
 	private void patch(Path base, Path out, Path patches) throws IOException {
 		ByteArrayOutputStream logger = new ByteArrayOutputStream();
 		PatchOperation patchOperation = PatchOperation.builder()
@@ -155,8 +150,7 @@ public class TaskDecompile extends Task {
 				.build();
 		CliOperation.Result<PatchOperation.PatchesSummary> result = patchOperation.operate();
 		if (result.exit != 0) {
-			// TODO
-			//info.addInfo(logger.toString());
+			addMessage(logger.toString(), Task.INFO);
 			throw new IOException("Patching failed!");
 		}
 	}

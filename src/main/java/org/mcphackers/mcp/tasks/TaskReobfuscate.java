@@ -87,11 +87,6 @@ public class TaskReobfuscate extends Task {
 		}
 	}
 
-	@Override
-	public String getName() {
-		return "Reobfuscate";
-	}
-
 	private void flipMappingTree() throws IOException {
 		((MappingTree) mappingTree).getClasses().forEach(classEntry -> {
 			String obfName = classEntry.getName("official");

@@ -1,9 +1,11 @@
 package org.mcphackers.mcp.main;
 
 import java.io.Console;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -16,7 +18,6 @@ import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
-import org.mcphackers.mcp.MCPLogger;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tools.Util;
@@ -32,19 +33,21 @@ public class MainCLI implements MCP {
 			.fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |     ").a('\n')
 			.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
 			.fgDefault();
-	private MCPLogger logger;
 	private TaskMode mode;
 	private TaskMode helpCommand;
 	private Console console = System.console();
 	private Options options = new Options();
+	private String currentVersion;
 
 	public static void main(String[] args) throws Exception {
 		if(System.console() != null) {
 			AnsiConsole.systemInstall();
 		}
 		else {
-			System.err.println("Error: Could not find console. Launching GUI instead");
-			MainGUI.main(args);
+//			System.err.println("Error: Could not find console. Launching GUI instead");
+//			MainGUI.main(args);
+			String filename = MCP.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
+          	Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd","/k","java -cp \"" + filename + ";D:/Stuff/git/RetroMCP-Java/build/libs/RetroMCP-Java-all.jar" + "\" org.mcphackers.mcp.main.MainCLI"});
 			return;
 		}
 		new MainCLI(args);
@@ -54,17 +57,16 @@ public class MainCLI implements MCP {
 
 		options.resetDefaults();
 		attemptToDeleteUpdateJar();
-		logger = new MCPLogger();
-		logger.log("Operating system: " + System.getProperty("os.name"));
-		logger.log("RetroMCP " + MCP.VERSION);
+		log("Operating system: " + System.getProperty("os.name"));
+		log("RetroMCP " + MCP.VERSION);
 
 		boolean startedWithNoParams = false;
 		boolean exit = false;
 		String version = null;
 		if(Files.exists(Paths.get(MCPPaths.VERSION))) {
 			try {
-				VersionsParser.setCurrentVersion(new String(Files.readAllBytes(Paths.get(MCPPaths.VERSION))));
-				version = new Ansi().a("Current version: ").fgBrightCyan().a(VersionsParser.getCurrentVersion()).fgDefault().toString();
+				currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(Paths.get(MCPPaths.VERSION))));
+				version = new Ansi().a("Current version: ").fgBrightCyan().a(currentVersion).fgDefault().toString();
 			} catch (Exception e) {
 				version = new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString();
 			}
@@ -101,7 +103,7 @@ public class MainCLI implements MCP {
 			}
 			setParams(parsedArgs, mode);
 			if (taskMode) {
-				if(mode == TaskMode.startclient || mode == TaskMode.startserver) {
+				if(mode == TaskMode.start) {
 					options.setParameter(TaskParameter.RUN_ARGS, args);
 				}
 				start();
@@ -131,7 +133,6 @@ public class MainCLI implements MCP {
 			helpCommand = null;
 			executeTimes++;
 		}
-		shutdown();
 	}
 
 	private void setParams(Map<String, Object> parsedArgs, TaskMode mode) {
@@ -170,14 +171,10 @@ public class MainCLI implements MCP {
 		}
 	}
 
-	private void shutdown() {
-		logger.close();
-	}
-
 	private boolean setMode(String name) {
 		try {
 			mode = TaskMode.valueOf(name);
-			//return mode.task != null;
+			return mode.taskClass != null;
 		}
 		catch (IllegalArgumentException ignored) {}
 		return false;
@@ -267,12 +264,6 @@ public class MainCLI implements MCP {
 	}
 
 	@Override
-	public void setProgress(int side, String progressMessage, int progress) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void setProgress(int side, String progressMessage) {
 		// TODO Auto-generated method stub
 		
@@ -296,7 +287,7 @@ public class MainCLI implements MCP {
 		return console.readLine().toLowerCase();
 	}
 
-	public void showPopup(String title, String msg, int type) {
+	public void showMessage(String title, String msg, int type) {
 		String typeName = "INFO";
 		switch (type) {
 		case Task.WARNING:
@@ -307,6 +298,40 @@ public class MainCLI implements MCP {
 			break;
 		}
 		log("[" + typeName + "]: " + msg);
+	}
+
+	@Override
+	public String getCurrentVersion() {
+		return currentVersion;
+	}
+
+	@Override
+	public void setCurrentVersion(String version) {
+		currentVersion = version;
+	}
+
+	@Override
+	public void setProgressBarName(int side, String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setActive(boolean active) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setProgressBars(List<Task> tasks) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clearProgressBars() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

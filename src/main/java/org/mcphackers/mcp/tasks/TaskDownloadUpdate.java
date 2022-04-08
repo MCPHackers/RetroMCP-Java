@@ -18,7 +18,7 @@ public class TaskDownloadUpdate extends Task {
 	private static final String API = "https://api.github.com/repos/MCPHackers/RetroMCP-Java/releases/latest";
 	
 	public TaskDownloadUpdate(MCP instance) {
-		super(Side.NONE , instance);
+		super(Side.ANY , instance);
 	}
 
 	@Override
@@ -69,10 +69,5 @@ public class TaskDownloadUpdate extends Task {
 		else {
 			log("Up to date!");
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "Update";
 	}
 }

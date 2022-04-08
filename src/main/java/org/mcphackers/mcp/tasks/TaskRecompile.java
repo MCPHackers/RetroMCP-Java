@@ -119,7 +119,7 @@ public class TaskRecompile extends Task {
 		boolean success = task.call();
 		for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
 			if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
-				String[] kindString = new String[] {"Info", "Warning", "Error"};
+				String[] kindString = {"Info", "Warning", "Error"};
 				byte kind = (byte) (diagnostic.getKind() == Diagnostic.Kind.ERROR ? 2 : 1);
 				JavaFileObject source = diagnostic.getSource();
 				if (source == null) {
@@ -139,11 +139,6 @@ public class TaskRecompile extends Task {
 		if (!success) {
 			throw new RuntimeException("Compilation error!");
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "Recompile";
 	}
 
 	protected void updateProgress() {

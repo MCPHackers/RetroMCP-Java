@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tools.constants;
+package org.mcphackers.mcp.tools.source;
 
 import java.io.IOException;
 import java.util.Map;
@@ -49,9 +49,9 @@ public class GLConstants extends Constants {
 
 	protected String replace_constants(String code) {
 		Set<String> imports = new HashSet<>();
-		code = replaceTextOfMatchGroup(code, _INPUT_REGEX, match1 -> {
+		code = Source.replaceTextOfMatchGroup(code, _INPUT_REGEX, match1 -> {
 			String full_call = match1.group(0);
-			return replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
+			return Source.replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
 				String replaceConst = (String)_CONSTANTS_KEYBOARD.get(match2.group(0));
 				if(replaceConst == null) {
 					return match2.group();
@@ -60,11 +60,11 @@ public class GLConstants extends Constants {
 				return "Keyboard." + replaceConst;
 			});
 		});
-		code = replaceTextOfMatchGroup(code, _CALL_REGEX, match1 -> {
+		code = Source.replaceTextOfMatchGroup(code, _CALL_REGEX, match1 -> {
 			String full_call = match1.group(0);
 			String pkg = match1.group(1);
 			String method = match1.group(2);
-			return replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
+			return Source.replaceTextOfMatchGroup(full_call, _CONSTANT_REGEX, match2 -> {
 				String full_match = match2.group(0);
 				for (Object groupg : _CONSTANTS) {
 					List group = (List)groupg;

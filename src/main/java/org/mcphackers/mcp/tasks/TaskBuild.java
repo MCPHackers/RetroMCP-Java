@@ -56,11 +56,6 @@ public class TaskBuild extends Task {
 			}
 		}
 	}
-
-	@Override
-	public String getName() {
-		return "Build";
-	}
 	
 	public void setProgress(int progress) {
 		switch (step) {

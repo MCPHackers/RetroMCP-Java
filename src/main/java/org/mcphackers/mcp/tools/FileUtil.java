@@ -18,6 +18,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -134,10 +135,17 @@ public class FileUtil {
 	}
 
 	public static void deleteDirectory(Path path) throws IOException {
-  	  Files.walk(path)
+		AtomicBoolean a = new AtomicBoolean(true);
+		Files.walk(path)
 		.sorted(Comparator.reverseOrder())
 		.map(Path::toFile)
-		.forEach(File::delete);
+		.forEach(f -> {
+				boolean b = f.delete();
+				if(!b) a.set(b);
+			});
+		if(!a.get()) {
+			throw new IOException("One or more files were locked");
+		}
 	}
 
 	public static List<Path> walkDirectory(Path path) throws IOException {
