@@ -61,7 +61,7 @@ public enum TaskMode {
 			TaskParameter.FULL_BUILD,
 			TaskParameter.SIDE
 			}),
-	createpatch("Create patch", "Creates patch", TaskTest.class),
+	createpatch("Create patch", "Creates patch", TaskCreatePatch.class),
 	exit("Exit", "Exit the program", null);
 	
 	public final String name;
