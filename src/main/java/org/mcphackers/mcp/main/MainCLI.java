@@ -51,10 +51,8 @@ public class MainCLI implements MCP {
 			AnsiConsole.systemInstall();
 		}
 		else {
-//			System.err.println("Error: Could not find console. Launching GUI instead");
-//			MainGUI.main(args);
-			String filename = MCP.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
-			Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd","/k","java -cp \"" + filename + ";D:/Stuff/git/RetroMCP-Java/build/libs/RetroMCP-Java-all.jar" + "\" org.mcphackers.mcp.main.MainCLI"});
+			System.err.println("Error: Could not find console. Launching GUI instead");
+			MainGUI.main(args);
 			return;
 		}
 		new MainCLI(args);
