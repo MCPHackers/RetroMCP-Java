@@ -28,4 +28,17 @@ public class Update {
 			}
 		}
 	}
+
+	public static void attemptToDeleteUpdateJar() {
+		long startTime = System.currentTimeMillis();
+		boolean keepTrying = true;
+		while(keepTrying) {
+			try {
+				Files.deleteIfExists(Paths.get(MCPPaths.UPDATE_JAR));
+				keepTrying = false;
+			} catch (IOException e) {
+				keepTrying = System.currentTimeMillis() - startTime < 10000;
+			}
+		}
+	}
 }

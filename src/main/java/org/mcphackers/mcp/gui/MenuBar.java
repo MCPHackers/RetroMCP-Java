@@ -99,10 +99,13 @@ public class MenuBar extends JMenuBar {
 		}
 		menuOptions.add(sideMenu);
 		
-		String[] names = {TaskMode.decompile.name, TaskMode.recompile.name/*, TaskMode.build.name*/};
+		String[] names = {TaskMode.decompile.name, TaskMode.recompile.name, TaskMode.reobfuscate.name, TaskMode.build.name, "Running"};
 		TaskParameter[][] params = {
 				{TaskParameter.PATCHES, TaskParameter.INDENTION_STRING, TaskParameter.IGNORED_PACKAGES},
-				{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.BOOT_CLASS_PATH}
+				{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.BOOT_CLASS_PATH},
+				{TaskParameter.OBFUSCATION},
+				{TaskParameter.FULL_BUILD},
+				{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS}
 		};
 		Map<TaskParameter, JMenuItem> resetOptions = new HashMap<>();
 		for(int i = 0; i < names.length; i++) {
@@ -123,7 +126,7 @@ public class MenuBar extends JMenuBar {
 						if(param.type == String[].class) {
 							s = "Enter a set of values\n(Separate values with comma)";
 						}
-						String value = owner.inputString(param.desc, s);
+						String value = (String)JOptionPane.showInputDialog(owner, s, param.desc, JOptionPane.PLAIN_MESSAGE, null, null, options.getParameter(param));
 						//TODO move this to a separate method so it can be used with other MCP implementations
 						if(value != null) {
 							try {
@@ -151,9 +154,9 @@ public class MenuBar extends JMenuBar {
 								if(value.contains(",")) {
 									try {
 										String[] values = value.split(",");
-										for(String value2 : values) {
-											value2.trim();
-											value2 = value2.replace("\\n", "\n").replace("\\t", "\t");
+										for(int i2 = 0 ; i2 < values.length; i2++) {
+											values[i2] = values[i2].trim();
+											values[i2] = values[i2].replace("\\n", "\n").replace("\\t", "\t");
 										}
 										options.setParameter(param, values);
 										return;

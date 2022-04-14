@@ -3,7 +3,6 @@ package org.mcphackers.mcp.tools;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mcphackers.mcp.MCP;
 
 import java.awt.Desktop;
 import java.awt.Toolkit;
@@ -25,31 +24,32 @@ import java.util.concurrent.TimeUnit;
 
 public class Util {
 
-	public static int runCommand(MCP mcp, String[] cmd, Path dir, boolean killOnShutdown) throws IOException {
+	public static int runCommand(String[] cmd, Path dir, boolean killOnShutdown) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
 		if(dir != null) {
 			procBuilder.directory(dir.toAbsolutePath().toFile());
 		}
 		Process proc = procBuilder.start();
-		new Thread(() -> {
-			try(Scanner sc = new Scanner(proc.getInputStream())) {
-				while (sc.hasNextLine()) {
-					mcp.log(sc.nextLine());
+		new Thread() {
+			public void run() {
+				try(Scanner sc = new Scanner(proc.getInputStream())) {
+					while (sc.hasNextLine()) {
+						System.out.println(sc.nextLine());
+					}
 				}
 			}
-		}).start();
-		new Thread(() -> {
-			try(Scanner sc = new Scanner(proc.getErrorStream())) {
-				while (sc.hasNextLine()) {
-					mcp.log(sc.nextLine());
-				}
-			}
-		});
+		}.start();
 		Thread hook = new Thread(() -> proc.destroy());
 		if(killOnShutdown) {
 			Runtime.getRuntime().addShutdownHook(hook);
 		}
-		while(proc.isAlive()) {};
+		while(proc.isAlive()) {
+			try(Scanner sc = new Scanner(proc.getErrorStream())) {
+				while (sc.hasNextLine()) {
+					System.out.println(sc.nextLine());
+				}
+			}
+		}
 		if(killOnShutdown) {
 			Runtime.getRuntime().removeShutdownHook(hook);
 		}

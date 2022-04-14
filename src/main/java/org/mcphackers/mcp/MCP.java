@@ -1,10 +1,9 @@
 package org.mcphackers.mcp;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,20 +14,9 @@ import org.mcphackers.mcp.tools.VersionsParser;
 
 public interface MCP {
 	
-	String VERSION = "v0.4";
-
-	default void attemptToDeleteUpdateJar() {
-		long startTime = System.currentTimeMillis();
-		boolean keepTrying = true;
-		while(keepTrying) {
-			try {
-				Files.deleteIfExists(Paths.get(MCPPaths.UPDATE_JAR));
-				keepTrying = false;
-			} catch (IOException e) {
-				keepTrying = System.currentTimeMillis() - startTime < 10000;
-			}
-		}
-	}
+	String VERSION = "v1.0-pre1";
+	
+	Map<String, TaskParameter> nameToParamMap = new HashMap<>();
 
 	default void performTask(TaskMode mode, Side side) {
 		performTask(mode, side, true, true);
@@ -58,7 +46,7 @@ public interface MCP {
 				performedTasks.add(task);
 			}
 		}
-		setProgressBars(performedTasks);
+		if(enableProgressBars) setProgressBars(performedTasks, mode);
 		ExecutorService pool = Executors.newFixedThreadPool(2);
 		setActive(false);
 
@@ -71,14 +59,6 @@ public interface MCP {
 				task.setProgressBarIndex(barIndex);
 			}
 			pool.execute(() -> {
-				String name = mode.name;
-				if(task.side == Side.CLIENT || task.side == Side.SERVER) {
-					name = task.side.name;
-				}
-				if(enableProgressBars) {
-					setProgressBarName(barIndex, name);
-					setProgressBarActive(barIndex, true);
-				}
 				try {
 					task.doTask();
 				} catch (Exception e) {
@@ -111,17 +91,11 @@ public interface MCP {
 			String[] msgs2 = {"Finished successfully!", "Finished with warnings!", "Finished with errors!"};
 			showMessage(mode.name, msgs2[result], result);
 		}
-
-		for(int i = 0; i < performedTasks.size(); i++) {
-			setProgressBarActive(i, false);
-			
-			setProgress(i, "Idle", 0);
-		}
 		setActive(true);
-		clearProgressBars();
+		if(enableProgressBars) clearProgressBars();
 	}
 	
-	void setProgressBars(List<Task> tasks);
+	void setProgressBars(List<Task> tasks, TaskMode mode);
 	
 	void clearProgressBars();
 
@@ -132,10 +106,6 @@ public interface MCP {
 	String getCurrentVersion();
 	
 	void setCurrentVersion(String version);
-	
-	void setProgressBarActive(int barIndex, boolean active);
-	
-	void setProgressBarName(int side, String name);
 	
 	void setProgress(int barIndex, String progressMessage);
 	

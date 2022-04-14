@@ -24,10 +24,13 @@ public class Options {
 			value = true;
 			break;
 		case IGNORED_PACKAGES:
-			value = new String[] {"paulscode", "com/jcraft", "isom"};
+			value = new String[] {"paulscode", "com/jcraft", "de/jarnbjo", "isom"};
 			break;
 		case INDENTION_STRING:
 			value = "\t";
+			break;
+		case OBFUSCATION:
+			value = true;
 			break;
 		case FULL_BUILD:
 			value = false;
@@ -36,7 +39,7 @@ public class Options {
 			value = false;
 			break;
 		case RUN_ARGS:
-			value = new String[0];
+			value = new String[] {"-Xms1024M", "-Xmx1024M", "-Djava.util.Arrays.useLegacyMergeSort=true"};
 			break;
 		case SETUP_VERSION:
 			value = null;
@@ -63,6 +66,15 @@ public class Options {
 		else {
 			throw new IllegalArgumentException("Type mismatch");
 		}
+	}
+
+	public Object getParameter(TaskParameter param) {
+		Object value = options.get(param);
+		if(value instanceof String[]) {
+			String valueStr = String.join(", ", (String[])value);
+			return valueStr;
+		}
+		return value;
 	}
 
 	public boolean getBooleanParameter(TaskParameter param) throws IllegalArgumentException {

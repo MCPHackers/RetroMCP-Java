@@ -1,9 +1,9 @@
 package org.mcphackers.mcp.main;
 
 import java.io.Console;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +19,9 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.Update;
 import org.mcphackers.mcp.tasks.Task;
+import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
@@ -34,10 +36,15 @@ public class MainCLI implements MCP {
 			.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
 			.fgDefault();
 	private TaskMode mode;
+	private Side side = Side.ANY;
 	private TaskMode helpCommand;
 	private Console console = System.console();
 	private Options options = new Options();
 	private String currentVersion;
+	
+	private int[] progresses;
+	private String[] progressStrings;
+	private String[] progressBarNames;
 
 	public static void main(String[] args) throws Exception {
 		if(System.console() != null) {
@@ -47,7 +54,7 @@ public class MainCLI implements MCP {
 //			System.err.println("Error: Could not find console. Launching GUI instead");
 //			MainGUI.main(args);
 			String filename = MCP.class.getProtectionDomain().getCodeSource().getLocation().toString().substring(6);
-          	Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd","/k","java -cp \"" + filename + ";D:/Stuff/git/RetroMCP-Java/build/libs/RetroMCP-Java-all.jar" + "\" org.mcphackers.mcp.main.MainCLI"});
+			Runtime.getRuntime().exec(new String[]{"cmd","/c","start","cmd","/k","java -cp \"" + filename + ";D:/Stuff/git/RetroMCP-Java/build/libs/RetroMCP-Java-all.jar" + "\" org.mcphackers.mcp.main.MainCLI"});
 			return;
 		}
 		new MainCLI(args);
@@ -56,8 +63,7 @@ public class MainCLI implements MCP {
 	public MainCLI(String[] args) {
 
 		options.resetDefaults();
-		attemptToDeleteUpdateJar();
-		log("Operating system: " + System.getProperty("os.name"));
+		Update.attemptToDeleteUpdateJar();
 		log("RetroMCP " + MCP.VERSION);
 
 		boolean startedWithNoParams = false;
@@ -106,7 +112,8 @@ public class MainCLI implements MCP {
 				if(mode == TaskMode.start) {
 					options.setParameter(TaskParameter.RUN_ARGS, args);
 				}
-				start();
+				boolean progressBars = mode != TaskMode.cleanup && mode != TaskMode.setup;
+				performTask(mode, side, progressBars, true);
 			} else if (mode == TaskMode.help) {
 				if(helpCommand == null) {
 					for (TaskMode mode : TaskMode.values()) {
@@ -119,7 +126,7 @@ public class MainCLI implements MCP {
 					log(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.name())).fgDefault().fgGreen().a(" ").a(helpCommand.desc).fgDefault().toString());
 					if(helpCommand.params.length > 0) log("Optional parameters:");
 					for(TaskParameter param : helpCommand.params) {
-						log(new Ansi().a(" ").fgCyan().a(String.format("%-10s", param)).a(" - ").fgBrightYellow().a(param.desc).fgDefault().toString());
+						log(new Ansi().a(" ").fgCyan().a(String.format("%-14s", param.name)).a(" - ").fgBrightYellow().a(param.desc).fgDefault().toString());
 					}
 				}
 			} else if (mode != TaskMode.exit) {
@@ -136,15 +143,18 @@ public class MainCLI implements MCP {
 	}
 
 	private void setParams(Map<String, Object> parsedArgs, TaskMode mode) {
+		side = Side.ANY;
 		for (Map.Entry<String, Object> arg : parsedArgs.entrySet()) {
 			Object value = arg.getValue();
 			String name = arg.getKey();
 			if(value == null) {
 				switch (name) {
 					case "client":
+						side = Side.CLIENT;
+						break;
 					case "server":
-						//setParameter(name, true);
-					break;
+						side = Side.SERVER;
+						break;
 				}
 				if(mode == TaskMode.help) {
 					try {
@@ -153,20 +163,11 @@ public class MainCLI implements MCP {
 					catch (IllegalArgumentException ignored) {}
 				}
 				if(mode == TaskMode.setup) {
-					//setParameter("setupversion", name);
+					options.setParameter(TaskParameter.SETUP_VERSION, name);
 				}
 			}
-			else if(value instanceof Integer) {
-				//setParameter(name, (Integer)value);
-			}
-			else if(value instanceof Boolean) {
-				//setParameter(name, (Boolean)value);
-			}
-			else if(value instanceof String) {
-				//setParameter(name, (String)value);
-			}
-			else if(value instanceof String[]) {
-				//setParameter(name, (String[])value);
+			else {
+				options.setParameter(nameToParamMap.get(name), value);
 			}
 		}
 	}
@@ -213,38 +214,6 @@ public class MainCLI implements MCP {
 			map.put(arg, null);
 		}
 	}
-
-	private void start() {
-//		TaskInfo task = getTaskInfo(mode);
-//		try {
-//			logger.info(new Ansi().fgMagenta().a("====== ").fgDefault().a(task.title()).fgMagenta().a(" ======").fgDefault().toString());
-//			processTask(task);
-//			logger.resetProgressString();
-//			String completemsg = task.successMsg();
-//			if(completemsg != null) {
-//				logger.info(new Ansi().a('\n').fgBrightGreen().a(completemsg).fgDefault().toString());
-//				List<String> errors = task.getInfoList();
-//				for(String error : errors) {
-//					logger.info(" " + error.replace("\n", "\n "));
-//				}
-//			}
-//		} catch (Exception e) {
-//			logger.info(new Ansi().a('\n').fgBrightRed().a(task.failMsg()).fgDefault().toString());
-//			List<String> errors = task.getInfoList();
-//			for(String error : errors) {
-//				logger.info(" " + error.replace("\n", "\n "));
-//			}
-//			if (debug) e.printStackTrace();
-//			else {
-//				String msg = e.getMessage();
-//				if(msg != null) {
-//					logger.info(msg);
-//				}
-//				logger.info("Use -debug for more info");
-//			}
-//		}
-//		task.clearInfoList();
-	}
 	
 
 	@Override
@@ -255,24 +224,6 @@ public class MainCLI implements MCP {
 	@Override
 	public Options getOptions() {
 		return options;
-	}
-
-	@Override
-	public void setProgressBarActive(int side, boolean active) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setProgress(int side, String progressMessage) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setProgress(int side, int progress) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -288,16 +239,23 @@ public class MainCLI implements MCP {
 	}
 
 	public void showMessage(String title, String msg, int type) {
-		String typeName = "INFO";
+		Ansi typeName = new Ansi();
 		switch (type) {
+		case Task.INFO:
+			typeName = typeName.fgBlue().a("INFO").fgDefault();
+			break;
 		case Task.WARNING:
-			typeName = "WARNING";
+			typeName = typeName.fgYellow().a("WARNING").fgDefault();
 			break;
 		case Task.ERROR:
-			typeName = "ERROR";
+			typeName = typeName.fgRed().a("ERROR").fgDefault();
 			break;
 		}
 		log("[" + typeName + "]: " + msg);
+	}
+
+	@Override
+	public void setActive(boolean active) {
 	}
 
 	@Override
@@ -310,28 +268,68 @@ public class MainCLI implements MCP {
 		currentVersion = version;
 	}
 
-	@Override
-	public void setProgressBarName(int side, String name) {
-		// TODO Auto-generated method stub
-		
+	private static String progressString(int progress, String progressMsg, String prefix) {
+		Ansi string = new Ansi(100);
+		string
+				.eraseLine()
+				.a(" ")
+				.a(String.format("%-7s", prefix))
+				.a(String.join("", Collections.nCopies(progress == 0 ? 2 : 2 - (int) (Math.log10(progress)), " ")))
+				.a(String.format(" %d%% [", progress))
+				.fgGreen()
+				.a(String.join("", Collections.nCopies(progress / 10, "=")))
+				.fgDefault()
+				.a(String.join("", Collections.nCopies(10 - progress / 10, "-")))
+				.a("] ")
+				.a(progressMsg);
+
+		return string.toString();
 	}
 
 	@Override
-	public void setActive(boolean active) {
-		// TODO Auto-generated method stub
-		
+	public void setProgress(int side, String progressMessage) {
+		synchronized (this) { 
+			progressStrings[side] = progressMessage;
+	        System.out.print(new Ansi().cursorUpLine(progresses.length));
+			for(int i = 0; i < progresses.length; i++) {
+				System.out.println(progressString(progresses[i], progressStrings[i], progressBarNames[i]));
+			}
+		}
 	}
 
 	@Override
-	public void setProgressBars(List<Task> tasks) {
-		// TODO Auto-generated method stub
-		
+	public void setProgress(int side, int progress) {
+		synchronized (this) { 
+			progresses[side] = progress;
+	        System.out.print(new Ansi().cursorUpLine(progresses.length));
+			for(int i = 0; i < progresses.length; i++) {
+				System.out.println(progressString(progresses[i], progressStrings[i], progressBarNames[i]));
+			}
+		}
+	}
+
+	@Override
+	public void setProgressBars(List<Task> tasks, TaskMode mode) {
+		progresses = new int[tasks.size()];
+		progressStrings = new String[tasks.size()];
+		progressBarNames = new String[tasks.size()];
+        for (int i = 0; i < tasks.size(); i++) {
+			String name = mode.name;
+			if(tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
+				name = tasks.get(i).side.name;
+			}
+			progresses[i] = 0;
+			progressStrings[i] = "Idle";
+			progressBarNames[i] = name;
+			System.out.println();
+        }
 	}
 
 	@Override
 	public void clearProgressBars() {
-		// TODO Auto-generated method stub
-		
+		progresses = new int[0];
+		progressStrings = new String[0];
+		progressBarNames = new String[0];
 	}
 
 }

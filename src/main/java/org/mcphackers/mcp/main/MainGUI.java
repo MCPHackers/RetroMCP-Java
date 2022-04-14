@@ -29,15 +29,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.Update;
 import org.mcphackers.mcp.gui.MenuBar;
 import org.mcphackers.mcp.gui.TextAreaOutputStream;
 import org.mcphackers.mcp.tasks.Task;
@@ -64,18 +66,12 @@ public class MainGUI extends JFrame implements MCP {
 	private JPanel bottom;
 	
 	public static void main(String[] args) throws Exception {
-		SwingUtilities.invokeLater(() -> new MainGUI());
+		new MainGUI();
 	}
 	
 	public MainGUI() {
 		super("RetroMCP " + MCP.VERSION);
-		try {
-			currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(Paths.get(MCPPaths.VERSION))));
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Could not start MCP", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-			System.exit(1);
-		}
+		Update.attemptToDeleteUpdateJar();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
             URL resource = this.getClass().getResource("/rmcp.png");
@@ -84,6 +80,11 @@ public class MainGUI extends JFrame implements MCP {
         } catch (IOException e) {
             e.printStackTrace();
         }
+		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
+		if (c == null) {
+			JOptionPane.showMessageDialog(this, "Java Development Kit not found!", "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
         initFrameContents();
         
 		setSize(840, 512);
@@ -176,15 +177,21 @@ public class MainGUI extends JFrame implements MCP {
 	}
 	
 	@Override
-	public void setProgressBars(List<Task> tasks) {
+	public void setProgressBars(List<Task> tasks, TaskMode mode) {
         for (int i = 0; i < tasks.size(); i++) {
+			String name = mode.name;
+			if(tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
+				name = tasks.get(i).side.name;
+			}
 			progressBars.add(i, new JProgressBar());
-			progressLabels.add(i, new JLabel("", JLabel.TRAILING));
+			progressLabels.add(i, new JLabel(name + ":", JLabel.TRAILING));
 			progressBars.get(i).setStringPainted(true);
-			setProgressBarActive(i, false);
+			progressLabels.get(i).setVisible(true);
+			progressBars.get(i).setVisible(true);
         	bottom.add(progressLabels.get(i));
         	progressLabels.get(i).setLabelFor(progressBars.get(i));
         	bottom.add(progressBars.get(i));
+        	setProgress(i, "Idle");
         }
         SpringUtilities.makeCompactGrid(bottom,
         						tasks.size(), 2, //rows, cols
@@ -284,6 +291,9 @@ public class MainGUI extends JFrame implements MCP {
 		patchButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.createpatch, getSide())));
 
 		try {
+			if(Files.exists(Paths.get(MCPPaths.VERSION))) {
+				currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(Paths.get(MCPPaths.VERSION))));
+			}
 			MainGUI mcp = this;
 			this.verList = new JComboBox<String>(VersionsParser.getVersionList().toArray(new String[0]));
 			this.verList.addPopupMenuListener(new PopupMenuListener() {
@@ -295,7 +305,7 @@ public class MainGUI extends JFrame implements MCP {
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
-			        if (!currentVersion.equals(verList.getSelectedItem()) && verList.getSelectedItem() != null) {
+			        if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(currentVersion)) {
 			        	int response = JOptionPane.showConfirmDialog(mcp, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
 			        	switch (response) {
 			        		case 0:
@@ -316,12 +326,7 @@ public class MainGUI extends JFrame implements MCP {
 				}
 				
 			});
-			if(Files.exists(Paths.get(MCPPaths.VERSION))) {
-				this.verList.setSelectedItem(currentVersion);
-			}
-			else {
-				this.verList.setSelectedItem(null);
-			}
+			this.verList.setSelectedItem(currentVersion);
 			this.verList.setMaximumRowCount(20);
 			this.verLabel = new JLabel("Current version:");
 			topRightContainer.add(this.verLabel);
@@ -396,17 +401,6 @@ public class MainGUI extends JFrame implements MCP {
 	@Override
 	public Options getOptions() {
 		return menuBar.options;
-	}
-
-	@Override
-	public void setProgressBarName(int side, String name) {
-		progressLabels.get(side).setText(name + ":");
-	}
-	
-	@Override
-	public void setProgressBarActive(int side, boolean active) {
-		progressLabels.get(side).setVisible(active);
-		progressBars.get(side).setVisible(active);
 	}
 
 	@Override

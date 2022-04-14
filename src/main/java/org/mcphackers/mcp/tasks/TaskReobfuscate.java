@@ -11,9 +11,11 @@ import java.util.Map;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
+import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
+import org.mcphackers.mcp.tools.mappings.ObfuscationUtils;
 
 import net.fabricmc.mappingio.adapter.MappingNsCompleter;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
@@ -44,14 +46,16 @@ public class TaskReobfuscate extends Task {
 		Path reobfDir = Paths.get(chooseFromSide(MCPPaths.CLIENT_REOBF, MCPPaths.SERVER_REOBF));
 		Path reobfMappings = Paths.get(chooseFromSide(MCPPaths.CLIENT_MAPPINGS_RO, MCPPaths.SERVER_MAPPINGS_RO));
 		Path deobfMappings = Paths.get(chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
-
+		
+		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
+		step();
+		new TaskRecompile(side, mcp, this).doTask();
 		step();
 		new TaskUpdateMD5(side, mcp, this).updateMD5(true);
 
 		if (Files.exists(reobfBin)) {
 			boolean hasMappings = Files.exists(deobfMappings);
 			FileUtil.deleteDirectoryIfExists(reobfDir);
-			step();
 			gatherMD5Hashes(true);
 			gatherMD5Hashes(false);
 
@@ -66,7 +70,17 @@ public class TaskReobfuscate extends Task {
 						if (obfPackage == null) {
 							return null;
 						}
-						return obfPackage + (className.lastIndexOf("/") >= 0 ? className.substring(className.lastIndexOf("/") + 1) : className);
+						String clsName = (className.lastIndexOf("/") >= 0 ? className.substring(className.lastIndexOf("/") + 1) : className);
+						if(enableObfuscation) {
+							int obfIndex = 0;
+							String obfName = ObfuscationUtils.getObfuscatedName(obfIndex);
+							while(mappingTree.getClass(obfPackage + obfName, 0) != null) {
+								obfIndex++;
+								obfName = ObfuscationUtils.getObfuscatedName(obfIndex);
+							}
+							clsName = obfName;
+						}
+						return obfPackage + clsName;
 					}
 					return null; // Returning null skips remapping this class
 				});

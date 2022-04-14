@@ -63,9 +63,7 @@ public class TaskRun extends Task {
 
 		List<String> args = new ArrayList<>(
 				Arrays.asList(java,
-						"-Xms1024M",
-						"-Xmx1024M",
-						"-Djava.util.Arrays.useLegacyMergeSort=true",
+						// TODO Would also be good if proxy could be customizable in run args
 						"-Dhttp.proxyHost=betacraft.uk",
 						"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(currentVersion),
 						"-Dorg.lwjgl.librarypath=" + natives,
@@ -73,23 +71,12 @@ public class TaskRun extends Task {
 						"-cp", cp,
 						side == Side.SERVER ? (VersionsParser.getServerVersion(currentVersion).startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
 																	  : runBuild ? "net.minecraft.client.Minecraft" : "Start"));
-		for(int i = 1; i < mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS).length; i++) {
-			String arg = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS)[i];
-			for(String arg2 : args) {
-				if(arg.indexOf("=") > 0 && arg2.indexOf("=") > 0) {
-					if(arg2.substring(0, arg2.indexOf("=")).equals(arg.substring(0, arg.indexOf("=")))) {
-						args.remove(arg2);
-						break;
-					}
-				}
-				else if(arg2.equals(arg)) {
-					args.remove(arg2);
-					break;
-				}
-			}
+		String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
+		for(int i = 0; i < runArgs.length; i++) {
+			String arg = runArgs[i];
 			args.add(1, arg);
 		}
-		int exit = Util.runCommand(mcp, args.toArray(new String[0]), Paths.get(MCPPaths.JARS), true);
+		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPPaths.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}

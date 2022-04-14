@@ -8,6 +8,7 @@ public enum TaskParameter {
 	PATCHES("patch", "Apply patches", Boolean.class),
 	IGNORED_PACKAGES("ignore", "Set ignored packages", String[].class),
 	INDENTION_STRING("ind", "Set indention string", String.class),
+	OBFUSCATION("obf", "Obfuscation", Boolean.class),
 	FULL_BUILD("fullbuild", "Full build", Boolean.class),
 	RUN_BUILD("runbuild", "Run build", Boolean.class),
 	RUN_ARGS("runargs", "Run arguments", String[].class),
@@ -25,6 +26,7 @@ public enum TaskParameter {
 	}
 	
 	TaskParameter(String name, String desc, Class c) {
+		MCP.nameToParamMap.put(name, this);
 		this.name = name;
 		this.desc = desc;
 		this.type = c;

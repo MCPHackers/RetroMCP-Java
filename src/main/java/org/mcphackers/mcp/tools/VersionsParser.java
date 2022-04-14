@@ -71,7 +71,8 @@ public class VersionsParser {
 
 	public static boolean hasServer(String version) throws Exception {
 		checkJson();
-		return json.getJSONObject(version).has("server_url");
+		//TODO Better null pointer handling
+		return version == null || json.getJSONObject(version).has("server_url");
 	}
 
 	public static String getDownloadURL(String version, int side) throws Exception {
