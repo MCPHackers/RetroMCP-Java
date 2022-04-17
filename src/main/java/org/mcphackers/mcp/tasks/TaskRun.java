@@ -2,7 +2,6 @@ package org.mcphackers.mcp.tasks;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -38,7 +37,7 @@ public class TaskRun extends Task {
 			}
 			cpList.add(FileUtil.absolutePathString(MCPPaths.SERVER_BIN));
 			cpList.add(FileUtil.absolutePathString(MCPPaths.SERVER));
-			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB_SERVER)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+			try(Stream<Path> stream = Files.list(MCPPaths.get(mcp, MCPPaths.LIB_SERVER)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
 		}
@@ -47,13 +46,13 @@ public class TaskRun extends Task {
 				cpList.add(FileUtil.absolutePathString(MCPPaths.BUILD_ZIP_CLIENT));
 			}
 			cpList.add(FileUtil.absolutePathString(MCPPaths.CLIENT_BIN));
-			if(!Files.exists(Paths.get(MCPPaths.CLIENT_FIXED))) {
+			if(!Files.exists(MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED))) {
 				cpList.add(FileUtil.absolutePathString(MCPPaths.CLIENT));
 			}
-			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+			try(Stream<Path> stream = Files.list(MCPPaths.get(mcp, MCPPaths.LIB)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
-			try(Stream<Path> stream = Files.list(Paths.get(MCPPaths.LIB_CLIENT)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+			try(Stream<Path> stream = Files.list(MCPPaths.get(mcp, MCPPaths.LIB_CLIENT)).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				cpList.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
 		}
@@ -76,7 +75,7 @@ public class TaskRun extends Task {
 			String arg = runArgs[i];
 			args.add(1, arg);
 		}
-		int exit = Util.runCommand(args.toArray(new String[0]), Paths.get(MCPPaths.JARS), true);
+		int exit = Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, MCPPaths.JARS), true);
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}

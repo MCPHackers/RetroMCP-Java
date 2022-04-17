@@ -1,7 +1,12 @@
 package org.mcphackers.mcp.gui;
 
 import java.awt.event.KeyEvent;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JMenu;
@@ -23,7 +28,6 @@ public class MenuBar extends JMenuBar {
 	public final JMenu mcpMenu = new JMenu("MCP");
 	private final JMenu helpMenu = new JMenu("Help");
 	private final JMenuItem[] sideItems = new JMenuItem[3];
-	private final Map<String, JMenuItem[]> taskOptions = new HashMap<>();
 	private final JMenuItem githubItem = new JMenuItem("Github Page");
 	private final MainGUI owner;
 	public Side side = Side.ANY;
@@ -38,28 +42,60 @@ public class MenuBar extends JMenuBar {
 		JMenuItem update = new JMenuItem("Check for updates");
 		update.addActionListener(a -> {
 			owner.operateOnThread(() -> {
-				owner.setActive(false);
-				owner.performTask(TaskMode.updatemcp, Side.ANY, false, false);
-    			owner.setActive(true);
+				owner.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false);
 			});
 		});
 		JMenuItem[] start = new JMenuItem[2];
 		String[] sides = {"client", "server"};
 		for(int i = 0; i < 2; i++) {
 			final int i2 = i;
-			start[i] = new JMenuItem(TaskMode.start.name + " " + sides[i]);
+			start[i] = new JMenuItem(TaskMode.START.getFullName() + " " + sides[i]);
 			start[i].addActionListener(a -> {
 				owner.operateOnThread(() -> {
-					owner.setActive(false);
-					owner.performTask(TaskMode.start, Task.sides.get(i2), false, false);
+					owner.performTask(TaskMode.START, Task.sides.get(i2), false, false);
 					reloadSide();
-	    			owner.setActive(true);
 				});
 			});
+		}
+		JMenuItem changeDir = new JMenuItem("Change working directory");
+		changeDir.addActionListener(a -> {
+			owner.operateOnThread(() -> {
+				String value = (String)JOptionPane.showInputDialog(owner, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, owner.getWorkingDir().toAbsolutePath().toString());
+				if(value != null) {
+					Path p = Paths.get(value);
+					if(Files.exists(p)) {
+						owner.workingDir = p;
+						owner.reloadVersionList();
+						owner.updateButtonState();
+					}
+				}
+			});
+		});
+		final boolean taskMenu = true;
+		if(taskMenu) {
+			List<TaskMode> usedTasks = Arrays.asList(new TaskMode[] {
+					TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.CREATE_PATCH, TaskMode.BUILD,
+					TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.UPDATE_MD5, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP
+			});
+			JMenu runTask = new JMenu("More tasks...");
+			for(TaskMode task : TaskMode.registeredTasks) {
+				if(usedTasks.contains(task)) {
+					continue;
+				}
+				JMenuItem taskItem = new JMenuItem(task.getFullName());
+				taskItem.addActionListener(a -> {
+					owner.operateOnThread(() -> {
+						owner.performTask(task, side);
+					});
+				});
+				runTask.add(taskItem);
+			}
+			mcpMenu.add(runTask);
 		}
 		mcpMenu.add(start[0]);
 		mcpMenu.add(start[1]);
 		mcpMenu.add(update);
+		mcpMenu.add(changeDir);
 		add(mcpMenu);
 		add(menuOptions);
 		this.githubItem.addActionListener(e -> this.onGithubClicked());
@@ -99,7 +135,13 @@ public class MenuBar extends JMenuBar {
 		}
 		menuOptions.add(sideMenu);
 		
-		String[] names = {TaskMode.decompile.name, TaskMode.recompile.name, TaskMode.reobfuscate.name, TaskMode.build.name, "Running"};
+		String[] names = {
+				TaskMode.DECOMPILE.getFullName(),
+				TaskMode.RECOMPILE.getFullName(),
+				TaskMode.REOBFUSCATE.getFullName(),
+				TaskMode.BUILD.getFullName(),
+				"Running"
+				};
 		TaskParameter[][] params = {
 				{TaskParameter.PATCHES, TaskParameter.INDENTION_STRING, TaskParameter.IGNORED_PACKAGES},
 				{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.BOOT_CLASS_PATH},
@@ -136,7 +178,7 @@ public class MenuBar extends JMenuBar {
 							}
 							catch (NumberFormatException e) {}
 							catch (IllegalArgumentException e) {
-								showErrorMessage(param);
+								owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
 								return;
 							}
 							if(value.equals("true") || value.equals("false")) {
@@ -146,7 +188,7 @@ public class MenuBar extends JMenuBar {
 									return;
 								}
 								catch (IllegalArgumentException e) {
-									showErrorMessage(param);
+									owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
 									return;
 								}
 							}
@@ -162,7 +204,7 @@ public class MenuBar extends JMenuBar {
 										return;
 									}
 									catch (IllegalArgumentException e) {
-										showErrorMessage(param);
+										owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
 										return;
 									}
 								}
@@ -173,7 +215,7 @@ public class MenuBar extends JMenuBar {
 										return;
 									}
 									catch (IllegalArgumentException e) {
-										showErrorMessage(param);
+										owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
 										return;
 									}
 								}
@@ -191,10 +233,6 @@ public class MenuBar extends JMenuBar {
 			resetDefaults(resetOptions);
 		});
 		menuOptions.add(reset);
-	}
-	
-	private void showErrorMessage(TaskParameter param) {
-		JOptionPane.showMessageDialog(owner, "Invalid value!", param.desc, JOptionPane.ERROR_MESSAGE);
 	}
 	
 	private void resetDefaults(Map<TaskParameter, JMenuItem> resetOptions) {

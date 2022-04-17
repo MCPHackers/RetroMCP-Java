@@ -3,7 +3,6 @@ package org.mcphackers.mcp.tasks;
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -17,9 +16,9 @@ public class TaskCreatePatch extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		Path srcPathUnpatched = Paths.get(chooseFromSide(MCPPaths.CLIENT_TEMP_SOURCES, MCPPaths.SERVER_TEMP_SOURCES));
-		Path srcPathPatched = Paths.get(chooseFromSide(MCPPaths.CLIENT_SOURCES, MCPPaths.SERVER_SOURCES));
-		Path patchesOut = Paths.get(chooseFromSide("patches/patches_client", "patches/patches_server"));
+		Path srcPathUnpatched = MCPPaths.get(mcp,chooseFromSide(MCPPaths.CLIENT_TEMP_SOURCES, MCPPaths.SERVER_TEMP_SOURCES));
+		Path srcPathPatched = MCPPaths.get(mcp,chooseFromSide(MCPPaths.CLIENT_SOURCES, MCPPaths.SERVER_SOURCES));
+		Path patchesOut = MCPPaths.get(mcp,chooseFromSide("patches/patches_client", "patches/patches_server"));
 		if (Files.exists(srcPathUnpatched)) {
 			if(Files.exists(srcPathPatched)) {
 				createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);

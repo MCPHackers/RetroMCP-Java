@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,26 +48,27 @@ public class TaskDecompile extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		String tinyOut 		= chooseFromSide(MCPPaths.CLIENT_TINY_OUT, MCPPaths.SERVER_TINY_OUT);
-		String excOut 		= chooseFromSide(MCPPaths.CLIENT_EXC_OUT, MCPPaths.SERVER_EXC_OUT);
-		String exc 			= chooseFromSide(MCPPaths.EXC_CLIENT, MCPPaths.EXC_SERVER);
-		String srcZip 		= chooseFromSide(MCPPaths.CLIENT_SRC, MCPPaths.SERVER_SRC);
-		Path originalJar 	= Paths.get(chooseFromSide(MCPPaths.CLIENT, MCPPaths.SERVER));
-		Path ffOut 			= Paths.get(chooseFromSide(MCPPaths.CLIENT_TEMP_SOURCES, MCPPaths.SERVER_TEMP_SOURCES));
-		Path srcPath 		= Paths.get(chooseFromSide(MCPPaths.CLIENT_SOURCES, MCPPaths.SERVER_SOURCES));
-		Path patchesPath 	= Paths.get(chooseFromSide(MCPPaths.CLIENT_PATCHES, MCPPaths.SERVER_PATCHES));
-		Path mappings		= Paths.get(chooseFromSide(MCPPaths.CLIENT_MAPPINGS, MCPPaths.SERVER_MAPPINGS));
-		Path deobfMappings	= Paths.get(chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
+		Path tinyOut 		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_TINY_OUT, MCPPaths.SERVER_TINY_OUT));
+		Path excOut 		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_EXC_OUT, MCPPaths.SERVER_EXC_OUT));
+		Path exc 			= MCPPaths.get(mcp, chooseFromSide(MCPPaths.EXC_CLIENT, MCPPaths.EXC_SERVER));
+		Path srcZip 		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SRC, MCPPaths.SERVER_SRC));
+		Path originalJar 	= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT, MCPPaths.SERVER));
+		Path ffOut 			= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_TEMP_SOURCES, MCPPaths.SERVER_TEMP_SOURCES));
+		Path srcPath 		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SOURCES, MCPPaths.SERVER_SOURCES));
+		Path patchesPath 	= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_PATCHES, MCPPaths.SERVER_PATCHES));
+		Path mappings		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS, MCPPaths.SERVER_MAPPINGS));
+		Path deobfMappings	= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
+		Path javadocs		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.JAVADOC_CLIENT, MCPPaths.JAVADOC_SERVER));
 		
 		boolean hasLWJGL = side == Side.CLIENT;
 		
 		if (Files.exists(srcPath)) {
 			throw new IOException(chooseFromSide("Client", "Server") + " sources found! Aborting.");
 		}
-		for (Path path : new Path[] { Paths.get(tinyOut), Paths.get(excOut), Paths.get(srcZip)}) {
+		for (Path path : new Path[] { tinyOut, excOut, srcZip}) {
 			Files.deleteIfExists(path);
 		}
-		FileUtil.createDirectories(Paths.get(MCPPaths.TEMP));
+		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.TEMP));
 		FileUtil.deleteDirectoryIfExists(ffOut);
 		while(step < STEPS) {
 			step();
@@ -85,31 +85,31 @@ public class TaskDecompile extends Task {
 						return null;
 					});
 					MappingUtil.writeMappings(deobfMappings, mappingTree);
-					MappingUtil.remap(deobfMappings, originalJar, Paths.get(tinyOut), getLibraryPaths(side), "official", "named");
+					MappingUtil.remap(deobfMappings, originalJar, tinyOut, getLibraryPaths(mcp, side), "official", "named");
 				}
 				else {
-					Files.copy(originalJar, Paths.get(tinyOut));
+					Files.copy(originalJar, tinyOut);
 				}
 				break;
 			case EXCEPTOR:
-				if (Files.exists(Paths.get(exc))) {
+				if (Files.exists(exc)) {
 					MCInjector.process(tinyOut, excOut, exc, 0);
 				}
 				else {
-					Files.copy(Paths.get(tinyOut), Paths.get(excOut));
+					Files.copy(tinyOut, excOut);
 				}
 				// Copying a fixed jar to libs
 				if(side == Side.CLIENT) {
-					Files.deleteIfExists(Paths.get(MCPPaths.CLIENT_FIXED));
-					Files.copy(Paths.get(excOut), Paths.get(MCPPaths.CLIENT_FIXED));
+					Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED));
+					Files.copy(excOut, MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED));
 				}
 				break;
 			case DECOMPILE:
-				 new Decompiler(this).decompile(excOut, srcZip, chooseFromSide(MCPPaths.JAVADOC_CLIENT, MCPPaths.JAVADOC_SERVER), mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING));
+				 new Decompiler(this).decompile(excOut, srcZip, javadocs, mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING));
 				break;
 			case EXTRACT:
-				FileUtil.createDirectories(Paths.get(MCPPaths.SRC));
-				FileUtil.unzipByExtension(Paths.get(srcZip), ffOut, ".java");
+				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.SRC));
+				FileUtil.unzipByExtension(srcZip, ffOut, ".java");
 				break;
 			case CONSTS:
 				List<Constants> constants = new ArrayList<>();
@@ -155,12 +155,12 @@ public class TaskDecompile extends Task {
 		}
 	}
 
-	public static Path[] getLibraryPaths(Side side) {
+	public static Path[] getLibraryPaths(MCP mcp, Side side) {
 		if(side == Side.CLIENT) {
 			return new Path[] {
-				Paths.get(MCPPaths.LWJGL),
-				Paths.get(MCPPaths.LWJGL_UTIL),
-				Paths.get(MCPPaths.JINPUT)
+				MCPPaths.get(mcp, MCPPaths.LWJGL),
+				MCPPaths.get(mcp, MCPPaths.LWJGL_UTIL),
+				MCPPaths.get(mcp, MCPPaths.JINPUT)
 			};
 		}
 		else {

@@ -144,6 +144,26 @@ public class MappingUtil {
 		}
 	}
 
+	public static String getObfuscatedName(int number) {
+		// Default obfuscation scheme
+		return getObfuscatedName('a', 'z', number);
+	}
+
+	public static String getObfuscatedName(char from, char to, int number) {
+		if(number == 0) {
+			return String.valueOf(from);
+		}
+		int num = number;
+		int allChars = to - from  + 1;
+		String retName = "";
+		while(num >= 0) {
+			char c = Character.valueOf((char)(from + (num % allChars)));
+			retName = c + retName;
+			num = num / allChars - 1;
+		}
+		return retName;
+	}
+
 	private static TinyRemapper applyMappings(IMappingProvider mappings, Path input, BiConsumer<String, byte[]> consumer, Path... classpath) {
 		TinyRemapper remapper = TinyRemapper.newRemapper()
 				.renameInvalidLocals(false)

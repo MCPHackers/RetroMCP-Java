@@ -1,5 +1,6 @@
 package org.mcphackers.mcp;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,8 @@ public interface MCP {
 		performTask(mode, side, true, true);
 	}
 	
+	Path getWorkingDir();
+	
 	default void performTask(TaskMode mode, Side side, boolean enableProgressBars, boolean enableCompletionMessage) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
@@ -42,7 +45,7 @@ public interface MCP {
 				if (task.side == Side.SERVER && hasServer || task.side != Side.SERVER) {
 					performedTasks.add(task);
 				}
-			} else if (task.side == side) {
+			} else if (task.side == side || task.side == Side.ANY) {
 				performedTasks.add(task);
 			}
 		}
@@ -89,7 +92,7 @@ public interface MCP {
 		}
 		if(enableCompletionMessage) {
 			String[] msgs2 = {"Finished successfully!", "Finished with warnings!", "Finished with errors!"};
-			showMessage(mode.name, msgs2[result], result);
+			showMessage(mode.getFullName(), msgs2[result], result);
 		}
 		setActive(true);
 		if(enableProgressBars) clearProgressBars();

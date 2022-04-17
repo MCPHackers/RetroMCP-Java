@@ -2,7 +2,6 @@ package org.mcphackers.mcp.tasks;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.mcphackers.mcp.MCP;
@@ -22,11 +21,11 @@ public class TaskBuild extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		Path originalJar =  Paths.get(chooseFromSide(MCPPaths.CLIENT, 			MCPPaths.SERVER));
-		Path bin = 			Paths.get(chooseFromSide(MCPPaths.CLIENT_BIN, 		MCPPaths.SERVER_BIN));
-		Path reobfDir = 	Paths.get(chooseFromSide(MCPPaths.CLIENT_REOBF, 	MCPPaths.SERVER_REOBF));
-		Path buildJar = 	Paths.get(chooseFromSide(MCPPaths.BUILD_JAR_CLIENT, MCPPaths.BUILD_JAR_SERVER));
-		Path buildZip = 	Paths.get(chooseFromSide(MCPPaths.BUILD_ZIP_CLIENT, MCPPaths.BUILD_ZIP_SERVER));
+		Path originalJar =  MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT, 			MCPPaths.SERVER));
+		Path bin = 			MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, 		MCPPaths.SERVER_BIN));
+		Path reobfDir = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF, 	MCPPaths.SERVER_REOBF));
+		Path buildJar = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.BUILD_JAR_CLIENT, MCPPaths.BUILD_JAR_SERVER));
+		Path buildZip = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.BUILD_ZIP_CLIENT, MCPPaths.BUILD_ZIP_SERVER));
 		
 		while(step < STEPS) {
 			step();
@@ -35,7 +34,7 @@ public class TaskBuild extends Task {
 				new TaskReobfuscate(side, mcp, this).doTask();
 				break;
 			case BUILD:
-				FileUtil.createDirectories(Paths.get(MCPPaths.BUILD));
+				FileUtil.createDirectories(MCPPaths.get(mcp,MCPPaths.BUILD));
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD)) {
 					Files.deleteIfExists(buildJar);
 					Files.copy(originalJar, buildJar);

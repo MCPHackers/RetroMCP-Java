@@ -16,8 +16,6 @@ public class Source {
 	
 	public final static String[] validModifiers = {"public", "protected", "private", "abstract", "static", "final", "strictfp", "transient", "volatile", "synchronized", "native"};
 	
-	//private static final Pattern test = Pattern.compile("[(" + String.join("|", validModifiers)  + ") ]* class .+");
-	
 	public static void modify(Path src, Function<String, String> editCode) throws IOException {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
 			@Override
@@ -29,13 +27,6 @@ public class Source {
 			}
 		});
 	}
-	
-//	public static void test(Path src) throws IOException {
-//		modify(src, code -> {
-//			code = addAfterMatch(code, test, "\n\tpublic static final String VERSION = \"Version???\";");
-//			return code;
-//		});
-//	}
 	
 	public static String replaceTextOfMatchGroup(String sourceString, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
 		Stack<MatchResult> results = new Stack<>();

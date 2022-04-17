@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,11 +43,9 @@ public class TaskRecompile extends Task {
 			throw new RuntimeException("Could not find compiling API");
 		}
 		DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
-
-		String bin = chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN);
-		Path binPath = Paths.get(bin);
-		Path srcPath = Paths.get(chooseFromSide(MCPPaths.CLIENT_SOURCES, 	MCPPaths.SERVER_SOURCES));
-		Path libPath = Paths.get(chooseFromSide(MCPPaths.LIB_CLIENT, 		MCPPaths.LIB_SERVER));
+		Path binPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, 		MCPPaths.SERVER_BIN));
+		Path srcPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SOURCES, 	MCPPaths.SERVER_SOURCES));
+		Path libPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.LIB_CLIENT, 		MCPPaths.LIB_SERVER));
 
 		step();
 		FileUtil.deleteDirectoryIfExists(binPath);
@@ -58,7 +55,7 @@ public class TaskRecompile extends Task {
 		// Compile side
 		if (Files.exists(srcPath)) {
 			List<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-			List<File> start = Files.walk(Paths.get(MCPPaths.CONF + "start")).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+			List<File> start = Files.walk(MCPPaths.get(mcp, MCPPaths.CONF + "start")).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
 			if(side == Side.CLIENT) {
 				src.addAll(start);
 			}
@@ -72,7 +69,7 @@ public class TaskRecompile extends Task {
 			try(Stream<Path> stream = Files.list(libPath).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
-			options.addAll(Arrays.asList("-d", bin));
+			options.addAll(Arrays.asList("-d", binPath.toString()));
 
 			int sourceVersion = mcp.getOptions().getIntParameter(TaskParameter.SOURCE_VERSION);
 			if (sourceVersion >= 0) {

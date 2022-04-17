@@ -30,6 +30,8 @@ public class VersionsParser {
 		List<String> verList = new ArrayList<>();
 		Iterator<String> iterator = json.keys();
 		iterator.forEachRemaining(verList::add);
+		// TODO sort by date instead
+		// Add date entry to json. Make a version to be the last one if there is no date entry
 		verList.sort(Comparator.naturalOrder());
 		return verList;
 	}
@@ -93,12 +95,11 @@ public class VersionsParser {
 	}
 
 	public static String setCurrentVersion(MCP mcp, String version) throws Exception {
-		//TODO use mcp instance to get working dir path (when it's implemented)
 		checkJson();
 		if(!json.has(version)) {
 			throw new Exception("Invalid version detected!");
 		}
-		try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPPaths.VERSION))) {
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPPaths.get(mcp, MCPPaths.VERSION).toFile()))) {
 			writer.write(version);
 		}
 		return version;

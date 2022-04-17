@@ -2,7 +2,6 @@ package org.mcphackers.mcp.tasks;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -25,31 +24,32 @@ public class TaskCleanup extends Task {
 		long startTime = System.currentTimeMillis();
 		int foldersDeleted = 0;
 		Path[] pathsToDelete = new Path[] {
-				Paths.get(MCPPaths.CONF),
-				Paths.get(MCPPaths.JARS),
-				Paths.get(MCPPaths.LIB),
-				Paths.get(MCPPaths.LIB_CLIENT),
-				Paths.get(MCPPaths.LIB_SERVER),
-				Paths.get(MCPPaths.TEMP),
-				Paths.get(MCPPaths.SRC),
-				Paths.get(MCPPaths.BIN),
-				Paths.get(MCPPaths.REOBF),
-				Paths.get(MCPPaths.BUILD),
-				Paths.get("workspace")
+				MCPPaths.get(mcp, MCPPaths.CONF),
+				MCPPaths.get(mcp, MCPPaths.JARS),
+				MCPPaths.get(mcp, MCPPaths.LIB),
+				MCPPaths.get(mcp, MCPPaths.LIB_CLIENT),
+				MCPPaths.get(mcp, MCPPaths.LIB_SERVER),
+				MCPPaths.get(mcp, MCPPaths.TEMP),
+				MCPPaths.get(mcp, MCPPaths.SRC),
+				MCPPaths.get(mcp, MCPPaths.BIN),
+				MCPPaths.get(mcp, MCPPaths.REOBF),
+				MCPPaths.get(mcp, MCPPaths.BUILD),
+				MCPPaths.get(mcp, "workspace")
 			};
 		if (srcCleanup) pathsToDelete = new Path[] {
-				Paths.get(MCPPaths.SRC),
-				Paths.get(MCPPaths.BIN),
-				Paths.get(MCPPaths.REOBF),
-				Paths.get(MCPPaths.BUILD)
+				MCPPaths.get(mcp, MCPPaths.SRC),
+				MCPPaths.get(mcp, MCPPaths.BIN),
+				MCPPaths.get(mcp, MCPPaths.REOBF),
+				MCPPaths.get(mcp, MCPPaths.BUILD)
 			};
 		for (Path path : pathsToDelete) {
 			if (Files.exists(path)) {
 				foldersDeleted++;
-				log("Deleting " + path + "...");
+				log("Deleting " + path.getFileName() + "...");
 				FileUtil.deleteDirectory(path);
 			}
 		}
+		mcp.setCurrentVersion(null);
 
 		if(foldersDeleted > 0) {
 			log("Done in " + Util.time(System.currentTimeMillis() - startTime));

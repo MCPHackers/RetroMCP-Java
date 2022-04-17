@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.NoSuchAlgorithmException;
@@ -38,8 +37,8 @@ public class TaskUpdateMD5 extends Task {
 	}
 
 	public void updateMD5(boolean reobf) throws Exception {
-		Path binPath 	= Paths.get(chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN));
-		Path md5 = Paths.get(reobf ? chooseFromSide(MCPPaths.CLIENT_MD5_RO, MCPPaths.SERVER_MD5_RO)
+		Path binPath 	= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN));
+		Path md5 = MCPPaths.get(mcp, reobf ? chooseFromSide(MCPPaths.CLIENT_MD5_RO, MCPPaths.SERVER_MD5_RO)
 				  				   : chooseFromSide(MCPPaths.CLIENT_MD5, 	 MCPPaths.SERVER_MD5));
 		step();
 		if(recompile) {
@@ -58,7 +57,7 @@ public class TaskUpdateMD5 extends Task {
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					try {
 						String md5_hash = Util.getMD5OfFile(file.toFile());
-						String fileName = Paths.get(chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
+						String fileName = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
 						writer.append(fileName).append(" ").append(md5_hash).append("\n");
 						progress++;
 						setProgress(50 + (int)((double)progress/(double)total * 50));

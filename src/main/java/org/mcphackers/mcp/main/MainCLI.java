@@ -2,6 +2,7 @@ package org.mcphackers.mcp.main;
 
 import java.io.Console;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
@@ -95,7 +96,7 @@ public class MainCLI implements MCP {
 				try {
 					str = console.readLine().trim();
 				} catch (NoSuchElementException ignored) {
-					mode = TaskMode.exit;
+					mode = TaskMode.EXIT;
 				}
 				System.out.print(new Ansi().fgDefault());
 				args = str.split(" ");
@@ -107,32 +108,32 @@ public class MainCLI implements MCP {
 			}
 			setParams(parsedArgs, mode);
 			if (taskMode) {
-				if(mode == TaskMode.start) {
+				if(mode == TaskMode.START) {
 					options.setParameter(TaskParameter.RUN_ARGS, args);
 				}
-				boolean progressBars = mode != TaskMode.cleanup && mode != TaskMode.setup;
+				boolean progressBars = mode != TaskMode.CLEANUP && mode != TaskMode.SETUP;
 				performTask(mode, side, progressBars, true);
-			} else if (mode == TaskMode.help) {
+			} else if (mode == TaskMode.HELP) {
 				if(helpCommand == null) {
-					for (TaskMode mode : TaskMode.values()) {
+					for (TaskMode mode : TaskMode.registeredTasks) {
 						log(new Ansi()
-								.fgBrightMagenta().a(" - " + String.format("%-12s", mode.name())).fgDefault()
-								.fgGreen().a(" ").a(mode.desc).fgDefault().toString());
+								.fgBrightMagenta().a(" - " + String.format("%-12s", mode.getName())).fgDefault()
+								.fgGreen().a(" ").a(mode.getDesc()).fgDefault().toString());
 					}
 				}
 				else {
-					log(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.name())).fgDefault().fgGreen().a(" ").a(helpCommand.desc).fgDefault().toString());
+					log(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.getName())).fgDefault().fgGreen().a(" ").a(helpCommand.getDesc()).fgDefault().toString());
 					if(helpCommand.params.length > 0) log("Optional parameters:");
 					for(TaskParameter param : helpCommand.params) {
 						log(new Ansi().a(" ").fgCyan().a(String.format("%-14s", param.name)).a(" - ").fgBrightYellow().a(param.desc).fgDefault().toString());
 					}
 				}
-			} else if (mode != TaskMode.exit) {
+			} else if (mode != TaskMode.EXIT) {
 				log("Unknown command. Type 'help' for list of available commands");
 			}
 			args = new String[]{};
 			options.resetDefaults();
-			if (!startedWithNoParams || mode == TaskMode.exit)
+			if (!startedWithNoParams || mode == TaskMode.EXIT)
 				exit = true;
 			mode = null;
 			helpCommand = null;
@@ -154,13 +155,15 @@ public class MainCLI implements MCP {
 						side = Side.SERVER;
 						break;
 				}
-				if(mode == TaskMode.help) {
-					try {
-						helpCommand = TaskMode.valueOf(name);
+				if(mode == TaskMode.HELP) {
+					for(TaskMode taskMode : TaskMode.registeredTasks) {
+						if(taskMode.getName() == name) {
+							helpCommand = taskMode;
+							break;
+						}
 					}
-					catch (IllegalArgumentException ignored) {}
 				}
-				if(mode == TaskMode.setup) {
+				if(mode == TaskMode.SETUP) {
 					options.setParameter(TaskParameter.SETUP_VERSION, name);
 				}
 			}
@@ -171,11 +174,12 @@ public class MainCLI implements MCP {
 	}
 
 	private boolean setMode(String name) {
-		try {
-			mode = TaskMode.valueOf(name);
-			return mode.taskClass != null;
+		for(TaskMode taskMode : TaskMode.registeredTasks) {
+			if(taskMode.getName() == name) {
+				mode = taskMode;
+				return mode.taskClass != null;
+			}
 		}
-		catch (IllegalArgumentException ignored) {}
 		return false;
 	}
 
@@ -312,7 +316,7 @@ public class MainCLI implements MCP {
 		progressStrings = new String[tasks.size()];
 		progressBarNames = new String[tasks.size()];
         for (int i = 0; i < tasks.size(); i++) {
-			String name = mode.name;
+			String name = mode.getFullName();
 			if(tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
 				name = tasks.get(i).side.name;
 			}
@@ -328,6 +332,11 @@ public class MainCLI implements MCP {
 		progresses = new int[0];
 		progressStrings = new String[0];
 		progressBarNames = new String[0];
+	}
+
+	@Override
+	public Path getWorkingDir() {
+		return Paths.get("");
 	}
 
 }

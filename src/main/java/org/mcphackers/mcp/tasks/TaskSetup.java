@@ -37,10 +37,9 @@ public class TaskSetup extends Task {
 	@Override
 	public void doTask() throws Exception {
 		new TaskCleanup(mcp).doTask();
-		log("Setting up your workspace...");
-		FileUtil.createDirectories(Paths.get(MCPPaths.JARS));
-		FileUtil.createDirectories(Paths.get(MCPPaths.LIB));
-		FileUtil.createDirectories(Paths.get(MCPPaths.NATIVES));
+		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.JARS));
+		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB));
+		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.NATIVES));
 		
 		log("Setting up Minecraft...");
 		List<String> versions = VersionsParser.getVersionList();
@@ -54,46 +53,46 @@ public class TaskSetup extends Task {
 
 		// Keep asking until they have a valid option
 		while (!versions.contains(chosenVersion)) {
-			chosenVersion = mcp.inputString(TaskMode.setup.name, "Select version:");
+			chosenVersion = mcp.inputString(TaskMode.SETUP.getFullName(), "Select version:");
 		}
 		
-		FileUtil.createDirectories(Paths.get(MCPPaths.CONF));
+		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.CONF));
 		mcp.setCurrentVersion(VersionsParser.setCurrentVersion(mcp, chosenVersion));
 		String currentVersion = mcp.getCurrentVersion();
 		
 		long startTime = System.currentTimeMillis();
-		if(Files.notExists(Paths.get("versions.json"))) {
+		if(Files.notExists(MCPPaths.get(mcp, "versions.json"))) {
 			log("Downloading mappings");
-			FileUtil.downloadFile(VersionsParser.downloadVersion(currentVersion), Paths.get(MCPPaths.CONF, "conf.zip"));
-			FileUtil.unzip(Paths.get(MCPPaths.CONF, "conf.zip"), Paths.get(MCPPaths.CONF), true);
+			FileUtil.downloadFile(VersionsParser.downloadVersion(currentVersion), MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
+			FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"), MCPPaths.get(mcp, MCPPaths.CONF), true);
 		}
 		
 		log("Setting up workspace");
-		FileUtil.deleteDirectoryIfExists(Paths.get("workspace"));
-		FileUtil.copyResource(MCP.class.getClassLoader().getResourceAsStream("workspace.zip"), Paths.get("workspace.zip"));
-		FileUtil.unzip(Paths.get("workspace.zip"), Paths.get("workspace"), true);
+		FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace"));
+		FileUtil.copyResource(MCP.class.getClassLoader().getResourceAsStream("workspace.zip"), MCPPaths.get(mcp, "workspace.zip"));
+		FileUtil.unzip(MCPPaths.get(mcp, "workspace.zip"), MCPPaths.get(mcp, "workspace"), true);
 		
 		setWorkspace();
 		log("Done in " + Util.time(System.currentTimeMillis() - startTime));
 
 		// Delete Minecraft.jar and Minecraft_server.jar if they exist.
-		Files.deleteIfExists(Paths.get(MCPPaths.CLIENT));
-		Files.deleteIfExists(Paths.get(MCPPaths.SERVER));
+		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.CLIENT));
+		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.SERVER));
 
 		// Download Minecraft
 		{
 			for(int side = 0; side <= (VersionsParser.hasServer(currentVersion) ? 1 : 0); side++) {
 				startTime = System.currentTimeMillis();
-				FileUtil.createDirectories(Paths.get(side == Side.CLIENT.index ? MCPPaths.LIB_CLIENT : MCPPaths.LIB_SERVER));
+				FileUtil.createDirectories(MCPPaths.get(mcp, side == Side.CLIENT.index ? MCPPaths.LIB_CLIENT : MCPPaths.LIB_SERVER));
 				log("Downloading Minecraft " + (side == Side.CLIENT.index ? "client" : "server") + "...");
 				String url = VersionsParser.getDownloadURL(currentVersion, side);
 				String out = side == Side.CLIENT.index ? MCPPaths.CLIENT : MCPPaths.SERVER;
-				Path pathOut = Paths.get(out);
+				Path pathOut = MCPPaths.get(mcp, out);
 				if(url.endsWith(".jar")) {
 					FileUtil.downloadFile(new URL(url), pathOut);
 				}
 				else {
-					Path zip = Paths.get(out.replace(".jar", ".zip"));
+					Path zip = MCPPaths.get(mcp, out.replace(".jar", ".zip"));
 					FileUtil.downloadFile(new URL(url), zip);
 					FileUtil.copyFileFromAZip(zip, "minecraft-server.jar", pathOut);
 					Files.deleteIfExists(zip);
@@ -104,15 +103,15 @@ public class TaskSetup extends Task {
 		
 		log("Downloading libraries...");
 		startTime = System.currentTimeMillis();
-		FileUtil.downloadFile(new URL(libsURL), Paths.get(MCPPaths.LIB_CLIENT + "libs.zip"));
+		FileUtil.downloadFile(new URL(libsURL), MCPPaths.get(mcp, MCPPaths.LIB_CLIENT + "libs.zip"));
 		String nativesURL = natives.get(Os.getOs());
 		if(nativesURL == null) {
 			throw new Exception("Could not find natives for your operating system");
 		}
-		FileUtil.downloadFile(new URL(nativesURL), Paths.get(MCPPaths.LIB_CLIENT + "natives.zip"));
+		FileUtil.downloadFile(new URL(nativesURL), MCPPaths.get(mcp, MCPPaths.LIB_CLIENT + "natives.zip"));
 		log("Done in " + Util.time(System.currentTimeMillis() - startTime));
-		FileUtil.unzip(Paths.get(MCPPaths.LIB_CLIENT + "libs.zip"), Paths.get(MCPPaths.LIB_CLIENT), true);
-		FileUtil.unzip(Paths.get(MCPPaths.LIB_CLIENT + "natives.zip"), Paths.get(MCPPaths.NATIVES), true);
+		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIB_CLIENT + "libs.zip"), MCPPaths.get(mcp, MCPPaths.LIB_CLIENT), true);
+		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIB_CLIENT + "natives.zip"), MCPPaths.get(mcp, MCPPaths.NATIVES), true);
 	}
 
 	private void setWorkspace() throws Exception {

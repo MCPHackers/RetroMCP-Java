@@ -59,11 +59,12 @@ public class MainGUI extends JFrame implements MCP {
 	private JComboBox<String> verList;
 	private JLabel verLabel;
 	private JPanel topRightContainer;
+	private JPanel bottom;
 	private final List<JProgressBar> progressBars = new ArrayList<>();
 	private final List<JLabel> progressLabels = new ArrayList<>();
 	private MenuBar menuBar;
-	private String currentVersion;
-	private JPanel bottom;
+	public String currentVersion;
+	public Path workingDir;
 	
 	public static void main(String[] args) throws Exception {
 		new MainGUI();
@@ -71,6 +72,7 @@ public class MainGUI extends JFrame implements MCP {
 	
 	public MainGUI() {
 		super("RetroMCP " + MCP.VERSION);
+		workingDir = Paths.get("");
 		Update.attemptToDeleteUpdateJar();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
@@ -151,24 +153,6 @@ public class MainGUI extends JFrame implements MCP {
 		textArea.setForeground(Color.BLACK);
 		JScrollPane scroll = new JScrollPane(textArea);
 	    scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-//		textInput = new JTextField();
-//		textInput.setMaximumSize(new Dimension(Integer.MAX_VALUE, 0));
-//	    textInput.setFont(font);
-//		textInput.setForeground(Color.BLACK);
-//		textInput.addActionListener(new ActionListener() {
-//	    	public void actionPerformed(ActionEvent e) {
-//	        	log(textInput.getText());
-//	        	if(inputWriter != null) {
-//	        		try {
-//						inputWriter.write(textInput.getText());
-//					} catch (IOException e1) {
-//						e1.printStackTrace();
-//					}
-//	        	}
-//	        	textInput.setText("");
-//	    	}
-//	    });
-//		textInput.setVisible(false);
 		middlePanel.add(scroll);
 		bottom = new JPanel(new SpringLayout());
         bottom.setVisible(false);
@@ -179,7 +163,7 @@ public class MainGUI extends JFrame implements MCP {
 	@Override
 	public void setProgressBars(List<Task> tasks, TaskMode mode) {
         for (int i = 0; i < tasks.size(); i++) {
-			String name = mode.name;
+			String name = mode.getFullName();
 			if(tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
 				name = tasks.get(i).side.name;
 			}
@@ -219,26 +203,26 @@ public class MainGUI extends JFrame implements MCP {
 			}
 			if(button == decompileButton) {
 				if(side == Side.CLIENT || side == Side.ANY) {
-					clientPaths.add(Paths.get(MCPPaths.CLIENT));
+					clientPaths.add(MCPPaths.get(this, MCPPaths.CLIENT));
 				}
 				if(side == Side.SERVER || side == Side.ANY) {
-					serverPaths.add(Paths.get(MCPPaths.SERVER));
+					serverPaths.add(MCPPaths.get(this, MCPPaths.SERVER));
 				}
 			}
 			if(button == recompileButton || button == reobfButton || button == md5Button || button == buildButton) {
 				if(side == Side.CLIENT || side == Side.ANY) {
-					clientPaths.add(Paths.get(MCPPaths.CLIENT_SOURCES));
+					clientPaths.add(MCPPaths.get(this, MCPPaths.CLIENT_SOURCES));
 				}
 				if(side == Side.SERVER || side == Side.ANY) {
-					serverPaths.add(Paths.get(MCPPaths.SERVER_SOURCES));
+					serverPaths.add(MCPPaths.get(this, MCPPaths.SERVER_SOURCES));
 				}
 			}
 			if(button == patchButton) {
 				if(side == Side.CLIENT || side == Side.ANY) {
-					clientPaths.add(Paths.get(MCPPaths.CLIENT_TEMP_SOURCES));
+					clientPaths.add(MCPPaths.get(this, MCPPaths.CLIENT_TEMP_SOURCES));
 				}
 				if(side == Side.SERVER || side == Side.ANY) {
-					serverPaths.add(Paths.get(MCPPaths.SERVER_TEMP_SOURCES));
+					serverPaths.add(MCPPaths.get(this, MCPPaths.SERVER_TEMP_SOURCES));
 				}
 			}
 			boolean allClientPathsReadable = true;
@@ -272,36 +256,44 @@ public class MainGUI extends JFrame implements MCP {
 	private void addListeners() {
 		decompileButton.addActionListener(event -> { operateOnThread(() -> {
 			int response = -1;
-			if(Files.exists(Paths.get(MCPPaths.SRC))) {
+			if(Files.exists(MCPPaths.get(this, MCPPaths.SRC))) {
 				response = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
 			}
 			if(response <= 0) {
 				if(response == 0) {
 					setParameter(TaskParameter.SRC_CLEANUP, true);
-					performTask(TaskMode.cleanup, Side.ANY, false, false);
+					performTask(TaskMode.CLEANUP, Side.ANY, false, false);
 				}
-				performTask(TaskMode.decompile, getSide());
+				performTask(TaskMode.DECOMPILE, getSide());
 			}
 		});
 		});
-		recompileButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.recompile, getSide())));
-		reobfButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.reobfuscate, getSide())));
-		buildButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.build, getSide())));
-		md5Button.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.updatemd5, getSide())));
-		patchButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.createpatch, getSide())));
+		recompileButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.RECOMPILE, getSide())));
+		reobfButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.REOBFUSCATE, getSide())));
+		buildButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.BUILD, getSide())));
+		md5Button.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.UPDATE_MD5, getSide())));
+		patchButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.CREATE_PATCH, getSide())));
 
+		reloadVersionList();
+	}
+	
+	public void reloadVersionList() {
 		try {
-			if(Files.exists(Paths.get(MCPPaths.VERSION))) {
-				currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(Paths.get(MCPPaths.VERSION))));
+			topRightContainer.removeAll();
+			if(Files.exists(MCPPaths.get(this, MCPPaths.VERSION))) {
+				currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(MCPPaths.get(this, MCPPaths.VERSION))));
+			}
+			else {
+				currentVersion = null;
 			}
 			MainGUI mcp = this;
 			this.verList = new JComboBox<String>(VersionsParser.getVersionList().toArray(new String[0]));
 			this.verList.addPopupMenuListener(new PopupMenuListener() {
-
+	
 				@Override
 				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 				}
-
+	
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
@@ -310,7 +302,7 @@ public class MainGUI extends JFrame implements MCP {
 			        	switch (response) {
 			        		case 0:
 		    					setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
-		    					performTask(TaskMode.setup, Side.ANY, false, true);
+		    					performTask(TaskMode.SETUP, Side.ANY, false, true);
 			        			break;
 			        		default:
 			        			verList.setSelectedItem(getCurrentVersion());
@@ -320,7 +312,7 @@ public class MainGUI extends JFrame implements MCP {
 			        }
 					});
 				}
-
+	
 				@Override
 				public void popupMenuCanceled(PopupMenuEvent e) {
 				}
@@ -336,8 +328,9 @@ public class MainGUI extends JFrame implements MCP {
 			verLabel.setForeground(Color.RED);
 			topRightContainer.add(verLabel);
 		}
+		topRightContainer.updateUI();
 	}
-	
+
 	private Side getSide() {
 		return menuBar.side;
 	}
@@ -441,5 +434,12 @@ public class MainGUI extends JFrame implements MCP {
 	@Override
 	public void setCurrentVersion(String version) {
 		currentVersion = version;
+		verList.setSelectedItem(version);
+		verList.repaint();
+	}
+
+	@Override
+	public Path getWorkingDir() {
+		return workingDir;
 	}
 }

@@ -1,5 +1,10 @@
 package org.mcphackers.mcp;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
 public class MCPPaths {
 
 	
@@ -61,5 +66,20 @@ public class MCPPaths {
 	public static final String BUILD_JAR_CLIENT = 	 BUILD + "minecraft.jar";
 	public static final String BUILD_JAR_SERVER = 	 BUILD + "minecraft_server.jar";
 	public static final String UPDATE_JAR 		= 	 "update.jar";
+	
+	private static final Map<String, Path> paths = new HashMap<>();
+	private static Path cachedWorkingDir;
 
+	public static Path get(MCP mcp, String path) {
+		if(mcp.getWorkingDir() != cachedWorkingDir) {
+			cachedWorkingDir = mcp.getWorkingDir();
+			paths.clear();
+		}
+		if(!paths.containsKey(path)) {
+			Path p = cachedWorkingDir.resolve(Paths.get(path));
+			paths.put(path, p);
+			return p;
+		}
+		return paths.get(path);
+	}
 }
