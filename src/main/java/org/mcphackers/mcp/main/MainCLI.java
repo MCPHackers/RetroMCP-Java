@@ -39,8 +39,8 @@ public class MainCLI implements MCP {
 	private TaskMode mode;
 	private Side side = Side.ANY;
 	private TaskMode helpCommand;
-	private Console console = System.console();
-	private Options options = new Options();
+	private final Console console = System.console();
+	private final Options options = new Options();
 	private String currentVersion;
 	
 	private int[] progresses;
@@ -68,9 +68,10 @@ public class MainCLI implements MCP {
 		boolean startedWithNoParams = false;
 		boolean exit = false;
 		String version = null;
-		if(Files.exists(Paths.get(MCPPaths.VERSION))) {
+		Path versionPath = Paths.get(MCPPaths.VERSION);
+		if(Files.exists(versionPath)) {
 			try {
-				currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(Paths.get(MCPPaths.VERSION))));
+				currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(versionPath)));
 				version = new Ansi().a("Current version: ").fgBrightCyan().a(currentVersion).fgDefault().toString();
 			} catch (Exception e) {
 				version = new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString();
@@ -157,7 +158,7 @@ public class MainCLI implements MCP {
 				}
 				if(mode == TaskMode.HELP) {
 					for(TaskMode taskMode : TaskMode.registeredTasks) {
-						if(taskMode.getName() == name) {
+						if(taskMode.getName().equals(name)) {
 							helpCommand = taskMode;
 							break;
 						}
@@ -175,7 +176,7 @@ public class MainCLI implements MCP {
 
 	private boolean setMode(String name) {
 		for(TaskMode taskMode : TaskMode.registeredTasks) {
-			if(taskMode.getName() == name) {
+			if(taskMode.getName().equals(name)) {
 				mode = taskMode;
 				return mode.taskClass != null;
 			}
@@ -231,7 +232,7 @@ public class MainCLI implements MCP {
 	@Override
 	public boolean yesNoInput(String title, String msg) {
 		log(msg);
-		return console.readLine().toLowerCase().equals("yes");
+		return console.readLine().equalsIgnoreCase("yes");
 	}
 
 	@Override

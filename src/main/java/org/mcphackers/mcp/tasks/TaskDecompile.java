@@ -2,6 +2,7 @@ package org.mcphackers.mcp.tasks;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,14 +77,16 @@ public class TaskDecompile extends Task {
 			case REMAP:
 				if (Files.exists(mappings)) {
 					MappingUtil.readMappings(mappings, mappingTree);
-					MappingUtil.modifyClasses(mappingTree, FileSystems.newFileSystem(originalJar, null).getPath("/"), className -> {
-						if (mappingTree.getClass(className) == null) {
-							if(className.lastIndexOf("/") < 0) {
-								return "net/minecraft/src/" + className;
+					try (FileSystem fs = FileSystems.newFileSystem(originalJar, null)) {
+						MappingUtil.modifyClasses(mappingTree, fs.getPath("/"), className -> {
+							if (mappingTree.getClass(className) == null) {
+								if(className.lastIndexOf("/") < 0) {
+									return "net/minecraft/src/" + className;
+								}
 							}
-						}
-						return null;
-					});
+							return null;
+						});
+					}
 					MappingUtil.writeMappings(deobfMappings, mappingTree);
 					MappingUtil.remap(deobfMappings, originalJar, tinyOut, getLibraryPaths(mcp, side), "official", "named");
 				}
@@ -114,7 +117,7 @@ public class TaskDecompile extends Task {
 			case CONSTS:
 				List<Constants> constants = new ArrayList<>();
 				if(hasLWJGL)
-				constants.add(new GLConstants());
+					constants.add(new GLConstants());
 				constants.add(new MathConstants());
 				Constants.replace(ffOut, constants);
 				break;
