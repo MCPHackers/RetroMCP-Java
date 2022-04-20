@@ -93,14 +93,18 @@ public class MainCLI implements MCP {
 		while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
 			while (args.length < 1) {
 				System.out.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
-				String str = "";
+				String str = null;
 				try {
-					str = console.readLine().trim();
+					str = console.readLine();
 				} catch (NoSuchElementException ignored) {
-					mode = TaskMode.EXIT;
 				}
-				System.out.print(new Ansi().fgDefault());
-				args = str.split(" ");
+				if (str == null) {
+					mode = TaskMode.EXIT;
+				} else {
+					str = str.trim();
+					System.out.print(new Ansi().fgDefault());
+					args = str.split(" ");
+				}
 			}
 			boolean taskMode = setMode(args[0]);
 			Map<String, Object> parsedArgs = new HashMap<>();
