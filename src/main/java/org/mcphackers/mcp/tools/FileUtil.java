@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -136,13 +137,14 @@ public class FileUtil {
 
 	public static void deleteDirectory(Path path) throws IOException {
 		AtomicBoolean a = new AtomicBoolean(true);
-		Files.walk(path)
-		.sorted(Comparator.reverseOrder())
-		.map(Path::toFile)
-		.forEach(f -> {
-				boolean b = f.delete();
-				if(!b) a.set(b);
-			});
+		try (Stream<Path> pathStream = Files.walk(path)) {
+			pathStream.sorted(Comparator.reverseOrder())
+					.map(Path::toFile)
+					.forEach(f -> {
+						boolean b = f.delete();
+						if(!b) a.set(false);
+					});
+		}
 		if(!a.get()) {
 			throw new IOException("One or more files were locked");
 		}
@@ -152,14 +154,18 @@ public class FileUtil {
 		if(!Files.isDirectory(path)) {
 			throw new IOException(path + "is not a directory");
 		}
-		return Files.walk(path).collect(Collectors.toList());
+		try (Stream<Path> pathStream = Files.walk(path)) {
+			return pathStream.collect(Collectors.toList());
+		}
 	}
 
 	public static List<Path> walkDirectory(Path path, Predicate<Path> predicate) throws IOException {
 		if(!Files.isDirectory(path)) {
 			throw new IOException(path + "is not a directory");
 		}
-		return Files.walk(path).filter(predicate).collect(Collectors.toList());
+		try (Stream<Path> pathStream = Files.walk(path)) {
+			return pathStream.filter(predicate).collect(Collectors.toList());
+		}
 	}
 
 	/**
@@ -167,40 +173,43 @@ public class FileUtil {
 	 */
 	@Deprecated
 	public static void copyDirectory(Path sourceFolder, Path targetFolder, String[] excludedFolders) throws IOException {
-		Files.walk(sourceFolder).filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
-			Path destination = targetFolder.resolve(sourceFolder.relativize(source));
-			boolean doCopy = true;
-			for (String excludedFolder : excludedFolders) {
-				if(targetFolder.relativize(destination).startsWith(Paths.get(excludedFolder))) {
-					doCopy = false;
-					break;
+		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {
+			pathStream.filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
+				Path destination = targetFolder.resolve(sourceFolder.relativize(source));
+				boolean doCopy = true;
+				for (String excludedFolder : excludedFolders) {
+					if(targetFolder.relativize(destination).startsWith(Paths.get(excludedFolder))) {
+						doCopy = false;
+						break;
+					}
 				}
-			}
-			if(doCopy) {
+				if(doCopy) {
+					try {
+						Files.createDirectories(destination.getParent());
+						Files.copy(source, destination);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+	}
+
+	public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
+		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {
+			pathStream.forEach(source -> {
+				Path destination = targetFolder.resolve(sourceFolder.relativize(source));
 				try {
-					Files.createDirectories(destination.getParent());
 					Files.copy(source, destination);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
-		});
-	}
-
-	public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
-		Files.walk(sourceFolder)
-        .forEach(source -> {
-        	Path destination = targetFolder.resolve(sourceFolder.relativize(source));
-            try {
-                Files.copy(source, destination);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+			});
+		}
 	}
 
 	public static void compress(Path sourceDir, Path target) throws IOException {
-		final ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(target.toFile()));
+		final ZipOutputStream outputStream = new ZipOutputStream(Files.newOutputStream(target.toFile().toPath()));
 		Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
@@ -221,26 +230,29 @@ public class FileUtil {
 	}
 
 	public static void deleteEmptyFolders(Path path) throws IOException {
-		Files.walk(path)
-        .sorted(Comparator.reverseOrder())
-        .map(Path::toFile)
-        .filter(File::isDirectory)
-        .forEach(File::delete);
+		try (Stream<Path> pathStream = Files.walk(path)) {
+			pathStream.sorted(Comparator.reverseOrder())
+					.map(Path::toFile)
+					.filter(File::isDirectory)
+					.forEach(File::delete);
+		}
 	}
 
 	public static void deletePackages(Path sourceFolder, String[] excludedFolders) throws IOException {
-		Files.walk(sourceFolder).filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
-			for (String excludedFolder : excludedFolders) {
-				if(sourceFolder.relativize(source).startsWith(Paths.get(excludedFolder))) {
-					try {
-						Files.deleteIfExists(source);
-					} catch (IOException e) {
-						e.printStackTrace();
+		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {
+			pathStream.filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
+				for (String excludedFolder : excludedFolders) {
+					if(sourceFolder.relativize(source).startsWith(Paths.get(excludedFolder))) {
+						try {
+							Files.deleteIfExists(source);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						break;
 					}
-					break;
 				}
-			}
-		});
+			});
+		}
 		deleteEmptyFolders(sourceFolder);
 	}
 }

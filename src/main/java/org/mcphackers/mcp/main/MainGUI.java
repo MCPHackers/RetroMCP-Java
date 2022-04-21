@@ -254,7 +254,7 @@ public class MainGUI extends JFrame implements MCP {
 	}
 	
 	private void addListeners() {
-		decompileButton.addActionListener(event -> { operateOnThread(() -> {
+		decompileButton.addActionListener(event -> operateOnThread(() -> {
 			int response = -1;
 			if(Files.exists(MCPPaths.get(this, MCPPaths.SRC))) {
 				response = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
@@ -266,8 +266,7 @@ public class MainGUI extends JFrame implements MCP {
 				}
 				performTask(TaskMode.DECOMPILE, getSide());
 			}
-		});
-		});
+		}));
 		recompileButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.RECOMPILE, getSide())));
 		reobfButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.REOBFUSCATE, getSide())));
 		buildButton.addActionListener(event -> operateOnThread(() -> performTask(TaskMode.BUILD, getSide())));
@@ -287,7 +286,7 @@ public class MainGUI extends JFrame implements MCP {
 				currentVersion = null;
 			}
 			MainGUI mcp = this;
-			this.verList = new JComboBox<String>(VersionsParser.getVersionList().toArray(new String[0]));
+			this.verList = new JComboBox<>(VersionsParser.getVersionList().toArray(new String[0]));
 			this.verList.addPopupMenuListener(new PopupMenuListener() {
 	
 				@Override

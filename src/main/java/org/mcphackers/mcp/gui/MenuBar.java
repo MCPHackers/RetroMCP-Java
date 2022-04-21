@@ -40,54 +40,40 @@ public class MenuBar extends JMenuBar {
 		initOptions();
 		reloadSide();
 		JMenuItem update = new JMenuItem("Check for updates");
-		update.addActionListener(a -> {
-			owner.operateOnThread(() -> {
-				owner.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false);
-			});
-		});
+		update.addActionListener(a -> owner.operateOnThread(() -> owner.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false)));
 		JMenuItem[] start = new JMenuItem[2];
 		String[] sides = {"client", "server"};
 		for(int i = 0; i < 2; i++) {
 			final int i2 = i;
 			start[i] = new JMenuItem(TaskMode.START.getFullName() + " " + sides[i]);
-			start[i].addActionListener(a -> {
-				owner.operateOnThread(() -> {
-					owner.performTask(TaskMode.START, Task.sides.get(i2), false, false);
-					reloadSide();
-				});
-			});
+			start[i].addActionListener(a -> owner.operateOnThread(() -> {
+				owner.performTask(TaskMode.START, Task.sides.get(i2), false, false);
+				reloadSide();
+			}));
 		}
 		JMenuItem changeDir = new JMenuItem("Change working directory");
-		changeDir.addActionListener(a -> {
-			owner.operateOnThread(() -> {
-				String value = (String)JOptionPane.showInputDialog(owner, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, owner.getWorkingDir().toAbsolutePath().toString());
-				if(value != null) {
-					Path p = Paths.get(value);
-					if(Files.exists(p)) {
-						owner.workingDir = p;
-						owner.reloadVersionList();
-						owner.updateButtonState();
-					}
+		changeDir.addActionListener(a -> owner.operateOnThread(() -> {
+			String value = (String)JOptionPane.showInputDialog(owner, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, owner.getWorkingDir().toAbsolutePath().toString());
+			if(value != null) {
+				Path p = Paths.get(value);
+				if(Files.exists(p)) {
+					owner.workingDir = p;
+					owner.reloadVersionList();
+					owner.updateButtonState();
 				}
-			});
-		});
+			}
+		}));
 		final boolean taskMenu = true;
 		if(taskMenu) {
-			List<TaskMode> usedTasks = Arrays.asList(new TaskMode[] {
-					TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.CREATE_PATCH, TaskMode.BUILD,
-					TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.UPDATE_MD5, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP
-			});
+			List<TaskMode> usedTasks = Arrays.asList(TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.CREATE_PATCH, TaskMode.BUILD,
+					TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.UPDATE_MD5, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP);
 			JMenu runTask = new JMenu("More tasks...");
 			for(TaskMode task : TaskMode.registeredTasks) {
 				if(usedTasks.contains(task)) {
 					continue;
 				}
 				JMenuItem taskItem = new JMenuItem(task.getFullName());
-				taskItem.addActionListener(a -> {
-					owner.operateOnThread(() -> {
-						owner.performTask(task, side);
-					});
-				});
+				taskItem.addActionListener(a -> owner.operateOnThread(() -> owner.performTask(task, side)));
 				runTask.add(taskItem);
 			}
 			mcpMenu.add(runTask);
@@ -157,9 +143,7 @@ public class MenuBar extends JMenuBar {
 				if(param.type == Boolean.class) {
 					b = new JRadioButtonMenuItem(param.desc);
 					resetOptions.put(param, b);
-					b.addActionListener(e -> {
-						options.setParameter(param, b.isSelected());
-					});
+					b.addActionListener(e -> options.setParameter(param, b.isSelected()));
 				}
 				else {
 					b = new JMenuItem(param.desc);
@@ -176,7 +160,7 @@ public class MenuBar extends JMenuBar {
 								options.setParameter(param, valueInt);
 								return;
 							}
-							catch (NumberFormatException e) {}
+							catch (NumberFormatException ignored) {}
 							catch (IllegalArgumentException e) {
 								owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
 								return;
@@ -229,9 +213,7 @@ public class MenuBar extends JMenuBar {
 		}
 		resetDefaults(resetOptions);
 		JMenuItem reset = new JMenuItem("Reset to defaults");
-		reset.addActionListener(e -> {
-			resetDefaults(resetOptions);
-		});
+		reset.addActionListener(e -> resetDefaults(resetOptions));
 		menuOptions.add(reset);
 	}
 	

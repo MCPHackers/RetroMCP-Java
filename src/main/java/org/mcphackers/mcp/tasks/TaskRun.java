@@ -71,8 +71,7 @@ public class TaskRun extends Task {
 						side == Side.SERVER ? (VersionsParser.getServerVersion(currentVersion).startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
 																	  : runBuild ? "net.minecraft.client.Minecraft" : "Start"));
 		String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
-		for(int i = 0; i < runArgs.length; i++) {
-			String arg = runArgs[i];
+		for (String arg : runArgs) {
 			args.add(1, arg);
 		}
 		int exit = Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, MCPPaths.JARS), true);

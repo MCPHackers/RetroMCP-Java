@@ -42,7 +42,7 @@ public interface MCP {
 		for (Task task : tasks) {
 			if (side == Side.ANY) {
 				// TODO also check if client/server exists locally
-				if (task.side == Side.SERVER && hasServer || task.side != Side.SERVER) {
+				if (task.side != Side.SERVER || hasServer) {
 					performedTasks.add(task);
 				}
 			} else if (task.side == side || task.side == Side.ANY) {

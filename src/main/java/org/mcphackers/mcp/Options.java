@@ -9,18 +9,19 @@ public class Options {
 		resetDefaults();
 	}
 	
-	private Map<TaskParameter, Object> options = new HashMap<>();
+	private final Map<TaskParameter, Object> options = new HashMap<>();
 
 	public void setDefault(TaskParameter param) {
 		Object value = null;
 		switch (param) {
 		case DEBUG:
-			value = false;
-			break;
 		case SRC_CLEANUP:
+		case FULL_BUILD:
+		case RUN_BUILD:
 			value = false;
 			break;
 		case PATCHES:
+		case OBFUSCATION:
 			value = true;
 			break;
 		case IGNORED_PACKAGES:
@@ -29,29 +30,12 @@ public class Options {
 		case INDENTION_STRING:
 			value = "\t";
 			break;
-		case OBFUSCATION:
-			value = true;
-			break;
-		case FULL_BUILD:
-			value = false;
-			break;
-		case RUN_BUILD:
-			value = false;
-			break;
 		case RUN_ARGS:
 			value = new String[] {"-Xms1024M", "-Xmx1024M", "-Djava.util.Arrays.useLegacyMergeSort=true"};
 			break;
-		case SETUP_VERSION:
-			value = null;
-			break;
 		case SOURCE_VERSION:
-			value = -1;
-			break;
 		case TARGET_VERSION:
 			value = -1;
-			break;
-		case BOOT_CLASS_PATH:
-			value = null;
 			break;
 		default:
 			break;
@@ -71,8 +55,7 @@ public class Options {
 	public Object getParameter(TaskParameter param) {
 		Object value = options.get(param);
 		if(value instanceof String[]) {
-			String valueStr = String.join(", ", (String[])value);
-			return valueStr;
+			return String.join(", ", (String[])value);
 		}
 		return value;
 	}

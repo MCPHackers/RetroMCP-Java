@@ -54,14 +54,19 @@ public class TaskRecompile extends Task {
 
 		// Compile side
 		if (Files.exists(srcPath)) {
-			List<File> src = Files.walk(srcPath).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-			List<File> start = Files.walk(MCPPaths.get(mcp, MCPPaths.CONF + "start")).filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+			List<File> src;
+			try(Stream<Path> pathStream = Files.walk(srcPath)) {
+				src = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+			}
+			List<File> start;
+			try(Stream<Path> pathStream = Files.walk(MCPPaths.get(mcp, MCPPaths.CONF + "start"))) {
+				start = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+			}
 			if(side == Side.CLIENT) {
 				src.addAll(start);
 			}
 
 			List<String> libraries = new ArrayList<>();
-			List<String> options = new ArrayList<>();
 
 			if(side == Side.SERVER) {
 				libraries.add(MCPPaths.SERVER);
@@ -69,7 +74,7 @@ public class TaskRecompile extends Task {
 			try(Stream<Path> stream = Files.list(libPath).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
 				libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
 			}
-			options.addAll(Arrays.asList("-d", binPath.toString()));
+			List<String> options = new ArrayList<>(Arrays.asList("-d", binPath.toString()));
 
 			int sourceVersion = mcp.getOptions().getIntParameter(TaskParameter.SOURCE_VERSION);
 			if (sourceVersion >= 0) {

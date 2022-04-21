@@ -19,13 +19,13 @@ public enum TaskParameter {
 	
 	public final String desc;
 	public final String name;
-	public final Class type;
+	public final Class<?> type;
 	
-	TaskParameter(String name, Class c) {
+	TaskParameter(String name, Class<?> c) {
 		this(name, "No description provided", c);
 	}
 	
-	TaskParameter(String name, String desc, Class c) {
+	TaskParameter(String name, String desc, Class<?> c) {
 		MCP.nameToParamMap.put(name, this);
 		this.name = name;
 		this.desc = desc;
