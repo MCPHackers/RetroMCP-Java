@@ -10,6 +10,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.NoSuchAlgorithmException;
 
+import java.util.stream.Stream;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
@@ -48,10 +49,12 @@ public class TaskUpdateMD5 extends Task {
 		if (Files.exists(binPath)) {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(md5.toFile()));
 			progress = 0;
-			int total = (int)Files.walk(binPath)
-					.parallel()
-					.filter(p -> !p.toFile().isDirectory())
-					.count();
+			int total;
+			try(Stream<Path> pathStream = Files.walk(binPath)) {
+				total = (int) pathStream.parallel()
+						.filter(p -> !p.toFile().isDirectory())
+						.count();
+			}
 			Files.walkFileTree(binPath, new SimpleFileVisitor<Path>() {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {

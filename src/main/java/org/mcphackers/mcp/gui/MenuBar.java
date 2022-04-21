@@ -42,11 +42,7 @@ public class MenuBar extends JMenuBar {
 		initOptions();
 		reloadSide();
 		JMenuItem update = new JMenuItem("Check for updates");
-		update.addActionListener(a -> {
-			operateOnThread(() -> {
-				owner.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false);
-			});
-		});
+		update.addActionListener(a -> operateOnThread(() -> owner.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false)));
 		JMenuItem[] start = new JMenuItem[2];
 		String[] sides = {"client", "server"};
 		for(int i = 0; i < 2; i++) {
@@ -60,8 +56,7 @@ public class MenuBar extends JMenuBar {
 			});
 		}
 		JMenuItem changeDir = new JMenuItem("Change working directory");
-		changeDir.addActionListener(a -> {
-			operateOnThread(() -> {
+		changeDir.addActionListener(a -> operateOnThread(() -> {
 				String value = (String)JOptionPane.showInputDialog(owner.frame, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, owner.getWorkingDir().toAbsolutePath().toString());
 				if(value != null) {
 					Path p = Paths.get(value);
@@ -71,18 +66,16 @@ public class MenuBar extends JMenuBar {
 						owner.updateButtonState();
 					}
 				}
-			});
-		});
+			})
+		);
 		mcpMenu.add(start[0]);
 		mcpMenu.add(start[1]);
 		mcpMenu.add(update);
 		mcpMenu.add(changeDir);
 		final boolean taskMenu = true;
 		if(taskMenu) {
-			List<TaskMode> usedTasks = Arrays.asList(new TaskMode[] {
-					TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.CREATE_PATCH, TaskMode.BUILD,
-					TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.UPDATE_MD5, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP
-			});
+			List<TaskMode> usedTasks = Arrays.asList(TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.CREATE_PATCH, TaskMode.BUILD,
+					TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.UPDATE_MD5, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP);
 			JMenu runTask = new JMenu("More tasks...");
 			for(TaskMode task : TaskMode.registeredTasks) {
 				if(usedTasks.contains(task)) {
@@ -94,6 +87,7 @@ public class MenuBar extends JMenuBar {
 						owner.performTask(task, side);
 					});
 				});
+				taskItem.addActionListener(a -> operateOnThread(() -> owner.performTask(task, side)));
 				runTask.add(taskItem);
 			}
 			mcpMenu.add(runTask);
@@ -159,9 +153,7 @@ public class MenuBar extends JMenuBar {
 				if(param.type == Boolean.class) {
 					b = new JRadioButtonMenuItem(param.desc);
 					resetOptions.put(param, b);
-					b.addActionListener(e -> {
-						options.setParameter(param, b.isSelected());
-					});
+					b.addActionListener(e -> options.setParameter(param, b.isSelected()));
 				}
 				else {
 					b = new JMenuItem(param.desc);
@@ -178,7 +170,7 @@ public class MenuBar extends JMenuBar {
 								options.setParameter(param, valueInt);
 								return;
 							}
-							catch (NumberFormatException e) {}
+							catch (NumberFormatException ignored) {}
 							catch (IllegalArgumentException e) {
 								owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
 								return;
@@ -231,9 +223,7 @@ public class MenuBar extends JMenuBar {
 		}
 		resetDefaults(resetOptions);
 		JMenuItem reset = new JMenuItem("Reset to defaults");
-		reset.addActionListener(e -> {
-			resetDefaults(resetOptions);
-		});
+		reset.addActionListener(e -> resetDefaults(resetOptions));
 		menuOptions.add(reset);
 	}
 	

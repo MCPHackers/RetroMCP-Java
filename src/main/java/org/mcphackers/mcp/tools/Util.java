@@ -30,16 +30,14 @@ public class Util {
 			procBuilder.directory(dir.toAbsolutePath().toFile());
 		}
 		Process proc = procBuilder.start();
-		new Thread() {
-			public void run() {
-				try(Scanner sc = new Scanner(proc.getInputStream())) {
-					while (sc.hasNextLine()) {
-						System.out.println(sc.nextLine());
-					}
+		new Thread(() -> {
+			try(Scanner sc = new Scanner(proc.getInputStream())) {
+				while (sc.hasNextLine()) {
+					System.out.println(sc.nextLine());
 				}
 			}
-		}.start();
-		Thread hook = new Thread(() -> proc.destroy());
+		}).start();
+		Thread hook = new Thread(proc::destroy);
 		if(killOnShutdown) {
 			Runtime.getRuntime().addShutdownHook(hook);
 		}
