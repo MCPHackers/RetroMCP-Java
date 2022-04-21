@@ -65,6 +65,12 @@ public class Util {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
     }
 
+	public static Thread operateOnThread(Runnable function) {
+		Thread thread = new Thread(function);
+		thread.start();
+		return thread;
+	}
+
     public static void openUrl(String url) {
         try {
             switch (Os.getOs()) {

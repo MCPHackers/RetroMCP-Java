@@ -1,6 +1,9 @@
 package org.mcphackers.mcp;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,24 +11,33 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.mcphackers.mcp.plugin.MCPPlugin;
+import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
+import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.VersionsParser;
 
-public interface MCP {
+public abstract class MCP {
 	
-	String VERSION = "v1.0-pre1";
+	public static final String VERSION = "v1.0-pre1";
+	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 	
-	Map<String, TaskParameter> nameToParamMap = new HashMap<>();
+	static {
+		loadPlugins();
+	}
 
-	default void performTask(TaskMode mode, Side side) {
+	public void performTask(TaskMode mode, Side side) {
 		performTask(mode, side, true, true);
 	}
 	
-	Path getWorkingDir();
+	public abstract Path getWorkingDir();
 	
-	default void performTask(TaskMode mode, Side side, boolean enableProgressBars, boolean enableCompletionMessage) {
+	public final void performTask(TaskMode mode, Side side, boolean enableProgressBars, boolean enableCompletionMessage) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
 			System.err.println("Performing 0 tasks");
@@ -52,6 +64,7 @@ public interface MCP {
 		if(enableProgressBars) setProgressBars(performedTasks, mode);
 		ExecutorService pool = Executors.newFixedThreadPool(2);
 		setActive(false);
+		triggerEvent(MCPEvent.STARTED_TASKS);
 
 		AtomicInteger result1 = new AtomicInteger(Task.INFO);
 		
@@ -63,7 +76,7 @@ public interface MCP {
 			}
 			pool.execute(() -> {
 				try {
-					task.doTask();
+					task.performTask();
 				} catch (Exception e) {
 					result1.set(Task.ERROR);
 					e.printStackTrace();
@@ -86,10 +99,12 @@ public interface MCP {
 				result = retresult;
 			}
 		}
+		//TODO display this info in the pop up message
 		if(msgs.size() > 0) log("");
 		for(String msg : msgs) {
 			log(msg);
 		}
+		triggerEvent(MCPEvent.FINISHED_TASKS);
 		if(enableCompletionMessage) {
 			String[] msgs2 = {"Finished successfully!", "Finished with warnings!", "Finished with errors!"};
 			showMessage(mode.getFullName(), msgs2[result], result);
@@ -98,32 +113,67 @@ public interface MCP {
 		if(enableProgressBars) clearProgressBars();
 	}
 	
-	void setProgressBars(List<Task> tasks, TaskMode mode);
+	public abstract void setProgressBars(List<Task> tasks, TaskMode mode);
 	
-	void clearProgressBars();
+	public abstract void clearProgressBars();
 
-	void log(String msg);
+	public abstract void log(String msg);
 	
-	Options getOptions();
+	public abstract Options getOptions();
 	
-	String getCurrentVersion();
+	public abstract String getCurrentVersion();
 	
-	void setCurrentVersion(String version);
+	public abstract void setCurrentVersion(String version);
 	
-	void setProgress(int barIndex, String progressMessage);
+	public abstract void setProgress(int barIndex, String progressMessage);
 	
-	void setProgress(int barIndex, int progress);
+	public abstract void setProgress(int barIndex, int progress);
 	
-	void setActive(boolean active);
+	public abstract void setActive(boolean active);
 
-	boolean yesNoInput(String title, String msg);
+	public abstract boolean yesNoInput(String title, String msg);
 	
-	String inputString(String title, String msg);
+	public abstract String inputString(String title, String msg);
 	
-	void showMessage(String title, String msg, int type);
+	public abstract void showMessage(String title, String msg, int type);
 	
-	default void setProgress(int barIndex, String progressMessage, int progress) {
+	public void setProgress(int barIndex, String progressMessage, int progress) {
 		setProgress(barIndex, progress);
 		setProgress(barIndex, progressMessage);
 	}
+
+    private final static void loadPlugins() {
+    	if(Files.exists(Paths.get("plugins"))) {
+        	List<Path> jars = new ArrayList<>();
+			try(Stream<Path> stream = Files.list(Paths.get("plugins")).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
+				jars.addAll(stream.collect(Collectors.toList()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    	try {
+	    		for(Path p : jars) {
+					List<Class<MCPPlugin>> classes = ClassUtils.getClasses(p, MCPPlugin.class);
+					for(Class<MCPPlugin> cls : classes) {
+						MCPPlugin plugin = cls.newInstance();
+						plugin.init();
+						plugins.put(plugin.pluginId(), plugin);
+					}
+	    		}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+    	}
+    }
+    
+    public final void triggerEvent(MCPEvent event) {
+    	for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+    		entry.getValue().onMCPEvent(event, this);
+    	}
+    }
+    
+    public final void triggerTaskEvent(TaskEvent event, Task task) {
+    	for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+    		entry.getValue().onTaskEvent(event, task);
+    	}
+    }
 }

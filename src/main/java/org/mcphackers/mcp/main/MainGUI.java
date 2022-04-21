@@ -46,9 +46,12 @@ import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.VersionsParser;
 
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
+
 import layout.SpringUtilities;
 
-public class MainGUI extends JFrame implements MCP {
+
+public class MainGUI extends MCP {
 	
 	private JButton decompileButton;
 	private JButton recompileButton;
@@ -65,41 +68,42 @@ public class MainGUI extends JFrame implements MCP {
 	private MenuBar menuBar;
 	public String currentVersion;
 	public Path workingDir;
+	public JFrame frame;
 	
 	public static void main(String[] args) throws Exception {
 		new MainGUI();
 	}
 	
 	public MainGUI() {
-		super("RetroMCP " + MCP.VERSION);
+		frame = new JFrame("RetroMCP " + MCP.VERSION);
 		workingDir = Paths.get("");
 		Update.attemptToDeleteUpdateJar();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
             URL resource = this.getClass().getResource("/rmcp.png");
             BufferedImage image = ImageIO.read(resource);
-            setIconImage(image);
+            frame.setIconImage(image);
         } catch (IOException e) {
             e.printStackTrace();
         }
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
-			JOptionPane.showMessageDialog(this, "Java Development Kit not found!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Java Development Kit not found!", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
         initFrameContents();
         
-		setSize(840, 512);
-		setMinimumSize(new Dimension(840,200));
-		setLocationRelativeTo(null);
-		setVisible(true);
+        frame.setSize(840, 512);
+        frame.setMinimumSize(new Dimension(840,200));
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
 	}
 	
 	private void initFrameContents() {
 
-		Container contentPane = getContentPane();
+		Container contentPane = frame.getContentPane();
 		menuBar = new MenuBar(this);
-		setJMenuBar(menuBar);
+		frame.setJMenuBar(menuBar);
 		contentPane.setLayout(new BorderLayout());
 		JPanel topLeftContainer = new JPanel();
 
@@ -257,7 +261,7 @@ public class MainGUI extends JFrame implements MCP {
 		decompileButton.addActionListener(event -> { operateOnThread(() -> {
 			int response = -1;
 			if(Files.exists(MCPPaths.get(this, MCPPaths.SRC))) {
-				response = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+				response = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
 			}
 			if(response <= 0) {
 				if(response == 0) {
@@ -286,7 +290,6 @@ public class MainGUI extends JFrame implements MCP {
 			else {
 				currentVersion = null;
 			}
-			MainGUI mcp = this;
 			this.verList = new JComboBox<String>(VersionsParser.getVersionList().toArray(new String[0]));
 			this.verList.addPopupMenuListener(new PopupMenuListener() {
 	
@@ -298,7 +301,7 @@ public class MainGUI extends JFrame implements MCP {
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
 			        if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(currentVersion)) {
-			        	int response = JOptionPane.showConfirmDialog(mcp, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+			        	int response = JOptionPane.showConfirmDialog(frame, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
 			        	switch (response) {
 			        		case 0:
 		    					setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
@@ -333,12 +336,6 @@ public class MainGUI extends JFrame implements MCP {
 
 	private Side getSide() {
 		return menuBar.side;
-	}
-
-	public Thread operateOnThread(Runnable function) {
-		Thread thread = new Thread(function);
-		thread.start();
-		return thread;
 	}
 
 	public void updateButtonState() {
@@ -408,12 +405,12 @@ public class MainGUI extends JFrame implements MCP {
 
 	@Override
 	public boolean yesNoInput(String title, String msg) {
-		return JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION) == 0;
+		return JOptionPane.showConfirmDialog(frame, msg, title, JOptionPane.YES_NO_OPTION) == 0;
 	}
 
 	@Override
 	public String inputString(String title, String msg) {
-		return JOptionPane.showInputDialog(this, msg, title, JOptionPane.PLAIN_MESSAGE);
+		return JOptionPane.showInputDialog(frame, msg, title, JOptionPane.PLAIN_MESSAGE);
 	}
 
 	public void showMessage(String title, String msg, int type) {
@@ -428,7 +425,7 @@ public class MainGUI extends JFrame implements MCP {
 			type = JOptionPane.ERROR_MESSAGE;
 			break;
 		}
-		JOptionPane.showMessageDialog(this, msg, title, type);
+		JOptionPane.showMessageDialog(frame, msg, title, type);
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.mcphackers.mcp.ProgressListener;
+import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
 import org.mcphackers.mcp.MCP;
 
 public abstract class Task implements ProgressListener {
@@ -13,7 +14,8 @@ public abstract class Task implements ProgressListener {
 	public enum Side {
 		ANY(-1, "Any"),
 		CLIENT(0, "Client"),
-		SERVER(1, "Server");
+		SERVER(1, "Server"),
+		MERGED(2, "Merged");
 		
 		public final int index;
 		public final String name;
@@ -33,7 +35,7 @@ public abstract class Task implements ProgressListener {
 	
 	public final Side side;
 	protected final MCP mcp;
-	protected int step;
+	public int step;
 	private byte result = INFO;
 	private ProgressListener progressListener;
 	private int progressBarIndex = -1; 
@@ -49,14 +51,25 @@ public abstract class Task implements ProgressListener {
 		this.mcp = instance;
 	}
 
-	public abstract void doTask() throws Exception;
+	public final void performTask() throws Exception {
+		triggerEvent(TaskEvent.PRE_TASK);
+		doTask();
+		triggerEvent(TaskEvent.POST_TASK);
+	}
+
+	protected abstract void doTask() throws Exception;
 	
-	protected void step() {
+	protected final void step() {
 		step++;
+		triggerEvent(TaskEvent.TASK_STEP);
 		updateProgress();
 	}
 	
-	protected void addMessage(String msg, byte logLevel) {
+	protected final void triggerEvent(TaskEvent event) {
+		mcp.triggerTaskEvent(event, this);
+	}
+	
+	protected final void addMessage(String msg, byte logLevel) {
 		if(progressListener != null) {
 			if(progressListener instanceof Task) {
 				Task task = (Task)progressListener;
@@ -67,11 +80,11 @@ public abstract class Task implements ProgressListener {
 		result = logLevel < result ? result : logLevel;
 	}
 
-	public byte getResult() {
+	public final byte getResult() {
 		return result;
 	}
 	
-	public List<String> getMessageList() {
+	public final List<String> getMessageList() {
 		return logMessages;
 	}
 	
@@ -97,7 +110,7 @@ public abstract class Task implements ProgressListener {
 		}
 	}
 	
-	protected void log(String msg) {
+	public void log(String msg) {
 		mcp.log(msg);
 	}
 	

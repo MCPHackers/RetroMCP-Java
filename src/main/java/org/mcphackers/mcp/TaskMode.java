@@ -3,7 +3,9 @@ package org.mcphackers.mcp;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mcphackers.mcp.tasks.*;
 import org.mcphackers.mcp.tasks.Task.Side;
@@ -11,8 +13,10 @@ import org.mcphackers.mcp.tasks.Task.Side;
 public class TaskMode {
 	public static final List<TaskMode> registeredTasks = new ArrayList<>();
 	
-	public static final TaskMode HELP = new TaskMode("help", "Help", "Displays command usage", null);
-	public static final TaskMode DECOMPILE = new TaskMode("decompile", "Decompile", "Start decompiling Minecraft", TaskDecompile.class, new TaskParameter[]{
+	public static final Map<String, TaskParameter> nameToParamMap = new HashMap<>();
+	
+	public static TaskMode HELP = new TaskMode("help", "Help", "Displays command usage", null);
+	public static TaskMode DECOMPILE = new TaskMode("decompile", "Decompile", "Start decompiling Minecraft", TaskDecompile.class, new TaskParameter[]{
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
@@ -22,40 +26,40 @@ public class TaskMode {
 			TaskParameter.PATCHES,
 			TaskParameter.SIDE
 			});
-	public static final TaskMode RECOMPILE = new TaskMode("recompile", "Recompile", "Recompile Minecraft sources", TaskRecompile.class, new TaskParameter[] {
+	public static TaskMode RECOMPILE = new TaskMode("recompile", "Recompile", "Recompile Minecraft sources", TaskRecompile.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
 			TaskParameter.BOOT_CLASS_PATH,
 			TaskParameter.SIDE
 			});
-	public static final TaskMode REOBFUSCATE = new TaskMode("reobfuscate", "Reobfuscate", "Reobfuscate Minecraft classes", TaskReobfuscate.class, new TaskParameter[] {
+	public static TaskMode REOBFUSCATE = new TaskMode("reobfuscate", "Reobfuscate", "Reobfuscate Minecraft classes", TaskReobfuscate.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
 			TaskParameter.BOOT_CLASS_PATH,
 			TaskParameter.SIDE
 			});
-	public static final TaskMode UPDATE_MD5 = new TaskMode("updatemd5", "Update MD5 Hashes", "Update md5 hash tables used for reobfuscation", TaskUpdateMD5.class, new TaskParameter[] {
+	public static TaskMode UPDATE_MD5 = new TaskMode("updatemd5", "Update MD5 Hashes", "Update md5 hash tables used for reobfuscation", TaskUpdateMD5.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
 			TaskParameter.BOOT_CLASS_PATH,
 			TaskParameter.SIDE
 			});
-	public static final TaskMode UPDATE_MCP = new TaskMode("updatemcp", "Update", "Download an update if available", TaskDownloadUpdate.class);
+	public static TaskMode UPDATE_MCP = new TaskMode("updatemcp", "Update", "Download an update if available", TaskDownloadUpdate.class);
 
-	public static final TaskMode SETUP = new TaskMode("setup", "Setup", "Choose a version to setup", TaskSetup.class, new TaskParameter[] {
+	public static TaskMode SETUP = new TaskMode("setup", "Setup", "Choose a version to setup", TaskSetup.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			});
-	public static final TaskMode CLEANUP = new TaskMode("cleanup", "Cleanup", "Delete all source and class folders", TaskCleanup.class, new TaskParameter[] {
+	public static TaskMode CLEANUP = new TaskMode("cleanup", "Cleanup", "Delete all source and class folders", TaskCleanup.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SRC_CLEANUP
 			});
-	public static final TaskMode START = new TaskMode("start", "Start", "Runs the client or the server from compiled classes", TaskRun.class, new TaskParameter[] {
+	public static TaskMode START = new TaskMode("start", "Start", "Runs the client or the server from compiled classes", TaskRun.class, new TaskParameter[] {
 			TaskParameter.RUN_BUILD
 			});
-	public static final TaskMode BUILD = new TaskMode("build", "Build", "Builds the final jar or zip", TaskBuild.class, new TaskParameter[] {
+	public static TaskMode BUILD = new TaskMode("build", "Build", "Builds the final jar or zip", TaskBuild.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
@@ -63,8 +67,8 @@ public class TaskMode {
 			TaskParameter.FULL_BUILD,
 			TaskParameter.SIDE
 			});
-	public static final TaskMode CREATE_PATCH = new TaskMode("createpatch", "Create patch", "Creates patch", TaskCreatePatch.class);
-	public static final TaskMode EXIT = new TaskMode("exit", "Exit", "Exit the program", null);
+	public static TaskMode CREATE_PATCH = new TaskMode("createpatch", "Create patch", "Creates patch", TaskCreatePatch.class);
+	public static TaskMode EXIT = new TaskMode("exit", "Exit", "Exit the program", null);
 	
 	private final String name;
 	private final String fullName;
@@ -80,13 +84,17 @@ public class TaskMode {
 		registeredTasks.add(this);
 	}
 	
-	public TaskMode(String name, String fullName, Class<? extends Task> taskClass, TaskParameter[] params) {
-		this(name, fullName, "???", taskClass, params);
-	}
-	
 	public TaskMode(String name, String fullName, String desc, Class<? extends Task> taskClass, TaskParameter[] params) {
 		this(name, fullName, desc, taskClass);
 		this.params = params;
+	}
+	
+	public TaskMode(String name, String fullName, Class<? extends Task> taskClass, TaskParameter[] params) {
+		this(name, fullName, "No description provided", taskClass, params);
+	}
+	
+	public TaskMode(String name, String fullName, Class<? extends Task> taskClass) {
+		this(name, fullName, "No description provided", taskClass);
 	}
 	
 	public String getName() {

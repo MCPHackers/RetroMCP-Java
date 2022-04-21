@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.mcphackers.mcp.tasks.Task;
 
-public abstract class BasicMCP implements MCP {
+public abstract class BasicMCP extends MCP {
 
 	@Override
 	public Path getWorkingDir() {

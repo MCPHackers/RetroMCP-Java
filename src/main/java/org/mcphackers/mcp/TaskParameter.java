@@ -26,7 +26,7 @@ public enum TaskParameter {
 	}
 	
 	TaskParameter(String name, String desc, Class c) {
-		MCP.nameToParamMap.put(name, this);
+		TaskMode.nameToParamMap.put(name, this);
 		this.name = name;
 		this.desc = desc;
 		this.type = c;

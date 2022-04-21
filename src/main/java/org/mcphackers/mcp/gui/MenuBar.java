@@ -23,6 +23,8 @@ import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.Util;
 
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
+
 public class MenuBar extends JMenuBar {
 	public final JMenu menuOptions = new JMenu("Options");
 	public final JMenu mcpMenu = new JMenu("MCP");
@@ -41,7 +43,7 @@ public class MenuBar extends JMenuBar {
 		reloadSide();
 		JMenuItem update = new JMenuItem("Check for updates");
 		update.addActionListener(a -> {
-			owner.operateOnThread(() -> {
+			operateOnThread(() -> {
 				owner.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false);
 			});
 		});
@@ -51,7 +53,7 @@ public class MenuBar extends JMenuBar {
 			final int i2 = i;
 			start[i] = new JMenuItem(TaskMode.START.getFullName() + " " + sides[i]);
 			start[i].addActionListener(a -> {
-				owner.operateOnThread(() -> {
+				operateOnThread(() -> {
 					owner.performTask(TaskMode.START, Task.sides.get(i2), false, false);
 					reloadSide();
 				});
@@ -59,8 +61,8 @@ public class MenuBar extends JMenuBar {
 		}
 		JMenuItem changeDir = new JMenuItem("Change working directory");
 		changeDir.addActionListener(a -> {
-			owner.operateOnThread(() -> {
-				String value = (String)JOptionPane.showInputDialog(owner, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, owner.getWorkingDir().toAbsolutePath().toString());
+			operateOnThread(() -> {
+				String value = (String)JOptionPane.showInputDialog(owner.frame, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, owner.getWorkingDir().toAbsolutePath().toString());
 				if(value != null) {
 					Path p = Paths.get(value);
 					if(Files.exists(p)) {
@@ -71,6 +73,10 @@ public class MenuBar extends JMenuBar {
 				}
 			});
 		});
+		mcpMenu.add(start[0]);
+		mcpMenu.add(start[1]);
+		mcpMenu.add(update);
+		mcpMenu.add(changeDir);
 		final boolean taskMenu = true;
 		if(taskMenu) {
 			List<TaskMode> usedTasks = Arrays.asList(new TaskMode[] {
@@ -84,7 +90,7 @@ public class MenuBar extends JMenuBar {
 				}
 				JMenuItem taskItem = new JMenuItem(task.getFullName());
 				taskItem.addActionListener(a -> {
-					owner.operateOnThread(() -> {
+					operateOnThread(() -> {
 						owner.performTask(task, side);
 					});
 				});
@@ -92,10 +98,6 @@ public class MenuBar extends JMenuBar {
 			}
 			mcpMenu.add(runTask);
 		}
-		mcpMenu.add(start[0]);
-		mcpMenu.add(start[1]);
-		mcpMenu.add(update);
-		mcpMenu.add(changeDir);
 		add(mcpMenu);
 		add(menuOptions);
 		this.githubItem.addActionListener(e -> this.onGithubClicked());
@@ -168,7 +170,7 @@ public class MenuBar extends JMenuBar {
 						if(param.type == String[].class) {
 							s = "Enter a set of values\n(Separate values with comma)";
 						}
-						String value = (String)JOptionPane.showInputDialog(owner, s, param.desc, JOptionPane.PLAIN_MESSAGE, null, null, options.getParameter(param));
+						String value = (String)JOptionPane.showInputDialog(owner.frame, s, param.desc, JOptionPane.PLAIN_MESSAGE, null, null, options.getParameter(param));
 						//TODO move this to a separate method so it can be used with other MCP implementations
 						if(value != null) {
 							try {

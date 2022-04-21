@@ -26,7 +26,7 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
-public class MainCLI implements MCP {
+public class MainCLI extends MCP {
 	private static final Ansi logo =
 			new Ansi()
 			.fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____  ").a('\n')
@@ -157,7 +157,7 @@ public class MainCLI implements MCP {
 				}
 				if(mode == TaskMode.HELP) {
 					for(TaskMode taskMode : TaskMode.registeredTasks) {
-						if(taskMode.getName() == name) {
+						if(taskMode.getName().equals(name)) {
 							helpCommand = taskMode;
 							break;
 						}
@@ -168,14 +168,14 @@ public class MainCLI implements MCP {
 				}
 			}
 			else {
-				options.setParameter(nameToParamMap.get(name), value);
+				options.setParameter(TaskMode.nameToParamMap.get(name), value);
 			}
 		}
 	}
 
 	private boolean setMode(String name) {
 		for(TaskMode taskMode : TaskMode.registeredTasks) {
-			if(taskMode.getName() == name) {
+			if(taskMode.getName().equals(name)) {
 				mode = taskMode;
 				return mode.taskClass != null;
 			}
