@@ -1,1 +1,0 @@
-org.mcphackers.mcp.test.Test
