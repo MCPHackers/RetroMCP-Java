@@ -1,7 +1,6 @@
 package org.mcphackers.mcp.tools;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -18,7 +17,7 @@ import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 
-public class VersionsParser {
+public abstract class VersionsParser {
 	
 	private static final String jsonURL = "https://mcphackers.github.io/versions/versions.json";
 	private static Exception cause = null;
@@ -99,7 +98,7 @@ public class VersionsParser {
 		if(!json.has(version)) {
 			throw new Exception("Invalid version detected!");
 		}
-		try(BufferedWriter writer = new BufferedWriter(new FileWriter(MCPPaths.get(mcp, MCPPaths.VERSION).toFile()))) {
+		try(BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, MCPPaths.VERSION))) {
 			writer.write(version);
 		}
 		return version;

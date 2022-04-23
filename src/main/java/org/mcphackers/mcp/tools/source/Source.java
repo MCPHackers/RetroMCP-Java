@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public class Source {
 	
 	public final static String[] validModifiers = {"public", "protected", "private", "abstract", "static", "final", "strictfp", "transient", "volatile", "synchronized", "native"};
+	private static final Pattern _IMPORT = Pattern.compile("import [.*\\w]+;");
 	
 	public static void modify(Path src, Function<String, String> editCode) throws IOException {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
@@ -26,6 +27,20 @@ public class Source {
 				return FileVisitResult.CONTINUE;
 			}
 		});
+	}
+	
+	//TODO Handle classes with no imports
+	public static String updateImport(String code, String imp) {
+		Matcher matcher = _IMPORT.matcher(code);
+		int lastIndex = -1;
+		while (matcher.find()) {
+			lastIndex = matcher.end();
+		}
+		String impString = "import " + imp + ";";
+		if(lastIndex >= 0 && !code.contains(impString)) {
+			code = code.substring(0, lastIndex) + System.lineSeparator() + impString + code.substring(lastIndex);
+		}
+		return code;
 	}
 	
 	public static String replaceTextOfMatchGroup(String sourceString, Pattern pattern, Function<MatchResult,String> replaceStrategy) {

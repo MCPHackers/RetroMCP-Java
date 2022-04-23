@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class Util {
+public abstract class Util {
 
 	public static int runCommand(String[] cmd, Path dir, boolean killOnShutdown) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
@@ -167,9 +167,9 @@ public class Util {
 		}
 	}
 
-	public static String getMD5OfFile(File file) throws IOException, NoSuchAlgorithmException {
+	public static String getMD5OfFile(Path file) throws IOException, NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("MD5");
-		FileInputStream fs = new FileInputStream(file);
+		InputStream fs = Files.newInputStream(file);
 		BufferedInputStream bs = new BufferedInputStream(fs);
 		byte[] buffer = new byte[1024];
 		int bytesRead;
@@ -185,6 +185,14 @@ public class Util {
 		}
 		bs.close();
 		return sb.toString();
+	}
+	
+	public static String convertFromEscapedString(String s) {
+		return s.replace("\\n", "\n").replace("\\t", "\t");
+	}
+	
+	public static String convertToEscapedString(String s) {
+		return s.replace("\n", "\\n").replace("\t", "\\t");
 	}
 	
 	public static <K, V> K getKey(Map<K, V> map, V value) {

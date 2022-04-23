@@ -30,7 +30,7 @@ import java.util.zip.ZipOutputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class FileUtil {
+public abstract class FileUtil {
 	
 	public static void createDirectories(Path path) throws IOException {
 		if (Files.notExists(path)) {
@@ -125,8 +125,12 @@ public class FileUtil {
 		}
 	}
 	
-	public static String absolutePathString(String path) {
-		return Paths.get(path).toAbsolutePath().toString();
+	public static void collectJars(Path libPath, List<Path> list) throws IOException {
+		try(Stream<Path> stream = Files.list(libPath)
+			.filter(library -> library.getFileName().toString().endsWith(".jar"))
+			.filter(library -> !Files.isDirectory(library))) {
+				list.addAll(stream.collect(Collectors.toList()));
+		}
 	}
 	
 	public static void deleteDirectoryIfExists(Path path) throws IOException {
@@ -209,7 +213,7 @@ public class FileUtil {
 	}
 
 	public static void compress(Path sourceDir, Path target) throws IOException {
-		final ZipOutputStream outputStream = new ZipOutputStream(Files.newOutputStream(target.toFile().toPath()));
+		final ZipOutputStream outputStream = new ZipOutputStream(Files.newOutputStream(target));
 		Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
@@ -253,6 +257,6 @@ public class FileUtil {
 				}
 			});
 		}
-		deleteEmptyFolders(sourceFolder);
+		//deleteEmptyFolders(sourceFolder);
 	}
 }

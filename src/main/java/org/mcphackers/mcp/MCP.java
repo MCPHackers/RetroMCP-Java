@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.mcphackers.mcp.plugin.MCPPlugin;
 import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
@@ -20,6 +18,8 @@ import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.ClassUtils;
+import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public abstract class MCP {
@@ -28,7 +28,12 @@ public abstract class MCP {
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 	
 	static {
+		Update.attemptToDeleteUpdateJar();
 		loadPlugins();
+	}
+	
+	protected MCP() {
+		triggerEvent(MCPEvent.ENV_STARTUP);
 	}
 
 	public void performTask(TaskMode mode, Side side) {
@@ -141,12 +146,61 @@ public abstract class MCP {
 		setProgress(barIndex, progress);
 		setProgress(barIndex, progressMessage);
 	}
+	
+	public void setParameter(TaskParameter param, Object value) throws IllegalArgumentException {
+		getOptions().setParameter(param, value);
+	}
+	
+	public void safeSetParameter(TaskParameter param, String value) {
+		if(value != null) {
+			if(param.type == Integer.class) {
+				try {
+					int valueInt = Integer.parseInt(value);
+					setParameter(param, valueInt);
+					return;
+				}
+				catch (NumberFormatException ignored) {}
+				catch (IllegalArgumentException e) {}
+			}
+			else if(param.type == Boolean.class) {
+				if(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+					try {
+						boolean valueBoolean = Boolean.parseBoolean(value);
+						setParameter(param, valueBoolean);
+						return;
+					}
+					catch (IllegalArgumentException e) {}
+				}
+			}
+			else if(param.type == String[].class) {
+				try {
+					String[] values = value.split(",");
+					for(int i2 = 0 ; i2 < values.length; i2++) {
+						values[i2] = Util.convertFromEscapedString(values[i2]).trim();
+					}
+					setParameter(param, values);
+					return;
+				}
+				catch (IllegalArgumentException e) {}
+			}
+			else if(param.type == String.class) {
+				try {
+					value = Util.convertFromEscapedString(value);
+					setParameter(param, value);
+					return;
+				}
+				catch (IllegalArgumentException e) {}
+			}
+			showMessage(param.desc, "Invalid value!", Task.ERROR);
+		}
+	}
 
     private final static void loadPlugins() {
-    	if(Files.exists(Paths.get("plugins"))) {
+    	Path pluginsDir = Paths.get("plugins");
+    	if(Files.exists(pluginsDir)) {
         	List<Path> jars = new ArrayList<>();
-			try(Stream<Path> stream = Files.list(Paths.get("plugins")).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
-				jars.addAll(stream.collect(Collectors.toList()));
+			try {
+				FileUtil.collectJars(pluginsDir, jars);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

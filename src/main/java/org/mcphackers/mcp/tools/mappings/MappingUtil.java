@@ -28,7 +28,7 @@ import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.TinyUtils;
 
-public class MappingUtil {
+public abstract class MappingUtil {
 
 	private static final Pattern MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+");
 

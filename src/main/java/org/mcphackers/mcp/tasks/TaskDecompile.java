@@ -77,7 +77,7 @@ public class TaskDecompile extends Task {
 			case REMAP:
 				if (Files.exists(mappings)) {
 					MappingUtil.readMappings(mappings, mappingTree);
-					try (FileSystem fs = FileSystems.newFileSystem(originalJar, null)) {
+					try (FileSystem fs = FileSystems.newFileSystem(originalJar, (ClassLoader)null)) {
 						MappingUtil.modifyClasses(mappingTree, fs.getPath("/"), className -> {
 							if (mappingTree.getClass(className) == null) {
 								if(className.lastIndexOf("/") < 0) {

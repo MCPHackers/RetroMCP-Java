@@ -20,7 +20,6 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.TaskParameter;
-import org.mcphackers.mcp.Update;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.Util;
@@ -62,7 +61,6 @@ public class MainCLI extends MCP {
 	public MainCLI(String[] args) {
 
 		options.resetDefaults();
-		Update.attemptToDeleteUpdateJar();
 		log("RetroMCP " + MCP.VERSION);
 
 		boolean startedWithNoParams = false;
@@ -169,11 +167,11 @@ public class MainCLI extends MCP {
 					}
 				}
 				if(mode == TaskMode.SETUP) {
-					options.setParameter(TaskParameter.SETUP_VERSION, name);
+					setParameter(TaskParameter.SETUP_VERSION, name);
 				}
 			}
 			else {
-				options.setParameter(TaskMode.nameToParamMap.get(name), value);
+				safeSetParameter(TaskMode.nameToParamMap.get(name), value.toString());
 			}
 		}
 	}

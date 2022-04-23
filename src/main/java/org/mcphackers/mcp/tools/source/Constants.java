@@ -3,10 +3,10 @@ package org.mcphackers.mcp.tools.source;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-public abstract class Constants {
+public abstract class Constants extends Source {
 	
 	public static void replace(Path src, List<Constants> constants) throws IOException {
-		Source.modify(src, code -> {
+		modify(src, code -> {
 			for(Constants constantReplacer : constants) {
 				code = constantReplacer.replace_constants(code);
 			}

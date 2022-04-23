@@ -15,7 +15,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 
-import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.main.MainGUI;
@@ -31,18 +30,18 @@ public class MenuBar extends JMenuBar {
 	private final JMenu helpMenu = new JMenu("Help");
 	private final JMenuItem[] sideItems = new JMenuItem[3];
 	private final JMenuItem githubItem = new JMenuItem("Github Page");
-	private final MainGUI owner;
-	public Side side = Side.ANY;
-	public Options options = new Options();
+	private final MCPFrame owner;
+	private MainGUI mcp;
 
-	public MenuBar(MainGUI mainGUI) {
-		owner = mainGUI;
+	public MenuBar(MCPFrame frame) {
+		owner = frame;
+		mcp = frame.mcp;
 		this.menuOptions.setMnemonic(KeyEvent.VK_O);
 		this.helpMenu.setMnemonic(KeyEvent.VK_H);
 		initOptions();
 		reloadSide();
 		JMenuItem update = new JMenuItem("Check for updates");
-		update.addActionListener(a -> operateOnThread(() -> owner.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false)));
+		update.addActionListener(a -> operateOnThread(() -> mcp.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false)));
 		JMenuItem[] start = new JMenuItem[2];
 		String[] sides = {"client", "server"};
 		for(int i = 0; i < 2; i++) {
@@ -50,18 +49,18 @@ public class MenuBar extends JMenuBar {
 			start[i] = new JMenuItem(TaskMode.START.getFullName() + " " + sides[i]);
 			start[i].addActionListener(a -> {
 				operateOnThread(() -> {
-					owner.performTask(TaskMode.START, Task.sides.get(i2), false, false);
+					mcp.performTask(TaskMode.START, Task.sides.get(i2), false, false);
 					reloadSide();
 				});
 			});
 		}
 		JMenuItem changeDir = new JMenuItem("Change working directory");
 		changeDir.addActionListener(a -> operateOnThread(() -> {
-				String value = (String)JOptionPane.showInputDialog(owner.frame, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, owner.getWorkingDir().toAbsolutePath().toString());
+				String value = (String)JOptionPane.showInputDialog(owner, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, mcp.getWorkingDir().toAbsolutePath().toString());
 				if(value != null) {
 					Path p = Paths.get(value);
 					if(Files.exists(p)) {
-						owner.workingDir = p;
+						mcp.workingDir = p;
 						owner.reloadVersionList();
 						owner.updateButtonState();
 					}
@@ -82,12 +81,7 @@ public class MenuBar extends JMenuBar {
 					continue;
 				}
 				JMenuItem taskItem = new JMenuItem(task.getFullName());
-				taskItem.addActionListener(a -> {
-					operateOnThread(() -> {
-						owner.performTask(task, side);
-					});
-				});
-				taskItem.addActionListener(a -> operateOnThread(() -> owner.performTask(task, side)));
+				taskItem.addActionListener(owner.performTask(task));
 				runTask.add(taskItem);
 			}
 			mcpMenu.add(runTask);
@@ -103,7 +97,7 @@ public class MenuBar extends JMenuBar {
 		for (JMenuItem sideItem : sideItems) {
 			sideItem.setSelected(false);
 		}
-		int itemNumber = side.index;
+		int itemNumber = mcp.side.index;
 		if(itemNumber == -1) {
 			itemNumber = 2;
 		}
@@ -115,7 +109,7 @@ public class MenuBar extends JMenuBar {
 		if(itemNumber == 2) {
 			itemNumber = -1;
 		}
-		side = Task.sides.get(itemNumber);
+		mcp.side = Task.sides.get(itemNumber);
 		reloadSide();
 		owner.updateButtonState();
 	}
@@ -153,7 +147,7 @@ public class MenuBar extends JMenuBar {
 				if(param.type == Boolean.class) {
 					b = new JRadioButtonMenuItem(param.desc);
 					resetOptions.put(param, b);
-					b.addActionListener(e -> options.setParameter(param, b.isSelected()));
+					b.addActionListener(e -> mcp.options.setParameter(param, b.isSelected()));
 				}
 				else {
 					b = new JMenuItem(param.desc);
@@ -162,59 +156,9 @@ public class MenuBar extends JMenuBar {
 						if(param.type == String[].class) {
 							s = "Enter a set of values\n(Separate values with comma)";
 						}
-						String value = (String)JOptionPane.showInputDialog(owner.frame, s, param.desc, JOptionPane.PLAIN_MESSAGE, null, null, options.getParameter(param));
-						//TODO move this to a separate method so it can be used with other MCP implementations
-						if(value != null) {
-							try {
-								int valueInt = Integer.parseInt(value);
-								options.setParameter(param, valueInt);
-								return;
-							}
-							catch (NumberFormatException ignored) {}
-							catch (IllegalArgumentException e) {
-								owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
-								return;
-							}
-							if(value.equals("true") || value.equals("false")) {
-								try {
-									boolean valueBoolean = Boolean.parseBoolean(value);
-									options.setParameter(param, valueBoolean);
-									return;
-								}
-								catch (IllegalArgumentException e) {
-									owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
-									return;
-								}
-							}
-							else {
-								if(value.contains(",")) {
-									try {
-										String[] values = value.split(",");
-										for(int i2 = 0 ; i2 < values.length; i2++) {
-											values[i2] = values[i2].trim();
-											values[i2] = values[i2].replace("\\n", "\n").replace("\\t", "\t");
-										}
-										options.setParameter(param, values);
-										return;
-									}
-									catch (IllegalArgumentException e) {
-										owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
-										return;
-									}
-								}
-								else {
-									try {
-										value = value.replace("\\n", "\n").replace("\\t", "\t");
-										options.setParameter(param, value);
-										return;
-									}
-									catch (IllegalArgumentException e) {
-										owner.showMessage(param.desc, "Invalid value!", Task.ERROR);
-										return;
-									}
-								}
-							}
-						}
+						String value = (String)JOptionPane.showInputDialog(owner, s, param.desc, JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(mcp.options.getParameter(param).toString()));
+						mcp.safeSetParameter(param, value);
+						
 					});
 				}
 				a.add(b);
@@ -228,9 +172,9 @@ public class MenuBar extends JMenuBar {
 	}
 	
 	private void resetDefaults(Map<TaskParameter, JMenuItem> resetOptions) {
-		options.resetDefaults();
+		mcp.options.resetDefaults();
 		for(Map.Entry<TaskParameter, JMenuItem> entry : resetOptions.entrySet()) {
-			entry.getValue().setSelected(options.getBooleanParameter(entry.getKey()));
+			entry.getValue().setSelected(mcp.options.getBooleanParameter(entry.getKey()));
 		}
 	}
 

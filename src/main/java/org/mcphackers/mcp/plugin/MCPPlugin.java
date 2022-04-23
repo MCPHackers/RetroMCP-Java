@@ -41,7 +41,8 @@ public interface MCPPlugin {
 	public enum MCPEvent {
 		//TODO Custom events
 		STARTED_TASKS,
-		FINISHED_TASKS;
+		FINISHED_TASKS,
+		ENV_STARTUP;
 	}
 	
 }

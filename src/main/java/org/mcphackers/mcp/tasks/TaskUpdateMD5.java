@@ -1,7 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -9,8 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.NoSuchAlgorithmException;
-
 import java.util.stream.Stream;
+
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
@@ -47,7 +46,7 @@ public class TaskUpdateMD5 extends Task {
 		}
 		step();
 		if (Files.exists(binPath)) {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(md5.toFile()));
+			BufferedWriter writer = Files.newBufferedWriter(md5);
 			progress = 0;
 			int total;
 			try(Stream<Path> pathStream = Files.walk(binPath)) {
@@ -59,7 +58,7 @@ public class TaskUpdateMD5 extends Task {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					try {
-						String md5_hash = Util.getMD5OfFile(file.toFile());
+						String md5_hash = Util.getMD5OfFile(file);
 						String fileName = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
 						writer.append(fileName).append(" ").append(md5_hash).append("\n");
 						progress++;
