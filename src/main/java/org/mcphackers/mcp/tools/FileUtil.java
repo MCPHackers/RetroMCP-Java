@@ -234,6 +234,7 @@ public abstract class FileUtil {
 	}
 
 	public static void deleteEmptyFolders(Path path) throws IOException {
+		//TODO Check if each folder only contains folders instead of letting File::delete to decide
 		try (Stream<Path> pathStream = Files.walk(path)) {
 			pathStream.sorted(Comparator.reverseOrder())
 					.map(Path::toFile)
@@ -257,6 +258,6 @@ public abstract class FileUtil {
 				}
 			});
 		}
-		//deleteEmptyFolders(sourceFolder);
+		deleteEmptyFolders(sourceFolder);
 	}
 }
