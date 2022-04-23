@@ -7,7 +7,7 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-mainClassName = 'org.mcphackers.mcp.main.MainGUI'
+mainClassName = 'org.mcphackers.mcp.main.MainCLI'
 
 repositories {
     mavenCentral()
@@ -40,7 +40,7 @@ dependencies {
 
 application {
     // Redirect all execution into the testing folder
-    mainClass = 'org.mcphackers.mcp.main.MainGUI'
+    mainClass = mainClassName
     executableDir = 'test'
 }
 

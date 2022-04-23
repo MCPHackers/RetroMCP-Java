@@ -51,7 +51,7 @@ public class MainCLI extends MCP {
 			AnsiConsole.systemInstall();
 		}
 		else {
-			System.err.println("Error: Could not find console. Launching GUI instead");
+			//System.out.println("Could not find console. Launching GUI");
 			MainGUI.main(args);
 			return;
 		}
