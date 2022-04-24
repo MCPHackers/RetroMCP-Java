@@ -1,7 +1,6 @@
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'java'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -19,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    def ASMVersion = '9.2'
+    def ASMVersion = '9.3'
 
     // Required libraries
     implementation 'org.ow2.asm:asm:' + ASMVersion
@@ -30,7 +29,7 @@ dependencies {
 
     implementation 'com.github.MCPHackers:RetroFernflower:3992b4b81fe2b106f2e53dca2d7425fce72dd9f5'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
-    implementation 'net.fabricmc:tiny-remapper:0.6.0'
+    implementation 'net.fabricmc:tiny-remapper:0.8.2'
     // TODO: Don't gut MCInjector bundled ASM
     implementation name: 'mcinjector'
     implementation 'org.json:json:20220320'
