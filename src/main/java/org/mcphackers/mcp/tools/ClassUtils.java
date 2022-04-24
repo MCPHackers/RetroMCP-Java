@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public abstract class ClassUtils
-{
+public abstract class ClassUtils {
 	public static <T> List<Class<T>> getClasses(Path p, Class<T> type) throws Exception {
 		String pathToJar = p.toAbsolutePath().toString();
 		JarFile jarFile = new JarFile(pathToJar);
