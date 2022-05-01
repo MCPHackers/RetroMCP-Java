@@ -23,15 +23,15 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public abstract class MCP {
-	
-	public static final String VERSION = "v1.0-pre1";
+
+	public static final String VERSION = "v1.0-pre2";
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
-	
+
 	static {
 		Update.attemptToDeleteUpdateJar();
 		loadPlugins();
 	}
-	
+
 	protected MCP() {
 		triggerEvent(MCPEvent.ENV_STARTUP);
 	}
@@ -39,16 +39,16 @@ public abstract class MCP {
 	public void performTask(TaskMode mode, Side side) {
 		performTask(mode, side, true, true);
 	}
-	
+
 	public abstract Path getWorkingDir();
-	
+
 	public final void performTask(TaskMode mode, Side side, boolean enableProgressBars, boolean enableCompletionMessage) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
 			System.err.println("Performing 0 tasks");
 			return;
 		}
-		
+
 		boolean hasServer = true;
 		try {
 			hasServer = VersionsParser.hasServer(getCurrentVersion());
@@ -72,7 +72,7 @@ public abstract class MCP {
 		triggerEvent(MCPEvent.STARTED_TASKS);
 
 		AtomicInteger result1 = new AtomicInteger(Task.INFO);
-		
+
 		for(int i = 0; i < performedTasks.size(); i++) {
 			Task task = performedTasks.get(i);
 			final int barIndex = i;
@@ -117,40 +117,40 @@ public abstract class MCP {
 		setActive(true);
 		if(enableProgressBars) clearProgressBars();
 	}
-	
+
 	public abstract void setProgressBars(List<Task> tasks, TaskMode mode);
-	
+
 	public abstract void clearProgressBars();
 
 	public abstract void log(String msg);
-	
+
 	public abstract Options getOptions();
-	
+
 	public abstract String getCurrentVersion();
-	
+
 	public abstract void setCurrentVersion(String version);
-	
+
 	public abstract void setProgress(int barIndex, String progressMessage);
-	
+
 	public abstract void setProgress(int barIndex, int progress);
-	
+
 	public abstract void setActive(boolean active);
 
 	public abstract boolean yesNoInput(String title, String msg);
-	
+
 	public abstract String inputString(String title, String msg);
-	
+
 	public abstract void showMessage(String title, String msg, int type);
-	
+
 	public void setProgress(int barIndex, String progressMessage, int progress) {
 		setProgress(barIndex, progress);
 		setProgress(barIndex, progressMessage);
 	}
-	
+
 	public void setParameter(TaskParameter param, Object value) throws IllegalArgumentException {
 		getOptions().setParameter(param, value);
 	}
-	
+
 	public void safeSetParameter(TaskParameter param, String value) {
 		if(value != null) {
 			if(param.type == Integer.class) {
@@ -218,16 +218,22 @@ public abstract class MCP {
 			}
     	}
     }
-    
+
+	public final void setPluginOverrides(Task task) {
+    	for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+			entry.getValue().setTaskOverrides(task);
+    	}
+	}
+
     public final void triggerEvent(MCPEvent event) {
     	for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
     		entry.getValue().onMCPEvent(event, this);
     	}
     }
-    
+
     public final void triggerTaskEvent(TaskEvent event, Task task) {
     	for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
     		entry.getValue().onTaskEvent(event, task);
     	}
-    }
+	}
 }

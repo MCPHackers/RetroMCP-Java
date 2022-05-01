@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.MCPPaths;
 import org.mcphackers.mcp.tools.Util;
 
 public class TaskDownloadUpdate extends Task {

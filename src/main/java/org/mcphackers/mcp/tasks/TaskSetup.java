@@ -11,10 +11,10 @@ import java.util.Map;
 
 import org.fusesource.jansi.Ansi;
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.MCPPaths;
 import org.mcphackers.mcp.tools.Os;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;

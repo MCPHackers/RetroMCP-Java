@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.MCPPaths;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 
@@ -20,7 +20,7 @@ import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
-public class TaskReobfuscate extends Task {
+public class TaskReobfuscate extends TaskStaged {
 	private final Map<String, String> recompHashes = new HashMap<>();
 	private final Map<String, String> originalHashes = new HashMap<>();
 
@@ -37,90 +37,99 @@ public class TaskReobfuscate extends Task {
 	}
 
 	@Override
-	public void doTask() throws Exception {
-
-		Path reobfJar = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF_JAR, MCPPaths.SERVER_REOBF_JAR));
-		Path reobfBin = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN));
-		Path reobfDir = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF, MCPPaths.SERVER_REOBF));
-		Path reobfMappings = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS_RO, MCPPaths.SERVER_MAPPINGS_RO));
-		Path deobfMappings = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
-		
-		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
-		step();
-		new TaskRecompile(side, mcp, this).doTask();
-		step();
-		new TaskUpdateMD5(side, mcp, this).updateMD5(true);
-
-		if (Files.exists(reobfBin)) {
-			boolean hasMappings = Files.exists(deobfMappings);
-			FileUtil.deleteDirectoryIfExists(reobfDir);
+	protected Stage[] setStages() {
+		final Path reobfDir = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF, MCPPaths.SERVER_REOBF));
+		final Path reobfJar = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF_JAR, MCPPaths.SERVER_REOBF_JAR));
+		return new Stage[] {
+		stage("Recompiling",
+		() -> {
+			new TaskRecompile(side, mcp, this).doTask();
+		}),
+		stage("Gathering MD5 hashes", 30,
+		() -> {
+			new TaskUpdateMD5(side, mcp, this).updateMD5(true);
 			gatherMD5Hashes(true);
 			gatherMD5Hashes(false);
-
-			step();
-			if (hasMappings) {
-				MappingUtil.readMappings(deobfMappings, mappingTree);
-				flipMappingTree();
-				Map<String, Integer> obfIndexes = new HashMap<>();
-				MappingUtil.modifyClasses(mappingTree, reobfBin, className -> {
-					if (mappingTree.getClass(className) == null) { // Class isn't present in original mappings
-						String packageName = className.lastIndexOf("/") >= 0 ? className.substring(0, className.lastIndexOf("/") + 1) : null;
-						String obfPackage = reobfPackages.get(packageName);
-						if (obfPackage == null) {
-							return null;
-						}
-						String clsName = (className.lastIndexOf("/") >= 0 ? className.substring(className.lastIndexOf("/") + 1) : className);
-						if(enableObfuscation) {
-							int obfIndex = obfIndexes.getOrDefault(obfPackage, 0);
-							String obfName = MappingUtil.getObfuscatedName(obfIndex);
-							while(mappingTree.getClass(obfPackage + obfName, 0) != null) {
-								obfIndex++;
-								obfName = MappingUtil.getObfuscatedName(obfIndex);
-							}
-							if(obfIndex > obfIndexes.getOrDefault(obfPackage, 0)) {
-								obfIndexes.put(obfPackage, obfIndex);
-							}
-							clsName = obfName;
-						}
-						return obfPackage + clsName;
-					}
-					return null; // Returning null skips remapping
-				});
-//				MappingUtil.modifyFields(mappingTree, reobfBin, (className, name, desc) -> {
-//					if (mappingTree.getField(className, name, desc) == null) {
-//						if(enableObfuscation) {
-//							//TODO field and method reobf
-//							int obfIndex = 0;
-//							String obfName = MappingUtil.getObfuscatedName(obfIndex);
-//							ClassMapping c = ((MappingTree)mappingTree).getClass(className);
-//							String fName = c == null ? null : c.getDstName(0);
-//							if(fName != null) {
-//								//FIXME this won't do.
-//								//Causes name clashing if there's something with a different descriptor but the same name.
-//								while(mappingTree.getField(fName, obfName, desc, 0) != null) {
-//									obfIndex++;
-//									obfName = MappingUtil.getObfuscatedName(obfIndex);
-//								}
-//							}
-//							return obfName;
-//						}
-//					}
-//					return null;
-//				});
-				MappingUtil.writeMappings(reobfMappings, mappingTree);
-
-			}
-
-			Files.deleteIfExists(reobfJar);
-			if (hasMappings) {
-				MappingUtil.remap(reobfMappings, reobfBin, reobfJar, TaskDecompile.getLibraryPaths(mcp, side), "named", "official");
-			} else {
-				FileUtil.compress(reobfBin, reobfJar);
-			}
-			step();
+		}),
+		stage("Reobfuscating", 52,
+		() -> {
+			reobfuscate();
+		}),
+		stage("Unpacking", 54,
+		() -> {
 			unpack(reobfJar, reobfDir);
+		})
+		};
+	}
+		
+	
+	private void reobfuscate() throws IOException {
+		final Path reobfDir = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF, MCPPaths.SERVER_REOBF));
+		final Path reobfJar = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF_JAR, MCPPaths.SERVER_REOBF_JAR));
+		final Path reobfMappings = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS_RO, MCPPaths.SERVER_MAPPINGS_RO));
+		final Path deobfMappings = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
+		final Path reobfBin = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN));
+		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
+		final boolean hasMappings = Files.exists(deobfMappings);
+		
+		FileUtil.deleteDirectoryIfExists(reobfDir);
+
+		if (hasMappings) {
+			MappingUtil.readMappings(deobfMappings, mappingTree);
+			flipMappingTree();
+			Map<String, Integer> obfIndexes = new HashMap<>();
+			MappingUtil.modifyClasses(mappingTree, reobfBin, className -> {
+				if (mappingTree.getClass(className) == null) { // Class isn't present in original mappings
+					String packageName = className.lastIndexOf("/") >= 0 ? className.substring(0, className.lastIndexOf("/") + 1) : null;
+					String obfPackage = reobfPackages.get(packageName);
+					if (obfPackage == null) {
+						return null;
+					}
+					String clsName = (className.lastIndexOf("/") >= 0 ? className.substring(className.lastIndexOf("/") + 1) : className);
+					if(enableObfuscation) {
+						int obfIndex = obfIndexes.getOrDefault(obfPackage, 0);
+						String obfName = MappingUtil.getObfuscatedName(obfIndex);
+						while(mappingTree.getClass(obfPackage + obfName, 0) != null) {
+							obfIndex++;
+							obfName = MappingUtil.getObfuscatedName(obfIndex);
+						}
+						if(obfIndex > obfIndexes.getOrDefault(obfPackage, 0)) {
+							obfIndexes.put(obfPackage, obfIndex);
+						}
+						clsName = obfName;
+					}
+					return obfPackage + clsName;
+				}
+				return null; // Returning null skips remapping
+			});
+//			MappingUtil.modifyFields(mappingTree, reobfBin, (className, name, desc) -> {
+//				if (mappingTree.getField(className, name, desc) == null) {
+//					if(enableObfuscation) {
+//						//TODO field and method reobf
+//						int obfIndex = 0;
+//						String obfName = MappingUtil.getObfuscatedName(obfIndex);
+//						ClassMapping c = ((MappingTree)mappingTree).getClass(className);
+//						String fName = c == null ? null : c.getDstName(0);
+//						if(fName != null) {
+//							//FIXME this won't do.
+//							//Causes name clashing if there's something with a different descriptor but the same name.
+//							while(mappingTree.getField(fName, obfName, desc, 0) != null) {
+//								obfIndex++;
+//								obfName = MappingUtil.getObfuscatedName(obfIndex);
+//							}
+//						}
+//						return obfName;
+//					}
+//				}
+//				return null;
+//			});
+			MappingUtil.writeMappings(reobfMappings, mappingTree);
+		}
+		Files.deleteIfExists(reobfJar);
+		if (hasMappings) {
+			MappingUtil.remap(reobfMappings, reobfBin, reobfJar, TaskDecompile.getLibraryPaths(mcp, side), "named", "official");
 		} else {
-			throw new IOException(chooseFromSide("Client", "Server") + " classes not found!");
+			FileUtil.compress(reobfBin, reobfJar);
 		}
 	}
 
@@ -148,33 +157,18 @@ public class TaskReobfuscate extends Task {
 	
 	public void setProgress(int progress) {
 		switch (step) {
-		case 1: {
+		case 0: {
 			int percent = (int)((double)progress * 0.5D);
+			super.setProgress(1 + percent);
+			break;
+		}
+		case 1: {
+			int percent = (int)((double)progress * 0.22D);
 			super.setProgress(1 + percent);
 			break;
 		}
 		default:
 			super.setProgress(progress);
-			break;
-		}
-	}
-
-	protected void updateProgress() {
-		switch (step) {
-		case 1:
-			setProgress("Recompiling...");
-			break;
-		case 2:
-			setProgress("Gathering MD5 hashes...", 51);
-			break;
-		case 3:
-			setProgress("Reobfuscating...", 52);
-			break;
-		case 4:
-			setProgress("Unpacking...", 54);
-			break;
-		default:
-			super.updateProgress();
 			break;
 		}
 	}

@@ -14,6 +14,8 @@ public interface MCPPlugin {
 	void onTaskEvent(TaskEvent event, Task task);
 
 	void onMCPEvent(MCPEvent event, MCP mcp);
+
+	void setTaskOverrides(Task task);
 	
 	default TaskMode registerTask(String name, String fullName, Class<? extends Task> taskClass) {
 		return new TaskMode(name, fullName, taskClass);

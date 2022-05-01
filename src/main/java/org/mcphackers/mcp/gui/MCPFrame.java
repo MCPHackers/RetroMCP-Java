@@ -38,12 +38,12 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tools.MCPPaths;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public class MCPFrame extends JFrame {

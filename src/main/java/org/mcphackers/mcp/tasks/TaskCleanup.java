@@ -4,9 +4,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.MCPPaths;
 import org.mcphackers.mcp.tools.Util;
 
 public class TaskCleanup extends Task {
@@ -49,7 +49,7 @@ public class TaskCleanup extends Task {
 				FileUtil.deleteDirectory(path);
 			}
 		}
-		mcp.setCurrentVersion(null);
+		if(!srcCleanup) mcp.setCurrentVersion(null);
 
 		if(foldersDeleted > 0) {
 			log("Done in " + Util.time(System.currentTimeMillis() - startTime));

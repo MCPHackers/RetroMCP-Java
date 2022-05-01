@@ -37,6 +37,9 @@ public class Options {
 		case TARGET_VERSION:
 			value = -1;
 			break;
+		case JAVA_HOME:
+			value = "";
+			break;
 		default:
 			break;
 		}

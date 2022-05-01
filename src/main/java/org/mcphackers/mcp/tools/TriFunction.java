@@ -1,4 +1,4 @@
-package org.mcphackers.mcp;
+package org.mcphackers.mcp.tools;
 
 @FunctionalInterface
 public interface TriFunction<E, T, U, R> {

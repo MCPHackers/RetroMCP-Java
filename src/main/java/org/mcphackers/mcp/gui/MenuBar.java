@@ -134,7 +134,7 @@ public class MenuBar extends JMenuBar {
 				};
 		TaskParameter[][] params = {
 				{TaskParameter.PATCHES, TaskParameter.INDENTION_STRING, TaskParameter.IGNORED_PACKAGES},
-				{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.BOOT_CLASS_PATH},
+				{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
 				{TaskParameter.OBFUSCATION},
 				{TaskParameter.FULL_BUILD},
 				{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS}
@@ -156,7 +156,7 @@ public class MenuBar extends JMenuBar {
 						if(param.type == String[].class) {
 							s = "Enter a set of values\n(Separate values with comma)";
 						}
-						String value = (String)JOptionPane.showInputDialog(owner, s, param.desc, JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(mcp.options.getParameter(param).toString()));
+						String value = (String)JOptionPane.showInputDialog(owner, s, param.desc, JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(String.valueOf(mcp.options.getParameter(param))));
 						mcp.safeSetParameter(param, value);
 						
 					});

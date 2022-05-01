@@ -1,9 +1,11 @@
-package org.mcphackers.mcp;
+package org.mcphackers.mcp.tools;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.mcphackers.mcp.MCP;
 
 public class MCPPaths {
 

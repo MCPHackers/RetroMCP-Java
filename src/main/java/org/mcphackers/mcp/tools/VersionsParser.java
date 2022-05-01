@@ -15,7 +15,6 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 
 public abstract class VersionsParser {
 	

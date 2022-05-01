@@ -20,7 +20,7 @@ public class TaskMode {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
-			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.JAVA_HOME,
 			TaskParameter.IGNORED_PACKAGES,
 			TaskParameter.INDENTION_STRING,
 			TaskParameter.PATCHES,
@@ -30,21 +30,21 @@ public class TaskMode {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
-			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.JAVA_HOME,
 			TaskParameter.SIDE
 			});
 	public static TaskMode REOBFUSCATE = new TaskMode("reobfuscate", "Reobfuscate", "Reobfuscate Minecraft classes", TaskReobfuscate.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
-			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.JAVA_HOME,
 			TaskParameter.SIDE
 			});
 	public static TaskMode UPDATE_MD5 = new TaskMode("updatemd5", "Update MD5 Hashes", "Update md5 hash tables used for reobfuscation", TaskUpdateMD5.class, new TaskParameter[] {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
-			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.JAVA_HOME,
 			TaskParameter.SIDE
 			});
 	public static TaskMode UPDATE_MCP = new TaskMode("updatemcp", "Update", "Download an update if available", TaskDownloadUpdate.class);
@@ -63,7 +63,7 @@ public class TaskMode {
 			TaskParameter.DEBUG,
 			TaskParameter.SOURCE_VERSION,
 			TaskParameter.TARGET_VERSION,
-			TaskParameter.BOOT_CLASS_PATH,
+			TaskParameter.JAVA_HOME,
 			TaskParameter.FULL_BUILD,
 			TaskParameter.SIDE
 			});

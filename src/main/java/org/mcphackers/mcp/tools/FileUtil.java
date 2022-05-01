@@ -125,12 +125,16 @@ public abstract class FileUtil {
 		}
 	}
 	
-	public static void collectJars(Path libPath, List<Path> list) throws IOException {
-		try(Stream<Path> stream = Files.list(libPath)
+	public static void collectJars(Path libPath, List<Path> list, boolean walk) throws IOException {
+		try(Stream<Path> stream = walk ? Files.walk(libPath) : Files.list(libPath)
 			.filter(library -> library.getFileName().toString().endsWith(".jar"))
 			.filter(library -> !Files.isDirectory(library))) {
 				list.addAll(stream.collect(Collectors.toList()));
 		}
+	}
+	
+	public static void collectJars(Path libPath, List<Path> list) throws IOException {
+		collectJars(libPath, list, false);
 	}
 	
 	public static void deleteDirectoryIfExists(Path path) throws IOException {

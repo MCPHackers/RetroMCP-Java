@@ -15,12 +15,12 @@ public enum TaskParameter {
 	SETUP_VERSION("setup", "Setup version", String.class),
 	SOURCE_VERSION("source", "Set a specific source version", Integer.class),
 	TARGET_VERSION("target", "Set a specific target version", Integer.class),
-	BOOT_CLASS_PATH("bootclasspath", "Set a specific bootstrap class path", String.class);
-	
+	JAVA_HOME("javahome", "Set JAVA_HOME used for compiling", String.class);
+
 	public final String desc;
 	public final String name;
 	public final Class<?> type;
-	
+
 	TaskParameter(String name, Class<?> c) {
 		this(name, "No description provided", c);
 	}

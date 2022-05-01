@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,15 +19,12 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.ProgressListener;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.MCPPaths;
 
-public class TaskRecompile extends Task {
-	
-	private static final int RECOMPILE = 1;
-	private static final int COPYRES = 2;
+public class TaskRecompile extends TaskStaged {
 	
 	public TaskRecompile(Side side, MCP instance) {
 		super(side, instance);
@@ -37,80 +35,112 @@ public class TaskRecompile extends Task {
 	}
 
 	@Override
-	public void doTask() throws Exception {
+	protected Stage[] setStages() {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if(compiler == null) {
 			throw new RuntimeException("Could not find compiling API");
 		}
-		DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
 		Path binPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, 		MCPPaths.SERVER_BIN));
 		Path srcPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SOURCES, 	MCPPaths.SERVER_SOURCES));
+		return new Stage[] {
+			stage("Recompiling", 1,
+			() -> {
+				FileUtil.deleteDirectoryIfExists(binPath);
+				Files.createDirectories(binPath);
+				setProgress(2);
+				if (!Files.exists(srcPath)) {
+					throw new IOException(chooseFromSide("Client", "Server") + " sources not found!");
+				}
+
+				final List<File> src = collectSource();
+				final List<Path> classpath = collectClassPath();
+				final List<Path> bootclasspath = collectBootClassPath();
+
+				List<String> cp = new ArrayList<>();
+				classpath.forEach(p -> cp.add(p.toAbsolutePath().toString()));
+
+				List<String> options = new ArrayList<>(Arrays.asList("-d", binPath.toString()));
+
+				int sourceVersion = mcp.getOptions().getIntParameter(TaskParameter.SOURCE_VERSION);
+				if (sourceVersion >= 0) {
+					options.addAll(Arrays.asList("-source", Integer.toString(sourceVersion)));
+				}
+
+				int targetVersion = mcp.getOptions().getIntParameter(TaskParameter.TARGET_VERSION);
+				if (targetVersion >= 0) {
+					options.addAll(Arrays.asList("-target", Integer.toString(targetVersion)));
+				}
+
+				List<String> bootcp = new ArrayList<>();
+				bootclasspath.forEach(p -> bootcp.add(p.toAbsolutePath().toString()));
+				if (bootclasspath.size() > 0) {
+					options.addAll(Arrays.asList("-bootclasspath", String.join(System.getProperty("path.separator"), bootcp)));
+				}
+
+				options.addAll(Arrays.asList("-cp", String.join(System.getProperty("path.separator"), cp)));
+
+				setProgress(3);
+
+				DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
+				recompile(compiler, ds, src, options);
+			}),
+			stage("Copying resources", 50,
+			() -> {
+				// Copy assets from source folder
+				List<Path> assets = FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
+				int i = 0;
+				for(Path path : assets) {
+					if(srcPath.relativize(path).getParent() != null) {
+						Files.createDirectories(binPath.resolve(srcPath.relativize(path).getParent()));
+					}
+					Files.copy(path, binPath.resolve(srcPath.relativize(path)));
+					i++;
+					setProgress(50 + (int)((double)i / assets.size() * 49));
+				}
+			})
+		};
+	}
+	
+	public List<Path> collectClassPath() throws IOException {
+		List<Path> classpath = new ArrayList<>();
 		Path libPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.LIB_CLIENT, 		MCPPaths.LIB_SERVER));
-
-		step();
-		FileUtil.deleteDirectoryIfExists(binPath);
-		Files.createDirectories(binPath);
-		setProgress(2);
-
-		// Compile side
-		if (Files.exists(srcPath)) {
-			List<File> src;
-			try(Stream<Path> pathStream = Files.walk(srcPath)) {
-				src = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+		if(side == Side.SERVER) {
+			classpath.add(MCPPaths.get(mcp, MCPPaths.SERVER));
+		}
+		FileUtil.collectJars(libPath, classpath);
+		return classpath;
+	}
+	
+	public List<Path> collectBootClassPath() throws IOException {
+		List<Path> bootclasspath = new ArrayList<>();
+		String javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
+		if(!javaHome.equals("")) {
+			Path libs = Paths.get(javaHome).resolve("lib");
+			Path libsJre = Paths.get(javaHome).resolve("jre/lib");
+			if(Files.exists(libs)) {
+				FileUtil.collectJars(libs, bootclasspath);
 			}
+			if(Files.exists(libsJre)) {
+				FileUtil.collectJars(libsJre, bootclasspath);
+			}
+		}
+		return bootclasspath;
+	}
+	
+	public List<File> collectSource() throws IOException {
+		Path srcPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SOURCES, 	MCPPaths.SERVER_SOURCES));
+		List<File> src;
+		try(Stream<Path> pathStream = Files.walk(srcPath)) {
+			src = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
+		}
+		if(side == Side.CLIENT) {
 			List<File> start;
 			try(Stream<Path> pathStream = Files.walk(MCPPaths.get(mcp, MCPPaths.CONF + "start"))) {
 				start = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
 			}
-			if(side == Side.CLIENT) {
-				src.addAll(start);
-			}
-
-			List<String> libraries = new ArrayList<>();
-
-			if(side == Side.SERVER) {
-				libraries.add(MCPPaths.SERVER);
-			}
-			try(Stream<Path> stream = Files.list(libPath).filter(library -> !library.endsWith(".jar")).filter(library -> !Files.isDirectory(library))) {
-				libraries.addAll(stream.map(Path::toAbsolutePath).map(Path::toString).collect(Collectors.toList()));
-			}
-			List<String> options = new ArrayList<>(Arrays.asList("-d", binPath.toString()));
-
-			int sourceVersion = mcp.getOptions().getIntParameter(TaskParameter.SOURCE_VERSION);
-			if (sourceVersion >= 0) {
-				options.addAll(Arrays.asList("-source", Integer.toString(sourceVersion)));
-			}
-
-			int targetVersion = mcp.getOptions().getIntParameter(TaskParameter.TARGET_VERSION);
-			if (targetVersion >= 0) {
-				options.addAll(Arrays.asList("-target", Integer.toString(targetVersion)));
-			}
-
-			String bootclasspath = mcp.getOptions().getStringParameter(TaskParameter.BOOT_CLASS_PATH);
-			if (bootclasspath != null) {
-				options.addAll(Arrays.asList("-bootclasspath", bootclasspath));
-			}
-
-			options.addAll(Arrays.asList("-cp", String.join(System.getProperty("path.separator"), libraries)));
-
-			setProgress(3);
-			recompile(compiler, ds, src, options);
-			setProgress(50);
-			// Copy assets from source folder
-			step();
-			List<Path> assets = FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
-			int i = 0;
-			for(Path path : assets) {
-				if(srcPath.relativize(path).getParent() != null) {
-					Files.createDirectories(binPath.resolve(srcPath.relativize(path).getParent()));
-				}
-				Files.copy(path, binPath.resolve(srcPath.relativize(path)));
-				i++;
-				setProgress(50 + (int)((double)i / assets.size() * 49));
-			}
-		} else {
-			throw new IOException(chooseFromSide("Client", "Server") + " sources not found!");
+			src.addAll(start);
 		}
+		return src;
 	}
 
 	public void recompile(JavaCompiler compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> src, Iterable<String> recompileOptions) throws IOException, RuntimeException {
@@ -135,25 +165,10 @@ public class TaskRecompile extends Task {
 							diagnostic.getMessage(null)),
 							kind);
 				}
-			
 			}
 		mgr.close();
 		if (!success) {
 			throw new RuntimeException("Compilation error!");
-		}
-	}
-
-	protected void updateProgress() {
-		switch (step) {
-		case RECOMPILE:
-			setProgress("Recompiling...", 1);
-			break;
-		case COPYRES:
-			setProgress("Copying resources...");
-			break;
-		default:
-			super.updateProgress();
-			break;
 		}
 	}
 }

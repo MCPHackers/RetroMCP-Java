@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tools.MCPPaths;
 
 import codechicken.diffpatch.cli.DiffOperation;
 
@@ -19,6 +19,7 @@ public class TaskCreatePatch extends Task {
 		Path srcPathUnpatched = MCPPaths.get(mcp,chooseFromSide(MCPPaths.CLIENT_TEMP_SOURCES, MCPPaths.SERVER_TEMP_SOURCES));
 		Path srcPathPatched = MCPPaths.get(mcp,chooseFromSide(MCPPaths.CLIENT_SOURCES, MCPPaths.SERVER_SOURCES));
 		Path patchesOut = MCPPaths.get(mcp,chooseFromSide("patches/patches_client", "patches/patches_server"));
+		setProgress("Creating patch");
 		if (Files.exists(srcPathUnpatched)) {
 			if(Files.exists(srcPathPatched)) {
 				createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);

@@ -5,35 +5,30 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.MCPPaths;
 
-public class TaskBuild extends Task {
-
-	private static final int REOBF = 1;
-	private static final int BUILD = 2;
-	private static final int STEPS = 2;
+public class TaskBuild extends TaskStaged {
 
 	public TaskBuild(Side side, MCP instance) {
 		super(side, instance);
 	}
 
 	@Override
-	public void doTask() throws Exception {
+	protected Stage[] setStages() {
 		Path originalJar =  MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT, 			MCPPaths.SERVER));
 		Path bin = 			MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, 		MCPPaths.SERVER_BIN));
 		Path reobfDir = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF, 	MCPPaths.SERVER_REOBF));
 		Path buildJar = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.BUILD_JAR_CLIENT, MCPPaths.BUILD_JAR_SERVER));
 		Path buildZip = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.BUILD_ZIP_CLIENT, MCPPaths.BUILD_ZIP_SERVER));
-		
-		while(step < STEPS) {
-			step();
-			switch (step) {
-			case REOBF:
+		return new Stage[] {
+			stage("Recompiling",
+			() -> {
 				new TaskReobfuscate(side, mcp, this).doTask();
-				break;
-			case BUILD:
+			}),
+			stage("Building", 52,
+			() -> {
 				FileUtil.createDirectories(MCPPaths.get(mcp,MCPPaths.BUILD));
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD)) {
 					Files.deleteIfExists(buildJar);
@@ -51,33 +46,19 @@ public class TaskBuild extends Task {
 					List<Path> assets = FileUtil.walkDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
 					FileUtil.packFilesToZip(buildZip, assets, bin);
 				}
-				break;
-			}
-		}
+			})
+		};
 	}
 	
 	public void setProgress(int progress) {
 		switch (step) {
-		case 1: {
+		case 0: {
 			int percent = (int)((double)progress * 0.49D);
 			super.setProgress(1 + percent);
 			break;
 		}
 		default:
 			super.setProgress(progress);
-			break;
-		}
-	}
-
-	protected void updateProgress() {
-		switch (step) {
-		case REOBF:
-			break;
-		case BUILD:
-			setProgress("Building...", 52);
-			break;
-		default:
-			super.updateProgress();
 			break;
 		}
 	}

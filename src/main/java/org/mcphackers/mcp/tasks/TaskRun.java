@@ -10,8 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.tools.MCPPaths;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 

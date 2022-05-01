@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.mcphackers.mcp.ProgressListener;
+import org.mcphackers.mcp.TaskRunnable;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
 import org.mcphackers.mcp.MCP;
 
-public abstract class Task implements ProgressListener {
+public abstract class Task implements ProgressListener, TaskRunnable {
 	
 	public enum Side {
 		ANY(-1, "Any"),
@@ -35,34 +36,29 @@ public abstract class Task implements ProgressListener {
 	
 	public final Side side;
 	protected final MCP mcp;
-	public int step;
 	private byte result = INFO;
 	private ProgressListener progressListener;
 	private int progressBarIndex = -1; 
 	private final List<String> logMessages = new ArrayList<>();
 	
-	protected Task(Side side, MCP instance, ProgressListener listener) {
+	public Task(Side side, MCP instance, ProgressListener listener) {
 		this(side, instance);
 		this.progressListener = listener;
 	}
 	
-	protected Task(Side side, MCP instance) {
+	public Task(Side side, MCP instance) {
 		this.side = side;
 		this.mcp = instance;
+	}
+	
+	public Task(MCP instance) {
+		this(Side.ANY, instance);
 	}
 
 	public final void performTask() throws Exception {
 		triggerEvent(TaskEvent.PRE_TASK);
 		doTask();
 		triggerEvent(TaskEvent.POST_TASK);
-	}
-
-	protected abstract void doTask() throws Exception;
-	
-	protected final void step() {
-		step++;
-		triggerEvent(TaskEvent.TASK_STEP);
-		updateProgress();
 	}
 	
 	protected final void triggerEvent(TaskEvent event) {
@@ -86,10 +82,6 @@ public abstract class Task implements ProgressListener {
 	
 	public final List<String> getMessageList() {
 		return logMessages;
-	}
-	
-	protected void updateProgress() {
-		setProgress("Idle", 0);
 	}
 
 	public void setProgress(String progressString) {
