@@ -25,28 +25,25 @@ public class TaskRun extends Task {
 		boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
 		String currentVersion = mcp.getCurrentVersion();
 		if(side == Side.SERVER && !VersionsParser.hasServer(currentVersion)) {
-			throw new Exception("Server isn't available for this version!");
+			throw new Exception(Side.SERVER.name + " isn't available for this version!");
 		}
+		int port = VersionsParser.getProxyPort(currentVersion);
+		boolean isClassic = VersionsParser.getServerVersion(currentVersion).startsWith("c");
 		Path natives = MCPPaths.get(mcp, MCPPaths.NATIVES);
 		List<Path> cpList = new LinkedList<>();
+		if(runBuild) {
+			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
+		}
+		cpList.add(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side));
 		if(side == Side.SERVER) {
-			if(runBuild) {
-				cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP_SERVER));
-			}
-			cpList.add(MCPPaths.get(mcp, MCPPaths.SERVER_BIN));
-			cpList.add(MCPPaths.get(mcp, MCPPaths.SERVER));
-			collectJars(MCPPaths.get(mcp, MCPPaths.LIB_SERVER), cpList);
+			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 		}
 		else if (side == Side.CLIENT) {
-			if(runBuild) {
-				cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP_CLIENT));
-			}
-			cpList.add(MCPPaths.get(mcp, MCPPaths.CLIENT_BIN));
 			if(!Files.exists(MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED))) {
-				cpList.add(MCPPaths.get(mcp, MCPPaths.CLIENT));
+				cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 			}
-			collectJars(MCPPaths.get(mcp, MCPPaths.LIB_CLIENT), cpList);
 		}
+		collectJars(MCPPaths.get(mcp, MCPPaths.LIBS, side), cpList);
 		collectJars(MCPPaths.get(mcp, MCPPaths.LIB), cpList);
 		
 		List<String> classPath = new ArrayList<>();
@@ -58,11 +55,11 @@ public class TaskRun extends Task {
 				Arrays.asList(java,
 						// TODO Would also be good if proxy could be customizable in run args
 						"-Dhttp.proxyHost=betacraft.uk",
-						"-Dhttp.proxyPort=" + VersionsParser.getProxyPort(currentVersion),
+						"-Dhttp.proxyPort=" + port,
 						"-Dorg.lwjgl.librarypath=" + natives.toAbsolutePath(),
 						"-Dnet.java.games.input.librarypath=" + natives.toAbsolutePath(),
 						"-cp", cp,
-						side == Side.SERVER ? (VersionsParser.getServerVersion(currentVersion).startsWith("c") ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
+						side == Side.SERVER ? (isClassic ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
 																	  : runBuild ? "net.minecraft.client.Minecraft" : "Start"));
 		String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
 		for (String arg : runArgs) {

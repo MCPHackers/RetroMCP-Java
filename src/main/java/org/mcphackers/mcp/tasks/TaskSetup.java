@@ -45,10 +45,10 @@ public class TaskSetup extends Task {
 		List<String> versions = VersionsParser.getVersionList();
 		String chosenVersion = mcp.getOptions().getStringParameter(TaskParameter.SETUP_VERSION);
 		if(!versions.contains(chosenVersion)) {
+			//FIXME This may not look good in GUI
 			log(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
 			log(getTable(versions));
 			log(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
-			//mcp.log(new Ansi().fgYellow().a("If you wish to supply your own configuration, type \"custom\".").fgDefault().toString());
 		}
 
 		// Keep asking until they have a valid option
@@ -76,23 +76,25 @@ public class TaskSetup extends Task {
 		log("Done in " + Util.time(System.currentTimeMillis() - startTime));
 
 		// Delete Minecraft.jar and Minecraft_server.jar if they exist.
-		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.CLIENT));
-		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.SERVER));
+		// TODO Make side-independent
+		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
+		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));
 
 		// Download Minecraft
 		{
-			for(int side = 0; side <= (VersionsParser.hasServer(currentVersion) ? 1 : 0); side++) {
+			for(int sideIndex = 0; sideIndex <= (VersionsParser.hasServer(currentVersion) ? 1 : 0); sideIndex++) {
+				Side side = Task.sides.get(sideIndex);
 				startTime = System.currentTimeMillis();
-				FileUtil.createDirectories(MCPPaths.get(mcp, side == Side.CLIENT.index ? MCPPaths.LIB_CLIENT : MCPPaths.LIB_SERVER));
-				log("Downloading Minecraft " + (side == Side.CLIENT.index ? "client" : "server") + "...");
-				String url = VersionsParser.getDownloadURL(currentVersion, side);
-				String out = side == Side.CLIENT.index ? MCPPaths.CLIENT : MCPPaths.SERVER;
-				Path pathOut = MCPPaths.get(mcp, out);
+				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIBS, side));
+				log("Downloading Minecraft " + side.name.toLowerCase() + "...");
+				String url = VersionsParser.getDownloadURL(currentVersion, sideIndex);
+				String out = MCPPaths.JAR_ORIGINAL;
+				Path pathOut = MCPPaths.get(mcp, out, side);
 				if(url.endsWith(".jar")) {
 					FileUtil.downloadFile(new URL(url), pathOut);
 				}
 				else {
-					Path zip = MCPPaths.get(mcp, out.replace(".jar", ".zip"));
+					Path zip = MCPPaths.get(mcp, out.replace(".jar", ".zip"), side);
 					FileUtil.downloadFile(new URL(url), zip);
 					FileUtil.copyFileFromAZip(zip, "minecraft-server.jar", pathOut);
 					Files.deleteIfExists(zip);
@@ -103,15 +105,15 @@ public class TaskSetup extends Task {
 		
 		log("Downloading libraries...");
 		startTime = System.currentTimeMillis();
-		FileUtil.downloadFile(new URL(libsURL), MCPPaths.get(mcp, MCPPaths.LIB_CLIENT + "libs.zip"));
+		FileUtil.downloadFile(new URL(libsURL), MCPPaths.get(mcp, MCPPaths.LIBS + "libs.zip", Side.CLIENT));
 		String nativesURL = natives.get(Os.getOs());
 		if(nativesURL == null) {
 			throw new Exception("Could not find natives for your operating system");
 		}
-		FileUtil.downloadFile(new URL(nativesURL), MCPPaths.get(mcp, MCPPaths.LIB_CLIENT + "natives.zip"));
+		FileUtil.downloadFile(new URL(nativesURL), MCPPaths.get(mcp, MCPPaths.LIBS + "natives.zip", Side.CLIENT));
 		log("Done in " + Util.time(System.currentTimeMillis() - startTime));
-		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIB_CLIENT + "libs.zip"), MCPPaths.get(mcp, MCPPaths.LIB_CLIENT), true);
-		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIB_CLIENT + "natives.zip"), MCPPaths.get(mcp, MCPPaths.NATIVES), true);
+		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIBS + "libs.zip", Side.CLIENT), MCPPaths.get(mcp, MCPPaths.LIBS, Side.CLIENT), true);
+		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIBS + "natives.zip", Side.CLIENT), MCPPaths.get(mcp, MCPPaths.NATIVES), true);
 	}
 
 	private void setWorkspace() throws Exception {

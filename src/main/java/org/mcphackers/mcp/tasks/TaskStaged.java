@@ -34,6 +34,7 @@ public abstract class TaskStaged extends Task {
 		mcp.setPluginOverrides(this);
 		while(step < stages.length) {
 			updateProgress();
+			setProgress(stages[step].stageName, stages[step].completion);
 			stages[step].doTask();
 			step();
 		}

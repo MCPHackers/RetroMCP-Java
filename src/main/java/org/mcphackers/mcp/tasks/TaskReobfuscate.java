@@ -38,8 +38,8 @@ public class TaskReobfuscate extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		final Path reobfDir = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF, MCPPaths.SERVER_REOBF));
-		final Path reobfJar = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF_JAR, MCPPaths.SERVER_REOBF_JAR));
+		final Path reobfDir = MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, side);
+		final Path reobfJar = MCPPaths.get(mcp, MCPPaths.REOBF_JAR, side);
 		return new Stage[] {
 		stage("Recompiling",
 		() -> {
@@ -64,11 +64,11 @@ public class TaskReobfuscate extends TaskStaged {
 		
 	
 	private void reobfuscate() throws IOException {
-		final Path reobfDir = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF, MCPPaths.SERVER_REOBF));
-		final Path reobfJar = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF_JAR, MCPPaths.SERVER_REOBF_JAR));
-		final Path reobfMappings = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS_RO, MCPPaths.SERVER_MAPPINGS_RO));
-		final Path deobfMappings = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
-		final Path reobfBin = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN));
+		final Path reobfDir = MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, side);
+		final Path reobfJar = MCPPaths.get(mcp, MCPPaths.REOBF_JAR, side);
+		final Path reobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_RO, side);
+		final Path deobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_DO, side);
+		final Path reobfBin = MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side);
 		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
 		final boolean hasMappings = Files.exists(deobfMappings);
 		
@@ -174,8 +174,7 @@ public class TaskReobfuscate extends TaskStaged {
 	}
 
 	private void gatherMD5Hashes(boolean reobf) throws IOException {
-		Path md5 = MCPPaths.get(mcp, reobf ? chooseFromSide(MCPPaths.CLIENT_MD5_RO, MCPPaths.SERVER_MD5_RO)
-				: chooseFromSide(MCPPaths.CLIENT_MD5, MCPPaths.SERVER_MD5));
+		final Path md5 = MCPPaths.get(mcp, reobf ? MCPPaths.MD5_RO : MCPPaths.MD5, side);
 
 		try (BufferedReader reader = Files.newBufferedReader(md5)) {
 			String line = reader.readLine();

@@ -28,7 +28,7 @@ public class MenuBar extends JMenuBar {
 	public final JMenu menuOptions = new JMenu("Options");
 	public final JMenu mcpMenu = new JMenu("MCP");
 	private final JMenu helpMenu = new JMenu("Help");
-	private final JMenuItem[] sideItems = new JMenuItem[3];
+	private JMenuItem[] sideItems;
 	private final JMenuItem githubItem = new JMenuItem("Github Page");
 	private final MCPFrame owner;
 	private MainGUI mcp;
@@ -81,7 +81,7 @@ public class MenuBar extends JMenuBar {
 					continue;
 				}
 				JMenuItem taskItem = new JMenuItem(task.getFullName());
-				taskItem.addActionListener(owner.performTask(task));
+				taskItem.addActionListener(TaskButton.performTask(mcp, task));
 				runTask.add(taskItem);
 			}
 			mcpMenu.add(runTask);
@@ -95,34 +95,37 @@ public class MenuBar extends JMenuBar {
 
 	private void reloadSide() {
 		for (JMenuItem sideItem : sideItems) {
-			sideItem.setSelected(false);
+			if(sideItem != null) {
+				sideItem.setSelected(false);
+			}
 		}
 		int itemNumber = mcp.side.index;
-		if(itemNumber == -1) {
-			itemNumber = 2;
+		if(itemNumber < 0) {
+			itemNumber = sideItems.length - 1;
 		}
 		sideItems[itemNumber].setSelected(true);
 	}
 	
-	private void setSide(int i) {
-		int itemNumber = i;
-		if(itemNumber == 2) {
-			itemNumber = -1;
-		}
-		mcp.side = Task.sides.get(itemNumber);
+	private void setSide(Side side) {
+		mcp.side = side;
 		reloadSide();
 		owner.updateButtonState();
 	}
 
 	private void initOptions() {
 		JMenu sideMenu = new JMenu("Side");
-		String[] sideNames = {Side.CLIENT.name, Side.SERVER.name, "All"};
-		for(int i = 0; i < sideItems.length; i++) {
-			final int i2 = i;
-			sideItems[i] = new JRadioButtonMenuItem(sideNames[i]);
-			sideItems[i].addActionListener(e -> setSide(i2));
-			sideMenu.add(sideItems[i]);
+		sideItems = new JMenuItem[Side.values().length];
+		for(Side side : Side.values()) {
+			final int i = side.index;
+			if(i >= 0) {
+				sideItems[i] = new JRadioButtonMenuItem(side.name);
+				sideItems[i].addActionListener(e -> setSide(side));
+				sideMenu.add(sideItems[i]);
+			}
 		}
+		sideItems[sideItems.length - 1] = new JRadioButtonMenuItem(Side.ANY.name);
+		sideItems[sideItems.length - 1].addActionListener(e -> setSide(Side.ANY));
+		sideMenu.add(sideItems[sideItems.length - 1]);
 		menuOptions.add(sideMenu);
 		
 		String[] names = {

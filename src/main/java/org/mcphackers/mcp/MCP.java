@@ -57,13 +57,14 @@ public abstract class MCP {
 		}
 		List<Task> performedTasks = new ArrayList<>();
 		for (Task task : tasks) {
-			if (side == Side.ANY) {
+			if (task.side == side || task.side == Side.ANY) {
+				performedTasks.add(task);
+			}
+			else if (side == Side.ANY) {
 				// TODO also check if client/server exists locally
-				if (task.side != Side.SERVER || hasServer) {
+				if (task.side == Side.SERVER && hasServer || task.side == Side.CLIENT) {
 					performedTasks.add(task);
 				}
-			} else if (task.side == side || task.side == Side.ANY) {
-				performedTasks.add(task);
 			}
 		}
 		if(enableProgressBars) setProgressBars(performedTasks, mode);

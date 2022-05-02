@@ -16,19 +16,19 @@ public class TaskCreatePatch extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		Path srcPathUnpatched = MCPPaths.get(mcp,chooseFromSide(MCPPaths.CLIENT_TEMP_SOURCES, MCPPaths.SERVER_TEMP_SOURCES));
-		Path srcPathPatched = MCPPaths.get(mcp,chooseFromSide(MCPPaths.CLIENT_SOURCES, MCPPaths.SERVER_SOURCES));
-		Path patchesOut = MCPPaths.get(mcp,chooseFromSide("patches/patches_client", "patches/patches_server"));
+		Path srcPathUnpatched = MCPPaths.get(mcp, MCPPaths.TEMP_SOURCES, side);
+		Path srcPathPatched = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
+		Path patchesOut = MCPPaths.get(mcp, "patches/patches_%s", side);
 		setProgress("Creating patch");
 		if (Files.exists(srcPathUnpatched)) {
 			if(Files.exists(srcPathPatched)) {
 				createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);
 			}
 			else {
-				throw new Exception("Patched " + chooseFromSide("client", "server") + " sources cannot be found!");
+				throw new Exception("Patched " + side.name.toLowerCase() + " sources cannot be found!");
 			}
 		} else {
-			throw new Exception("Unpatched " + chooseFromSide("client", "server") + " sources cannot be found!");
+			throw new Exception("Unpatched " + side.name.toLowerCase() + " sources cannot be found!");
 		}
 	}
 

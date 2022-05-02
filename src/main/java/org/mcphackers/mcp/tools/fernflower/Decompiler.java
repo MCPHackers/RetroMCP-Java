@@ -22,7 +22,6 @@ import de.fernflower.util.InterpreterUtil;
 
 public class Decompiler implements IBytecodeProvider {
 	public DecompileLogger log;
-	public static TinyJavadocProvider tinyJavadocProvider;
 
 	public Decompiler(ProgressListener listener) {
 		this.log = new DecompileLogger(listener);
@@ -52,8 +51,12 @@ public class Decompiler implements IBytecodeProvider {
 		if (lstSources.isEmpty()) {
 			throw new IOException("No sources found");
 		}
-		File jdFile = javadocs.toFile();
-		tinyJavadocProvider = jdFile.exists() ? new TinyJavadocProvider(jdFile) : null;
+		TinyJavadocProvider tinyJavadocProvider = null;
+		if(javadocs != null)
+		{
+			File jdFile = javadocs.toFile();
+			tinyJavadocProvider = jdFile.exists() ? new TinyJavadocProvider(jdFile) : null;
+		}
 		BaseDecompiler decompiler = new BaseDecompiler(this, saveType.getSaver().apply(destination), mapOptions, log, tinyJavadocProvider);
 		try {
 			for (File source2 : lstSources) {

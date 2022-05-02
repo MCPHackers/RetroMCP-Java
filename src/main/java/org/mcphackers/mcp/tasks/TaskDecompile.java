@@ -24,10 +24,9 @@ import org.mcphackers.mcp.tools.source.MathConstants;
 import codechicken.diffpatch.cli.CliOperation;
 import codechicken.diffpatch.cli.PatchOperation;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import net.fabricmc.stitch.merge.JarMerger;
 
 public class TaskDecompile extends TaskStaged {
-	private final MemoryMappingTree mappingTree = new MemoryMappingTree();
-
 	public static final int INIT = 0;
 	public static final int REMAP = 1;
 	public static final int EXCEPTOR = 2;
@@ -48,27 +47,23 @@ public class TaskDecompile extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		Path tinyOut 		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_TINY_OUT, MCPPaths.SERVER_TINY_OUT));
-		Path excOut 		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_EXC_OUT, MCPPaths.SERVER_EXC_OUT));
-		Path exc 			= MCPPaths.get(mcp, chooseFromSide(MCPPaths.EXC_CLIENT, MCPPaths.EXC_SERVER));
-		Path srcZip 		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SRC, MCPPaths.SERVER_SRC));
-		Path originalJar 	= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT, MCPPaths.SERVER));
-		Path ffOut 			= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_TEMP_SOURCES, MCPPaths.SERVER_TEMP_SOURCES));
-		Path srcPath 		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SOURCES, MCPPaths.SERVER_SOURCES));
-		Path patchesPath 	= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_PATCHES, MCPPaths.SERVER_PATCHES));
-		Path mappings		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS, MCPPaths.SERVER_MAPPINGS));
-		Path deobfMappings	= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_MAPPINGS_DO, MCPPaths.SERVER_MAPPINGS_DO));
-		Path javadocs		= MCPPaths.get(mcp, chooseFromSide(MCPPaths.JAVADOC_CLIENT, MCPPaths.JAVADOC_SERVER));
+		final Path remapped 	= MCPPaths.get(mcp, MCPPaths.DEOBF_OUT, side);
+		final Path excOut 		= MCPPaths.get(mcp, MCPPaths.EXC_OUT, side);
+		final Path tempExcOut 	= MCPPaths.get(mcp, MCPPaths.TEMP_EXC_OUT, side);
+		final Path srcZip 		= MCPPaths.get(mcp, MCPPaths.SIDE_SRC, side);
+		final Path ffOut 		= MCPPaths.get(mcp, MCPPaths.TEMP_SOURCES, side);
+		final Path srcPath 		= MCPPaths.get(mcp, MCPPaths.SOURCES, side);
+		final Path patchesPath 	= MCPPaths.get(mcp, MCPPaths.PATCHES, side);
 		
-		boolean hasLWJGL = side == Side.CLIENT;
+		boolean hasLWJGL = side == Side.CLIENT || side == Side.MERGED;
 		
 		return new Stage[] {
 		stage("Idle", 0,
 		() -> {
 			if (Files.exists(srcPath)) {
-				throw new IOException(chooseFromSide("Client", "Server") + " sources found! Aborting.");
+				throw new IOException(side.name + " sources found! Aborting.");
 			}
-			for (Path path : new Path[] { tinyOut, excOut, srcZip}) {
+			for (Path path : new Path[] {remapped, excOut, srcZip}) {
 				Files.deleteIfExists(path);
 			}
 			FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.TEMP));
@@ -76,43 +71,70 @@ public class TaskDecompile extends TaskStaged {
 		}),
 		stage("Remapping JAR", 1,
 		() -> {
-			
-			if (Files.exists(mappings)) {
-				MappingUtil.readMappings(mappings, mappingTree);
-				try (FileSystem fs = FileSystems.newFileSystem(originalJar, (ClassLoader)null)) {
-					MappingUtil.modifyClasses(mappingTree, fs.getPath("/"), className -> {
-						if (mappingTree.getClass(className) == null) {
-							if(className.lastIndexOf("/") < 0) {
-								return "net/minecraft/src/" + className;
+			Side[] sides = (side == Side.MERGED) ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
+			for(Side sideLocal : sides) {
+				final MemoryMappingTree mappingTree = new MemoryMappingTree();
+				final Path mappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS, sideLocal);
+				final Path deobfMappings	= MCPPaths.get(mcp, MCPPaths.MAPPINGS_DO, sideLocal);
+				final Path tinyOut 		= MCPPaths.get(mcp, MCPPaths.DEOBF_OUT, sideLocal);
+				final Path originalJar 	= MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, sideLocal);
+				Files.deleteIfExists(tinyOut);
+				if (Files.exists(mappings)) {
+					MappingUtil.readMappings(mappings, mappingTree);
+					try (FileSystem fs = FileSystems.newFileSystem(originalJar, (ClassLoader)null)) {
+						MappingUtil.modifyClasses(mappingTree, fs.getPath("/"), className -> {
+							if (mappingTree.getClass(className) == null) {
+								if(className.lastIndexOf("/") < 0) {
+									return "net/minecraft/src/" + className;
+								}
 							}
-						}
-						return null;
-					});
+							return null;
+						});
+					}
+					MappingUtil.writeMappings(deobfMappings, mappingTree);
+					MappingUtil.remap(deobfMappings, originalJar, tinyOut, getLibraryPaths(mcp, sideLocal), "official", "named");
 				}
-				MappingUtil.writeMappings(deobfMappings, mappingTree);
-				MappingUtil.remap(deobfMappings, originalJar, tinyOut, getLibraryPaths(mcp, side), "official", "named");
+				else {
+					Files.copy(originalJar, tinyOut);
+				}
 			}
-			else {
-				Files.copy(originalJar, tinyOut);
+			if(side == Side.MERGED) {
+				final Path client = MCPPaths.get(mcp, MCPPaths.DEOBF_OUT, Side.CLIENT);
+				final Path server = MCPPaths.get(mcp, MCPPaths.DEOBF_OUT, Side.SERVER);
+
+				try (JarMerger jarMerger = new JarMerger(client.toFile(), server.toFile(), remapped.toFile())) {
+					jarMerger.enableSyntheticParamsOffset();
+					jarMerger.merge();
+				}
 			}
 		}),
 		stage("Applying MCInjector", 2,
 		() -> {
-			if (Files.exists(exc)) {
-				MCInjector.process(tinyOut, excOut, exc, 0);
-			}
-			else {
-				Files.copy(tinyOut, excOut);
+			Side[] sides = (side == Side.MERGED) ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
+			Files.deleteIfExists(tempExcOut);
+			Files.copy(remapped, tempExcOut);
+			for(Side sideLocal : sides) {
+				final Path exc = MCPPaths.get(mcp, MCPPaths.EXC, sideLocal);
+				if (Files.exists(exc)) {
+					MCInjector.process(tempExcOut, excOut, exc, 0);
+					Files.deleteIfExists(tempExcOut);
+					Files.copy(excOut, tempExcOut);
+				}
+				else {
+					Files.copy(tempExcOut, excOut);
+				}
 			}
 			// Copying a fixed jar to libs
-			if(side == Side.CLIENT) {
+			if(side == Side.CLIENT || side == Side.MERGED) {
 				Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED));
 				Files.copy(excOut, MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED));
 			}
+			Files.deleteIfExists(tempExcOut);
 		}),
 		stage("Decompiling",
 		() -> {
-			new Decompiler(this).decompile(excOut, srcZip, javadocs, mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING));
+			//TODO javadocs
+			new Decompiler(this).decompile(excOut, srcZip, null, mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING));
 		}),
 		stage("Extracting sources", 84,
 		() -> {
@@ -162,7 +184,7 @@ public class TaskDecompile extends TaskStaged {
 	}
 
 	public static Path[] getLibraryPaths(MCP mcp, Side side) {
-		if(side == Side.CLIENT) {
+		if(side == Side.CLIENT || side == Side.MERGED) {
 			return new Path[] {
 				MCPPaths.get(mcp, MCPPaths.LWJGL),
 				MCPPaths.get(mcp, MCPPaths.LWJGL_UTIL),

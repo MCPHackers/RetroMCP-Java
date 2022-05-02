@@ -17,11 +17,11 @@ public class TaskBuild extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		Path originalJar =  MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT, 			MCPPaths.SERVER));
-		Path bin = 			MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, 		MCPPaths.SERVER_BIN));
-		Path reobfDir = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_REOBF, 	MCPPaths.SERVER_REOBF));
-		Path buildJar = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.BUILD_JAR_CLIENT, MCPPaths.BUILD_JAR_SERVER));
-		Path buildZip = 	MCPPaths.get(mcp, chooseFromSide(MCPPaths.BUILD_ZIP_CLIENT, MCPPaths.BUILD_ZIP_SERVER));
+		Path originalJar =  MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side);
+		Path bin = 			MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side);
+		Path reobfDir = 	MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, side);
+		Path buildJar = 	MCPPaths.get(mcp, MCPPaths.BUILD_JAR, side);
+		Path buildZip = 	MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side);
 		return new Stage[] {
 			stage("Recompiling",
 			() -> {
@@ -29,7 +29,7 @@ public class TaskBuild extends TaskStaged {
 			}),
 			stage("Building", 52,
 			() -> {
-				FileUtil.createDirectories(MCPPaths.get(mcp,MCPPaths.BUILD));
+				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.BUILD));
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD)) {
 					Files.deleteIfExists(buildJar);
 					Files.copy(originalJar, buildJar);

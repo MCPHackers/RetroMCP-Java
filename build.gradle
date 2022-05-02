@@ -28,7 +28,9 @@ dependencies {
     implementation 'org.ow2.asm:asm-util:' + ASMVersion
 
     implementation 'com.github.MCPHackers:RetroFernflower:3992b4b81fe2b106f2e53dca2d7425fce72dd9f5'
+    implementation 'com.github.MCPHackers:Stitch:fdbe41ae758bf2501fc7addb0b78938c7f7da226'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
+    implementation 'net.fabricmc:tiny-remapper:0.8.2'
     implementation 'net.fabricmc:tiny-remapper:0.8.2'
     // TODO: Don't gut MCInjector bundled ASM
     implementation name: 'mcinjector'

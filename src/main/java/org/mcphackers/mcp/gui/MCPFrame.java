@@ -15,27 +15,22 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.TaskMode;
@@ -48,17 +43,12 @@ import org.mcphackers.mcp.tools.VersionsParser;
 
 public class MCPFrame extends JFrame {
 	
-	private JButton decompileButton;
-	private JButton recompileButton;
-	private JButton reobfButton;
-	private JButton buildButton;
-	private JButton patchButton;
-	private JButton md5Button;
 	private JComboBox<String> verList;
+	private List<TaskButton> buttons = new ArrayList<>();
 	private JLabel verLabel;
 	private JPanel topRightContainer;
 	private JPanel bottom;
-	private JProgressBar[] progressBars = new JProgressBar[0];
+	private SideProgressBar[] progressBars = new SideProgressBar[0];
 	private JLabel[] progressLabels = new JLabel[0];
 	private MenuBar menuBar;
 	public MainGUI mcp;
@@ -68,19 +58,13 @@ public class MCPFrame extends JFrame {
 		this.mcp = mcp;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
-            URL resource = this.getClass().getResource("/rmcp.png");
+            URL resource = getClass().getResource("/rmcp.png");
             BufferedImage image = ImageIO.read(resource);
             setIconImage(image);
         } catch (IOException e) {
             e.printStackTrace();
         }
-		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
-		if (c == null) {
-			JOptionPane.showMessageDialog(this, "Java Development Kit not found!", "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
         initFrameContents();
-        //TODO display buttons in two rows so you could shrink it more horizontally
 		setMinimumSize(new Dimension(842, 100));
         pack();
         setLocationRelativeTo(null);
@@ -95,35 +79,37 @@ public class MCPFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout());
 		JPanel topLeftContainer = new JPanel();
 
-		for(int i = 0; i < 6; i++) {
-			String[] buttonName = {"Decompile", "Recompile", "Reobfuscate", "Build", "Update MD5", "Create Patch"};
-			JButton button = new JButton(buttonName[i]);
+		TaskMode[] tasks = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
+		for(TaskMode task : tasks) {
+			TaskButton button;
+			if(task == TaskMode.DECOMPILE) {
+				ActionListener defaultActionListener = event -> operateOnThread(() -> {
+					int response = -1;
+					boolean srcExists = mcp.side == Side.ANY ? Files.exists(MCPPaths.get(mcp, MCPPaths.SRC))
+															 : Files.exists(MCPPaths.get(mcp, MCPPaths.SOURCES, mcp.side));
+					if(srcExists) {
+						response = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+					}
+					if(response <= 0) {
+						if(response == 0) {
+							mcp.setParameter(TaskParameter.SRC_CLEANUP, true);
+							mcp.performTask(TaskMode.CLEANUP, Side.ANY, false, false);
+						}
+						mcp.performTask(TaskMode.DECOMPILE, mcp.side);
+					}
+				});
+				button = new TaskButton(this, task, defaultActionListener);
+			}
+			else {
+				button = new TaskButton(this, task);
+			}
+			buttons.add(button);
 			button.setEnabled(false);
 			topLeftContainer.add(button);
-			switch (i) {
-			case 0:
-				this.decompileButton = button;
-				break;
-			case 1:
-				this.recompileButton = button;
-				break;
-			case 2:
-				this.reobfButton = button;
-				break;
-			case 3:
-				this.buildButton = button;
-				break;
-			case 4:
-				this.md5Button = button;
-				break;
-			case 5:
-				this.patchButton = button;
-				break;
-			}
 		}
 		
 		topRightContainer = new JPanel();
-		addListeners();
+		reloadVersionList();
 		updateButtonState();
 		
 		JPanel topContainer = new JPanel(new BorderLayout(4,4));
@@ -151,33 +137,6 @@ public class MCPFrame extends JFrame {
         bottom.setVisible(false);
 		contentPane.add(bottom, BorderLayout.SOUTH);
 		contentPane.add(middlePanel, BorderLayout.CENTER);
-	}
-	
-	private void addListeners() {
-		decompileButton.addActionListener(event -> operateOnThread(() -> {
-			int response = -1;
-			if(Files.exists(MCPPaths.get(mcp, MCPPaths.SRC))) {
-				response = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
-			}
-			if(response <= 0) {
-				if(response == 0) {
-					mcp.setParameter(TaskParameter.SRC_CLEANUP, true);
-					mcp.performTask(TaskMode.CLEANUP, Side.ANY, false, false);
-				}
-				mcp.performTask(TaskMode.DECOMPILE, mcp.side);
-			}
-		}));
-		recompileButton.addActionListener(performTask(TaskMode.RECOMPILE));
-		reobfButton.addActionListener(performTask(TaskMode.REOBFUSCATE));
-		buildButton.addActionListener(performTask(TaskMode.BUILD));
-		md5Button.addActionListener(performTask(TaskMode.UPDATE_MD5));
-		patchButton.addActionListener(performTask(TaskMode.CREATE_PATCH));
-
-		reloadVersionList();
-	}
-	
-	public ActionListener performTask(TaskMode mode) {
-		return event -> operateOnThread(() -> mcp.performTask(mode, mcp.side));
 	}
 	
 	public void reloadVersionList() {
@@ -227,81 +186,15 @@ public class MCPFrame extends JFrame {
 			topRightContainer.add(this.verLabel);
 			topRightContainer.add(this.verList);
 		} catch (Exception e) {
-			verLabel = new JLabel("Unable to get current version!");
+			verLabel = new JLabel("Unable to get version list!");
 			verLabel.setForeground(Color.RED);
 			topRightContainer.add(verLabel);
-			e.printStackTrace();
 		}
 		topRightContainer.updateUI();
 	}
 
-	private boolean isButtonActive(JButton button) {
-		Side side = mcp.side;
-		try {
-			List<Path> clientPaths = new ArrayList<>();
-			List<Path> serverPaths = new ArrayList<>();
-			if(side == Side.SERVER && !VersionsParser.hasServer(mcp.getCurrentVersion())) {
-				return false;
-			}
-			if(button == decompileButton) {
-				if(side == Side.CLIENT || side == Side.ANY) {
-					clientPaths.add(MCPPaths.get(mcp, MCPPaths.CLIENT));
-				}
-				if(side == Side.SERVER || side == Side.ANY) {
-					serverPaths.add(MCPPaths.get(mcp, MCPPaths.SERVER));
-				}
-			}
-			if(button == recompileButton || button == reobfButton || button == md5Button || button == buildButton) {
-				if(side == Side.CLIENT || side == Side.ANY) {
-					clientPaths.add(MCPPaths.get(mcp, MCPPaths.CLIENT_SOURCES));
-				}
-				if(side == Side.SERVER || side == Side.ANY) {
-					serverPaths.add(MCPPaths.get(mcp, MCPPaths.SERVER_SOURCES));
-				}
-			}
-			if(button == patchButton) {
-				if(side == Side.CLIENT || side == Side.ANY) {
-					clientPaths.add(MCPPaths.get(mcp, MCPPaths.CLIENT_TEMP_SOURCES));
-				}
-				if(side == Side.SERVER || side == Side.ANY) {
-					serverPaths.add(MCPPaths.get(mcp, MCPPaths.SERVER_TEMP_SOURCES));
-				}
-			}
-			boolean allClientPathsReadable = true;
-			for(Path path : clientPaths) {
-				if(!Files.isReadable(path)) {
-					allClientPathsReadable = false;
-				}
-			}
-			boolean allServerPathsReadable = VersionsParser.hasServer(mcp.getCurrentVersion());
-			for(Path path : serverPaths) {
-				if(!Files.isReadable(path)) {
-					allServerPathsReadable = false;
-				}
-			}
-			if(side == Side.ANY) {
-				return allClientPathsReadable || allServerPathsReadable;
-			}
-			if(side == Side.CLIENT) {
-				return allClientPathsReadable;
-			}
-			if(side == Side.SERVER) {
-				return allServerPathsReadable;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
 	public void updateButtonState() {
-		decompileButton.setEnabled(isButtonActive(decompileButton));
-		recompileButton.setEnabled(isButtonActive(recompileButton));
-		reobfButton.setEnabled(isButtonActive(reobfButton));
-		buildButton.setEnabled(isButtonActive(buildButton));
-		md5Button.setEnabled(isButtonActive(md5Button));
-		patchButton.setEnabled(isButtonActive(patchButton));
+		buttons.forEach(button -> button.setEnabled(button.getEnabled()));
 		if(verList != null) verList.setEnabled(true);
 		verLabel.setEnabled(true);
 		menuBar.menuOptions.setEnabled(true);
@@ -309,12 +202,7 @@ public class MCPFrame extends JFrame {
 	}
 	
 	public void setAllButtonsInactive() {
-		decompileButton.setEnabled(false);
-		recompileButton.setEnabled(false);
-		reobfButton.setEnabled(false);
-		buildButton.setEnabled(false);
-		md5Button.setEnabled(false);
-		patchButton.setEnabled(false);
+		buttons.forEach(button -> button.setEnabled(false));
 		if(verList != null) verList.setEnabled(false);
 		verLabel.setEnabled(false);
 		menuBar.menuOptions.setEnabled(false);
@@ -329,30 +217,31 @@ public class MCPFrame extends JFrame {
 	public void resetProgressBars() {
         bottom.removeAll();
         bottom.setVisible(false);
-        progressBars = new JProgressBar[0];
+        progressBars = new SideProgressBar[0];
         progressLabels = new JLabel[0];
 	}
 
 	public void setProgress(int side, int progress) {
-		progressBars[side].setValue(progress);
+		progressBars[side].progress = progress;
+		progressBars[side].updateProgress();
 	}
 
 	public void setProgress(int side, String progressMessage) {
-		progressBars[side].setString(progressBars[side].getValue() + "% " + progressMessage);
+		progressBars[side].progressMsg = progressMessage;
+		progressBars[side].updateProgress();
 	}
 
 	public void setProgressBars(List<Task> tasks, TaskMode mode) {
         int size = tasks.size();
-		progressBars = new JProgressBar[size];
+		progressBars = new SideProgressBar[size];
         progressLabels = new JLabel[size];
         for (int i = 0; i < size; i++) {
 			String name = mode.getFullName();
-			if(tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
+			if(tasks.get(i).side != Side.ANY) {
 				name = tasks.get(i).side.name;
 			}
-			progressBars[i] = new JProgressBar();
+			progressBars[i] = new SideProgressBar();
 			progressLabels[i] = new JLabel(name + ":", JLabel.TRAILING);
-			progressBars[i].setStringPainted(true);
 			progressLabels[i].setVisible(true);
 			progressBars[i].setVisible(true);
 			GridBagConstraintsBuilder cb = new GridBagConstraintsBuilder(new GridBagConstraints()).insetsUnscaled(4, 4);

@@ -3,9 +3,12 @@ package org.mcphackers.mcp.tools;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.tasks.Task.Side;
 
 public class MCPPaths {
 
@@ -21,56 +24,52 @@ public class MCPPaths {
 	public static final String BUILD = 	"build/";
 	
 	//Files and subdirectories
-	public static final String CLIENT = 			 JARS + "minecraft.jar";
-	public static final String SERVER = 			 JARS + "minecraft_server.jar";
-	public static final String LIB_CLIENT =			 LIB + "client/";
-	public static final String LIB_SERVER =			 LIB + "server/";
-	public static final String CLIENT_FIXED = 		 LIB_CLIENT + "minecraft.jar";
-	public static final String LWJGL = 				 LIB_CLIENT + "lwjgl.jar";
-	public static final String LWJGL_UTIL = 		 LIB_CLIENT + "lwjgl_util.jar";
-	public static final String JINPUT = 	 		 LIB_CLIENT + "jinput.jar";
-	public static final String NATIVES = 			 LIB_CLIENT + "natives";
-	public static final String CLIENT_TINY_OUT = 	 TEMP + "client_deobf.jar";
-	public static final String SERVER_TINY_OUT = 	 TEMP + "server_deobf.jar";
-	public static final String CLIENT_EXC_OUT = 	 TEMP + "client_exc.jar";
-	public static final String SERVER_EXC_OUT = 	 TEMP + "server_exc.jar";
-	public static final String CLIENT_SRC = 		 TEMP + "client_src.zip";
-	public static final String SERVER_SRC = 		 TEMP + "server_src.zip";
-	public static final String CLIENT_TEMP_SOURCES = TEMP + "src/client";
-	public static final String SERVER_TEMP_SOURCES = TEMP + "src/server";
-	public static final String CLIENT_MD5 = 		 TEMP + "client.md5";
-	public static final String SERVER_MD5 = 		 TEMP + "server.md5";
-	public static final String CLIENT_MD5_RO = 		 TEMP + "client_reobf.md5";
-	public static final String SERVER_MD5_RO = 		 TEMP + "server_reobf.md5";
-	public static final String CLIENT_REOBF_JAR = 	 TEMP + "client_reobf.jar";
-	public static final String SERVER_REOBF_JAR = 	 TEMP + "server_reobf.jar";
-	public static final String CLIENT_MAPPINGS_RO =  TEMP + "client_reobf.tiny";
-	public static final String SERVER_MAPPINGS_RO =  TEMP + "server_reobf.tiny";
-	public static final String CLIENT_MAPPINGS_DO =  TEMP + "client_deobf.tiny";
-	public static final String SERVER_MAPPINGS_DO =  TEMP + "server_deobf.tiny";
-	public static final String CLIENT_SOURCES = 	 SRC + "minecraft";
-	public static final String SERVER_SOURCES = 	 SRC + "minecraft_server";
-	public static final String CLIENT_BIN = 		 BIN + "minecraft";
-	public static final String SERVER_BIN = 		 BIN + "minecraft_server";
-	public static final String CLIENT_REOBF = 		 REOBF + "minecraft";
-	public static final String SERVER_REOBF = 		 REOBF + "minecraft_server";
+	public static final String JAR_ORIGINAL = 		 JARS + "minecraft_%s.jar";
+	public static final String LIBS =			 	 LIB + "%s/";
+	public static final String LIBS_CLIENT =		 String.format(LIBS, Side.CLIENT.name.toLowerCase());
+	public static final String CLIENT_FIXED = 		 LIBS_CLIENT + "minecraft.jar";
+	public static final String LWJGL = 				 LIBS_CLIENT + "lwjgl.jar";
+	public static final String LWJGL_UTIL = 		 LIBS_CLIENT + "lwjgl_util.jar";
+	public static final String JINPUT = 	 		 LIBS_CLIENT + "jinput.jar";
+	public static final String NATIVES = 			 LIBS_CLIENT + "natives";
+	public static final String DEOBF_OUT = 	 		 TEMP + "%s_deobf.jar";
+	public static final String EXC_OUT = 	 		 TEMP + "%s_exc.jar";
+	public static final String TEMP_EXC_OUT = 	 	 TEMP + "%s_exc_temp.jar";
+	public static final String SIDE_SRC = 		 	 TEMP + "%s_src.zip";
+	public static final String TEMP_SOURCES = 		 TEMP + "src/%s";
+	public static final String MD5 = 		 		 TEMP + "%s.md5";
+	public static final String MD5_RO = 		 	 TEMP + "%s_reobf.md5";
+	public static final String REOBF_JAR = 	 		 TEMP + "%s_reobf.jar";
+	public static final String MAPPINGS_RO =  		 TEMP + "%s_reobf.tiny";
+	public static final String MAPPINGS_DO =  		 TEMP + "%s_deobf.tiny";
+	public static final String SOURCES = 	 		 SRC + "minecraft_%s";
+	public static final String BIN_SIDE = 		 	 BIN + "minecraft_%s";
+	public static final String REOBF_SIDE = 		 REOBF + "minecraft_%s";
+	public static final String MAPPINGS = 			 CONF + "%s.tiny";
+	public static final String EXC = 		 		 CONF + "%s.exc";
+	public static final String PATCHES = 	 		 CONF + "patches_%s";
+	public static final String BUILD_ZIP = 	 		 BUILD + "minecraft_%s.zip";
+	public static final String BUILD_JAR = 	 		 BUILD + "minecraft_%s.jar";
 	public static final String VERSION = 	 		 CONF + "version";
-	public static final String CLIENT_MAPPINGS = 	 CONF + "client.tiny";
-	public static final String SERVER_MAPPINGS = 	 CONF + "server.tiny";
-	public static final String EXC_CLIENT = 		 CONF + "client.exc";
-	public static final String EXC_SERVER = 		 CONF + "server.exc";
-	public static final String CLIENT_PATCHES = 	 CONF + "patches_client";
-	public static final String SERVER_PATCHES = 	 CONF + "patches_server";
-	public static final String JAVADOC_CLIENT = 	 CLIENT_MAPPINGS;
-	public static final String JAVADOC_SERVER = 	 SERVER_MAPPINGS;
-	public static final String BUILD_ZIP_CLIENT = 	 BUILD + "minecraft.zip";
-	public static final String BUILD_ZIP_SERVER = 	 BUILD + "minecraft_server.zip";
-	public static final String BUILD_JAR_CLIENT = 	 BUILD + "minecraft.jar";
-	public static final String BUILD_JAR_SERVER = 	 BUILD + "minecraft_server.jar";
 	public static final String UPDATE_JAR 		= 	 "update.jar";
 	
 	private static final Map<String, Path> paths = new HashMap<>();
 	private static Path cachedWorkingDir;
+	private static final Set<String> stripClient = new HashSet<String>() {{
+	    add(JAR_ORIGINAL);
+	    add(SOURCES);
+	    add(BIN_SIDE);
+	    add(REOBF_SIDE);
+	    add(BUILD_ZIP);
+	    add(BUILD_JAR);
+	}};
+	
+	public static Path get(MCP mcp, String path, Side side) {
+		if(side == Side.CLIENT && stripClient.contains(path)) {
+			return get(mcp, path.replace("_%s", ""));
+		}
+		return get(mcp, String.format(path, side.name.toLowerCase()));
+	}
 
 	public static Path get(MCP mcp, String path) {
 		if(mcp.getWorkingDir() != cachedWorkingDir) {

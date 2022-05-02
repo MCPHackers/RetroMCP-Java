@@ -40,8 +40,8 @@ public class TaskRecompile extends TaskStaged {
 		if(compiler == null) {
 			throw new RuntimeException("Could not find compiling API");
 		}
-		Path binPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, 		MCPPaths.SERVER_BIN));
-		Path srcPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SOURCES, 	MCPPaths.SERVER_SOURCES));
+		Path binPath = MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side);
+		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
 		return new Stage[] {
 			stage("Recompiling", 1,
 			() -> {
@@ -49,7 +49,7 @@ public class TaskRecompile extends TaskStaged {
 				Files.createDirectories(binPath);
 				setProgress(2);
 				if (!Files.exists(srcPath)) {
-					throw new IOException(chooseFromSide("Client", "Server") + " sources not found!");
+					throw new IOException(side.name + " sources not found!");
 				}
 
 				final List<File> src = collectSource();
@@ -103,11 +103,16 @@ public class TaskRecompile extends TaskStaged {
 	
 	public List<Path> collectClassPath() throws IOException {
 		List<Path> classpath = new ArrayList<>();
-		Path libPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.LIB_CLIENT, 		MCPPaths.LIB_SERVER));
 		if(side == Side.SERVER) {
-			classpath.add(MCPPaths.get(mcp, MCPPaths.SERVER));
+			classpath.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 		}
-		FileUtil.collectJars(libPath, classpath);
+		Side[] sides = (side == Side.MERGED) ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
+		for(Side sideLocal : sides) {
+			final Path libPath = MCPPaths.get(mcp, MCPPaths.LIBS, sideLocal);
+			if(Files.exists(libPath)) {
+				FileUtil.collectJars(libPath, classpath);
+			}
+		}
 		return classpath;
 	}
 	
@@ -128,7 +133,7 @@ public class TaskRecompile extends TaskStaged {
 	}
 	
 	public List<File> collectSource() throws IOException {
-		Path srcPath = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_SOURCES, 	MCPPaths.SERVER_SOURCES));
+		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
 		List<File> src;
 		try(Stream<Path> pathStream = Files.walk(srcPath)) {
 			src = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());

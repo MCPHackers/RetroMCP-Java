@@ -54,11 +54,11 @@ public class TaskUpdateMD5 extends TaskStaged {
 	}
 
 	public void updateMD5(boolean reobf) throws IOException {
-		Path binPath 	= MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN));
-		Path md5 = MCPPaths.get(mcp, reobf ? chooseFromSide(MCPPaths.CLIENT_MD5_RO, MCPPaths.SERVER_MD5_RO)
-				  				   : chooseFromSide(MCPPaths.CLIENT_MD5, 	 MCPPaths.SERVER_MD5));
+		final Path binPath 	= MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side);
+		final Path md5 = MCPPaths.get(mcp, reobf ? MCPPaths.MD5_RO : MCPPaths.MD5, side);
+
 		if (!Files.exists(binPath)) {
-			throw new IOException(chooseFromSide("Client", "Server") + " classes not found!");
+			throw new IOException(side.name + " classes not found!");
 		}
 		BufferedWriter writer = Files.newBufferedWriter(md5);
 		progress = 0;
@@ -73,7 +73,7 @@ public class TaskUpdateMD5 extends TaskStaged {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				try {
 					String md5_hash = Util.getMD5OfFile(file);
-					String fileName = MCPPaths.get(mcp, chooseFromSide(MCPPaths.CLIENT_BIN, MCPPaths.SERVER_BIN)).relativize(file).toString().replace("\\", "/").replace(".class", "");
+					String fileName = binPath.relativize(file).toString().replace("\\", "/").replace(".class", "");
 					writer.append(fileName).append(" ").append(md5_hash).append("\n");
 					progress++;
 					setProgress(50 + (int)((double)progress/(double)total * 50));

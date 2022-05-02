@@ -5,6 +5,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.Options;
@@ -27,6 +29,11 @@ public class MainGUI extends MCP {
 	
 	public MainGUI() {
 		workingDir = Paths.get("");
+		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
+		if (c == null) {
+			JOptionPane.showMessageDialog(null, "Java Development Kit not found!", "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
 		frame = new MCPFrame(this);
 	}
 	

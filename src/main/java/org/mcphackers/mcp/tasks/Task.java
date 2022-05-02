@@ -109,11 +109,4 @@ public abstract class Task implements ProgressListener, TaskRunnable {
 	public void setProgressBarIndex(int i) {
 		progressBarIndex = i;
 	}
-	
-	protected String chooseFromSide(String... strings) {
-		if(side.index >= 0 && side.index < strings.length) {
-			return strings[side.index];
-		}
-		return null;
-	}
 }
