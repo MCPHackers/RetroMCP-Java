@@ -138,7 +138,7 @@ public class TaskRecompile extends TaskStaged {
 		try(Stream<Path> pathStream = Files.walk(srcPath)) {
 			src = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
 		}
-		if(side == Side.CLIENT) {
+		if(side == Side.CLIENT || side == Side.MERGED) {
 			List<File> start;
 			try(Stream<Path> pathStream = Files.walk(MCPPaths.get(mcp, MCPPaths.CONF + "start"))) {
 				start = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());

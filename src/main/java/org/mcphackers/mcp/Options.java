@@ -18,10 +18,10 @@ public class Options {
 		case SRC_CLEANUP:
 		case FULL_BUILD:
 		case RUN_BUILD:
+		case OBFUSCATION:
 			value = false;
 			break;
 		case PATCHES:
-		case OBFUSCATION:
 			value = true;
 			break;
 		case IGNORED_PACKAGES:

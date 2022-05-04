@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -193,15 +192,6 @@ public abstract class Util {
 	
 	public static String convertToEscapedString(String s) {
 		return s.replace("\n", "\\n").replace("\t", "\\t");
-	}
-	
-	public static <K, V> K getKey(Map<K, V> map, V value) {
-		for (Entry<K, V> entry : map.entrySet()) {
-			if (entry.getValue() != null && entry.getValue().equals(value)) {
-				return entry.getKey();
-			}
-		}
-		return null;
 	}
 
 	public static String getJava() {

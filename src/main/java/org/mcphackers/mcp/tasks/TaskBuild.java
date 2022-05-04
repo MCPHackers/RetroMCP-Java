@@ -17,11 +17,7 @@ public class TaskBuild extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		Path originalJar =  MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side);
 		Path bin = 			MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side);
-		Path reobfDir = 	MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, side);
-		Path buildJar = 	MCPPaths.get(mcp, MCPPaths.BUILD_JAR, side);
-		Path buildZip = 	MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side);
 		return new Stage[] {
 			stage("Recompiling",
 			() -> {
@@ -29,22 +25,29 @@ public class TaskBuild extends TaskStaged {
 			}),
 			stage("Building", 52,
 			() -> {
-				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.BUILD));
-				if(mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD)) {
-					Files.deleteIfExists(buildJar);
-					Files.copy(originalJar, buildJar);
-					List<Path> reobfClasses = FileUtil.walkDirectory(reobfDir, path -> !Files.isDirectory(path));
-					FileUtil.packFilesToZip(buildJar, reobfClasses, reobfDir);
-					List<Path> assets = FileUtil.walkDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
-					FileUtil.packFilesToZip(buildJar, assets, bin);
-					FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.DSA");
-					FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.SF");
-				}
-				else {
-					Files.deleteIfExists(buildZip);
-					FileUtil.compress(reobfDir, buildZip);
-					List<Path> assets = FileUtil.walkDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
-					FileUtil.packFilesToZip(buildZip, assets, bin);
+				Side[] sides = side == Side.MERGED ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
+				for(Side localSide : sides) {
+					Path originalJar =  MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, localSide);
+					Path reobfDir = 	MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, localSide);
+					Path buildJar = 	MCPPaths.get(mcp, MCPPaths.BUILD_JAR, localSide);
+					Path buildZip = 	MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, localSide);
+					FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.BUILD));
+					if(mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD)) {
+						Files.deleteIfExists(buildJar);
+						Files.copy(originalJar, buildJar);
+						List<Path> reobfClasses = FileUtil.walkDirectory(reobfDir, path -> !Files.isDirectory(path));
+						FileUtil.packFilesToZip(buildJar, reobfClasses, reobfDir);
+						List<Path> assets = FileUtil.walkDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
+						FileUtil.packFilesToZip(buildJar, assets, bin);
+						FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.DSA");
+						FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.SF");
+					}
+					else {
+						Files.deleteIfExists(buildZip);
+						FileUtil.compress(reobfDir, buildZip);
+						List<Path> assets = FileUtil.walkDirectory(bin, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".class"));
+						FileUtil.packFilesToZip(buildZip, assets, bin);
+					}
 				}
 			})
 		};

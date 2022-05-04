@@ -21,6 +21,7 @@ import org.objectweb.asm.Opcodes;
 import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.format.Tiny2Reader;
 import net.fabricmc.mappingio.format.Tiny2Writer;
+import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import net.fabricmc.tinyremapper.IMappingProvider;
 import net.fabricmc.tinyremapper.NonClassCopyMode;
@@ -32,27 +33,27 @@ public abstract class MappingUtil {
 
 	private static final Pattern MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+");
 
-	public static void readMappings(Path mappings, MemoryMappingTree mappingTree) throws IOException {
+	public static void readMappings(Path mappings, MappingTree mappingTree) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(mappings)) {
-			Tiny2Reader.read(reader, mappingTree);
+			Tiny2Reader.read(reader, (MemoryMappingTree)mappingTree);
 		}
 	}
 
-	public static void writeMappings(Path mappings, MemoryMappingTree mappingTree) throws IOException {
+	public static void writeMappings(Path mappings, MappingTree mappingTree) throws IOException {
 		try (Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(mappings), false)) {
 			mappingTree.accept(writer);
 		}
 	}
-	public static void modifyClasses(MemoryMappingTree mappingTree, Path classPath, Function<String, String> getDstName) throws IOException {
-		modifyMappings(mappingTree, classPath, MappedElementKind.CLASS, getDstName);
+	public static void modifyClasses(MappingTree mappingTree, Path classPath, Function<String, String> getDstName) throws IOException {
+		modifyMappings((MemoryMappingTree)mappingTree, classPath, MappedElementKind.CLASS, getDstName);
 	}
 	
-	public static void modifyFields(MemoryMappingTree mappingTree, Path classPath, TriFunction<String, String, String, String> getDstName) throws IOException {
-		modifyMappings(mappingTree, classPath, MappedElementKind.FIELD, getDstName);
+	public static void modifyFields(MappingTree mappingTree, Path classPath, TriFunction<String, String, String, String> getDstName) throws IOException {
+		modifyMappings((MemoryMappingTree)mappingTree, classPath, MappedElementKind.FIELD, getDstName);
 	}
 	
-	public static void modifyMethods(MemoryMappingTree mappingTree, Path classPath, TriFunction<String, String, String, String> getDstName) throws IOException {
-		modifyMappings(mappingTree, classPath, MappedElementKind.METHOD, getDstName);
+	public static void modifyMethods(MappingTree mappingTree, Path classPath, TriFunction<String, String, String, String> getDstName) throws IOException {
+		modifyMappings((MemoryMappingTree)mappingTree, classPath, MappedElementKind.METHOD, getDstName);
 	}
 	
 	private static void modifyMappings(MemoryMappingTree mappingTree, Path classPath, MappedElementKind kind, Object getDstName) throws IOException {

@@ -40,8 +40,7 @@ public class SimpleJavadocProvider implements IJavadocProvider {
 
 	private static void readMappings(File inputFile) throws IOException {
 		try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
-			String line = reader.readLine();
-			while (line != null) {
+			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 				String[] splitLine = line.split("=");
 
 				if (splitLine[0].startsWith("c ")) {
@@ -56,9 +55,6 @@ public class SimpleJavadocProvider implements IJavadocProvider {
 				} else {
 					System.err.println("Invalid keyword with: " + line);
 				}
-
-				// Read next line
-				line = reader.readLine();
 			}
 		}
 	}

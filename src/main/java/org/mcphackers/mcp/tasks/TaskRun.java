@@ -27,14 +27,19 @@ public class TaskRun extends Task {
 		if(side == Side.SERVER && !VersionsParser.hasServer(currentVersion)) {
 			throw new Exception(Side.SERVER.name + " isn't available for this version!");
 		}
-		int port = VersionsParser.getProxyPort(currentVersion);
-		boolean isClassic = VersionsParser.getServerVersion(currentVersion).startsWith("c");
+		String host = "localhost";
+		int port = 11700;
+		try {
+			port = VersionsParser.getProxyPort(currentVersion);
+			host = "betacraft.uk";
+		} catch (Exception e) {};
+		
 		Path natives = MCPPaths.get(mcp, MCPPaths.NATIVES);
 		List<Path> cpList = new LinkedList<>();
 		if(runBuild) {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
+			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, Side.MERGED));
 		}
-		cpList.add(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side));
+		cpList.add(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, Side.MERGED));
 		if(side == Side.SERVER) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 		}
@@ -53,14 +58,14 @@ public class TaskRun extends Task {
 		String java = Util.getJava();
 		List<String> args = new ArrayList<>(
 				Arrays.asList(java,
-						// TODO Would also be good if proxy could be customizable in run args
-						"-Dhttp.proxyHost=betacraft.uk",
+						"-Dhttp.proxyHost=" + host,
 						"-Dhttp.proxyPort=" + port,
 						"-Dorg.lwjgl.librarypath=" + natives.toAbsolutePath(),
 						"-Dnet.java.games.input.librarypath=" + natives.toAbsolutePath(),
 						"-cp", cp,
-						side == Side.SERVER ? (isClassic ? "com.mojang.minecraft.server.MinecraftServer" : "net.minecraft.server.MinecraftServer")
-																	  : runBuild ? "net.minecraft.client.Minecraft" : "Start"));
+						findStartClass(cpList)
+						)
+				);
 		String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
 		for (String arg : runArgs) {
 			args.add(1, arg);
@@ -69,5 +74,26 @@ public class TaskRun extends Task {
 		if(exit != 0) {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}
+	}
+	
+	private String findStartClass(List<Path> classPath) throws Exception {
+		List<String> possibleStartClass = new ArrayList<>();
+		possibleStartClass.add("Start");
+		if(side != Side.SERVER) {
+			possibleStartClass.add("net.minecraft.client.Minecraft");
+			possibleStartClass.add("com.mojang.minecraft.Minecraft");
+		}
+		if(side != Side.CLIENT) {
+			possibleStartClass.add("net.minecraft.server.MinecraftServer");
+			possibleStartClass.add("com.mojang.minecraft.server.MinecraftServer");
+		}
+		for(Path cp : classPath) {
+			for(String start : possibleStartClass) {
+				if(Files.exists(cp.resolve(start))) {
+					return start;
+				}
+			}
+		}
+		throw new Exception("Could not find start class");
 	}
 }
