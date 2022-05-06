@@ -11,8 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.stream.Stream;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.ProgressListener;
-import org.mcphackers.mcp.tools.MCPPaths;
+import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tools.Util;
 
 public class TaskUpdateMD5 extends TaskStaged {

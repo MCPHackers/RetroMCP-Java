@@ -6,8 +6,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.main.MainGUI;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
 
 public class TaskButton extends JButton {
 	private TaskMode linkedTask;
@@ -28,10 +28,10 @@ public class TaskButton extends JButton {
 	}
 	
 	public static ActionListener performTask(MainGUI mcp, TaskMode mode) {
-		return event -> operateOnThread(() -> mcp.performTask(mode, mcp.side));
+		return event -> operateOnThread(() -> mcp.performTask(mode, mcp.getOptions().side));
 	}
 
 	public boolean getEnabled() {
-		return linkedTask.isAvailable(frame.mcp, frame.mcp.side);
+		return linkedTask.isAvailable(frame.mcp, frame.mcp.getOptions().side);
 	}
 }

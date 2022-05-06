@@ -1,15 +1,17 @@
-package org.mcphackers.mcp;
+package org.mcphackers.mcp.tasks.mode;
 
 import org.mcphackers.mcp.tasks.Task;
+import org.mcphackers.mcp.tasks.mode.TaskMode.Requirement;
 
 public class TaskModeBuilder {
 	
 	private String name;
-	private String fullName;
-	private String desc;
-	public Class<? extends Task> taskClass;
-	public TaskParameter[] params = new TaskParameter[] {};
-	public Requirement requirement;
+	private String fullName = "???";
+	private String desc = "No description provided";
+	private boolean usesProgressBars = true;
+	private Class<? extends Task> taskClass;
+	private TaskParameter[] params = new TaskParameter[] {};
+	private Requirement requirement;
 
 	public TaskModeBuilder setCmdName(String name) {
 		this.name = name;
@@ -23,6 +25,11 @@ public class TaskModeBuilder {
 
 	public TaskModeBuilder setDescription(String desc) {
 		this.desc = desc;
+		return this;
+	}
+
+	public TaskModeBuilder setProgressBars(boolean enabled) {
+		this.usesProgressBars = enabled;
 		return this;
 	}
 
@@ -42,6 +49,6 @@ public class TaskModeBuilder {
 	}
 
 	public TaskMode build() {
-		return new TaskMode(name, fullName, desc, taskClass, params, requirement);
+		return new TaskMode(name, fullName, desc, taskClass, params, usesProgressBars, requirement);
 	}
 }

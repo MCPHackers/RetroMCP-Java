@@ -1,4 +1,4 @@
-package org.mcphackers.mcp;
+package org.mcphackers.mcp.tasks;
 
 public interface TaskRunnable {
 	

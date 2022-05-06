@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.mcphackers.mcp.tools.MCPPaths;
 import org.mcphackers.mcp.tools.Util;
 
 public class Update {

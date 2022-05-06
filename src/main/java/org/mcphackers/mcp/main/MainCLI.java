@@ -15,13 +15,13 @@ import javax.tools.ToolProvider;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
-import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
-import org.mcphackers.mcp.TaskParameter;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
-import org.mcphackers.mcp.tools.MCPPaths;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
@@ -114,8 +114,7 @@ public class MainCLI extends MCP {
 				if(mode == TaskMode.START) {
 					options.setParameter(TaskParameter.RUN_ARGS, args);
 				}
-				boolean progressBars = mode != TaskMode.CLEANUP && mode != TaskMode.SETUP;
-				performTask(mode, side, progressBars, true);
+				performTask(mode, side);
 			} else if (mode == TaskMode.HELP) {
 				if(helpCommand == null) {
 					for (TaskMode mode : TaskMode.registeredTasks) {

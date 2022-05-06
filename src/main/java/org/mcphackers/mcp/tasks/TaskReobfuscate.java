@@ -11,12 +11,11 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MappingData;
-import org.mcphackers.mcp.ProgressListener;
-import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.MCPPaths;
 import org.mcphackers.mcp.tools.TriFunction;
+import org.mcphackers.mcp.tools.mappings.MappingData;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 
 import net.fabricmc.mappingio.tree.MappingTree;
@@ -35,18 +34,18 @@ public class TaskReobfuscate extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-		stage("Recompiling",
-		() -> {
-			new TaskRecompile(side, mcp, this).doTask();
-		}),
-		stage("Gathering MD5 hashes", 30,
-		() -> {
-			new TaskUpdateMD5(side, mcp, this).updateMD5(true);
-		}),
-		stage("Reobfuscating", 52,
-		() -> {
-			reobfuscate();
-		})
+			stage("Recompiling",
+			() -> {
+				new TaskRecompile(side, mcp, this).doTask();
+			}),
+			stage("Gathering MD5 hashes", 30,
+			() -> {
+				new TaskUpdateMD5(side, mcp, this).updateMD5(true);
+			}),
+			stage("Reobfuscating", 52,
+			() -> {
+				reobfuscate();
+			})
 		};
 	}
 		
@@ -89,15 +88,15 @@ public class TaskReobfuscate extends TaskStaged {
 			FileUtil.deleteDirectoryIfExists(reobfDir);
 			FileUtil.unzip(reobfJar, reobfDir, entry -> {
 				String className = entry.getName().replace(".class", "");
-				ClassMapping cls = mappingData.getTree().getClass(className);
-				String deobfName = cls == null ? className : cls.getDstName(0);
+				ClassMapping cls = mappingData.getTree().getClass(className, 0);
+				String deobfName = cls == null ? className : cls.getSrcName();
 				String hash			= originalHashes.get(deobfName);
 				String hashModified = recompHashes.get(deobfName);
 				if(!entry.isDirectory()) {
 					if(hash == null) {
 						return true;
 					}
-					else if(!hash.equals(hashModified)) {
+					else if(!hash.equals(hashModified) && cls != null) {
 						return true;
 					}
 				}

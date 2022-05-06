@@ -10,8 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.TaskParameter;
-import org.mcphackers.mcp.tools.MCPPaths;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
@@ -24,9 +24,6 @@ public class TaskRun extends Task {
 	public void doTask() throws Exception {
 		boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
 		String currentVersion = mcp.getCurrentVersion();
-		if(side == Side.SERVER && !VersionsParser.hasServer(currentVersion)) {
-			throw new Exception(Side.SERVER.name + " isn't available for this version!");
-		}
 		String host = "localhost";
 		int port = 11700;
 		try {
@@ -37,9 +34,12 @@ public class TaskRun extends Task {
 		Path natives = MCPPaths.get(mcp, MCPPaths.NATIVES);
 		List<Path> cpList = new LinkedList<>();
 		if(runBuild) {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, Side.MERGED));
+			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
 		}
-		cpList.add(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, Side.MERGED));
+		cpList.add(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side));
+		if(Files.exists(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, Side.MERGED))) {
+			cpList.add(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, Side.MERGED));
+		}
 		if(side == Side.SERVER) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 		}
@@ -89,7 +89,7 @@ public class TaskRun extends Task {
 		}
 		for(Path cp : classPath) {
 			for(String start : possibleStartClass) {
-				if(Files.exists(cp.resolve(start))) {
+				if(Files.exists(cp.resolve(start.replace(".", "/") + ".class"))) {
 					return start;
 				}
 			}

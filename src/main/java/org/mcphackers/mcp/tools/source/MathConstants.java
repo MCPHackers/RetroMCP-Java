@@ -28,10 +28,11 @@ public class MathConstants extends Constants {
 		replaceValue((double)(float)Math.PI, "(double)(float)Math.PI");
 		replaceValue(Math.PI * 2D, "Math.PI * 2D");
 		replaceValue(Math.PI / 2D, "Math.PI / 2D");
-		replaceValue(0xFFFFFF, "0xFFFFFF"); // TODO Might do this in fernflower at some point
+		replaceValue(0xFFFFFF, "0xFFFFFF");
 		replaceValue(0x20200000, "0x20200000");
 		replaceValue(0x20400000, "0x20400000");
 		replaceValue(0xFF000000, "0xFF000000");
+		replaceValue(1.0D / 256D, "1.0D / 256D");
 		replaceValue(2.0D / 256D, "2.0D / 256D");
 		replaceValue(6.0D / 256D, "6.0D / 256D");
 		replaceValue(7.0D / 256D, "7.0D / 256D");

@@ -16,14 +16,12 @@ public interface MCPPlugin {
 	void setTaskOverrides(Task task);
 	
 	public enum TaskEvent {
-		//TODO Custom events
 		PRE_TASK,
 		POST_TASK,
 		TASK_STEP;
 	}
 	
 	public enum MCPEvent {
-		//TODO Custom events
 		STARTED_TASKS,
 		FINISHED_TASKS,
 		ENV_STARTUP;

@@ -1,9 +1,14 @@
 package org.mcphackers.mcp.gui;
 
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
+
+import java.awt.Desktop;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,19 +20,21 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 
-import org.mcphackers.mcp.TaskMode;
-import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.main.MainGUI;
-import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.Util;
-
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
 public class MenuBar extends JMenuBar {
 	public final JMenu menuOptions = new JMenu("Options");
 	public final JMenu mcpMenu = new JMenu("MCP");
-	private final JMenu helpMenu = new JMenu("Help");
+	public final Map<Side, JMenuItem> start = new HashMap<>();
+	public final Map<TaskParameter, JMenuItem> optionItems = new HashMap<>();
+	private final JMenu helpMenu = new JMenu(TaskMode.HELP.getFullName());
 	private JMenuItem[] sideItems;
 	private final JMenuItem githubItem = new JMenuItem("Github Page");
 	private final MCPFrame owner;
@@ -41,19 +48,27 @@ public class MenuBar extends JMenuBar {
 		initOptions();
 		reloadSide();
 		JMenuItem update = new JMenuItem("Check for updates");
-		update.addActionListener(a -> operateOnThread(() -> mcp.performTask(TaskMode.UPDATE_MCP, Side.ANY, false, false)));
-		JMenuItem[] start = new JMenuItem[2];
-		String[] sides = {"client", "server"};
-		for(int i = 0; i < 2; i++) {
-			final int i2 = i;
-			start[i] = new JMenuItem(TaskMode.START.getFullName() + " " + sides[i]);
-			start[i].addActionListener(a -> {
+		update.addActionListener(a -> operateOnThread(() -> mcp.performTask(TaskMode.UPDATE_MCP, Side.ANY, false)));
+		Side[] sides = {Side.CLIENT, Side.SERVER};
+		for(Side side : sides) {
+			JMenuItem start = new JMenuItem(TaskMode.START.getFullName() + " " + side.name);
+			start.addActionListener(a -> {
 				operateOnThread(() -> {
-					mcp.performTask(TaskMode.START, Task.sides.get(i2), false, false);
+					mcp.performTask(TaskMode.START, side, false);
 					reloadSide();
 				});
 			});
+			mcpMenu.add(start);
+			this.start.put(side, start);
 		}
+		JMenuItem browseDir = new JMenuItem("View working directory");
+		browseDir.addActionListener(a -> {
+			try {
+				Desktop.getDesktop().open(mcp.getWorkingDir().toAbsolutePath().toFile());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		});
 		JMenuItem changeDir = new JMenuItem("Change working directory");
 		changeDir.addActionListener(a -> operateOnThread(() -> {
 				String value = (String)JOptionPane.showInputDialog(owner, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, mcp.getWorkingDir().toAbsolutePath().toString());
@@ -61,20 +76,24 @@ public class MenuBar extends JMenuBar {
 					Path p = Paths.get(value);
 					if(Files.exists(p)) {
 						mcp.workingDir = p;
+						mcp.options = new Options(MCPPaths.get(mcp, "options.cfg"));
+						reloadOptions();
+						reloadSide();
+						mcp.options.save();
 						owner.reloadVersionList();
 						owner.updateButtonState();
 					}
 				}
 			})
 		);
-		mcpMenu.add(start[0]);
-		mcpMenu.add(start[1]);
 		mcpMenu.add(update);
+		mcpMenu.add(browseDir);
 		mcpMenu.add(changeDir);
 		final boolean taskMenu = true;
 		if(taskMenu) {
-			List<TaskMode> usedTasks = Arrays.asList(TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.CREATE_PATCH, TaskMode.BUILD,
-					TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.UPDATE_MD5, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP);
+			List<TaskMode> usedTasks = new ArrayList<>();
+			usedTasks.addAll(Arrays.asList(MainGUI.TASKS));
+			usedTasks.addAll(Arrays.asList(TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP));
 			JMenu runTask = new JMenu("More tasks...");
 			for(TaskMode task : TaskMode.registeredTasks) {
 				if(usedTasks.contains(task)) {
@@ -86,9 +105,12 @@ public class MenuBar extends JMenuBar {
 			}
 			mcpMenu.add(runTask);
 		}
+		JMenuItem exit = new JMenuItem(TaskMode.EXIT.getFullName());
+		exit.addActionListener(a -> System.exit(0));
+		mcpMenu.add(exit);
 		add(mcpMenu);
 		add(menuOptions);
-		this.githubItem.addActionListener(e -> this.onGithubClicked());
+		this.githubItem.addActionListener(e -> Util.openUrl(MCP.githubURL));
 		this.helpMenu.add(this.githubItem);
 		add(helpMenu);
 	}
@@ -99,7 +121,7 @@ public class MenuBar extends JMenuBar {
 				sideItem.setSelected(false);
 			}
 		}
-		int itemNumber = mcp.side.index;
+		int itemNumber = mcp.getSide().index;
 		if(itemNumber < 0) {
 			itemNumber = sideItems.length - 1;
 		}
@@ -107,7 +129,8 @@ public class MenuBar extends JMenuBar {
 	}
 	
 	private void setSide(Side side) {
-		mcp.side = side;
+		mcp.getOptions().side = side;
+		mcp.getOptions().save();
 		reloadSide();
 		owner.updateButtonState();
 	}
@@ -142,14 +165,13 @@ public class MenuBar extends JMenuBar {
 				{TaskParameter.FULL_BUILD},
 				{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS}
 		};
-		Map<TaskParameter, JMenuItem> resetOptions = new HashMap<>();
 		for(int i = 0; i < names.length; i++) {
 			JMenu a = new JMenu(names[i]);
 			for(TaskParameter param : params[i]) {
 				JMenuItem b;
 				if(param.type == Boolean.class) {
 					b = new JRadioButtonMenuItem(param.desc);
-					resetOptions.put(param, b);
+					optionItems.put(param, b);
 					b.addActionListener(e -> mcp.options.setParameter(param, b.isSelected()));
 				}
 				else {
@@ -168,20 +190,15 @@ public class MenuBar extends JMenuBar {
 			}
 			menuOptions.add(a);
 		}
-		resetDefaults(resetOptions);
+		reloadOptions();
 		JMenuItem reset = new JMenuItem("Reset to defaults");
-		reset.addActionListener(e -> resetDefaults(resetOptions));
+		reset.addActionListener(e -> reloadOptions());
 		menuOptions.add(reset);
 	}
 	
-	private void resetDefaults(Map<TaskParameter, JMenuItem> resetOptions) {
-		mcp.options.resetDefaults();
-		for(Map.Entry<TaskParameter, JMenuItem> entry : resetOptions.entrySet()) {
+	private void reloadOptions() {
+		for(Map.Entry<TaskParameter, JMenuItem> entry : optionItems.entrySet()) {
 			entry.getValue().setSelected(mcp.options.getBooleanParameter(entry.getKey()));
 		}
-	}
-
-	private void onGithubClicked() {
-		Util.openUrl("https://github.com/MCPHackers/RetroMCP-Java");
 	}
 }

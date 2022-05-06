@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mcphackers.mcp.ProgressListener;
-import org.mcphackers.mcp.TaskRunnable;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
 import org.mcphackers.mcp.MCP;
 

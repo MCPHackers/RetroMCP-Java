@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.tools.MCPPaths;
+import org.mcphackers.mcp.MCPPaths;
 
 import codechicken.diffpatch.cli.DiffOperation;
 

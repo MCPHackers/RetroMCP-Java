@@ -9,19 +9,21 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
-import org.mcphackers.mcp.TaskMode;
 import org.mcphackers.mcp.gui.MCPFrame;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
 
 
 public class MainGUI extends MCP {
 	public String currentVersion;
 	public Path workingDir;
 	public MCPFrame frame;
-	public Side side = Side.ANY;
-	public Options options = new Options();
+	public Options options;
+	
+	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 	
 	public static void main(String[] args) throws Exception {
 		new MainGUI();
@@ -29,12 +31,17 @@ public class MainGUI extends MCP {
 	
 	public MainGUI() {
 		workingDir = Paths.get("");
+		options = new Options(MCPPaths.get(this, "options.cfg"));
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
 			JOptionPane.showMessageDialog(null, "Java Development Kit not found!", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 		frame = new MCPFrame(this);
+	}
+	
+	public Side getSide() {
+		return getOptions().side;
 	}
 	
 	@Override

@@ -41,7 +41,7 @@ public abstract class FileUtil {
 	public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
 		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader)null)) {
 			for(Path file : files) {
-				Path fileInsideZipPath = fs.getPath(relativeTo.relativize(file).toString());
+				Path fileInsideZipPath = fs.getPath("/" + relativeTo.relativize(file).toString());
 				Files.deleteIfExists(fileInsideZipPath);
 				if(fileInsideZipPath.getParent() != null && !Files.exists(fileInsideZipPath.getParent()))
 					Files.createDirectories(fileInsideZipPath.getParent());

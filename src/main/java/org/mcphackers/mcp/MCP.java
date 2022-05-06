@@ -17,14 +17,16 @@ import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.Util;
-import org.mcphackers.mcp.tools.VersionsParser;
 
 public abstract class MCP {
 
 	public static final String VERSION = "v1.0-pre2";
+	public static final String githubURL = "https://github.com/MCPHackers/RetroMCP-Java";
+
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 
 	static {
@@ -36,34 +38,31 @@ public abstract class MCP {
 		triggerEvent(MCPEvent.ENV_STARTUP);
 	}
 
-	public void performTask(TaskMode mode, Side side) {
-		performTask(mode, side, true, true);
+	public abstract Path getWorkingDir();
+	
+	public final void performTask(TaskMode mode, Side side) {
+		performTask(mode, side, true);
 	}
 
-	public abstract Path getWorkingDir();
-
-	public final void performTask(TaskMode mode, Side side, boolean enableProgressBars, boolean enableCompletionMessage) {
+	public final void performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
 			System.err.println("Performing 0 tasks");
 			return;
 		}
-
-		boolean hasServer = true;
-		try {
-			hasServer = VersionsParser.hasServer(getCurrentVersion());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		boolean enableProgressBars = mode.usesProgressBars;
+		
 		List<Task> performedTasks = new ArrayList<>();
 		for (Task task : tasks) {
 			if (task.side == side || task.side == Side.ANY) {
 				performedTasks.add(task);
 			}
 			else if (side == Side.ANY) {
-				// TODO also check if client/server exists locally
-				if (task.side == Side.SERVER && hasServer || task.side == Side.CLIENT) {
-					performedTasks.add(task);
+				if (task.side == Side.SERVER || task.side == Side.CLIENT) {
+					if(mode.requirement.get(this, task.side)) {
+						performedTasks.add(task);
+					}
 				}
 			}
 		}
@@ -92,6 +91,7 @@ public abstract class MCP {
 				}
 			});
 		}
+		
 		pool.shutdown();
 		while (!pool.isTerminated()) {}
 
@@ -105,13 +105,13 @@ public abstract class MCP {
 				result = retresult;
 			}
 		}
-		//TODO display this info in the pop up message
+		//TODO display this info in the pop up message (Maybe)
 		if(msgs.size() > 0) log("");
 		for(String msg : msgs) {
 			log(msg);
 		}
 		triggerEvent(MCPEvent.FINISHED_TASKS);
-		if(enableCompletionMessage) {
+		if(completionMsg) {
 			String[] msgs2 = {"Finished successfully!", "Finished with warnings!", "Finished with errors!"};
 			showMessage(mode.getFullName(), msgs2[result], result);
 		}
@@ -154,44 +154,7 @@ public abstract class MCP {
 
 	public void safeSetParameter(TaskParameter param, String value) {
 		if(value != null) {
-			if(param.type == Integer.class) {
-				try {
-					int valueInt = Integer.parseInt(value);
-					setParameter(param, valueInt);
-					return;
-				}
-				catch (NumberFormatException ignored) {}
-				catch (IllegalArgumentException e) {}
-			}
-			else if(param.type == Boolean.class) {
-				if(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-					try {
-						boolean valueBoolean = Boolean.parseBoolean(value);
-						setParameter(param, valueBoolean);
-						return;
-					}
-					catch (IllegalArgumentException e) {}
-				}
-			}
-			else if(param.type == String[].class) {
-				try {
-					String[] values = value.split(",");
-					for(int i2 = 0 ; i2 < values.length; i2++) {
-						values[i2] = Util.convertFromEscapedString(values[i2]).trim();
-					}
-					setParameter(param, values);
-					return;
-				}
-				catch (IllegalArgumentException e) {}
-			}
-			else if(param.type == String.class) {
-				try {
-					value = Util.convertFromEscapedString(value);
-					setParameter(param, value);
-					return;
-				}
-				catch (IllegalArgumentException e) {}
-			}
+			if(getOptions().safeSetParameter(param, value)) return;
 			showMessage(param.desc, "Invalid value!", Task.ERROR);
 		}
 	}
@@ -211,7 +174,7 @@ public abstract class MCP {
 					for(Class<MCPPlugin> cls : classes) {
 						MCPPlugin plugin = cls.newInstance();
 						plugin.init();
-						plugins.put(plugin.pluginId(), plugin);
+						plugins.put(plugin.pluginId() + plugin.hashCode(), plugin);
 					}
 	    		}
 			} catch (Exception e) {

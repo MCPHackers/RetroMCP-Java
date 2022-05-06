@@ -1,8 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.ProgressListener;
-import org.mcphackers.mcp.TaskRunnable;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
 
 public abstract class TaskStaged extends Task {
@@ -31,9 +29,8 @@ public abstract class TaskStaged extends Task {
 	
 	public void doTask() throws Exception {
 		stages = setStages();
-		mcp.setPluginOverrides(this);
+		mcp.setPluginOverrides(this); // TODO set overrides for Task class too
 		while(step < stages.length) {
-			updateProgress();
 			setProgress(stages[step].stageName, stages[step].completion);
 			stages[step].doTask();
 			step();
@@ -43,20 +40,6 @@ public abstract class TaskStaged extends Task {
 	public void overrideStage(int stageIndex, TaskRunnable task) {
 		if(stageIndex < stages.length) {
 			stages[stageIndex].setOperation(task);
-		}
-	}
-	
-	protected void updateProgress() {
-		if(step < stages.length) {
-			if(stages[step].completion >= 0 && stages[step].completion <= 100) {
-				setProgress(stages[step].stageName, stages[step].completion);
-			}
-			else {
-				setProgress(stages[step].stageName);
-			}
-		}
-		else {
-			setProgress("Idle");
 		}
 	}
 	

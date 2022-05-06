@@ -19,10 +19,9 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.ProgressListener;
-import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.MCPPaths;
 
 public class TaskRecompile extends TaskStaged {
 	
@@ -87,7 +86,7 @@ public class TaskRecompile extends TaskStaged {
 			stage("Copying resources", 50,
 			() -> {
 				// Copy assets from source folder
-				List<Path> assets = FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java"));
+				List<Path> assets = collectResources();
 				int i = 0;
 				for(Path path : assets) {
 					if(srcPath.relativize(path).getParent() != null) {
@@ -99,6 +98,11 @@ public class TaskRecompile extends TaskStaged {
 				}
 			})
 		};
+	}
+	
+	public List<Path> collectResources() throws IOException {
+		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
+		return FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java") && !path.getFileName().toString().endsWith(".class"));
 	}
 	
 	public List<Path> collectClassPath() throws IOException {
@@ -157,7 +161,7 @@ public class TaskRecompile extends TaskStaged {
 		for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
 			if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
 				String[] kindString = {"Info", "Warning", "Error"};
-				byte kind = (byte) (diagnostic.getKind() == Diagnostic.Kind.ERROR ? 2 : 1);
+				byte kind = (byte) (diagnostic.getKind() == Diagnostic.Kind.ERROR ? Task.ERROR : Task.WARNING);
 				JavaFileObject source = diagnostic.getSource();
 				if (source == null) {
 					addMessage(kindString[kind] + String.format("%n%s%n",
@@ -172,8 +176,5 @@ public class TaskRecompile extends TaskStaged {
 				}
 			}
 		mgr.close();
-		if (!success) {
-			throw new RuntimeException("Compilation error!");
-		}
 	}
 }

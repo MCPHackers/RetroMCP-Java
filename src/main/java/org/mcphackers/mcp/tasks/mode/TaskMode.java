@@ -1,4 +1,4 @@
-package org.mcphackers.mcp;
+package org.mcphackers.mcp.tasks.mode;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.TaskBuild;
@@ -20,7 +22,6 @@ import org.mcphackers.mcp.tasks.TaskReobfuscate;
 import org.mcphackers.mcp.tasks.TaskRun;
 import org.mcphackers.mcp.tasks.TaskSetup;
 import org.mcphackers.mcp.tasks.TaskUpdateMD5;
-import org.mcphackers.mcp.tools.MCPPaths;
 
 public class TaskMode {
 	public static final List<TaskMode> registeredTasks = new ArrayList<>();
@@ -31,6 +32,7 @@ public class TaskMode {
 			.setCmdName("help")
 			.setFullName("Help")
 			.setDescription("Displays command usage")
+			.setProgressBars(false)
 			.build();
 	public static TaskMode DECOMPILE = new TaskModeBuilder()
 			.setCmdName("decompile")
@@ -108,12 +110,14 @@ public class TaskMode {
 			.setFullName("Update")
 			.setDescription("Download an update if available")
 			.setTaskClass(TaskDownloadUpdate.class)
+			.setProgressBars(false)
 			.build();
 	public static TaskMode SETUP = new TaskModeBuilder()
 			.setCmdName("setup")
 			.setFullName("Setup")
 			.setDescription("Set initial workspace for a version")
 			.setTaskClass(TaskSetup.class)
+			.setProgressBars(false)
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG
 				})
@@ -123,6 +127,7 @@ public class TaskMode {
 			.setFullName("Cleanup")
 			.setDescription("Delete all source and class folders")
 			.setTaskClass(TaskCleanup.class)
+			.setProgressBars(false)
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG,
 				TaskParameter.SRC_CLEANUP
@@ -133,6 +138,10 @@ public class TaskMode {
 			.setFullName("Start")
 			.setDescription("Runs the client or the server from compiled classes")
 			.setTaskClass(TaskRun.class)
+			.setProgressBars(false)
+			.addRequirement((mcp, side) -> {
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side)) ||  Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, Side.MERGED));
+			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG,
 				TaskParameter.RUN_BUILD
@@ -173,21 +182,24 @@ public class TaskMode {
 			.setCmdName("exit")
 			.setFullName("Exit")
 			.setDescription("Exit the program")
+			.setProgressBars(false)
 			.build();
 	
 	private final String name;
 	private final String fullName;
 	private final String desc;
+	public final boolean usesProgressBars;
 	public final Class<? extends Task> taskClass;
 	public final TaskParameter[] params;
 	public final Requirement requirement;
 	
-	public TaskMode(String name, String fullName, String desc, Class<? extends Task> taskClass, TaskParameter[] params, Requirement requirements) {
+	public TaskMode(String name, String fullName, String desc, Class<? extends Task> taskClass, TaskParameter[] params, boolean useBars, Requirement requirements) {
 		this.name = name;
 		this.fullName = fullName;
 		this.desc = desc;
 		this.taskClass = taskClass;
 		this.params = params;
+		this.usesProgressBars = useBars;
 		this.requirement = requirements;
 		registeredTasks.add(this); //TODO overriding any default tasks will register a duplicate
 	}
@@ -251,5 +263,10 @@ public class TaskMode {
 			}
 		}
 		return true;
+	}
+	
+	@FunctionalInterface
+	public interface Requirement {
+		boolean get(MCP mcp, Side side);
 	}
 }

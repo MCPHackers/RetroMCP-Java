@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.mcphackers.mcp.tasks.Task;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
 
 public abstract class BasicMCP extends MCP {
 
@@ -31,10 +32,6 @@ public abstract class BasicMCP extends MCP {
 
 	@Override
 	public void setActive(boolean active) {
-	}
-
-	@Override
-	public void showMessage(String title, String msg, int type) {
 	}
 
 }

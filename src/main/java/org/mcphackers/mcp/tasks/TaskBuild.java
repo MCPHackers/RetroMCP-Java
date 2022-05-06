@@ -5,9 +5,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.MCPPaths;
 
 public class TaskBuild extends TaskStaged {
 

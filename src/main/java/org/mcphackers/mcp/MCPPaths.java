@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tools;
+package org.mcphackers.mcp;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tasks.Task.Side;
 
 public class MCPPaths {
@@ -32,16 +31,17 @@ public class MCPPaths {
 	public static final String LWJGL_UTIL = 		 LIBS_CLIENT + "lwjgl_util.jar";
 	public static final String JINPUT = 	 		 LIBS_CLIENT + "jinput.jar";
 	public static final String NATIVES = 			 LIBS_CLIENT + "natives";
-	public static final String DEOBF_OUT = 	 		 TEMP + "%s_deobf.jar";
-	public static final String EXC_OUT = 	 		 TEMP + "%s_exc.jar";
-	public static final String TEMP_EXC_OUT = 	 	 TEMP + "%s_exc_temp.jar";
-	public static final String SIDE_SRC = 		 	 TEMP + "%s_src.zip";
-	public static final String TEMP_SOURCES = 		 TEMP + "src/%s";
-	public static final String MD5 = 		 		 TEMP + "%s.md5";
-	public static final String MD5_RO = 		 	 TEMP + "%s_reobf.md5";
-	public static final String REOBF_JAR = 	 		 TEMP + "%s_reobf.jar";
-	public static final String MAPPINGS_RO =  		 TEMP + "%s_reobf.tiny";
-	public static final String MAPPINGS_DO =  		 TEMP + "%s_deobf.tiny";
+	public static final String TEMP_SIDE = 	 		 TEMP + "%s";
+	public static final String DEOBF_OUT = 	 		 TEMP + "%s/deobf.jar";
+	public static final String EXC_OUT = 	 		 TEMP + "%s/exc.jar";
+	public static final String TEMP_EXC_OUT = 	 	 TEMP + "%s/exc_temp.jar";
+	public static final String SIDE_SRC = 		 	 TEMP + "%s/src.zip";
+	public static final String TEMP_SOURCES = 		 TEMP + "%s/src";
+	public static final String MD5 = 		 		 TEMP + "%s/original.md5";
+	public static final String MD5_RO = 		 	 TEMP + "%s/modified.md5";
+	public static final String REOBF_JAR = 	 		 TEMP + "%s/reobf.jar";
+	public static final String MAPPINGS_RO =  		 TEMP + "%s/reobf.tiny";
+	public static final String MAPPINGS_DO =  		 TEMP + "%s/deobf.tiny";
 	public static final String SOURCES = 	 		 SRC + "minecraft_%s";
 	public static final String BIN_SIDE = 		 	 BIN + "minecraft_%s";
 	public static final String REOBF_SIDE = 		 REOBF + "minecraft_%s";

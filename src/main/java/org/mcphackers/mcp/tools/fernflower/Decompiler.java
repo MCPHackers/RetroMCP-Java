@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.mcphackers.mcp.ProgressListener;
+import org.mcphackers.mcp.tasks.ProgressListener;
 
 import de.fernflower.main.decompiler.BaseDecompiler;
 import de.fernflower.main.decompiler.DirectoryResultSaver;

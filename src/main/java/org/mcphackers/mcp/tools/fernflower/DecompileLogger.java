@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.tools.fernflower;
 
-import org.mcphackers.mcp.ProgressListener;
+import org.mcphackers.mcp.tasks.ProgressListener;
 
 import de.fernflower.main.extern.IFernflowerLogger;
 

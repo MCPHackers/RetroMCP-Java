@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,12 +34,12 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.TaskMode;
-import org.mcphackers.mcp.TaskParameter;
+import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
-import org.mcphackers.mcp.tools.MCPPaths;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public class MCPFrame extends JFrame {
@@ -65,7 +66,7 @@ public class MCPFrame extends JFrame {
             e.printStackTrace();
         }
         initFrameContents();
-		setMinimumSize(new Dimension(842, 100));
+		setMinimumSize(new Dimension(300, 100));
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -77,25 +78,27 @@ public class MCPFrame extends JFrame {
 		menuBar = new MenuBar(this);
 		setJMenuBar(menuBar);
 		contentPane.setLayout(new BorderLayout());
-		JPanel topLeftContainer = new JPanel();
+		JPanel topLeftContainer = new JPanel(new FlowLayout());
 
-		TaskMode[] tasks = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
-		for(TaskMode task : tasks) {
+		for(TaskMode task : MainGUI.TASKS) {
 			TaskButton button;
 			if(task == TaskMode.DECOMPILE) {
 				ActionListener defaultActionListener = event -> operateOnThread(() -> {
-					int response = -1;
-					boolean srcExists = mcp.side == Side.ANY ? Files.exists(MCPPaths.get(mcp, MCPPaths.SRC))
-															 : Files.exists(MCPPaths.get(mcp, MCPPaths.SOURCES, mcp.side));
-					if(srcExists) {
+					int response = 0;
+					if(TaskMode.RECOMPILE.isAvailable(mcp, mcp.getSide())) {
 						response = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
 					}
-					if(response <= 0) {
-						if(response == 0) {
-							mcp.setParameter(TaskParameter.SRC_CLEANUP, true);
-							mcp.performTask(TaskMode.CLEANUP, Side.ANY, false, false);
-						}
-						mcp.performTask(TaskMode.DECOMPILE, mcp.side);
+					if(response == 0) {
+						mcp.performTask(TaskMode.DECOMPILE, mcp.getSide());
+					}
+				});
+				button = new TaskButton(this, task, defaultActionListener);
+			}
+			else if(task == TaskMode.UPDATE_MD5) {
+				ActionListener defaultActionListener = event -> operateOnThread(() -> {
+					int response = JOptionPane.showConfirmDialog(this, "Are you sure you want to regenerate original hashes?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+					if(response == 0) {
+						mcp.performTask(task, mcp.getSide());
 					}
 				});
 				button = new TaskButton(this, task, defaultActionListener);
@@ -108,7 +111,7 @@ public class MCPFrame extends JFrame {
 			topLeftContainer.add(button);
 		}
 		
-		topRightContainer = new JPanel();
+		topRightContainer = new JPanel(new FlowLayout());
 		reloadVersionList();
 		updateButtonState();
 		
@@ -159,7 +162,7 @@ public class MCPFrame extends JFrame {
 			        	switch (response) {
 			        		case 0:
 		    					mcp.setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
-		    					mcp.performTask(TaskMode.SETUP, Side.ANY, false, true);
+		    					mcp.performTask(TaskMode.SETUP, Side.ANY);
 			        			break;
 			        		default:
 			        			verList.setSelectedItem(mcp.getCurrentVersion());
@@ -195,6 +198,7 @@ public class MCPFrame extends JFrame {
 
 	public void updateButtonState() {
 		buttons.forEach(button -> button.setEnabled(button.getEnabled()));
+		menuBar.start.entrySet().forEach(entry -> entry.getValue().setEnabled(TaskMode.START.isAvailable(mcp, entry.getKey())));
 		if(verList != null) verList.setEnabled(true);
 		verLabel.setEnabled(true);
 		menuBar.menuOptions.setEnabled(true);

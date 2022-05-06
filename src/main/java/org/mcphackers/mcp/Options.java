@@ -1,15 +1,84 @@
 package org.mcphackers.mcp;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tools.Util;
 
 public class Options {
+
+	private final Map<TaskParameter, Object> options = new HashMap<>();
+	public Path saveFile;
+	public Side side = Side.ANY;
 	
 	public Options() {
-		resetDefaults();
+		for(TaskParameter param : TaskParameter.values()) {
+			setDefault(param);
+		}
 	}
 	
-	private final Map<TaskParameter, Object> options = new HashMap<>();
+	public Options(Path file) {
+		this();
+		saveFile = file;
+		if(Files.exists(saveFile)) {
+			load(saveFile);
+			save();
+		}
+	}
+	
+	private void load(Path file) {
+		try (BufferedReader reader = Files.newBufferedReader(file)) {
+			for(String line = reader.readLine(); line != null; line = reader.readLine()) {
+				int sep = line.indexOf("=");
+				if(sep >= 0) {
+					String key = line.substring(0, sep);
+					String value = sep == line.length() ? "" : line.substring(sep + 1);
+					if(key.equals(TaskParameter.SIDE.name)) {
+						try {
+							side = Side.valueOf(value);
+						} catch (IllegalArgumentException e) {}
+					}
+					else {
+						safeSetParameter(TaskMode.nameToParamMap.get(key), value);
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void save() {
+		if(saveFile != null) {
+			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
+				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
+				for(Entry<TaskParameter, Object> entry : options.entrySet()) {
+					if(entry.getValue() != null) {
+						writer.append(entry.getKey().name).append('=').append(String.valueOf(getParameter(entry.getKey()).toString() + '\n'));
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void resetDefaults() {
+		side = Side.ANY;
+		for(TaskParameter param : TaskParameter.values()) {
+			setDefault(param);
+		}
+		save();
+	}
 
 	public void setDefault(TaskParameter param) {
 		Object value = null;
@@ -40,6 +109,10 @@ public class Options {
 		case JAVA_HOME:
 			value = "";
 			break;
+		case SIDE:
+			side = Side.ANY;
+			value = side.index;
+			break;
 		default:
 			break;
 		}
@@ -53,6 +126,7 @@ public class Options {
 		else {
 			throw new IllegalArgumentException("Type mismatch");
 		}
+		save();
 	}
 
 	public Object getParameter(TaskParameter param) {
@@ -95,9 +169,48 @@ public class Options {
 		throw new IllegalArgumentException("Type mismatch");
 	}
 
-	public void resetDefaults() {
-		for(TaskParameter param : TaskParameter.values()) {
-			setDefault(param);
+	public boolean safeSetParameter(TaskParameter param, String value) {
+		if(param == null) {
+			return false;
 		}
+		if(param.type == Integer.class) {
+			try {
+				int valueInt = Integer.parseInt(value);
+				setParameter(param, valueInt);
+				return true;
+			}
+			catch (NumberFormatException ignored) {}
+			catch (IllegalArgumentException e) {}
+		}
+		else if(param.type == Boolean.class) {
+			if(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+				try {
+					boolean valueBoolean = Boolean.parseBoolean(value);
+					setParameter(param, valueBoolean);
+					return true;
+				}
+				catch (IllegalArgumentException e) {}
+			}
+		}
+		else if(param.type == String[].class) {
+			try {
+				String[] values = value.split(",");
+				for(int i2 = 0 ; i2 < values.length; i2++) {
+					values[i2] = Util.convertFromEscapedString(values[i2]).trim();
+				}
+				setParameter(param, values);
+				return true;
+			}
+			catch (IllegalArgumentException e) {}
+		}
+		else if(param.type == String.class) {
+			try {
+				value = Util.convertFromEscapedString(value);
+				setParameter(param, value);
+				return true;
+			}
+			catch (IllegalArgumentException e) {}
+		}
+		return false;
 	}
 }
