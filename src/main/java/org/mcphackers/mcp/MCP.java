@@ -30,25 +30,25 @@ public abstract class MCP {
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 
 	static {
-		Update.attemptToDeleteUpdateJar();
 		loadPlugins();
 	}
 
 	protected MCP() {
 		triggerEvent(MCPEvent.ENV_STARTUP);
+		Update.attemptToDeleteUpdateJar();
 	}
 
 	public abstract Path getWorkingDir();
 	
-	public final void performTask(TaskMode mode, Side side) {
-		performTask(mode, side, true);
+	public final boolean performTask(TaskMode mode, Side side) {
+		return performTask(mode, side, true);
 	}
 
-	public final void performTask(TaskMode mode, Side side, boolean completionMsg) {
+	public final boolean performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
 			System.err.println("Performing 0 tasks");
-			return;
+			return false;
 		}
 		
 		boolean enableProgressBars = mode.usesProgressBars;
@@ -117,6 +117,7 @@ public abstract class MCP {
 		}
 		setActive(true);
 		if(enableProgressBars) clearProgressBars();
+		return result != Task.ERROR;
 	}
 
 	public abstract void setProgressBars(List<Task> tasks, TaskMode mode);
@@ -142,6 +143,8 @@ public abstract class MCP {
 	public abstract String inputString(String title, String msg);
 
 	public abstract void showMessage(String title, String msg, int type);
+
+	public abstract boolean updateDialogue(String changelog, String version);
 
 	public void setProgress(int barIndex, String progressMessage, int progress) {
 		setProgress(barIndex, progress);
@@ -172,9 +175,14 @@ public abstract class MCP {
 	    		for(Path p : jars) {
 					List<Class<MCPPlugin>> classes = ClassUtils.getClasses(p, MCPPlugin.class);
 					for(Class<MCPPlugin> cls : classes) {
-						MCPPlugin plugin = cls.newInstance();
-						plugin.init();
-						plugins.put(plugin.pluginId() + plugin.hashCode(), plugin);
+						if(!ClassUtils.isClassAbstract(cls)) {
+							MCPPlugin plugin = cls.newInstance();
+							plugin.init();
+							plugins.put(plugin.pluginId() + plugin.hashCode(), plugin);
+						}
+						else {
+							System.err.println("Incompatible plugin found: " + cls.getName());
+						}
 					}
 	    		}
 			} catch (Exception e) {

@@ -2,6 +2,8 @@
 
 package org.mcphackers.mcp.tools;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -36,5 +38,18 @@ public abstract class ClassUtils {
 		}
 		jarFile.close();
 		return classes;
+	}
+
+	/** 
+	 * @see Modifier#isAbstract(int) does no guarantee that all methods were implemented in the compiled class
+	 * And there is a chance it was compiled from a different source where one of the methods didn't exist
+	 */
+	public static boolean isClassAbstract(Class<?> type) {
+		for(Method meth : type.getMethods()) {
+			if(Modifier.isAbstract(meth.getModifiers())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

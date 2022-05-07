@@ -4,6 +4,7 @@ import java.io.Console;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,13 +50,12 @@ public class MainCLI extends MCP {
 	public static void main(String[] args) throws Exception {
 		if(System.console() != null) {
 			AnsiConsole.systemInstall();
+			new MainCLI(args);
 		}
 		else {
-			//System.out.println("Could not find console. Launching GUI");
 			MainGUI.main(args);
 			return;
 		}
-		new MainCLI(args);
 	}
 	
 	public MainCLI(String[] args) {
@@ -67,10 +67,12 @@ public class MainCLI extends MCP {
 		boolean exit = false;
 		String version = null;
 		Path versionPath = Paths.get(MCPPaths.VERSION);
+		List<String> versions = null;
 		if(Files.exists(versionPath)) {
 			try {
 				currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(versionPath)));
 				version = new Ansi().a("Current version: ").fgBrightCyan().a(currentVersion).fgDefault().toString();
+				versions = VersionsParser.getVersionList();
 			} catch (Exception e) {
 				version = new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString();
 			}
@@ -110,12 +112,18 @@ public class MainCLI extends MCP {
 				parseArg(args[index], parsedArgs);
 			}
 			setParams(parsedArgs, mode);
-			if (taskMode) {
-				if(mode == TaskMode.START) {
-					options.setParameter(TaskParameter.RUN_ARGS, args);
+			if (mode == TaskMode.SETUP && versions != null) {
+				log(getOptions().getStringParameter(TaskParameter.SETUP_VERSION));
+				if(!versions.contains(getOptions().getStringParameter(TaskParameter.SETUP_VERSION))) {
+					log(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
+					log(getTable(versions));
+					log(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
 				}
+			}
+			if (taskMode) {
 				performTask(mode, side);
-			} else if (mode == TaskMode.HELP) {
+			}
+			else if (mode == TaskMode.HELP) {
 				if(helpCommand == null) {
 					for (TaskMode mode : TaskMode.registeredTasks) {
 						log(new Ansi()
@@ -218,7 +226,29 @@ public class MainCLI extends MCP {
 			map.put(arg, null);
 		}
 	}
-	
+
+	private static String getTable(List<String> versions) {
+		int rows = (int)Math.ceil(versions.size() / 3D);
+		List<String>[] tableList = (List<String>[]) new List[rows];
+		for (int i = 0; i < tableList.length; i++)
+		{
+			tableList[i] = new ArrayList<>();
+		}
+		StringBuilder table = new StringBuilder();
+		int index = 0;
+		for (String ver : versions) {
+			tableList[index % rows].add(new Ansi().fgBrightCyan().a(" - ").fgDefault().fgCyan().a(String.format("%-16s", ver)).fgDefault().toString());
+			index++;
+		}
+		for (int i = 0; i < tableList.length; i++)
+		{
+			for (String ver : tableList[i]) {
+				table.append(ver);
+			}
+			if(i < tableList.length - 1) table.append("\n");
+		}
+		return table.toString();
+	}
 
 	@Override
 	public void log(String msg) {
@@ -341,6 +371,11 @@ public class MainCLI extends MCP {
 	@Override
 	public Path getWorkingDir() {
 		return Paths.get("");
+	}
+
+	@Override
+	public boolean updateDialogue(String changelog, String version) {
+		return yesNoInput("New version found: " + version, changelog + "\n\nAre you sure you want to update?");
 	}
 
 }

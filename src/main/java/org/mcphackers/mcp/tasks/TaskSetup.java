@@ -4,12 +4,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.fusesource.jansi.Ansi;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
@@ -44,12 +42,6 @@ public class TaskSetup extends Task {
 		log("Setting up Minecraft...");
 		List<String> versions = VersionsParser.getVersionList();
 		String chosenVersion = mcp.getOptions().getStringParameter(TaskParameter.SETUP_VERSION);
-		if(!versions.contains(chosenVersion)) {
-			//FIXME This may not look good in GUI
-			log(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
-			log(getTable(versions));
-			log(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
-		}
 
 		// Keep asking until they have a valid option
 		while (!versions.contains(chosenVersion)) {
@@ -167,28 +159,5 @@ public class TaskSetup extends Task {
 			Files.deleteIfExists(Paths.get("workspace/.metadata/.plugins/org.eclipse.core.resources/.root/0.tree"));
 			FileUtil.copyResource(MCP.class.getClassLoader().getResourceAsStream("0.tree"), Paths.get("workspace/.metadata/.plugins/org.eclipse.core.resources/.root/0.tree"));
 		}
-	}
-
-	private static String getTable(List<String> versions) {
-		int rows = (int)Math.ceil(versions.size() / 3D);
-		List<String>[] tableList = (List<String>[]) new List[rows];
-		for (int i = 0; i < tableList.length; i++)
-		{
-			tableList[i] = new ArrayList<>();
-		}
-		StringBuilder table = new StringBuilder();
-		int index = 0;
-		for (String ver : versions) {
-			tableList[index % rows].add(new Ansi().fgBrightCyan().a(" - ").fgDefault().fgCyan().a(String.format("%-16s", ver)).fgDefault().toString());
-			index++;
-		}
-		for (int i = 0; i < tableList.length; i++)
-		{
-			for (String ver : tableList[i]) {
-				table.append(ver);
-			}
-			if(i < tableList.length - 1) table.append("\n");
-		}
-		return table.toString();
 	}
 }

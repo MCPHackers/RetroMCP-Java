@@ -201,7 +201,7 @@ public class TaskMode {
 		this.params = params;
 		this.usesProgressBars = useBars;
 		this.requirement = requirements;
-		registeredTasks.add(this); //TODO overriding any default tasks will register a duplicate
+		registeredTasks.add(this);
 	}
 	
 	public String getName() {

@@ -1,10 +1,14 @@
 package org.mcphackers.mcp.main;
 
+import java.awt.Font;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
@@ -122,5 +126,33 @@ public class MainGUI extends MCP {
 	@Override
 	public Path getWorkingDir() {
 		return workingDir;
+	}
+
+	@Override
+	public boolean updateDialogue(String changelog, String version) {
+		JPanel components = new JPanel();
+		components.setLayout(new BoxLayout(components, BoxLayout.Y_AXIS));
+		String[] lines = changelog.split("\n");
+		for(String line : lines) {
+			line = line.replace("`", "");
+			if(line.startsWith("# ")) {
+				JLabel label = new JLabel(line.substring(2));
+				Font font = label.getFont();
+				font.deriveFont(3F);
+				label.setFont(new Font(font.getName(), Font.PLAIN, 18));
+				components.add(label);
+			}
+			else if(line.startsWith("-"))
+			{
+				String bullet = "•";
+				JLabel label = new JLabel(bullet + line.substring(1));
+				components.add(label);
+			}
+			else {
+				components.add(new JLabel(line));
+			}
+		}
+		components.add(new JLabel("Are you sure you want to update?"));
+		return JOptionPane.showConfirmDialog(frame, components, "New version found: " + version, JOptionPane.YES_NO_OPTION) == 0;
 	}
 }
