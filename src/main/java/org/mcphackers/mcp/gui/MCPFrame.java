@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -21,7 +23,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -66,11 +68,14 @@ public class MCPFrame extends JFrame {
             e.printStackTrace();
         }
         initFrameContents();
-		setMinimumSize(new Dimension(300, 100));
         pack();
+		setMinimumSize(getMinimumSize());
+		setSize(new Dimension(940, 500));
         setLocationRelativeTo(null);
         setVisible(true);
 	}
+	
+	
 	
 	private void initFrameContents() {
 
@@ -78,7 +83,14 @@ public class MCPFrame extends JFrame {
 		menuBar = new MenuBar(this);
 		setJMenuBar(menuBar);
 		contentPane.setLayout(new BorderLayout());
-		JPanel topLeftContainer = new JPanel(new FlowLayout());
+		FlowLayout layout = new WrapLayout(FlowLayout.LEFT);
+		JPanel topLeftContainer = new JPanel();
+		topLeftContainer.setLayout(layout);
+		this.addComponentListener(new ComponentAdapter() {
+		    public void componentResized(ComponentEvent componentEvent) {
+		        SwingUtilities.invokeLater(() -> topLeftContainer.revalidate());
+		    }
+		});
 
 		for(TaskMode task : MainGUI.TASKS) {
 			TaskButton button;
@@ -106,25 +118,28 @@ public class MCPFrame extends JFrame {
 			else {
 				button = new TaskButton(this, task);
 			}
+			button.setPreferredSize(new Dimension(110, 30));
 			buttons.add(button);
 			button.setEnabled(false);
 			topLeftContainer.add(button);
 		}
 		
-		topRightContainer = new JPanel(new FlowLayout());
+		topRightContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		reloadVersionList();
 		updateButtonState();
 		
-		JPanel topContainer = new JPanel(new BorderLayout(4,4));
-		topContainer.add(topLeftContainer, BorderLayout.WEST);
-		topContainer.add(topRightContainer, BorderLayout.EAST);
+		JPanel topContainer = new JPanel(new BorderLayout());
 		
+		topContainer.add(topLeftContainer, BorderLayout.CENTER);
+		topContainer.add(topRightContainer, BorderLayout.EAST);
+        topContainer.setMinimumSize(new Dimension(340, 96));
+		topRightContainer.setMinimumSize(topRightContainer.getMinimumSize());
 		contentPane.add(topContainer, BorderLayout.NORTH);
+
 		JTextArea textArea = new JTextArea();
 		JPanel middlePanel = new JPanel();
 	    middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Console output"));
-        middlePanel.setLayout(new BoxLayout(middlePanel,
-                BoxLayout.Y_AXIS));
+        middlePanel.setLayout(new BorderLayout());
 		textArea.setEditable(false);
 		PrintStream printStream = new PrintStream(new TextAreaOutputStream(textArea));
 		System.setOut(printStream);
@@ -133,13 +148,12 @@ public class MCPFrame extends JFrame {
 		textArea.setFont(font);
 		textArea.setForeground(Color.BLACK);
 		JScrollPane scroll = new JScrollPane(textArea);
-		scroll.setPreferredSize(new Dimension(600, 380));
 	    scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		middlePanel.add(scroll);
 		bottom = new JPanel(new GridBagLayout());
         bottom.setVisible(false);
-		contentPane.add(bottom, BorderLayout.SOUTH);
 		contentPane.add(middlePanel, BorderLayout.CENTER);
+		contentPane.add(bottom, BorderLayout.SOUTH);
 	}
 	
 	public void reloadVersionList() {

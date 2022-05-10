@@ -9,6 +9,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
@@ -30,7 +31,7 @@ public class MainGUI extends MCP {
 	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 	
 	public static void main(String[] args) throws Exception {
-		new MainGUI();
+		SwingUtilities.invokeLater(() -> new MainGUI());
 	}
 	
 	public MainGUI() {

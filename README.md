@@ -24,12 +24,6 @@ and your JAR file associations are properly configured
 * A Start class for applet-only versions
 * Reobfuscation for all available versions
 
-# Licensing
-
-MCP Version 4.3 __did not__ ship with a license, therefore it is allowed to be reuploaded and modified here.
-
-With that in mind, all credit towards MCP goes to the original creators. Read MCP43-CREDITS.txt for a list of people who worked on the original MCP.
-
 # Contributing
 
 If you enounter any issues or bugs with RetroMCP, please create an issue and explain it in detail!
