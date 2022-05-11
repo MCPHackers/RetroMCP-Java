@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.Task.Side;
 
 public abstract class VersionsParser {
 	
@@ -24,14 +26,32 @@ public abstract class VersionsParser {
 	
 	public static final JSONObject json = getJson();
 	
+	public static class VersionSorter implements Comparator<String> {
+
+		public int compare(String t1, String t2) {
+			try {
+				if(!json.getJSONObject(t1).has("client_timestamp")) {
+					return 1;
+				}
+				if(!json.getJSONObject(t2).has("client_timestamp")) {
+					return -1;
+				}
+				Instant i1 = Instant.parse(json.getJSONObject(t1).getString("client_timestamp"));
+				Instant i2 = Instant.parse(json.getJSONObject(t2).getString("client_timestamp"));
+				return i2.compareTo(i1);
+			}
+			catch (Exception e) {
+				return -1;
+			}
+		}
+	}
+	
 	public static List<String> getVersionList() throws Exception {
 		checkJson();
 		List<String> verList = new ArrayList<>();
 		Iterator<String> iterator = json.keys();
 		iterator.forEachRemaining(verList::add);
-		// TODO sort by date instead
-		// Add date entry to json. Make a version to be the last one if there is no date entry
-		verList.sort(Comparator.naturalOrder());
+		verList.sort(new VersionSorter());
 		return verList;
 	}
 	
@@ -76,13 +96,13 @@ public abstract class VersionsParser {
 		return version == null || json.getJSONObject(version).has("server_url");
 	}
 
-	public static String getDownloadURL(String version, int side) throws Exception {
+	public static String getDownloadURL(String version, Side side) throws Exception {
 		checkJson();
-		String url = side == 0 ? "client_url" : side == 1 ? "server_url" : null;
+		String url = side == Side.CLIENT ? "client_url" : side == Side.SERVER ? "server_url" : null;
 		if(json.getJSONObject(version).has(url)) {
 			return json.getJSONObject(version).getString(url);
 		}
-		throw new JSONException("Could not get download link for " + (side == 0 ? "client" : "server"));
+		throw new JSONException("Could not get download link for " + side.name.toLowerCase());
 	}
 
 	public static URL downloadVersion(String version) throws Exception {

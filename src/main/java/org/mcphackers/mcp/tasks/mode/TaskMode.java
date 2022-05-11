@@ -10,18 +10,8 @@ import java.util.Map;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
-import org.mcphackers.mcp.tasks.TaskBuild;
-import org.mcphackers.mcp.tasks.TaskCleanup;
-import org.mcphackers.mcp.tasks.TaskCreatePatch;
-import org.mcphackers.mcp.tasks.TaskDecompile;
-import org.mcphackers.mcp.tasks.TaskDownloadUpdate;
-import org.mcphackers.mcp.tasks.TaskRecompile;
-import org.mcphackers.mcp.tasks.TaskReobfuscate;
-import org.mcphackers.mcp.tasks.TaskRun;
-import org.mcphackers.mcp.tasks.TaskSetup;
-import org.mcphackers.mcp.tasks.TaskUpdateMD5;
+import org.mcphackers.mcp.tasks.*;
 
 public class TaskMode {
 	public static final List<TaskMode> registeredTasks = new ArrayList<>();
@@ -117,7 +107,6 @@ public class TaskMode {
 			.setFullName("Setup")
 			.setDescription("Set initial workspace for a version")
 			.setTaskClass(TaskSetup.class)
-			.setProgressBars(false)
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG
 				})
@@ -184,7 +173,14 @@ public class TaskMode {
 			.setDescription("Exit the program")
 			.setProgressBars(false)
 			.build();
-	
+
+	static {
+		new TaskModeBuilder()
+		.setCmdName("timestamps")
+		.setFullName("Timestamps")
+		.setTaskClass(TaskTimestamps.class)
+		.build();
+	}
 	private final String name;
 	private final String fullName;
 	private final String desc;

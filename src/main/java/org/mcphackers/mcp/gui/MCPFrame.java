@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -61,10 +60,10 @@ public class MCPFrame extends JFrame {
 		this.mcp = mcp;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
-            URL resource = getClass().getResource("/rmcp.png");
+            URL resource = getClass().getResource("/icon/rmcp.png");
             BufferedImage image = ImageIO.read(resource);
             setIconImage(image);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         initFrameContents();

@@ -72,6 +72,7 @@ public class MCPPaths {
 	}
 
 	public static Path get(MCP mcp, String path) {
+		//TODO measure the performance of getting a path from a hashmap instead of making a new one
 		if(mcp.getWorkingDir() != cachedWorkingDir) {
 			cachedWorkingDir = mcp.getWorkingDir();
 			paths.clear();
