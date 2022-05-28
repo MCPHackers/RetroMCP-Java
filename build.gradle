@@ -39,6 +39,7 @@ application {
     // Redirect all execution into the testing folder
     mainClass = mainClassName
     executableDir = 'test'
+    mkdir(executableDir)
 }
 
 shadowJar {
