@@ -29,24 +29,18 @@ public abstract class Util {
 			procBuilder.directory(dir.toAbsolutePath().toFile());
 		}
 		Process proc = procBuilder.start();
-		new Thread(() -> {
-			try(Scanner sc = new Scanner(proc.getInputStream())) {
-				while (sc.hasNextLine()) {
-					System.out.println(sc.nextLine());
-				}
-			}
-		}).start();
 		Thread hook = new Thread(proc::destroy);
 		if(killOnShutdown) {
 			Runtime.getRuntime().addShutdownHook(hook);
 		}
+		Scanner err = new Scanner(proc.getErrorStream());
+		Scanner in = new Scanner(proc.getInputStream());
 		while(proc.isAlive()) {
-			try(Scanner sc = new Scanner(proc.getErrorStream())) {
-				while (sc.hasNextLine()) {
-					System.out.println(sc.nextLine());
-				}
-			}
+			if(in.hasNextLine())  System.out.println(in.nextLine());
+			if(err.hasNextLine()) System.err.println(err.nextLine());
 		}
+		in.close();
+		err.close();
 		if(killOnShutdown) {
 			Runtime.getRuntime().removeShutdownHook(hook);
 		}

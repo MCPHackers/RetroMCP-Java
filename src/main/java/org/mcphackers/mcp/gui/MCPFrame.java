@@ -140,9 +140,12 @@ public class MCPFrame extends JFrame {
 	    middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Console output"));
         middlePanel.setLayout(new BorderLayout());
 		textArea.setEditable(false);
-		PrintStream printStream = new PrintStream(new TextAreaOutputStream(textArea));
-		System.setOut(printStream);
-		System.setErr(printStream);
+	    PrintStream origOut = System.out;
+	    PrintStream interceptor = new TextAreaOutputStream(textArea, origOut);
+	    System.setOut(interceptor);
+	    origOut = System.err;
+	    interceptor = new TextAreaOutputStream(textArea, origOut);
+		System.setErr(interceptor);
 		Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 		textArea.setFont(font);
 		textArea.setForeground(Color.BLACK);

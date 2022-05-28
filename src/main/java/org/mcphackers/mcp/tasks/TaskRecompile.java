@@ -24,6 +24,11 @@ import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 
 public class TaskRecompile extends TaskStaged {
+	/*
+	 * Indexes of stages for plugin overrides
+	 */
+	public static final int STAGE_RECOMPILE = 0;
+	public static final int STAGE_COPYRES = 1;
 	
 	public TaskRecompile(Side side, MCP instance) {
 		super(side, instance);

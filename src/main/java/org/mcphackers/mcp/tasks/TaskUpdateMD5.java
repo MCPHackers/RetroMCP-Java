@@ -15,6 +15,12 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tools.Util;
 
 public class TaskUpdateMD5 extends TaskStaged {
+	/*
+	 * Indexes of stages for plugin overrides
+	 */
+	public static final int STAGE_RECOMPILE = 0;
+	public static final int STAGE_MD5 = 1;
+
 	private int progress = 0;
 
 	public TaskUpdateMD5(Side side, MCP instance) {

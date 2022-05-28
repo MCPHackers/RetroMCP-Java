@@ -3,7 +3,6 @@ package org.mcphackers.mcp.tasks;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class TaskSetup extends Task {
 
 	static {
 		natives.put(Os.WINDOWS, "https://files.betacraft.uk/launcher/assets/natives-windows.zip");
-		natives.put(Os.MAC, "https://files.betacraft.uk/launcher/assets/natives-osx.zip");
+		natives.put(Os.OSX, "https://files.betacraft.uk/launcher/assets/natives-osx.zip");
 		natives.put(Os.LINUX, "https://files.betacraft.uk/launcher/assets/natives-linux.zip");
 	}
 
@@ -138,7 +137,7 @@ public class TaskSetup extends Task {
 							}
 							break;
 						case 2:
-							lines.set(i, lines.get(i).replace("$MCP_LOC$", Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString().replace("\\", "/")));
+							lines.set(i, lines.get(i).replace("$MCP_LOC$", mcp.getWorkingDir().toAbsolutePath().toString().replace("\\", "/")));
 							break;
 						case 3:
 							if(side == Side.SERVER && !VersionsParser.hasServer(currentVersion) && lines.get(i).contains("path=&quot;Server&quot;")) {

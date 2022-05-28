@@ -20,6 +20,7 @@ public class TaskRun extends Task {
 	public static final String[] CLIENT_START = {
 		"Start",
 		"net.minecraft.client.Minecraft",
+		"net.minecraft.client.main.Main",
 		"com.mojang.minecraft.Minecraft"
 	};
 	

@@ -16,25 +16,30 @@ import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.mappings.MappingData;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
-import org.mcphackers.mcp.tools.mcinjector.MCInjector;
 import org.mcphackers.mcp.tools.source.Constants;
 import org.mcphackers.mcp.tools.source.GLConstants;
 import org.mcphackers.mcp.tools.source.MathConstants;
+import org.mcphackers.rdi.injector.Injector;
+import org.mcphackers.rdi.injector.RDInjector;
+import org.mcphackers.rdi.util.IOUtil;
 
 import codechicken.diffpatch.cli.CliOperation;
 import codechicken.diffpatch.cli.PatchOperation;
 import net.fabricmc.stitch.merge.JarMerger;
 
 public class TaskDecompile extends TaskStaged {
-	public static final int INIT = 0;
-	public static final int REMAP = 1;
-	public static final int EXCEPTOR = 2;
-	public static final int DECOMPILE = 3;
-	public static final int EXTRACT = 4;
-	public static final int CONSTS = 5;
-	public static final int PATCH = 6;
-	public static final int COPYSRC = 7;
-	public static final int MD5 = 8;
+	/*
+	 * Indexes of stages for plugin overrides
+	 */
+	public static final int STAGE_INIT = 0;
+	public static final int STAGE_REMAP = 1;
+	public static final int STAGE_EXCEPTOR = 2;
+	public static final int STAGE_DECOMPILE = 3;
+	public static final int STAGE_EXTRACT = 4;
+	public static final int STAGE_CONSTS = 5;
+	public static final int STAGE_PATCH = 6;
+	public static final int STAGE_COPYSRC = 7;
+	public static final int STAGE_MD5 = 8;
 
 	public TaskDecompile(Side side, MCP instance) {
 		super(side, instance);
@@ -113,7 +118,12 @@ public class TaskDecompile extends TaskStaged {
 				for(Side sideLocal : sides) {
 					final Path exc = MCPPaths.get(mcp, MCPPaths.EXC, sideLocal);
 					if (Files.exists(exc)) {
-						MCInjector.process(tempExcOut, excOut, exc, 0);
+						Injector injector = new RDInjector(tempExcOut)
+							.fixInnerClasses()
+							.fixImplicitConstructors()
+							.fixExceptions(exc);
+						injector.transform();
+						IOUtil.write(injector, Files.newOutputStream(excOut), tempExcOut);
 						Files.deleteIfExists(tempExcOut);
 						Files.copy(excOut, tempExcOut);
 					}
@@ -132,7 +142,7 @@ public class TaskDecompile extends TaskStaged {
 			() -> {
 				//TODO Apply both javadocs if side == Side.MERGED
 				final Path deobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_DO, side == Side.MERGED ? Side.CLIENT : side);
-				new Decompiler(this).decompile(excOut, srcZip, deobfMappings, mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING));
+				new Decompiler(this, excOut, srcZip, deobfMappings, mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING)).decompile();
 			}),
 			stage("Extracting sources", 84,
 			() -> {
@@ -196,12 +206,12 @@ public class TaskDecompile extends TaskStaged {
 	
 	public void setProgress(int progress) {
 		switch (step) {
-		case DECOMPILE: {
+		case STAGE_DECOMPILE: {
 			int percent = (int)((double)progress * 0.8D);
 			super.setProgress(3 + percent);
 			break;
 		}
-		case MD5: {
+		case STAGE_MD5: {
 			int percent = (int)((double)progress * 0.04D);
 			super.setProgress(96 + percent);
 			break;
