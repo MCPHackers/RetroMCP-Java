@@ -18,6 +18,9 @@ public class MappingData {
 	private Path saveFile;
 	private MappingTree mappingTree = new MemoryMappingTree();
 	public Map<String, String> packages = new HashMap<>();
+
+	public static final String SOURCE_NS = "official";
+	public static final String NAMED_NS = "named";
 	
 	public MappingData(Side side, Path mappingFile) throws IOException {
 		this.side = side;
@@ -28,8 +31,8 @@ public class MappingData {
 	
 	private void reloadPackages() {
 		mappingTree.getClasses().forEach(classEntry -> {
-			String obfName = classEntry.getName("official");
-			String deobfName = classEntry.getName("named");
+			String obfName = classEntry.getName(SOURCE_NS);
+			String deobfName = classEntry.getName(NAMED_NS);
 			if (deobfName != null) {
 				String obfPackage = obfName.lastIndexOf("/") >= 0 ? obfName.substring(0, obfName.lastIndexOf("/") + 1) : "";
 				String deobfPackage = deobfName.lastIndexOf("/") >= 0 ? deobfName.substring(0, deobfName.lastIndexOf("/") + 1) : "";
@@ -42,7 +45,7 @@ public class MappingData {
 
 	public void flipMappingTree() throws IOException {
 		Map<String, String> namespaces = new HashMap<>();
-		namespaces.put("named", "official");
+		namespaces.put(NAMED_NS, SOURCE_NS);
 		MemoryMappingTree namedTree = new MemoryMappingTree();
 		MappingNsCompleter nsCompleter = new MappingNsCompleter(namedTree, namespaces);
 		MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
