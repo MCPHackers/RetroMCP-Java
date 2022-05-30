@@ -263,13 +263,15 @@ public class MainCLI extends MCP {
 	@Override
 	public boolean yesNoInput(String title, String msg) {
 		log(msg);
-		return console.readLine().equalsIgnoreCase("yes");
+		String line = console.readLine();
+		return line != null && line.equalsIgnoreCase("yes");
 	}
 
 	@Override
 	public String inputString(String title, String msg) {
 		log(msg);
-		return console.readLine().toLowerCase();
+		String line = console.readLine();
+		return line == null ? "" : line.toLowerCase();
 	}
 
 	public void showMessage(String title, String msg, int type) {
