@@ -51,12 +51,9 @@ public class TaskSetup extends Task {
 		mcp.setCurrentVersion(VersionsParser.setCurrentVersion(mcp, chosenVersion));
 		String currentVersion = mcp.getCurrentVersion();
 		
-		//TODO Better handling for local versions.json
-		if(Files.notExists(MCPPaths.get(mcp, "versions.json"))) {
-			setProgress("Downloading mappings", 5);
-			FileUtil.downloadFile(VersionsParser.downloadVersion(currentVersion), MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
-			FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"), MCPPaths.get(mcp, MCPPaths.CONF), true);
-		}
+		setProgress("Downloading mappings", 5);
+		FileUtil.downloadFile(VersionsParser.downloadVersion(currentVersion), MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
+		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"), MCPPaths.get(mcp, MCPPaths.CONF), true);
 
 		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
 		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));

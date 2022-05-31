@@ -10,7 +10,7 @@ import org.mcphackers.mcp.MCP;
 
 public abstract class Task implements ProgressListener, TaskRunnable {
 	
-	public enum Side {
+	public static enum Side {
 		ANY(-1, "Any"),
 		CLIENT(0, "Client"),
 		SERVER(1, "Server"),

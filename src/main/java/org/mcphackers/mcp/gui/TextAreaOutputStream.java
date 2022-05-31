@@ -14,6 +14,19 @@ public class TextAreaOutputStream extends PrintStream {
 	}
 
     @Override
+    public void print(Object o) {
+		textArea.append(String.valueOf(o));
+        super.print(o);
+    }
+
+    @Override
+    public void println(Object o) {
+        super.println(o);
+		textArea.append("\n");
+		textArea.setCaretPosition(textArea.getDocument().getLength());
+    }
+
+    @Override
     public void print(String s) {
 		textArea.append(s);
         super.print(s);

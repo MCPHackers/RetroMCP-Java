@@ -19,7 +19,6 @@ import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.mcp.tools.source.Constants;
 import org.mcphackers.mcp.tools.source.GLConstants;
 import org.mcphackers.mcp.tools.source.MathConstants;
-import org.mcphackers.rdi.injector.Injector;
 import org.mcphackers.rdi.injector.RDInjector;
 import org.mcphackers.rdi.util.IOUtil;
 
@@ -117,19 +116,18 @@ public class TaskDecompile extends TaskStaged {
 				Files.copy(remapped, tempExcOut);
 				for(Side sideLocal : sides) {
 					final Path exc = MCPPaths.get(mcp, MCPPaths.EXC, sideLocal);
+					RDInjector injector = new RDInjector(tempExcOut);
+					injector.fixInnerClasses();
+					injector.fixSwitchMaps();
+					injector.fixImplicitConstructors();
+					injector.fixBridges();
 					if (Files.exists(exc)) {
-						Injector injector = new RDInjector(tempExcOut)
-							.fixInnerClasses()
-							.fixImplicitConstructors()
-							.fixExceptions(exc);
-						injector.transform();
-						IOUtil.write(injector, Files.newOutputStream(excOut), tempExcOut);
-						Files.deleteIfExists(tempExcOut);
-						Files.copy(excOut, tempExcOut);
+						injector.fixExceptions(exc);
 					}
-					else {
-						Files.copy(tempExcOut, excOut);
-					}
+					injector.transform();
+					IOUtil.write(injector, Files.newOutputStream(excOut), tempExcOut);
+					Files.deleteIfExists(tempExcOut);
+					Files.copy(excOut, tempExcOut);
 				}
 				// Copying a fixed jar to libs
 				if(side == Side.CLIENT || side == Side.MERGED) {

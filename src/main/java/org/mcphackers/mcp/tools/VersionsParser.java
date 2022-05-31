@@ -20,8 +20,8 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.Task.Side;
 
 public abstract class VersionsParser {
-	
-	private static final String jsonURL = "https://mcphackers.github.io/versions/versions.json";
+
+	private static String versionsURL = "https://mcphackers.github.io/versions/";
 	private static Exception cause = null;
 	
 	public static final JSONObject json = getJson();
@@ -64,13 +64,20 @@ public abstract class VersionsParser {
 	private static JSONObject getJson() {
 		try {
 			Path jsonPath = Paths.get("versions.json");
+			String jsonURL = versionsURL + "versions.json";
 			if(Files.exists(jsonPath) && !Files.isDirectory(jsonPath)) {
-				return Util.parseJSONFile(jsonPath);
+				JSONObject jsonSource = Util.parseJSONFile(jsonPath);
+				if(jsonSource.has("source")) {
+					String src = jsonSource.getString("source");
+					if(!src.startsWith("http")) {
+						src = "file:" + src;
+					}
+					versionsURL = src;
+					jsonURL = src + "versions.json";
+				}
 			}
-			else {
-				InputStream in = new URL(jsonURL).openStream();
-				return Util.parseJSONFile(in);
-			}
+			InputStream in = new URL(jsonURL).openStream();
+			return Util.parseJSONFile(in);
 		} catch (JSONException | IOException e) {
 			cause = e;
 		}
@@ -92,8 +99,7 @@ public abstract class VersionsParser {
 
 	public static boolean hasServer(String version) throws Exception {
 		checkJson();
-		//TODO Better null pointer handling
-		return version == null || json.getJSONObject(version).has("server_url");
+		return json.getJSONObject(version).has("server_url");
 	}
 
 	public static String getDownloadURL(String version, Side side) throws Exception {
@@ -108,7 +114,7 @@ public abstract class VersionsParser {
 	public static URL downloadVersion(String version) throws Exception {
 		checkJson();
 		if(json.getJSONObject(version).has("resources")) {
-			return new URL("https://mcphackers.github.io/versions/" + json.getJSONObject(version).getString("resources"));
+			return new URL(versionsURL + json.getJSONObject(version).getString("resources"));
 		}
 		throw new JSONException("Could not get download link for mappings");
 	}
