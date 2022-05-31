@@ -69,7 +69,10 @@ public abstract class VersionsParser {
 				JSONObject jsonSource = Util.parseJSONFile(jsonPath);
 				if(jsonSource.has("source")) {
 					String src = jsonSource.getString("source");
-					if(!src.startsWith("http")) {
+					if(!src.endsWith("/") && !src.endsWith("\\")) {
+						src += "/";
+					}
+					if(!src.startsWith("https:") && !src.startsWith("http:") && !src.startsWith("file:")) {
 						src = "file:" + src;
 					}
 					versionsURL = src;
