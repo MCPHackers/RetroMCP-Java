@@ -15,19 +15,16 @@ and your JAR file associations are properly configured
 4. Run the decompile command
 5. Mod away! Now it's Yourcraft!
 
+For more info you can check [RetroMCP Wiki](https://github.com/MCPHackers/RetroMCP-Java/wiki).
+
 # Features
 
-**MCP**
-
 * Automatically download Minecraft .jar's from official download links
-* Include an auto patching bat to create patched client and server jars
-* A Start class for applet-only versions
+* A wrapper for applet versions
 * Reobfuscation for all available versions
 
 # Contributing
 
-If you encounter any issues or bugs with RetroMCP, please create an issue and explain it in detail!
-
-If you want to contribute, please keep pull requests about one topic instead of one huge pull request.
-
+If you encounter any issues or bugs with RetroMCP, please create an issue and explain it in detail!<br>
+If you want to contribute, please keep pull requests about one topic instead of one huge pull request.<br>
 We thank everyone who contributes to this project!
