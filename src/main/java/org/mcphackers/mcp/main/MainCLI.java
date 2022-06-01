@@ -83,7 +83,7 @@ public class MainCLI extends MCP {
 			JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 			if (c == null) {
 				// Likely a JRE
-				log(new Ansi().fgBrightRed().a("Error: Java Development Kit not detected! Compilation will fail!").toString());
+				log(new Ansi().fgBrightRed().a("Error: Java Development Kit is required to recompile!").toString());
 				log("Using Java from " + Paths.get(Util.getJava()).toAbsolutePath());
 			}
 			if(version != null) log(version);

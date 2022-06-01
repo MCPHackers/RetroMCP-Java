@@ -217,7 +217,7 @@ public class MCPFrame extends JFrame {
 		if(verList != null) verList.setEnabled(true);
 		verLabel.setEnabled(true);
 		menuBar.menuOptions.setEnabled(true);
-		menuBar.mcpMenu.setEnabled(true);
+		menuBar.setComponentsEnabled(true);
 	}
 	
 	public void setAllButtonsInactive() {
@@ -225,7 +225,7 @@ public class MCPFrame extends JFrame {
 		if(verList != null) verList.setEnabled(false);
 		verLabel.setEnabled(false);
 		menuBar.menuOptions.setEnabled(false);
-		menuBar.mcpMenu.setEnabled(false);
+		menuBar.setComponentsEnabled(false);
 	}
 
 	public void setCurrentVersion(String version) {

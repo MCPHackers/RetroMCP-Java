@@ -30,6 +30,7 @@ public class Decompiler implements IBytecodeProvider, IResultSaver {
 	private final Path source;
 	private final Path destination;
 	private final Map<String, Object> mapOptions = new HashMap<>();
+
 	private Map<String, ZipOutputStream> mapArchiveStreams = new HashMap<String, ZipOutputStream>();
 	private Map<String, Set<String>> mapArchiveEntries = new HashMap<String, Set<String>>();
 

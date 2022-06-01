@@ -254,11 +254,8 @@ public class TaskMode {
 			return requirement.get(mcp, Side.CLIENT) || requirement.get(mcp, Side.SERVER);
 		}
 		else {
-			if(!requirement.get(mcp, side)) {
-				return false;
-			}
+			return requirement.get(mcp, side);
 		}
-		return true;
 	}
 	
 	@FunctionalInterface

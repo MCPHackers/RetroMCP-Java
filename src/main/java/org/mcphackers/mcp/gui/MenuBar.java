@@ -32,6 +32,7 @@ import org.mcphackers.mcp.tools.Util;
 public class MenuBar extends JMenuBar {
 	public final JMenu menuOptions = new JMenu("Options");
 	public final JMenu mcpMenu = new JMenu("MCP");
+	public final List<JMenuItem> togglableComponents = new ArrayList<>();
 	public final Map<Side, JMenuItem> start = new HashMap<>();
 	public final Map<TaskParameter, JMenuItem> optionItems = new HashMap<>();
 	private final JMenu helpMenu = new JMenu(TaskMode.HELP.getFullName());
@@ -52,6 +53,7 @@ public class MenuBar extends JMenuBar {
 		Side[] sides = {Side.CLIENT, Side.SERVER};
 		for(Side side : sides) {
 			JMenuItem start = new JMenuItem(TaskMode.START.getFullName() + " " + side.name);
+			togglableComponents.add(start);
 			start.addActionListener(a -> {
 				operateOnThread(() -> {
 					mcp.performTask(TaskMode.START, side, false);
@@ -94,20 +96,23 @@ public class MenuBar extends JMenuBar {
 			List<TaskMode> usedTasks = new ArrayList<>();
 			usedTasks.addAll(Arrays.asList(MainGUI.TASKS));
 			usedTasks.addAll(Arrays.asList(TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP));
-			JMenu runTask = new JMenu("More tasks...");
+			JMenu moreTasks = new JMenu("More tasks...");
+			togglableComponents.add(moreTasks);
 			for(TaskMode task : TaskMode.registeredTasks) {
 				if(usedTasks.contains(task)) {
 					continue;
 				}
 				JMenuItem taskItem = new JMenuItem(task.getFullName());
 				taskItem.addActionListener(TaskButton.performTask(mcp, task));
-				runTask.add(taskItem);
+				moreTasks.add(taskItem);
 			}
-			mcpMenu.add(runTask);
+			mcpMenu.add(moreTasks);
 		}
 		JMenuItem exit = new JMenuItem(TaskMode.EXIT.getFullName());
 		exit.addActionListener(a -> System.exit(0));
 		mcpMenu.add(exit);
+		togglableComponents.add(update);
+		togglableComponents.add(changeDir);
 		add(mcpMenu);
 		add(menuOptions);
 		this.githubItem.addActionListener(e -> Util.openUrl(MCP.githubURL));
@@ -199,6 +204,12 @@ public class MenuBar extends JMenuBar {
 	private void reloadOptions() {
 		for(Map.Entry<TaskParameter, JMenuItem> entry : optionItems.entrySet()) {
 			entry.getValue().setSelected(mcp.options.getBooleanParameter(entry.getKey()));
+		}
+	}
+
+	public void setComponentsEnabled(boolean b) {
+		for(JMenuItem item : togglableComponents) {
+			item.setEnabled(b);
 		}
 	}
 }

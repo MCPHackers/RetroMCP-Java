@@ -39,8 +39,7 @@ public class MainGUI extends MCP {
 		options = new Options(MCPPaths.get(this, "options.cfg"));
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
-			JOptionPane.showMessageDialog(null, "Java Development Kit not found!", "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
+			JOptionPane.showMessageDialog(null, "Java Development Kit is required to recompile!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		frame = new MCPFrame(this);
 	}

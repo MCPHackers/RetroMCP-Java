@@ -53,8 +53,8 @@ public class TaskDecompile extends TaskStaged {
 		final Path remapped 	= MCPPaths.get(mcp, MCPPaths.DEOBF_OUT, side);
 		final Path excOut 		= MCPPaths.get(mcp, MCPPaths.EXC_OUT, side);
 		final Path tempExcOut 	= MCPPaths.get(mcp, MCPPaths.TEMP_EXC_OUT, side);
-		final Path srcZip 		= MCPPaths.get(mcp, MCPPaths.SIDE_SRC, side);
 		final Path ffOut 		= MCPPaths.get(mcp, MCPPaths.TEMP_SOURCES, side);
+		final Path srcZip 		= MCPPaths.get(mcp, MCPPaths.SIDE_SRC, side);
 		final Path srcPath 		= MCPPaths.get(mcp, MCPPaths.SOURCES, side);
 		final Path patchesPath 	= MCPPaths.get(mcp, MCPPaths.PATCHES, side);
 		
@@ -109,7 +109,7 @@ public class TaskDecompile extends TaskStaged {
 					}
 				}
 			}),
-			stage("Applying MCInjector", 2,
+			stage("Applying RDInjector", 2,
 			() -> {
 				Side[] sides = (side == Side.MERGED) ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
 				Files.deleteIfExists(tempExcOut);
@@ -139,6 +139,7 @@ public class TaskDecompile extends TaskStaged {
 			stage("Decompiling",
 			() -> {
 				//TODO Apply both javadocs if side == Side.MERGED
+				//FIXME Javadocs
 				final Path deobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_DO, side == Side.MERGED ? Side.CLIENT : side);
 				new Decompiler(this, excOut, srcZip, deobfMappings, mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING)).decompile();
 			}),
