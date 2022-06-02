@@ -57,6 +57,7 @@ public class TaskDownloadUpdate extends Task {
 						jarPath.toString()
 					};
 					Util.runCommand(cmd);
+					System.exit(0);
 				}
 				else {
 					throw new IOException("Running from a folder! Aborting");
