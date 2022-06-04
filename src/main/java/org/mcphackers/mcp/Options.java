@@ -88,6 +88,7 @@ public class Options {
 		case FULL_BUILD:
 		case RUN_BUILD:
 		case OBFUSCATION:
+		case DECOMPILE_OVERRIDE:
 			value = false;
 			break;
 		case PATCHES:
@@ -96,7 +97,7 @@ public class Options {
 		case IGNORED_PACKAGES:
 			value = new String[] {"paulscode", "com/jcraft", "de/jarnbjo", "isom"};
 			break;
-		case INDENTION_STRING:
+		case INDENTATION_STRING:
 			value = "\t";
 			break;
 		case RUN_ARGS:

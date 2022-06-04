@@ -141,7 +141,10 @@ public class TaskDecompile extends TaskStaged {
 				//TODO Apply both javadocs if side == Side.MERGED
 				//FIXME Javadocs
 				final Path deobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_DO, side == Side.MERGED ? Side.CLIENT : side);
-				new Decompiler(this, excOut, srcZip, deobfMappings, mcp.getOptions().getStringParameter(TaskParameter.INDENTION_STRING)).decompile();
+				new Decompiler(this, excOut, srcZip, deobfMappings,
+						mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING),
+						mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE))
+				.decompile();
 			}),
 			stage("Extracting sources", 84,
 			() -> {

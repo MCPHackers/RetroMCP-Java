@@ -164,7 +164,7 @@ public class MenuBar extends JMenuBar {
 				"Running"
 				};
 		TaskParameter[][] params = {
-				{TaskParameter.PATCHES, TaskParameter.INDENTION_STRING, TaskParameter.IGNORED_PACKAGES},
+				{TaskParameter.PATCHES, TaskParameter.DECOMPILE_OVERRIDE, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES},
 				{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
 				{TaskParameter.OBFUSCATION},
 				{TaskParameter.FULL_BUILD},

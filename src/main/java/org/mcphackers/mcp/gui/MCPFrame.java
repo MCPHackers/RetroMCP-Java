@@ -125,7 +125,7 @@ public class MCPFrame extends JFrame {
 		
 		topRightContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		reloadVersionList();
-		updateButtonState();
+		//updateButtonState();
 		
 		JPanel topContainer = new JPanel(new BorderLayout());
 		
@@ -159,10 +159,15 @@ public class MCPFrame extends JFrame {
 	}
 	
 	public void reloadVersionList() {
+
+		this.verLabel = new JLabel("Current version:");
+		this.verList = new JComboBox<>(new String[] {"Loading..."});
+		topRightContainer.removeAll();
+		topRightContainer.add(this.verLabel);
+		topRightContainer.add(this.verList);
+		operateOnThread(() ->  {
 		try {
-			topRightContainer.removeAll();
-			JFrame frame = this;
-			
+			setAllButtonsInactive();
 			this.verList = new JComboBox<>(VersionsParser.getVersionList().toArray(new String[0]));
 			this.verList.addPopupMenuListener(new PopupMenuListener() {
 	
@@ -174,7 +179,7 @@ public class MCPFrame extends JFrame {
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
 			        if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(mcp.getCurrentVersion())) {
-			        	int response = JOptionPane.showConfirmDialog(frame, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+			        	int response = JOptionPane.showConfirmDialog(MCPFrame.this, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
 			        	switch (response) {
 			        		case 0:
 		    					mcp.setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
@@ -201,14 +206,18 @@ public class MCPFrame extends JFrame {
 			}
 			this.verList.setMaximumRowCount(20);
 			this.verLabel = new JLabel("Current version:");
+			topRightContainer.removeAll();
 			topRightContainer.add(this.verLabel);
 			topRightContainer.add(this.verList);
 		} catch (Exception e) {
 			verLabel = new JLabel("Unable to get version list!");
 			verLabel.setForeground(Color.RED);
+			topRightContainer.removeAll();
 			topRightContainer.add(verLabel);
 		}
+		updateButtonState();
 		topRightContainer.updateUI();
+		});
 	}
 
 	public void updateButtonState() {

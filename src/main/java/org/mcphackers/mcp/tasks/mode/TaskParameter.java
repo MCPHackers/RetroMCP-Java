@@ -7,7 +7,7 @@ public enum TaskParameter {
 	SRC_CLEANUP("src", "Source cleanup", Boolean.class),
 	PATCHES("patch", "Apply patches", Boolean.class),
 	IGNORED_PACKAGES("ignore", "Set ignored packages", String[].class),
-	INDENTION_STRING("ind", "Set indention string", String.class),
+	INDENTATION_STRING("ind", "Set indentation string", String.class),
 	OBFUSCATION("obf", "Obfuscation", Boolean.class),
 	FULL_BUILD("fullbuild", "Full build", Boolean.class),
 	RUN_BUILD("runbuild", "Run build", Boolean.class),
@@ -15,7 +15,8 @@ public enum TaskParameter {
 	SETUP_VERSION("setup", "Setup version", String.class),
 	SOURCE_VERSION("source", "Set a specific source version", Integer.class),
 	TARGET_VERSION("target", "Set a specific target version", Integer.class),
-	JAVA_HOME("javahome", "Set JAVA_HOME used for compiling", String.class);
+	JAVA_HOME("javahome", "Set JAVA_HOME used for compiling", String.class),
+	DECOMPILE_OVERRIDE("override", "Decompile @Override", Boolean.class);
 
 	public final String desc;
 	public final String name;

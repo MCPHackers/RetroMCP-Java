@@ -1,16 +1,19 @@
 package org.mcphackers.mcp.tools;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -18,8 +21,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public abstract class Util {
 
@@ -33,11 +39,11 @@ public abstract class Util {
 		if(killOnShutdown) {
 			Runtime.getRuntime().addShutdownHook(hook);
 		}
-		Scanner err = new Scanner(proc.getErrorStream());
-		Scanner in = new Scanner(proc.getInputStream());
+		BufferedReader err = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 		while(proc.isAlive()) {
-			if(in.hasNextLine())  System.out.println(in.nextLine());
-			if(err.hasNextLine()) System.err.println(err.nextLine());
+			while(in.ready()) System.out.println(in.readLine());
+			while(err.ready()) System.err.println(err.readLine());
 		}
 		in.close();
 		err.close();

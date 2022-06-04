@@ -42,7 +42,7 @@ public class TaskMode {
 				TaskParameter.TARGET_VERSION,
 				TaskParameter.JAVA_HOME,
 				TaskParameter.IGNORED_PACKAGES,
-				TaskParameter.INDENTION_STRING,
+				TaskParameter.INDENTATION_STRING,
 				TaskParameter.PATCHES,
 				TaskParameter.SIDE
 				})

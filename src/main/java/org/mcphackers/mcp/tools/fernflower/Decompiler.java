@@ -34,10 +34,11 @@ public class Decompiler implements IBytecodeProvider, IResultSaver {
 	private Map<String, ZipOutputStream> mapArchiveStreams = new HashMap<String, ZipOutputStream>();
 	private Map<String, Set<String>> mapArchiveEntries = new HashMap<String, Set<String>>();
 
-	public Decompiler(ProgressListener listener, Path source, Path out, Path javadocs, String ind) {
+	public Decompiler(ProgressListener listener, Path source, Path out, Path javadocs, String ind, boolean override) {
 		this.source = source;
 		this.destination = out;
 		this.log = new DecompileLogger(listener);
+		mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, override ? "1" : "0");
 		mapOptions.put(IFernflowerPreferences.NO_COMMENT_OUTPUT, "1");
 		mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, "0");
 		mapOptions.put(IFernflowerPreferences.ASCII_STRING_CHARACTERS, "1");
