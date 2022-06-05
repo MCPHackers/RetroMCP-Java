@@ -46,6 +46,10 @@ shadowJar {
     minimize()
 }
 
+run {
+    workingDir 'test'
+}
+
 runShadow {
 
 }

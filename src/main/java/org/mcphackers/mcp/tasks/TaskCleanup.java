@@ -22,6 +22,11 @@ public class TaskCleanup extends Task {
 	
 	public void cleanup(boolean srcCleanup) throws Exception {
 		long startTime = System.currentTimeMillis();
+
+		if (Files.exists(MCPPaths.get(mcp, "src").resolve("main").resolve("java").resolve("org").resolve("mcphackers"))) {
+			throw new IllegalStateException("RMCP attempted to perform suicide. (Probably because you ran this application in the wrong folder)");
+		}
+
 		int foldersDeleted = 0;
 		Path[] pathsToDelete = new Path[] {
 				MCPPaths.get(mcp, MCPPaths.CONF),
