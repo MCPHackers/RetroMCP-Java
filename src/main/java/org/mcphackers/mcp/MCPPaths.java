@@ -2,9 +2,7 @@ package org.mcphackers.mcp;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.mcphackers.mcp.tasks.Task.Side;
@@ -53,15 +51,13 @@ public class MCPPaths {
 	public static final String VERSION = 	 		 CONF + "version";
 	public static final String UPDATE_JAR 		= 	 "update.jar";
 	
-	private static final Map<String, Path> paths = new HashMap<>();
-	private static Path cachedWorkingDir;
 	private static final Set<String> stripClient = new HashSet<String>() {{
-	    add(JAR_ORIGINAL);
-	    add(SOURCES);
-	    add(BIN_SIDE);
-	    add(REOBF_SIDE);
-	    add(BUILD_ZIP);
-	    add(BUILD_JAR);
+		add(JAR_ORIGINAL);
+		add(SOURCES);
+		add(BIN_SIDE);
+		add(REOBF_SIDE);
+		add(BUILD_ZIP);
+		add(BUILD_JAR);
 	}};
 	
 	public static Path get(MCP mcp, String path, Side side) {
@@ -72,16 +68,6 @@ public class MCPPaths {
 	}
 
 	public static Path get(MCP mcp, String path) {
-		//TODO measure the performance of getting a path from a hashmap instead of making a new one
-		if(mcp.getWorkingDir() != cachedWorkingDir) {
-			cachedWorkingDir = mcp.getWorkingDir();
-			paths.clear();
-		}
-		if(!paths.containsKey(path)) {
-			Path p = cachedWorkingDir.resolve(Paths.get(path));
-			paths.put(path, p);
-			return p;
-		}
-		return paths.get(path);
+		return mcp.getWorkingDir().resolve(Paths.get(path));
 	}
 }

@@ -23,17 +23,17 @@ public abstract class ClassUtils {
 		URLClassLoader cl = URLClassLoader.newInstance(urls);
 
 		while (e.hasMoreElements()) {
-		    JarEntry je = e.nextElement();
-		    if(je.isDirectory() || !je.getName().endsWith(".class")){
-		        continue;
-		    }
-		    // -6 because of .class
-		    String className = je.getName().substring(0,je.getName().length()-6);
-		    className = className.replace('/', '.');
-		    Class cls = cl.loadClass(className);
-		    if(type.isAssignableFrom(cls)) {
-		    	classes.add((Class<T>)cls);
-		    }
+			JarEntry je = e.nextElement();
+			if(je.isDirectory() || !je.getName().endsWith(".class")){
+				continue;
+			}
+			// -6 because of .class
+			String className = je.getName().substring(0,je.getName().length()-6);
+			className = className.replace('/', '.');
+			Class cls = cl.loadClass(className);
+			if(type.isAssignableFrom(cls)) {
+				classes.add((Class<T>)cls);
+			}
 		}
 		jarFile.close();
 		return classes;

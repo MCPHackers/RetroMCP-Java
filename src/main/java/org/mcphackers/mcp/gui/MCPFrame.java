@@ -31,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -54,27 +55,26 @@ public class MCPFrame extends JFrame {
 	private JLabel[] progressLabels = new JLabel[0];
 	private MenuBar menuBar;
 	public MainGUI mcp;
+	public boolean loadingVersions = true;
 	
 	public MCPFrame(MainGUI mcp) {
 		super("RetroMCP " + MCP.VERSION);
 		this.mcp = mcp;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        try {
-            URL resource = getClass().getResource("/icon/rmcp.png");
-            BufferedImage image = ImageIO.read(resource);
-            setIconImage(image);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        initFrameContents();
-        pack();
+		try {
+			URL resource = getClass().getResource("/icon/rmcp.png");
+			BufferedImage image = ImageIO.read(resource);
+			setIconImage(image);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		initFrameContents();
+		pack();
 		setMinimumSize(getMinimumSize());
 		setSize(new Dimension(940, 500));
-        setLocationRelativeTo(null);
-        setVisible(true);
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
-	
-	
 	
 	private void initFrameContents() {
 
@@ -86,9 +86,9 @@ public class MCPFrame extends JFrame {
 		JPanel topLeftContainer = new JPanel();
 		topLeftContainer.setLayout(layout);
 		this.addComponentListener(new ComponentAdapter() {
-		    public void componentResized(ComponentEvent componentEvent) {
-		        SwingUtilities.invokeLater(() -> topLeftContainer.revalidate());
-		    }
+			public void componentResized(ComponentEvent componentEvent) {
+				SwingUtilities.invokeLater(() -> topLeftContainer.revalidate());
+			}
 		});
 
 		for(TaskMode task : MainGUI.TASKS) {
@@ -125,35 +125,35 @@ public class MCPFrame extends JFrame {
 		
 		topRightContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		reloadVersionList();
-		//updateButtonState();
+		updateButtonState();
 		
 		JPanel topContainer = new JPanel(new BorderLayout());
 		
 		topContainer.add(topLeftContainer, BorderLayout.CENTER);
 		topContainer.add(topRightContainer, BorderLayout.EAST);
-        topContainer.setMinimumSize(new Dimension(340, 96));
+		topContainer.setMinimumSize(new Dimension(340, 96));
 		topRightContainer.setMinimumSize(topRightContainer.getMinimumSize());
 		contentPane.add(topContainer, BorderLayout.NORTH);
 
 		JTextArea textArea = new JTextArea();
 		JPanel middlePanel = new JPanel();
-	    middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Console output"));
-        middlePanel.setLayout(new BorderLayout());
+		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Console output"));
+		middlePanel.setLayout(new BorderLayout());
 		textArea.setEditable(false);
-	    PrintStream origOut = System.out;
-	    PrintStream interceptor = new TextAreaOutputStream(textArea, origOut);
-	    System.setOut(interceptor);
-	    origOut = System.err;
-	    interceptor = new TextAreaOutputStream(textArea, origOut);
+		PrintStream origOut = System.out;
+		PrintStream interceptor = new TextAreaOutputStream(textArea, origOut);
+		System.setOut(interceptor);
+		origOut = System.err;
+		interceptor = new TextAreaOutputStream(textArea, origOut);
 		System.setErr(interceptor);
 		Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 		textArea.setFont(font);
 		textArea.setForeground(Color.BLACK);
 		JScrollPane scroll = new JScrollPane(textArea);
-	    scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		middlePanel.add(scroll);
 		bottom = new JPanel(new GridBagLayout());
-        bottom.setVisible(false);
+		bottom.setVisible(false);
 		contentPane.add(middlePanel, BorderLayout.CENTER);
 		contentPane.add(bottom, BorderLayout.SOUTH);
 	}
@@ -162,12 +162,14 @@ public class MCPFrame extends JFrame {
 
 		this.verLabel = new JLabel("Current version:");
 		this.verList = new JComboBox<>(new String[] {"Loading..."});
+		verLabel.setEnabled(false);
+		verList.setEnabled(false);
 		topRightContainer.removeAll();
 		topRightContainer.add(this.verLabel);
 		topRightContainer.add(this.verList);
 		operateOnThread(() ->  {
 		try {
-			setAllButtonsInactive();
+			loadingVersions = true;
 			this.verList = new JComboBox<>(VersionsParser.getVersionList().toArray(new String[0]));
 			this.verList.addPopupMenuListener(new PopupMenuListener() {
 	
@@ -178,18 +180,18 @@ public class MCPFrame extends JFrame {
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
-			        if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(mcp.getCurrentVersion())) {
-			        	int response = JOptionPane.showConfirmDialog(MCPFrame.this, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
-			        	switch (response) {
-			        		case 0:
-		    					mcp.setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
-		    					mcp.performTask(TaskMode.SETUP, Side.ANY);
-			        		default:
-			        			verList.setSelectedItem(mcp.getCurrentVersion());
-			        			verList.repaint();
-			        			break;
-			        	}
-			        }
+					if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(mcp.getCurrentVersion())) {
+						int response = JOptionPane.showConfirmDialog(MCPFrame.this, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+						switch (response) {
+							case 0:
+								mcp.setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
+								mcp.performTask(TaskMode.SETUP, Side.ANY);
+							default:
+								verList.setSelectedItem(mcp.getCurrentVersion());
+								verList.repaint();
+								break;
+						}
+					}
 					});
 				}
 	
@@ -211,11 +213,18 @@ public class MCPFrame extends JFrame {
 			topRightContainer.add(this.verList);
 		} catch (Exception e) {
 			verLabel = new JLabel("Unable to get version list!");
+			verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
 			verLabel.setForeground(Color.RED);
 			topRightContainer.removeAll();
 			topRightContainer.add(verLabel);
 		}
-		updateButtonState();
+		loadingVersions = false;
+		synchronized (mcp) {
+			if(mcp.isActive) {
+				if(verList != null) verList.setEnabled(true);
+				verLabel.setEnabled(true);
+			}
+		}
 		topRightContainer.updateUI();
 		});
 	}
@@ -223,8 +232,8 @@ public class MCPFrame extends JFrame {
 	public void updateButtonState() {
 		buttons.forEach(button -> button.setEnabled(button.getEnabled()));
 		menuBar.start.entrySet().forEach(entry -> entry.getValue().setEnabled(TaskMode.START.isAvailable(mcp, entry.getKey())));
-		if(verList != null) verList.setEnabled(true);
-		verLabel.setEnabled(true);
+		if(verList != null && !loadingVersions) verList.setEnabled(true);
+		if(!loadingVersions) verLabel.setEnabled(true);
 		menuBar.menuOptions.setEnabled(true);
 		menuBar.setComponentsEnabled(true);
 	}
@@ -243,10 +252,10 @@ public class MCPFrame extends JFrame {
 	}
 
 	public void resetProgressBars() {
-        bottom.removeAll();
-        bottom.setVisible(false);
-        progressBars = new SideProgressBar[0];
-        progressLabels = new JLabel[0];
+		bottom.removeAll();
+		bottom.setVisible(false);
+		progressBars = new SideProgressBar[0];
+		progressLabels = new JLabel[0];
 	}
 
 	public void setProgress(int side, int progress) {
@@ -260,10 +269,10 @@ public class MCPFrame extends JFrame {
 	}
 
 	public void setProgressBars(List<Task> tasks, TaskMode mode) {
-        int size = tasks.size();
+		int size = tasks.size();
 		progressBars = new SideProgressBar[size];
-        progressLabels = new JLabel[size];
-        for (int i = 0; i < size; i++) {
+		progressLabels = new JLabel[size];
+		for (int i = 0; i < size; i++) {
 			String name = mode.getFullName();
 			if(tasks.get(i).side != Side.ANY) {
 				name = tasks.get(i).side.name;
@@ -275,9 +284,9 @@ public class MCPFrame extends JFrame {
 			GridBagConstraintsBuilder cb = new GridBagConstraintsBuilder(new GridBagConstraints()).insetsUnscaled(4, 4);
 			bottom.add(progressLabels[i], cb.pos(0, i).weightX(0).anchor(GridBagConstraints.LINE_END).fill(GridBagConstraints.NONE).build());
 			bottom.add(progressBars[i], cb.pos(1, i).weightX(1).anchor(GridBagConstraints.LINE_END).fill(GridBagConstraints.HORIZONTAL).build());
-        	setProgress(i, "Idle");
-        }
-        bottom.setVisible(true);
+			setProgress(i, "Idle");
+		}
+		bottom.setVisible(true);
 	}
 
 }

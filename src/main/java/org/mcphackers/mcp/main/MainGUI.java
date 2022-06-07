@@ -2,6 +2,7 @@ package org.mcphackers.mcp.main;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -11,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -30,15 +30,22 @@ public class MainGUI extends MCP {
 	public Path workingDir;
 	public MCPFrame frame;
 	public Options options;
+	public boolean isActive = true;
 	
 	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 	
 	public static void main(String[] args) throws Exception {
-		SwingUtilities.invokeLater(() -> new MainGUI());
+		Path workingDir = Paths.get("");
+		if(args.length >= 1) {
+			try {
+				workingDir = Paths.get(args[0]);
+			} catch (InvalidPathException e) {}
+		}
+		new MainGUI(workingDir);
 	}
 	
-	public MainGUI() {
-		workingDir = Paths.get("");
+	public MainGUI(Path dir) {
+		workingDir = dir;
 		options = new Options(MCPPaths.get(this, "options.cfg"));
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
@@ -62,6 +69,7 @@ public class MainGUI extends MCP {
 	}
 
 	public void setActive(boolean active) {
+		isActive = active;
 		if(active) {
 			frame.updateButtonState();
 		}
@@ -139,7 +147,7 @@ public class MainGUI extends MCP {
 		String[] lines = changelog.split("\n");
 		for(String line : lines) {
 			line = line.replace("`", "");
-			String bullet = "•";
+			char bullet = '\u2022';
 			if(line.startsWith("# ")) {
 				JLabel label = new JLabel(line.substring(2));
 				label.setBorder(new EmptyBorder(0, 0, 4, 0));

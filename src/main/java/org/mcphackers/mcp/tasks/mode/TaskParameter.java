@@ -8,7 +8,7 @@ public enum TaskParameter {
 	PATCHES("patch", "Apply patches", Boolean.class),
 	IGNORED_PACKAGES("ignore", "Set ignored packages", String[].class),
 	INDENTATION_STRING("ind", "Set indentation string", String.class),
-	OBFUSCATION("obf", "Obfuscation", Boolean.class),
+	OBFUSCATION("obf", "Obfuscate mod", Boolean.class),
 	FULL_BUILD("fullbuild", "Full build", Boolean.class),
 	RUN_BUILD("runbuild", "Run build", Boolean.class),
 	RUN_ARGS("runargs", "Run arguments", String[].class),

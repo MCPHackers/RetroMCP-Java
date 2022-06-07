@@ -14,9 +14,14 @@ public class DecompileLogger extends IFernflowerLogger {
 	}
 
 	public void writeMessage(String message, Severity severity) {
+		if(severity.ordinal() >= Severity.WARN.ordinal()) {
+//			System.out.println(message);
+		}
 	}
 
 	public void writeMessage(String message, Throwable t) {
+//		System.out.println(message);
+//		t.printStackTrace();
 	}
 
 	public void startReadingClass(String className) {

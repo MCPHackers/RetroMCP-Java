@@ -17,6 +17,7 @@ import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tasks.TaskStaged;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
@@ -24,7 +25,7 @@ import org.mcphackers.mcp.tools.FileUtil;
 
 public abstract class MCP {
 
-	public static final String VERSION = "v1.0-pre2";
+	public static final String VERSION = "v1.0-pre3";
 	public static final String githubURL = "https://github.com/MCPHackers/RetroMCP-Java";
 
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
@@ -162,17 +163,17 @@ public abstract class MCP {
 		}
 	}
 
-    private final static void loadPlugins() {
-    	Path pluginsDir = Paths.get("plugins");
-    	if(Files.exists(pluginsDir)) {
-        	List<Path> jars = new ArrayList<>();
+	private final static void loadPlugins() {
+		Path pluginsDir = Paths.get("plugins");
+		if(Files.exists(pluginsDir)) {
+			List<Path> jars = new ArrayList<>();
 			try {
 				FileUtil.collectJars(pluginsDir, jars);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-	    	try {
-	    		for(Path p : jars) {
+			try {
+				for(Path p : jars) {
 					List<Class<MCPPlugin>> classes = ClassUtils.getClasses(p, MCPPlugin.class);
 					for(Class<MCPPlugin> cls : classes) {
 						if(!ClassUtils.isClassAbstract(cls)) {
@@ -184,28 +185,28 @@ public abstract class MCP {
 							System.err.println("Incompatible plugin found: " + cls.getName());
 						}
 					}
-	    		}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-    	}
-    }
-
-	public final void setPluginOverrides(Task task) {
-    	for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
-			entry.getValue().setTaskOverrides(task);
-    	}
+		}
 	}
 
-    public final void triggerEvent(MCPEvent event) {
-    	for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
-    		entry.getValue().onMCPEvent(event, this);
-    	}
-    }
+	public final void setPluginOverrides(TaskStaged task) {
+		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+			entry.getValue().setTaskOverrides(task);
+		}
+	}
 
-    public final void triggerTaskEvent(TaskEvent event, Task task) {
-    	for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
-    		entry.getValue().onTaskEvent(event, task);
-    	}
+	public final void triggerEvent(MCPEvent event) {
+		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+			entry.getValue().onMCPEvent(event, this);
+		}
+	}
+
+	public final void triggerTaskEvent(TaskEvent event, Task task) {
+		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+			entry.getValue().onTaskEvent(event, task);
+		}
 	}
 }

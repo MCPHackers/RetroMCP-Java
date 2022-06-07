@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,7 +80,9 @@ public abstract class VersionsParser {
 					jsonURL = src + "versions.json";
 				}
 			}
-			InputStream in = new URL(jsonURL).openStream();
+			URLConnection connect = new URL(jsonURL).openConnection();
+			connect.setConnectTimeout(30000);
+			InputStream in = connect.getInputStream();
 			return Util.parseJSONFile(in);
 		} catch (JSONException | IOException e) {
 			cause = e;

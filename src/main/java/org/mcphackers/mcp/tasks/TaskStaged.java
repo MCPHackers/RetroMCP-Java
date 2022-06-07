@@ -29,7 +29,7 @@ public abstract class TaskStaged extends Task {
 	
 	public void doTask() throws Exception {
 		stages = setStages();
-		mcp.setPluginOverrides(this); // TODO set overrides for Task class too
+		mcp.setPluginOverrides(this);
 		while(step < stages.length) {
 			setProgress(stages[step].stageName, stages[step].completion);
 			stages[step].doTask();

@@ -2,6 +2,7 @@ package org.mcphackers.mcp.plugin;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tasks.Task;
+import org.mcphackers.mcp.tasks.TaskStaged;
 
 public interface MCPPlugin {
 	
@@ -13,7 +14,7 @@ public interface MCPPlugin {
 
 	void onMCPEvent(MCPEvent event, MCP mcp);
 
-	void setTaskOverrides(Task task);
+	void setTaskOverrides(TaskStaged task);
 	
 	public enum TaskEvent {
 		PRE_TASK,

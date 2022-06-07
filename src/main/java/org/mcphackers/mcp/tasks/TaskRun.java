@@ -112,24 +112,25 @@ public class TaskRun extends Task {
 			possibleStartClass = new String[] {"Start"};
 		}
 		for(Path cp : classPath) {
-			if(Files.exists(cp)) {
-				if(Files.isDirectory(cp)) {
-					for(String start : possibleStartClass) {
-						if(Files.exists(cp.resolve(start.replace(".", "/") + ".class"))) {
-							return start;
-						}
+			if(!Files.exists(cp)) {
+				continue;
+			}
+			if(Files.isDirectory(cp)) {
+				for(String start : possibleStartClass) {
+					if(Files.exists(cp.resolve(start.replace(".", "/") + ".class"))) {
+						return start;
 					}
 				}
-//				else {
-//					try (FileSystem fs = FileSystems.newFileSystem(cp, (ClassLoader)null)) {
-//						for(String start : possibleStartClass) {
-//							if(Files.exists(fs.getPath("/").resolve(start.replace(".", "/") + ".class"))) {
-//								return start;
-//							}
+			}
+//			else {
+//				try (FileSystem fs = FileSystems.newFileSystem(cp, (ClassLoader)null)) {
+//					for(String start : possibleStartClass) {
+//						if(Files.exists(fs.getPath("/").resolve(start.replace(".", "/") + ".class"))) {
+//							return start;
 //						}
 //					}
 //				}
-			}
+//			}
 		}
 		throw new Exception("Could not find start class");
 	}

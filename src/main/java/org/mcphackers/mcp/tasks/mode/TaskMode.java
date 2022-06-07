@@ -175,11 +175,11 @@ public class TaskMode {
 			.build();
 
 	static {
-		new TaskModeBuilder()
-		.setCmdName("timestamps")
-		.setFullName("Timestamps")
-		.setTaskClass(TaskTimestamps.class)
-		.build();
+//		new TaskModeBuilder()
+//		.setCmdName("timestamps")
+//		.setFullName("Timestamps")
+//		.setTaskClass(TaskTimestamps.class)
+//		.build();
 	}
 	private final String name;
 	private final String fullName;

@@ -10,32 +10,32 @@ public class TextAreaOutputStream extends PrintStream {
 
 	public TextAreaOutputStream(JTextArea textArea, OutputStream out) {
 		super(out, true);
-    	this.textArea = textArea;
+		this.textArea = textArea;
 	}
 
-    @Override
-    public void print(Object o) {
+	@Override
+	public void print(Object o) {
 		textArea.append(String.valueOf(o));
-        super.print(o);
-    }
+		super.print(o);
+	}
 
-    @Override
-    public void println(Object o) {
-        super.println(o);
+	@Override
+	public void println(Object o) {
+		super.println(o);
 		textArea.append("\n");
 		textArea.setCaretPosition(textArea.getDocument().getLength());
-    }
+	}
 
-    @Override
-    public void print(String s) {
+	@Override
+	public void print(String s) {
 		textArea.append(s);
-        super.print(s);
-    }
+		super.print(s);
+	}
 
-    @Override
-    public void println(String s) {
-        super.println(s);
+	@Override
+	public void println(String s) {
+		super.println(s);
 		textArea.append("\n");
 		textArea.setCaretPosition(textArea.getDocument().getLength());
-    }
+	}
 }

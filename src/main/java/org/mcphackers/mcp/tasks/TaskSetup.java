@@ -60,8 +60,9 @@ public class TaskSetup extends Task {
 
 		// Download Minecraft
 		Side[] sides = VersionsParser.hasServer(currentVersion) ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {Side.CLIENT};
-
-		setProgress(30);
+		
+		int progress = 30;
+		setProgress(progress);
 		for(Side side : sides) {
 			FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIBS, side));
 			setProgress("Downloading Minecraft " + side.name.toLowerCase());
@@ -77,6 +78,8 @@ public class TaskSetup extends Task {
 				FileUtil.copyFileFromAZip(zip, "minecraft-server.jar", pathOut);
 				Files.deleteIfExists(zip);
 			}
+			progress += 10;
+			setProgress(progress);
 		}
 		
 		setProgress("Downloading libraries", 50);

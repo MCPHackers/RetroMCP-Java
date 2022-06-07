@@ -1,6 +1,5 @@
 package org.mcphackers.mcp.main;
 
-import java.io.Console;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -27,19 +27,20 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public class MainCLI extends MCP {
-	private static final Ansi logo =
+	private static final boolean FORCE_CONSOLE = false;
+	private static final Ansi LOGO =
 			new Ansi()
-			.fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____  ").a('\n')
-			.fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\ ").a('\n')
+			.fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____").a('\n')
+			.fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\").a('\n')
 			.fgCyan().a(" | |__) |___| |_ _ __ ___ ").fgYellow().a("| \\  / | |    | |__) |").a('\n')
-			.fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |    |  ___/ ").a('\n')
-			.fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |     ").a('\n')
-			.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|     ").a('\n')
+			.fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |    |  ___/").a('\n')
+			.fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |").a('\n')
+			.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|").a('\n')
 			.fgDefault();
 	private TaskMode mode;
 	private Side side = Side.ANY;
 	private TaskMode helpCommand;
-	private final Console console = System.console();
+	private final Scanner consoleInput = new Scanner(System.in);
 	private final Options options = new Options();
 	private String currentVersion;
 	
@@ -48,7 +49,7 @@ public class MainCLI extends MCP {
 	private String[] progressBarNames;
 
 	public static void main(String[] args) throws Exception {
-		if(System.console() != null) {
+		if(System.console() != null || FORCE_CONSOLE) {
 			AnsiConsole.systemInstall();
 			new MainCLI(args);
 		}
@@ -79,7 +80,7 @@ public class MainCLI extends MCP {
 		}
 		if (args.length <= 0) {
 			startedWithNoParams = true;
-			log(logo.toString());
+			log(LOGO.toString());
 			JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 			if (c == null) {
 				// Likely a JRE
@@ -95,7 +96,7 @@ public class MainCLI extends MCP {
 				System.out.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
 				String str = null;
 				try {
-					str = console.readLine();
+					str = consoleInput.nextLine();
 				} catch (NoSuchElementException ignored) {
 				}
 				if (str == null) {
@@ -263,14 +264,14 @@ public class MainCLI extends MCP {
 	@Override
 	public boolean yesNoInput(String title, String msg) {
 		log(msg);
-		String line = console.readLine();
+		String line = consoleInput.nextLine();
 		return line != null && line.equalsIgnoreCase("yes");
 	}
 
 	@Override
 	public String inputString(String title, String msg) {
 		log(msg);
-		String line = console.readLine();
+		String line = consoleInput.nextLine();
 		return line == null ? "" : line.toLowerCase();
 	}
 
@@ -327,7 +328,7 @@ public class MainCLI extends MCP {
 		//TODO logging messages while progress bar is active still breaks;
 		synchronized (this) { 
 			progressStrings[side] = progressMessage;
-	        System.out.print(new Ansi().cursorUpLine(progresses.length));
+			System.out.print(new Ansi().cursorUpLine(progresses.length));
 			for(int i = 0; i < progresses.length; i++) {
 				System.out.println(progressString(progresses[i], progressStrings[i], progressBarNames[i]));
 			}
@@ -339,7 +340,7 @@ public class MainCLI extends MCP {
 		//TODO logging messages while progress bar is active still breaks;
 		synchronized (this) { 
 			progresses[side] = progress;
-	        System.out.print(new Ansi().cursorUpLine(progresses.length));
+			System.out.print(new Ansi().cursorUpLine(progresses.length));
 			for(int i = 0; i < progresses.length; i++) {
 				System.out.println(progressString(progresses[i], progressStrings[i], progressBarNames[i]));
 			}
@@ -351,7 +352,7 @@ public class MainCLI extends MCP {
 		progresses = new int[tasks.size()];
 		progressStrings = new String[tasks.size()];
 		progressBarNames = new String[tasks.size()];
-        for (int i = 0; i < tasks.size(); i++) {
+		for (int i = 0; i < tasks.size(); i++) {
 			String name = mode.getFullName();
 			if(tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
 				name = tasks.get(i).side.name;
@@ -360,7 +361,7 @@ public class MainCLI extends MCP {
 			progressStrings[i] = "Idle";
 			progressBarNames[i] = name;
 			System.out.println();
-        }
+		}
 	}
 
 	@Override

@@ -37,7 +37,6 @@ public class MenuBar extends JMenuBar {
 	public final Map<TaskParameter, JMenuItem> optionItems = new HashMap<>();
 	private final JMenu helpMenu = new JMenu(TaskMode.HELP.getFullName());
 	private JMenuItem[] sideItems;
-	private final JMenuItem githubItem = new JMenuItem("Github Page");
 	private final MCPFrame owner;
 	private MainGUI mcp;
 
@@ -47,7 +46,6 @@ public class MenuBar extends JMenuBar {
 		this.menuOptions.setMnemonic(KeyEvent.VK_O);
 		this.helpMenu.setMnemonic(KeyEvent.VK_H);
 		initOptions();
-		reloadSide();
 		JMenuItem update = new JMenuItem("Check for updates");
 		update.addActionListener(a -> operateOnThread(() -> mcp.performTask(TaskMode.UPDATE_MCP, Side.ANY, false)));
 		Side[] sides = {Side.CLIENT, Side.SERVER};
@@ -63,6 +61,7 @@ public class MenuBar extends JMenuBar {
 			mcpMenu.add(start);
 			this.start.put(side, start);
 		}
+		reloadSide();
 		JMenuItem browseDir = new JMenuItem("View working directory");
 		browseDir.addActionListener(a -> {
 			try {
@@ -115,8 +114,12 @@ public class MenuBar extends JMenuBar {
 		togglableComponents.add(changeDir);
 		add(mcpMenu);
 		add(menuOptions);
-		this.githubItem.addActionListener(e -> Util.openUrl(MCP.githubURL));
-		this.helpMenu.add(this.githubItem);
+		JMenuItem githubItem = new JMenuItem("Github Page");
+		JMenuItem wiki = new JMenuItem("Wiki");
+		githubItem.addActionListener(e -> Util.openUrl(MCP.githubURL));
+		wiki.addActionListener(e -> Util.openUrl(MCP.githubURL + "/wiki"));
+		this.helpMenu.add(githubItem);
+		this.helpMenu.add(wiki);
 		add(helpMenu);
 	}
 
@@ -197,7 +200,12 @@ public class MenuBar extends JMenuBar {
 		}
 		reloadOptions();
 		JMenuItem reset = new JMenuItem("Reset to defaults");
-		reset.addActionListener(e -> reloadOptions());
+		reset.addActionListener(e -> {
+			mcp.getOptions().resetDefaults();
+			reloadOptions();
+			reloadSide();
+			owner.updateButtonState();
+		});
 		menuOptions.add(reset);
 	}
 	

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,9 +57,9 @@ public abstract class Util {
 		procBuilder.start();
 	}
 	
-    public static void copyToClipboard(String text) {
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
-    }
+	public static void copyToClipboard(String text) {
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+	}
 
 	public static Thread operateOnThread(Runnable function) {
 		Thread thread = new Thread(function);
@@ -68,29 +67,23 @@ public abstract class Util {
 		return thread;
 	}
 
-    public static void openUrl(String url) {
-        try {
-            switch (Os.getOs()) {
-                case LINUX:
-                    new ProcessBuilder("/usr/bin/env", "xdg-open", url).start();
-                    break;
-                default:
-                    if (Desktop.isDesktopSupported()) {
-                        Desktop desktop = Desktop.getDesktop();
-                        desktop.browse(new URI(url));
-                    }
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        } catch (URISyntaxException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-	
-	public static String time(long time) {
-		long seconds = TimeUnit.MILLISECONDS.toSeconds(time);
-		long milliseconds = TimeUnit.MILLISECONDS.toMillis(time) - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(time));
-		return seconds + "s " + milliseconds + "ms";
+	public static void openUrl(String url) {
+		try {
+			switch (Os.getOs()) {
+				case LINUX:
+					new ProcessBuilder("/usr/bin/env", "xdg-open", url).start();
+					break;
+				default:
+					if (Desktop.isDesktopSupported()) {
+						Desktop desktop = Desktop.getDesktop();
+						desktop.browse(new URI(url));
+					}
+			}
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		} catch (URISyntaxException ex) {
+			throw new IllegalArgumentException(ex);
+		}
 	}
 	
 	public static Map<String, Object> jsonToMap(JSONObject jsonobj)  throws JSONException {
