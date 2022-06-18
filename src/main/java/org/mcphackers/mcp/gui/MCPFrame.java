@@ -10,7 +10,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
@@ -57,17 +56,22 @@ public class MCPFrame extends JFrame {
 	public MainGUI mcp;
 	public boolean loadingVersions = true;
 	
+	public static BufferedImage ICON;
+	
+	static {
+		try {
+			URL resource = MCPFrame.class.getResource("/icon/rmcp.png");
+			ICON = ImageIO.read(resource);
+		} catch (Exception e) {
+			System.err.println("Can't load icon");
+		}
+	}
+	
 	public MCPFrame(MainGUI mcp) {
 		super("RetroMCP " + MCP.VERSION);
 		this.mcp = mcp;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		try {
-			URL resource = getClass().getResource("/icon/rmcp.png");
-			BufferedImage image = ImageIO.read(resource);
-			setIconImage(image);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		setIconImage(ICON);
 		initFrameContents();
 		pack();
 		setMinimumSize(getMinimumSize());
@@ -92,34 +96,8 @@ public class MCPFrame extends JFrame {
 		});
 
 		for(TaskMode task : MainGUI.TASKS) {
-			TaskButton button;
-			if(task == TaskMode.DECOMPILE) {
-				ActionListener defaultActionListener = event -> operateOnThread(() -> {
-					int response = 0;
-					if(TaskMode.RECOMPILE.isAvailable(mcp, mcp.getSide())) {
-						response = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
-					}
-					if(response == 0) {
-						mcp.performTask(TaskMode.DECOMPILE, mcp.getSide());
-					}
-				});
-				button = new TaskButton(this, task, defaultActionListener);
-			}
-			else if(task == TaskMode.UPDATE_MD5) {
-				ActionListener defaultActionListener = event -> operateOnThread(() -> {
-					int response = JOptionPane.showConfirmDialog(this, "Are you sure you want to regenerate original hashes?", "Confirm Action", JOptionPane.YES_NO_OPTION);
-					if(response == 0) {
-						mcp.performTask(task, mcp.getSide());
-					}
-				});
-				button = new TaskButton(this, task, defaultActionListener);
-			}
-			else {
-				button = new TaskButton(this, task);
-			}
-			button.setPreferredSize(new Dimension(110, 30));
+			TaskButton button = mcp.getButton(task);
 			buttons.add(button);
-			button.setEnabled(false);
 			topLeftContainer.add(button);
 		}
 		
@@ -160,8 +138,8 @@ public class MCPFrame extends JFrame {
 	
 	public void reloadVersionList() {
 
-		this.verLabel = new JLabel("Current version:");
-		this.verList = new JComboBox<>(new String[] {"Loading..."});
+		verLabel = new JLabel("Current version:");
+		verList = new JComboBox<>(new String[] {"Loading..."});
 		verLabel.setEnabled(false);
 		verList.setEnabled(false);
 		topRightContainer.removeAll();
@@ -170,8 +148,8 @@ public class MCPFrame extends JFrame {
 		operateOnThread(() ->  {
 		try {
 			loadingVersions = true;
-			this.verList = new JComboBox<>(VersionsParser.getVersionList().toArray(new String[0]));
-			this.verList.addPopupMenuListener(new PopupMenuListener() {
+			verList = new JComboBox<>(VersionsParser.getVersionList().toArray(new String[0]));
+			verList.addPopupMenuListener(new PopupMenuListener() {
 	
 				@Override
 				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -201,31 +179,34 @@ public class MCPFrame extends JFrame {
 				
 			});
 			if(Files.exists(MCPPaths.get(mcp, MCPPaths.VERSION))) {
-				setCurrentVersion(mcp.currentVersion = VersionsParser.setCurrentVersion(mcp, new String(Files.readAllBytes(MCPPaths.get(mcp, MCPPaths.VERSION)))));
+				setCurrentVersion(VersionsParser.setCurrentVersion(mcp, new String(Files.readAllBytes(MCPPaths.get(mcp, MCPPaths.VERSION)))));
 			}
 			else {
-				setCurrentVersion(mcp.currentVersion = null);
+				setCurrentVersion(null);
 			}
-			this.verList.setMaximumRowCount(20);
-			this.verLabel = new JLabel("Current version:");
-			topRightContainer.removeAll();
-			topRightContainer.add(this.verLabel);
-			topRightContainer.add(this.verList);
+			verList.setMaximumRowCount(20);
+			verLabel = new JLabel("Current version:");
 		} catch (Exception e) {
 			verLabel = new JLabel("Unable to get version list!");
 			verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
 			verLabel.setForeground(Color.RED);
+			verList = null;
+		}
+		SwingUtilities.invokeLater(() -> {
 			topRightContainer.removeAll();
-			topRightContainer.add(verLabel);
-		}
-		loadingVersions = false;
-		synchronized (mcp) {
-			if(mcp.isActive) {
-				if(verList != null) verList.setEnabled(true);
-				verLabel.setEnabled(true);
+			topRightContainer.add(this.verLabel);
+			if(verList != null) {
+				topRightContainer.add(this.verList);
 			}
-		}
-		topRightContainer.updateUI();
+			loadingVersions = false;
+			synchronized (mcp) {
+				if(mcp.isActive) {
+					if(verList != null) verList.setEnabled(true);
+					verLabel.setEnabled(true);
+				}
+			}
+			topRightContainer.updateUI();
+		});
 		});
 	}
 
@@ -247,6 +228,7 @@ public class MCPFrame extends JFrame {
 	}
 
 	public void setCurrentVersion(String version) {
+		mcp.currentVersion = version;
 		verList.setSelectedItem(version);
 		verList.repaint();
 	}

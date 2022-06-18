@@ -41,9 +41,9 @@ public class TaskTimestamps extends Task {
 				String value = null;
 				try (FileSystem fs = FileSystems.newFileSystem(jar, (ClassLoader)null)) {
 					Path meta = fs.getPath("/").resolve("META-INF/MANIFEST.MF");
-						if(Files.exists(meta)) {
-							value = Files.getLastModifiedTime(meta).toInstant().toString();
-						}
+					if(Files.exists(meta)) {
+						value = Files.getLastModifiedTime(meta).toInstant().toString();
+					}
 				}
 				if(value != null) {
 					VersionsParser.json.getJSONObject(ver).put(time, value);

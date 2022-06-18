@@ -1,7 +1,11 @@
 package org.mcphackers.mcp.main;
 
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
+
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,10 +24,10 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.gui.MCPFrame;
+import org.mcphackers.mcp.gui.TaskButton;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
-
 
 public class MainGUI extends MCP {
 	public String currentVersion;
@@ -105,15 +109,18 @@ public class MainGUI extends MCP {
 
 	@Override
 	public boolean yesNoInput(String title, String msg) {
+		//frame.setExtendedState(Frame.NORMAL);
 		return JOptionPane.showConfirmDialog(frame, msg, title, JOptionPane.YES_NO_OPTION) == 0;
 	}
 
 	@Override
 	public String inputString(String title, String msg) {
+		//frame.setExtendedState(Frame.NORMAL);
 		return JOptionPane.showInputDialog(frame, msg, title, JOptionPane.PLAIN_MESSAGE);
 	}
 
 	public void showMessage(String title, String msg, int type) {
+		//frame.setExtendedState(Frame.NORMAL);
 		switch (type) {
 		case Task.INFO:
 			type = JOptionPane.INFORMATION_MESSAGE;
@@ -178,5 +185,36 @@ public class MainGUI extends MCP {
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		outer.add(label, BorderLayout.SOUTH);
 		return JOptionPane.showConfirmDialog(frame, outer, "New version found: " + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
+	}
+
+	public TaskButton getButton(TaskMode task) {
+		TaskButton button;
+		if(task == TaskMode.DECOMPILE) {
+			ActionListener defaultActionListener = event -> operateOnThread(() -> {
+				int response = 0;
+				if(TaskMode.RECOMPILE.isAvailable(this, getSide())) {
+					response = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+				}
+				if(response == 0) {
+					performTask(TaskMode.DECOMPILE, getSide());
+				}
+			});
+			button = new TaskButton(this, task, defaultActionListener);
+		}
+		else if(task == TaskMode.UPDATE_MD5) {
+			ActionListener defaultActionListener = event -> operateOnThread(() -> {
+				int response = JOptionPane.showConfirmDialog(frame, "Are you sure you want to regenerate original hashes?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+				if(response == 0) {
+					performTask(task, getSide());
+				}
+			});
+			button = new TaskButton(this, task, defaultActionListener);
+		}
+		else {
+			button = new TaskButton(this, task);
+		}
+		button.setPreferredSize(new Dimension(110, 30));
+		button.setEnabled(false);
+		return button;
 	}
 }

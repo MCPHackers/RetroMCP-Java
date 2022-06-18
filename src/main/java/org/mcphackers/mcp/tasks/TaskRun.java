@@ -17,6 +17,7 @@ import org.mcphackers.mcp.tools.VersionsParser;
 
 public class TaskRun extends Task {
 	
+	//TODO can only have one Start and it's the client one
 	public static final String[] CLIENT_START = {
 		"Start",
 		"net.minecraft.client.Minecraft",
@@ -25,7 +26,6 @@ public class TaskRun extends Task {
 	};
 	
 	public static final String[] SERVER_START = {
-		"Start",
 		"net.minecraft.server.MinecraftServer",
 		"com.mojang.minecraft.server.MinecraftServer"
 	};

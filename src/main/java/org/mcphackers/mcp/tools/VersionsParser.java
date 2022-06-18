@@ -128,7 +128,8 @@ public abstract class VersionsParser {
 	public static String setCurrentVersion(MCP mcp, String version) throws Exception {
 		checkJson();
 		if(!json.has(version)) {
-			throw new Exception("Invalid version detected!");
+			return null;
+			//throw new Exception("Invalid version detected!");
 		}
 		try(BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, MCPPaths.VERSION))) {
 			writer.write(version);

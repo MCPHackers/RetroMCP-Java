@@ -45,6 +45,7 @@ public class MenuBar extends JMenuBar {
 		mcp = frame.mcp;
 		this.menuOptions.setMnemonic(KeyEvent.VK_O);
 		this.helpMenu.setMnemonic(KeyEvent.VK_H);
+		this.mcpMenu.setMnemonic(KeyEvent.VK_M);
 		initOptions();
 		JMenuItem update = new JMenuItem("Check for updates");
 		update.addActionListener(a -> operateOnThread(() -> mcp.performTask(TaskMode.UPDATE_MCP, Side.ANY, false)));
