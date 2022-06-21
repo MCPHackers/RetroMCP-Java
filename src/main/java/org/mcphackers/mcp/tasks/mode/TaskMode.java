@@ -203,9 +203,8 @@ public class TaskMode {
 	
 	public String getFullName() {
 		try {
-			return MCP.CURRENT_RESOURCE_BUNDLE.getString(fullName.toLowerCase().replaceAll(" ", "_") + "_task");
+			return MCP.TRANSLATOR.translateKey(fullName.toLowerCase().replaceAll(" ", "_") + "_task");
 		} catch (NullPointerException | MissingResourceException ex) {
-			System.err.println("Task named: " + fullName + " has invalid or no translation for the current locale.");
 			return fullName;
 		}
 	}

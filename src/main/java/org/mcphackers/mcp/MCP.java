@@ -19,6 +19,7 @@ import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.TranslatorUtil;
 
 public abstract class MCP {
 
@@ -27,17 +28,10 @@ public abstract class MCP {
 
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 
-	public static ResourceBundle CURRENT_RESOURCE_BUNDLE;
+	public static TranslatorUtil TRANSLATOR = TranslatorUtil.getInstance();
 
 	static {
 		loadPlugins();
-		try {
-			//CURRENT_RESOURCE_BUNDLE = ResourceBundle.getBundle("retromcp", Locale.getDefault());
-			CURRENT_RESOURCE_BUNDLE = ResourceBundle.getBundle("retromcp", Locale.FRENCH);
-		} catch (NullPointerException | MissingResourceException ex) {
-			CURRENT_RESOURCE_BUNDLE = ResourceBundle.getBundle("retromcp");
-			System.err.println("Translation for locale " + Locale.getDefault() + " is unavailable! Defaulting to English (US)");
-		}
 	}
 
 	protected MCP() {
@@ -54,7 +48,7 @@ public abstract class MCP {
 	public final boolean performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
-			System.err.println(CURRENT_RESOURCE_BUNDLE.getString("performing_zero_tasks"));
+			System.err.println(TRANSLATOR.translateKey("performing_zero_tasks"));
 			return false;
 		}
 		
@@ -94,7 +88,7 @@ public abstract class MCP {
 					e.printStackTrace();
 				}
 				if(enableProgressBars) {
-					setProgress(barIndex, CURRENT_RESOURCE_BUNDLE.getString("finished"), 100);
+					setProgress(barIndex, TRANSLATOR.translateKey("finished"), 100);
 				}
 			});
 		}
@@ -119,7 +113,7 @@ public abstract class MCP {
 		}
 		triggerEvent(MCPEvent.FINISHED_TASKS);
 		if(completionMsg) {
-			String[] msgs2 = {CURRENT_RESOURCE_BUNDLE.getString("successful_finish"), CURRENT_RESOURCE_BUNDLE.getString("warning_finish"), CURRENT_RESOURCE_BUNDLE.getString("error_finish")};
+			String[] msgs2 = {TRANSLATOR.translateKey("successful_finish"), TRANSLATOR.translateKey("warning_finish"), TRANSLATOR.translateKey("error_finish")};
 			showMessage(mode.getFullName(), msgs2[result], result);
 		}
 		setActive(true);
@@ -165,7 +159,7 @@ public abstract class MCP {
 	public void safeSetParameter(TaskParameter param, String value) {
 		if(value != null) {
 			if(getOptions().safeSetParameter(param, value)) return;
-			showMessage(param.desc, CURRENT_RESOURCE_BUNDLE.getString("invalid_value"), Task.ERROR);
+			showMessage(param.translatedDesc, TRANSLATOR.translateKey("invalid_value"), Task.ERROR);
 		}
 	}
 
@@ -188,7 +182,7 @@ public abstract class MCP {
 							plugins.put(plugin.pluginId() + plugin.hashCode(), plugin);
 						}
 						else {
-							System.err.println(CURRENT_RESOURCE_BUNDLE.getString("incompatible_plugin") + cls.getName());
+							System.err.println(TRANSLATOR.translateKey("incompatible_plugin") + cls.getName());
 						}
 					}
 				}

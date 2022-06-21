@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks.mode;
 
+import org.mcphackers.mcp.MCP;
+
 public enum TaskParameter {
 	
 	DEBUG("debug", "Display additional info", Boolean.class),
@@ -21,6 +23,7 @@ public enum TaskParameter {
 	public final String desc;
 	public final String name;
 	public final Class<?> type;
+	public final String translatedDesc;
 
 	TaskParameter(String name, Class<?> c) {
 		this(name, "No description provided", c);
@@ -30,6 +33,7 @@ public enum TaskParameter {
 		TaskMode.nameToParamMap.put(name, this);
 		this.name = name;
 		this.desc = desc;
+		this.translatedDesc = MCP.TRANSLATOR.translateKey(desc.toLowerCase().replaceAll(" ", "_"));
 		this.type = c;
 	}
 }

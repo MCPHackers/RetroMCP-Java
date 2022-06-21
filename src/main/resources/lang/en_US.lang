@@ -28,6 +28,22 @@ running = Running
 reset_defaults = Reset to defaults
 
 # Automatically gotten at runtime
+display_additional_info = Display additional info
+set_side = Set side
+source_cleanup = Source cleanup
+apply_patches = Apply patches
+set_ignored_packages = Set ignored packages
+set_indentation_string = Set indentation string
+obfuscate_mod = Obfuscate mod
+full_build = Full build
+run_build = Run build
+run_arguments = Run arguments
+setup_version = Setup version
+set_a_specific_source_version = Set a specific source version
+set_a_specific_target_version = Set a specific target version
+set_java_home_used_for_compiling = Set JAVA_HOME used for compiling
+decompile_@override = Decompile @Override
+
 help_task = Help
 decompile_task = Decompile
 recompile_task = Recompile

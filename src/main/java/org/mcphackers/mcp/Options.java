@@ -63,7 +63,7 @@ public class Options {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				for(Entry<TaskParameter, Object> entry : options.entrySet()) {
 					if(entry.getValue() != null) {
-						writer.append(entry.getKey().name).append('=').append(String.valueOf(getParameter(entry.getKey()).toString() + '\n'));
+						writer.append(entry.getKey().name).append('=').append(getParameter(entry.getKey()).toString()).append(String.valueOf('\n'));
 					}
 				}
 			} catch (IOException e) {
