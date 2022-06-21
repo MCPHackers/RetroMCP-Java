@@ -28,7 +28,7 @@ public abstract class MCP {
 
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 
-	public static TranslatorUtil TRANSLATOR = TranslatorUtil.getInstance();
+	public static final TranslatorUtil TRANSLATOR = TranslatorUtil.getInstance();
 
 	static {
 		loadPlugins();
@@ -36,6 +36,7 @@ public abstract class MCP {
 
 	protected MCP() {
 		triggerEvent(MCPEvent.ENV_STARTUP);
+		
 		Update.attemptToDeleteUpdateJar();
 	}
 
@@ -48,7 +49,7 @@ public abstract class MCP {
 	public final boolean performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
-			System.err.println(TRANSLATOR.translateKey("performing_zero_tasks"));
+			System.err.println("Performing 0 tasks");
 			return false;
 		}
 		
@@ -88,7 +89,7 @@ public abstract class MCP {
 					e.printStackTrace();
 				}
 				if(enableProgressBars) {
-					setProgress(barIndex, TRANSLATOR.translateKey("finished"), 100);
+					setProgress(barIndex, TRANSLATOR.translateKey("task.stage.finished"), 100);
 				}
 			});
 		}
@@ -113,7 +114,10 @@ public abstract class MCP {
 		}
 		triggerEvent(MCPEvent.FINISHED_TASKS);
 		if(completionMsg) {
-			String[] msgs2 = {TRANSLATOR.translateKey("successful_finish"), TRANSLATOR.translateKey("warning_finish"), TRANSLATOR.translateKey("error_finish")};
+			String[] msgs2 = {
+					TRANSLATOR.translateKey("tasks.success"),
+					TRANSLATOR.translateKey("tasks.warning"),
+					TRANSLATOR.translateKey("tasks.error")};
 			showMessage(mode.getFullName(), msgs2[result], result);
 		}
 		setActive(true);
@@ -159,7 +163,7 @@ public abstract class MCP {
 	public void safeSetParameter(TaskParameter param, String value) {
 		if(value != null) {
 			if(getOptions().safeSetParameter(param, value)) return;
-			showMessage(param.translatedDesc, TRANSLATOR.translateKey("invalid_value"), Task.ERROR);
+			showMessage(param.getDesc(), TRANSLATOR.translateKey("options.invalidValue"), Task.ERROR);
 		}
 	}
 
@@ -182,7 +186,7 @@ public abstract class MCP {
 							plugins.put(plugin.pluginId() + plugin.hashCode(), plugin);
 						}
 						else {
-							System.err.println(TRANSLATOR.translateKey("incompatible_plugin") + cls.getName());
+							System.err.println(TRANSLATOR.translateKey("mcp.incompatiblePlugin") + cls.getName());
 						}
 					}
 				}
@@ -207,6 +211,13 @@ public abstract class MCP {
 	public final void triggerTaskEvent(TaskEvent event, Task task) {
 		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
 			entry.getValue().onTaskEvent(event, task);
+		}
+	}
+
+	public final void changeLanguage(String langName) {
+		TRANSLATOR.changeLang(langName);
+		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+			TRANSLATOR.readTranslation(entry.getValue().getClass());
 		}
 	}
 }

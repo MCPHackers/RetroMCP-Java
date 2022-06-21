@@ -24,7 +24,6 @@ import org.mcphackers.rdi.util.IOUtil;
 
 import codechicken.diffpatch.cli.CliOperation;
 import codechicken.diffpatch.cli.PatchOperation;
-import net.fabricmc.stitch.merge.JarMerger;
 
 public class TaskDecompile extends TaskStaged {
 	/*
@@ -61,7 +60,7 @@ public class TaskDecompile extends TaskStaged {
 		boolean hasLWJGL = side == Side.CLIENT || side == Side.MERGED;
 		
 		return new Stage[] {
-			stage("Preparing", 0,
+			stage(getLocalizedStage("prepare"), 0,
 			() -> {
 				FileUtil.deleteDirectoryIfExists(srcPath);
 				for (Path path : new Path[] {remapped, excOut, srcZip}) {
@@ -70,7 +69,7 @@ public class TaskDecompile extends TaskStaged {
 				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.TEMP_SIDE, side));
 				FileUtil.deleteDirectoryIfExists(ffOut);
 			}),
-			stage("Remapping JAR", 1,
+			stage(getLocalizedStage("remap"), 1,
 			() -> {
 				Side[] sides = (side == Side.MERGED) ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
 				for(Side sideLocal : sides) {
@@ -102,14 +101,18 @@ public class TaskDecompile extends TaskStaged {
 				if(side == Side.MERGED) {
 					final Path client = MCPPaths.get(mcp, MCPPaths.DEOBF_OUT, Side.CLIENT);
 					final Path server = MCPPaths.get(mcp, MCPPaths.DEOBF_OUT, Side.SERVER);
-	
-					try (JarMerger jarMerger = new JarMerger(client.toFile(), server.toFile(), remapped.toFile())) {
-						jarMerger.enableSyntheticParamsOffset();
-						jarMerger.merge();
-					}
+
+					RDInjector injector = new RDInjector(client);
+					injector.mergeWith(server);
+					injector.transform();
+					IOUtil.write(injector.getStorage(), Files.newOutputStream(remapped), client);
+//					try (JarMerger jarMerger = new JarMerger(client.toFile(), server.toFile(), remapped.toFile())) {
+//						jarMerger.enableSyntheticParamsOffset();
+//						jarMerger.merge();
+//					}
 				}
 			}),
-			stage("Applying RDInjector", 2,
+			stage(getLocalizedStage("rdi"), 2,
 			() -> {
 				Side[] sides = (side == Side.MERGED) ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
 				Files.deleteIfExists(tempExcOut);
@@ -118,14 +121,13 @@ public class TaskDecompile extends TaskStaged {
 					final Path exc = MCPPaths.get(mcp, MCPPaths.EXC, sideLocal);
 					RDInjector injector = new RDInjector(tempExcOut);
 					injector.fixInnerClasses();
-					injector.fixSwitchMaps();
 					injector.fixImplicitConstructors();
 					injector.fixBridges();
 					if (Files.exists(exc)) {
 						injector.fixExceptions(exc);
 					}
 					injector.transform();
-					IOUtil.write(injector, Files.newOutputStream(excOut), tempExcOut);
+					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), tempExcOut);
 					Files.deleteIfExists(tempExcOut);
 					Files.copy(excOut, tempExcOut);
 				}
@@ -136,7 +138,7 @@ public class TaskDecompile extends TaskStaged {
 				}
 				Files.deleteIfExists(tempExcOut);
 			}),
-			stage("Decompiling",
+			stage(getLocalizedStage("decompile"),
 			() -> {
 				//TODO Apply both javadocs if side == Side.MERGED
 				//FIXME Javadocs
@@ -146,12 +148,12 @@ public class TaskDecompile extends TaskStaged {
 						mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE))
 				.decompile();
 			}),
-			stage("Extracting sources", 84,
+			stage(getLocalizedStage("extractsrc"), 84,
 			() -> {
 					FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.SRC));
 					FileUtil.unzipByExtension(srcZip, ffOut, ".java");
 			}),
-			stage("Replacing constants", 86,
+			stage(getLocalizedStage("constants"), 86,
 			() -> {
 					List<Constants> constants = new ArrayList<>();
 					if(hasLWJGL)
@@ -159,18 +161,18 @@ public class TaskDecompile extends TaskStaged {
 					constants.add(new MathConstants());
 					Constants.replace(ffOut, constants);
 			}),
-			stage("Applying patches", 88,
+			stage(getLocalizedStage("patch"), 88,
 			() -> {
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
 					patch(ffOut, ffOut, patchesPath);
 				}
 			}),
-			stage("Copying sources", 90,
+			stage(getLocalizedStage("copysrc"), 90,
 			() -> {
 				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
 			}),
-			stage("Recompiling",
+			stage(getLocalizedStage("recompile"),
 			() -> {
 				new TaskUpdateMD5(side, mcp, this).doTask();
 			}),
@@ -189,7 +191,7 @@ public class TaskDecompile extends TaskStaged {
 		CliOperation.Result<PatchOperation.PatchesSummary> result = patchOperation.operate();
 		if (result.exit != 0) {
 			addMessage(logger.toString(), Task.INFO);
-			throw new IOException("Patching failed!");
+			addMessage("Patching failed!", Task.ERROR);
 		}
 	}
 

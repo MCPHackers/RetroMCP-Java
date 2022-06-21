@@ -23,7 +23,7 @@ public class MCPPaths {
 	//Files and subdirectories
 	public static final String JAR_ORIGINAL = 		 JARS + "minecraft_%s.jar";
 	public static final String LIBS =			 	 LIB + "%s/";
-	public static final String LIBS_CLIENT =		 String.format(LIBS, Side.CLIENT.name.toLowerCase());
+	public static final String LIBS_CLIENT =		 String.format(LIBS, Side.CLIENT.name);
 	public static final String CLIENT_FIXED = 		 LIBS_CLIENT + "minecraft.jar";
 	public static final String LWJGL = 				 LIBS_CLIENT + "lwjgl.jar";
 	public static final String LWJGL_UTIL = 		 LIBS_CLIENT + "lwjgl_util.jar";
@@ -64,7 +64,7 @@ public class MCPPaths {
 		if(side == Side.CLIENT && stripClient.contains(path)) {
 			return get(mcp, path.replace("_%s", ""));
 		}
-		return get(mcp, String.format(path, side.name.toLowerCase()));
+		return get(mcp, String.format(path, side.name));
 	}
 
 	public static Path get(MCP mcp, String path) {

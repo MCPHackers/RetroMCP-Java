@@ -68,7 +68,7 @@ public class TaskDownloadUpdate extends Task {
 			}
 		}
 		else {
-			mcp.showMessage(TaskMode.UPDATE_MCP.getFullName(), "Up to date!", Task.INFO);
+			mcp.showMessage(TaskMode.UPDATE_MCP.getFullName(), MCP.TRANSLATOR.translateKey("mcp.upToDate"), Task.INFO);
 		}
 	}
 }

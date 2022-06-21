@@ -19,16 +19,16 @@ public class TaskCreatePatch extends Task {
 		Path srcPathUnpatched = MCPPaths.get(mcp, MCPPaths.TEMP_SOURCES, side);
 		Path srcPathPatched = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
 		Path patchesOut = MCPPaths.get(mcp, "patches/patches_%s", side);
-		setProgress("Creating patch");
+		setProgress(getLocalizedStage("createpatch"));
 		if (Files.exists(srcPathUnpatched)) {
 			if(Files.exists(srcPathPatched)) {
 				createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);
 			}
 			else {
-				throw new Exception("Patched " + side.name.toLowerCase() + " sources cannot be found!");
+				throw new Exception("Patched " + side.name + " sources cannot be found!");
 			}
 		} else {
-			throw new Exception("Unpatched " + side.name.toLowerCase() + " sources cannot be found!");
+			throw new Exception("Unpatched " + side.name + " sources cannot be found!");
 		}
 	}
 

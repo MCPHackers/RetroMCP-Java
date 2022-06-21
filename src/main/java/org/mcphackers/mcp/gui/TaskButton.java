@@ -34,4 +34,8 @@ public class TaskButton extends JButton {
 	public boolean getEnabled() {
 		return linkedTask.isAvailable(mcp, mcp.getOptions().side);
 	}
+	
+	public void updateName() {
+		setText(linkedTask.getFullName());
+	}
 }

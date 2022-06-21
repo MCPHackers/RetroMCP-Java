@@ -136,7 +136,7 @@ public class MainCLI extends MCP {
 					log(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.getName())).fgDefault().fgGreen().a(" ").a(helpCommand.getDesc()).fgDefault().toString());
 					if(helpCommand.params.length > 0) log("Optional parameters:");
 					for(TaskParameter param : helpCommand.params) {
-						log(new Ansi().a(" ").fgCyan().a(String.format("%-14s", param.name)).a(" - ").fgBrightYellow().a(param.desc).fgDefault().toString());
+						log(new Ansi().a(" ").fgCyan().a(String.format("%-14s", param.name)).a(" - ").fgBrightYellow().a(param.getDesc()).fgDefault().toString());
 					}
 				}
 			} else if (mode != TaskMode.EXIT) {
@@ -355,7 +355,7 @@ public class MainCLI extends MCP {
 		for (int i = 0; i < tasks.size(); i++) {
 			String name = mode.getFullName();
 			if(tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
-				name = tasks.get(i).side.name;
+				name = tasks.get(i).side.getName();
 			}
 			progresses[i] = 0;
 			progressStrings[i] = "Idle";

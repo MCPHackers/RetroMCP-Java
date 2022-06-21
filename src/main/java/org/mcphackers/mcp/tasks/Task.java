@@ -11,10 +11,10 @@ import org.mcphackers.mcp.MCP;
 public abstract class Task implements ProgressListener, TaskRunnable {
 	
 	public static enum Side {
-		ANY(-1, "Any"),
-		CLIENT(0, "Client"),
-		SERVER(1, "Server"),
-		MERGED(2, "Merged");
+		ANY(-1, "any"),
+		CLIENT(0, "client"),
+		SERVER(1, "server"),
+		MERGED(2, "merged");
 		
 		public final int index;
 		public final String name;
@@ -23,6 +23,10 @@ public abstract class Task implements ProgressListener, TaskRunnable {
 			this.index = index;
 			this.name = name;
 			sides.put(index, this);
+		}
+		
+		public String getName() {
+			return MCP.TRANSLATOR.translateKey("side." + name);
 		}
 	}
 	
@@ -106,5 +110,9 @@ public abstract class Task implements ProgressListener, TaskRunnable {
 	
 	public void setProgressBarIndex(int i) {
 		progressBarIndex = i;
+	}
+	
+	public String getLocalizedStage(String stage) {
+		return MCP.TRANSLATOR.translateKey("task.stage." + stage);
 	}
 }

@@ -47,13 +47,13 @@ public class TaskRecompile extends TaskStaged {
 		Path binPath = MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side);
 		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
 		return new Stage[] {
-			stage("Recompiling", 1,
+			stage(getLocalizedStage("recompile"), 1,
 			() -> {
 				FileUtil.deleteDirectoryIfExists(binPath);
 				Files.createDirectories(binPath);
 				setProgress(2);
 				if (!Files.exists(srcPath)) {
-					throw new IOException(side.name + " sources not found!");
+					throw new IOException(side.getName() + " sources not found!");
 				}
 
 				final List<File> src = collectSource();
@@ -88,7 +88,7 @@ public class TaskRecompile extends TaskStaged {
 				DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
 				recompile(compiler, ds, src, options);
 			}),
-			stage("Copying resources", 50,
+			stage(getLocalizedStage("copyres"), 50,
 			() -> {
 				// Copy assets from source folder
 				List<Path> assets = collectResources();

@@ -34,11 +34,11 @@ public class TaskUpdateMD5 extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-			stage("Recompiling",
+			stage(getLocalizedStage("recompile"),
 			() -> {
 				new TaskRecompile(side, mcp, this).doTask();
 			}),
-			stage("Updating MD5", 50,
+			stage(getLocalizedStage("updatemd5"), 50,
 			() -> {
 				updateMD5(false);
 			})

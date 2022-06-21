@@ -114,7 +114,7 @@ public abstract class VersionsParser {
 		if(json.getJSONObject(version).has(url)) {
 			return json.getJSONObject(version).getString(url);
 		}
-		throw new JSONException("Could not get download link for " + side.name.toLowerCase());
+		throw new JSONException("Could not get download link for " + side.getName().toLowerCase());
 	}
 
 	public static URL downloadVersion(String version) throws Exception {

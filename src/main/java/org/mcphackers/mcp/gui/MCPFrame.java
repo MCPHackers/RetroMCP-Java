@@ -55,6 +55,7 @@ public class MCPFrame extends JFrame {
 	private MenuBar menuBar;
 	public MainGUI mcp;
 	public boolean loadingVersions = true;
+	private JPanel middlePanel;
 	
 	public static BufferedImage ICON;
 	
@@ -114,8 +115,8 @@ public class MCPFrame extends JFrame {
 		contentPane.add(topContainer, BorderLayout.NORTH);
 
 		JTextArea textArea = new JTextArea();
-		JPanel middlePanel = new JPanel();
-		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Console output"));
+		middlePanel = new JPanel();
+		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), MCP.TRANSLATOR.translateKey("mcp.console")));
 		middlePanel.setLayout(new BorderLayout());
 		textArea.setEditable(false);
 		PrintStream origOut = System.out;
@@ -134,12 +135,13 @@ public class MCPFrame extends JFrame {
 		bottom.setVisible(false);
 		contentPane.add(middlePanel, BorderLayout.CENTER);
 		contentPane.add(bottom, BorderLayout.SOUTH);
+		reloadText();
 	}
 	
 	public void reloadVersionList() {
 
-		verLabel = new JLabel(MCP.TRANSLATOR.translateKey("current_version"));
-		verList = new JComboBox<>(new String[] {"Loading..."});
+		verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
+		verList = new JComboBox<>(new String[] {MCP.TRANSLATOR.translateKey("mcp.versionList.loading")});
 		verLabel.setEnabled(false);
 		verList.setEnabled(false);
 		topRightContainer.removeAll();
@@ -159,7 +161,7 @@ public class MCPFrame extends JFrame {
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
 					if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(mcp.getCurrentVersion())) {
-						int response = JOptionPane.showConfirmDialog(MCPFrame.this, MCP.TRANSLATOR.translateKey("setup_confirmation"), MCP.TRANSLATOR.translateKey("confirm_action_title"), JOptionPane.YES_NO_OPTION);
+						int response = JOptionPane.showConfirmDialog(MCPFrame.this, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 						switch (response) {
 							case 0:
 								mcp.setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
@@ -185,9 +187,9 @@ public class MCPFrame extends JFrame {
 				setCurrentVersion(null);
 			}
 			verList.setMaximumRowCount(20);
-			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("current_version"));
+			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		} catch (Exception e) {
-			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("version_list_inaccessible"));
+			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
 			verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
 			verLabel.setForeground(Color.RED);
 			verList = null;
@@ -257,7 +259,7 @@ public class MCPFrame extends JFrame {
 		for (int i = 0; i < size; i++) {
 			String name = mode.getFullName();
 			if(tasks.get(i).side != Side.ANY) {
-				name = tasks.get(i).side.name;
+				name = tasks.get(i).side.getName();
 			}
 			progressBars[i] = new SideProgressBar();
 			progressLabels[i] = new JLabel(name + ":", JLabel.TRAILING);
@@ -266,9 +268,21 @@ public class MCPFrame extends JFrame {
 			GridBagConstraintsBuilder cb = new GridBagConstraintsBuilder(new GridBagConstraints()).insetsUnscaled(4, 4);
 			bottom.add(progressLabels[i], cb.pos(0, i).weightX(0).anchor(GridBagConstraints.LINE_END).fill(GridBagConstraints.NONE).build());
 			bottom.add(progressBars[i], cb.pos(1, i).weightX(1).anchor(GridBagConstraints.LINE_END).fill(GridBagConstraints.HORIZONTAL).build());
-			setProgress(i, MCP.TRANSLATOR.translateKey("idle_progress_message"));
+			setProgress(i, MCP.TRANSLATOR.translateKey("task.stage.idle"));
 		}
 		bottom.setVisible(true);
+	}
+	
+	public void reloadText() {
+		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), MCP.TRANSLATOR.translateKey("mcp.console")));
+		if(verList == null && !loadingVersions) {
+			verLabel.setText(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
+		}
+		else {
+			verLabel.setText(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
+		}
+		buttons.forEach(button -> button.updateName());
+		menuBar.reloadText();
 	}
 
 }

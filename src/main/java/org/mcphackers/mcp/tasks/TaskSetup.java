@@ -38,20 +38,20 @@ public class TaskSetup extends Task {
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB));
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.NATIVES));
 		
-		setProgress("Setting up", 1);
+		setProgress(getLocalizedStage("setup"), 1);
 		List<String> versions = VersionsParser.getVersionList();
 		String chosenVersion = mcp.getOptions().getStringParameter(TaskParameter.SETUP_VERSION);
 
 		// Keep asking until they have a valid option
 		while (!versions.contains(chosenVersion)) {
-			chosenVersion = mcp.inputString(TaskMode.SETUP.getFullName(), "Select version:");
+			chosenVersion = mcp.inputString(TaskMode.SETUP.getFullName(), MCP.TRANSLATOR.translateKey("task.setup.selectVersion"));
 		}
 		
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.CONF));
 		mcp.setCurrentVersion(VersionsParser.setCurrentVersion(mcp, chosenVersion));
 		String currentVersion = mcp.getCurrentVersion();
 		
-		setProgress("Downloading mappings", 5);
+		setProgress(getLocalizedStage("downloadMappings"), 5);
 		FileUtil.downloadFile(VersionsParser.downloadVersion(currentVersion), MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
 		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"), MCPPaths.get(mcp, MCPPaths.CONF), true);
 
@@ -65,7 +65,7 @@ public class TaskSetup extends Task {
 		setProgress(progress);
 		for(Side side : sides) {
 			FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIBS, side));
-			setProgress("Downloading Minecraft " + side.name.toLowerCase());
+			setProgress(MCP.TRANSLATOR.translateKeyWithFormatting("task.stage.downloadMC", side.getName().toLowerCase()));
 			String url = VersionsParser.getDownloadURL(currentVersion, side);
 			String out = MCPPaths.JAR_ORIGINAL;
 			Path pathOut = MCPPaths.get(mcp, out, side);
@@ -82,7 +82,7 @@ public class TaskSetup extends Task {
 			setProgress(progress);
 		}
 		
-		setProgress("Downloading libraries", 50);
+		setProgress(getLocalizedStage("downloadLibs"), 50);
 		FileUtil.downloadFile(new URL(libsURL), MCPPaths.get(mcp, MCPPaths.LIBS + "libs.zip", Side.CLIENT));
 		String nativesURL = natives.get(Os.getOs());
 		if(nativesURL == null) {
@@ -93,7 +93,7 @@ public class TaskSetup extends Task {
 		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIBS + "libs.zip", Side.CLIENT), MCPPaths.get(mcp, MCPPaths.LIBS, Side.CLIENT), true);
 		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIBS + "natives.zip", Side.CLIENT), MCPPaths.get(mcp, MCPPaths.NATIVES), true);
 
-		setProgress("Setting up workspace", 75);
+		setProgress(getLocalizedStage("workspace"), 75);
 		FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace"));
 		FileUtil.copyResource(ClassUtils.getResource(MCP.class, "workspace/workspace.zip"), MCPPaths.get(mcp, "workspace.zip"));
 		FileUtil.unzip(MCPPaths.get(mcp, "workspace.zip"), MCPPaths.get(mcp, "workspace"), true);
@@ -104,7 +104,7 @@ public class TaskSetup extends Task {
 		String currentVersion = mcp.getCurrentVersion();
 		Side[] sides = { Side.CLIENT, Side.SERVER };
 		for (Side side : sides) {
-			String project = side.name;
+			String project = side == Side.CLIENT ? "Client" : "Server";
 			String startclass;
 			try {
 				startclass = TaskRun.findStartClass(mcp, side);

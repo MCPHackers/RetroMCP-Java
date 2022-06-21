@@ -16,15 +16,11 @@ public class TaskMode {
 	public static final Map<String, TaskParameter> nameToParamMap = new HashMap<>();
 	
 	public static TaskMode HELP = new TaskModeBuilder()
-			.setCmdName("help")
-			.setFullName("Help")
-			.setDescription("Displays command usage")
+			.setName("help")
 			.setProgressBars(false)
 			.build();
 	public static TaskMode DECOMPILE = new TaskModeBuilder()
-			.setCmdName("decompile")
-			.setFullName("Decompile")
-			.setDescription("Start decompiling Minecraft")
+			.setName("decompile")
 			.setTaskClass(TaskDecompile.class)
 			.addRequirement((mcp, side) -> {
 				if(side == Side.MERGED) {
@@ -45,9 +41,7 @@ public class TaskMode {
 				})
 			.build();
 	public static TaskMode RECOMPILE = new TaskModeBuilder()
-			.setCmdName("recompile")
-			.setFullName("Recompile")
-			.setDescription("Recompile Minecraft sources")
+			.setName("recompile")
 			.setTaskClass(TaskRecompile.class)
 			.addRequirement((mcp, side) -> {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCES, side));
@@ -61,9 +55,7 @@ public class TaskMode {
 				})
 			.build();
 	public static TaskMode REOBFUSCATE = new TaskModeBuilder()
-			.setCmdName("reobfuscate")
-			.setFullName("Reobfuscate")
-			.setDescription("Reobfuscate Minecraft classes")
+			.setName("reobfuscate")
 			.setTaskClass(TaskReobfuscate.class)
 			.addRequirement((mcp, side) -> {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCES, side));
@@ -77,9 +69,7 @@ public class TaskMode {
 				})
 			.build();
 	public static TaskMode UPDATE_MD5 = new TaskModeBuilder()
-			.setCmdName("updatemd5")
-			.setFullName("Update MD5")
-			.setDescription("Update MD5 hash tables used for reobfuscation")
+			.setName("updatemd5")
 			.setTaskClass(TaskUpdateMD5.class)
 			.addRequirement((mcp, side) -> {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side));
@@ -93,25 +83,19 @@ public class TaskMode {
 				})
 			.build();
 	public static TaskMode UPDATE_MCP = new TaskModeBuilder()
-			.setCmdName("updatemcp")
-			.setFullName("Update")
-			.setDescription("Download an update if available")
+			.setName("updatemcp")
 			.setTaskClass(TaskDownloadUpdate.class)
 			.setProgressBars(false)
 			.build();
 	public static TaskMode SETUP = new TaskModeBuilder()
-			.setCmdName("setup")
-			.setFullName("Setup")
-			.setDescription("Set initial workspace for a version")
+			.setName("setup")
 			.setTaskClass(TaskSetup.class)
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG
 				})
 			.build();
 	public static TaskMode CLEANUP = new TaskModeBuilder()
-			.setCmdName("cleanup")
-			.setFullName("Cleanup")
-			.setDescription("Delete all source and class folders")
+			.setName("cleanup")
 			.setTaskClass(TaskCleanup.class)
 			.setProgressBars(false)
 			.setParameters(new TaskParameter[] {
@@ -120,9 +104,7 @@ public class TaskMode {
 				})
 			.build();
 	public static TaskMode START = new TaskModeBuilder()
-			.setCmdName("start")
-			.setFullName("Start")
-			.setDescription("Runs the client or the server from compiled classes")
+			.setName("start")
 			.setTaskClass(TaskRun.class)
 			.setProgressBars(false)
 			.addRequirement((mcp, side) -> {
@@ -134,9 +116,7 @@ public class TaskMode {
 				})
 			.build();
 	public static TaskMode BUILD = new TaskModeBuilder()
-			.setCmdName("build")
-			.setFullName("Build")
-			.setDescription("Builds the final jar or zip")
+			.setName("build")
 			.setTaskClass(TaskBuild.class)
 			.addRequirement((mcp, side) -> {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCES, side));
@@ -151,9 +131,7 @@ public class TaskMode {
 				})
 			.build();
 	public static TaskMode CREATE_PATCH = new TaskModeBuilder()
-			.setCmdName("createpatch")
-			.setFullName("Create patch")
-			.setDescription("Creates a patch based off your changes to source")
+			.setName("createpatch")
 			.setTaskClass(TaskCreatePatch.class)
 			.addRequirement((mcp, side) -> {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCES, side))
@@ -165,31 +143,24 @@ public class TaskMode {
 				})
 			.build();
 	public static TaskMode EXIT = new TaskModeBuilder()
-			.setCmdName("exit")
-			.setFullName("Exit")
-			.setDescription("Exit the program")
+			.setName("exit")
 			.setProgressBars(false)
 			.build();
 
 	static {
 //		new TaskModeBuilder()
-//		.setCmdName("timestamps")
-//		.setFullName("Timestamps")
+//		.setName("timestamps")
 //		.setTaskClass(TaskTimestamps.class)
 //		.build();
 	}
-	private final String name;
-	private final String fullName;
-	private final String desc;
+	public final String name;
 	public final boolean usesProgressBars;
 	public final Class<? extends Task> taskClass;
 	public final TaskParameter[] params;
 	public final Requirement requirement;
 	
-	public TaskMode(String name, String fullName, String desc, Class<? extends Task> taskClass, TaskParameter[] params, boolean useBars, Requirement requirements) {
+	public TaskMode(String name, Class<? extends Task> taskClass, TaskParameter[] params, boolean useBars, Requirement requirements) {
 		this.name = name;
-		this.fullName = fullName;
-		this.desc = desc;
 		this.taskClass = taskClass;
 		this.params = params;
 		this.usesProgressBars = useBars;
@@ -202,15 +173,19 @@ public class TaskMode {
 	}
 	
 	public String getFullName() {
-		try {
-			return MCP.TRANSLATOR.translateKey(fullName.toLowerCase().replaceAll(" ", "_") + "_task");
-		} catch (NullPointerException | MissingResourceException ex) {
-			return fullName;
+		String s = "task." + name;
+		if(MCP.TRANSLATOR.hasKey(s)) {
+			return MCP.TRANSLATOR.translateKey(s);
 		}
+		return name;
 	}
 	
 	public String getDesc() {
-		return desc;
+		String s = "task." + name + ".desc";
+		if(MCP.TRANSLATOR.hasKey(s)) {
+			return MCP.TRANSLATOR.translateKey(s);
+		}
+		return MCP.TRANSLATOR.translateKey("task.noDesc");
 	}
 	
 	public List<Side> allowedSides() {

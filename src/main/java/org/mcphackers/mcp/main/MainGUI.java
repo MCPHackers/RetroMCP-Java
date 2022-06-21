@@ -53,7 +53,7 @@ public class MainGUI extends MCP {
 		options = new Options(MCPPaths.get(this, "options.cfg"));
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
-			JOptionPane.showMessageDialog(null, TRANSLATOR.translateKey("jdk_requirement"), TRANSLATOR.translateKey("error_title"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, TRANSLATOR.translateKey("mcp.needJDK"), TRANSLATOR.translateKey("mcp.error"), JOptionPane.ERROR_MESSAGE);
 		}
 		frame = new MCPFrame(this);
 	}
@@ -179,12 +179,12 @@ public class MainGUI extends MCP {
 			}
 		}
 		outer.add(components);
-		JLabel label = new JLabel(TRANSLATOR.translateKey("update_confirmation"));
+		JLabel label = new JLabel(TRANSLATOR.translateKey("mcp.confirmUpdate"));
 		label.setFont(label.getFont().deriveFont(14F));
 		label.setBorder(new EmptyBorder(10, 0, 0, 0));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		outer.add(label, BorderLayout.SOUTH);
-		return JOptionPane.showConfirmDialog(frame, outer, TRANSLATOR.translateKey("new_version_found") + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
+		return JOptionPane.showConfirmDialog(frame, outer, TRANSLATOR.translateKey("mcp.newVersion") + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
 	}
 
 	public TaskButton getButton(TaskMode task) {
@@ -193,7 +193,7 @@ public class MainGUI extends MCP {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
 				int response = 0;
 				if(TaskMode.RECOMPILE.isAvailable(this, getSide())) {
-					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("redecompile_confirmation"), TRANSLATOR.translateKey("confirm_action_title"), JOptionPane.YES_NO_OPTION);
+					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 				}
 				if(response == 0) {
 					performTask(TaskMode.DECOMPILE, getSide());
@@ -203,7 +203,7 @@ public class MainGUI extends MCP {
 		}
 		else if(task == TaskMode.UPDATE_MD5) {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
-				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("regenerate_hashes"), TRANSLATOR.translateKey("confirm_action_title"), JOptionPane.YES_NO_OPTION);
+				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmUpdateMD5"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 				if(response == 0) {
 					performTask(task, getSide());
 				}

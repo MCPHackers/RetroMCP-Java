@@ -34,15 +34,15 @@ public class TaskReobfuscate extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-			stage("Recompiling",
+			stage(getLocalizedStage("recompile"),
 			() -> {
 				new TaskRecompile(side, mcp, this).doTask();
 			}),
-			stage("Gathering MD5 hashes", 30,
+			stage(getLocalizedStage("gathermd5"), 30,
 			() -> {
 				new TaskUpdateMD5(side, mcp, this).updateMD5(true);
 			}),
-			stage("Reobfuscating", 52,
+			stage(getLocalizedStage("reobf"), 52,
 			() -> {
 				reobfuscate();
 			})
