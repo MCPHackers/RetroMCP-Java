@@ -47,7 +47,7 @@ public class MenuBar extends JMenuBar {
 		this.helpMenu.setMnemonic(KeyEvent.VK_H);
 		this.mcpMenu.setMnemonic(KeyEvent.VK_M);
 		initOptions();
-		JMenuItem update = new JMenuItem("Check for updates");
+		JMenuItem update = new JMenuItem(MCP.CURRENT_RESOURCE_BUNDLE.getString("check_for_updates"));
 		update.addActionListener(a -> operateOnThread(() -> mcp.performTask(TaskMode.UPDATE_MCP, Side.ANY, false)));
 		Side[] sides = {Side.CLIENT, Side.SERVER};
 		for(Side side : sides) {
@@ -63,7 +63,7 @@ public class MenuBar extends JMenuBar {
 			this.start.put(side, start);
 		}
 		reloadSide();
-		JMenuItem browseDir = new JMenuItem("View working directory");
+		JMenuItem browseDir = new JMenuItem(MCP.CURRENT_RESOURCE_BUNDLE.getString("view_working_directory"));
 		browseDir.addActionListener(a -> {
 			try {
 				Desktop.getDesktop().open(mcp.getWorkingDir().toAbsolutePath().toFile());
@@ -71,9 +71,9 @@ public class MenuBar extends JMenuBar {
 				e1.printStackTrace();
 			}
 		});
-		JMenuItem changeDir = new JMenuItem("Change working directory");
+		JMenuItem changeDir = new JMenuItem(MCP.CURRENT_RESOURCE_BUNDLE.getString("change_working_directory"));
 		changeDir.addActionListener(a -> operateOnThread(() -> {
-				String value = (String)JOptionPane.showInputDialog(owner, "Enter a path to a directory", "Change working directory", JOptionPane.PLAIN_MESSAGE, null, null, mcp.getWorkingDir().toAbsolutePath().toString());
+				String value = (String)JOptionPane.showInputDialog(owner, MCP.CURRENT_RESOURCE_BUNDLE.getString("path_to_directory"), MCP.CURRENT_RESOURCE_BUNDLE.getString("change_working_directory"), JOptionPane.PLAIN_MESSAGE, null, null, mcp.getWorkingDir().toAbsolutePath().toString());
 				if(value != null) {
 					Path p = Paths.get(value);
 					if(Files.exists(p)) {
@@ -96,7 +96,7 @@ public class MenuBar extends JMenuBar {
 			List<TaskMode> usedTasks = new ArrayList<>();
 			usedTasks.addAll(Arrays.asList(MainGUI.TASKS));
 			usedTasks.addAll(Arrays.asList(TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP));
-			JMenu moreTasks = new JMenu("More tasks...");
+			JMenu moreTasks = new JMenu(MCP.CURRENT_RESOURCE_BUNDLE.getString("more_tasks"));
 			togglableComponents.add(moreTasks);
 			for(TaskMode task : TaskMode.registeredTasks) {
 				if(usedTasks.contains(task)) {
@@ -115,8 +115,8 @@ public class MenuBar extends JMenuBar {
 		togglableComponents.add(changeDir);
 		add(mcpMenu);
 		add(menuOptions);
-		JMenuItem githubItem = new JMenuItem("Github Page");
-		JMenuItem wiki = new JMenuItem("Wiki");
+		JMenuItem githubItem = new JMenuItem(MCP.CURRENT_RESOURCE_BUNDLE.getString("github_page"));
+		JMenuItem wiki = new JMenuItem(MCP.CURRENT_RESOURCE_BUNDLE.getString("wiki"));
 		githubItem.addActionListener(e -> Util.openUrl(MCP.githubURL));
 		wiki.addActionListener(e -> Util.openUrl(MCP.githubURL + "/wiki"));
 		this.helpMenu.add(githubItem);
@@ -145,7 +145,7 @@ public class MenuBar extends JMenuBar {
 	}
 
 	private void initOptions() {
-		JMenu sideMenu = new JMenu("Side");
+		JMenu sideMenu = new JMenu(MCP.CURRENT_RESOURCE_BUNDLE.getString("side"));
 		sideItems = new JMenuItem[Side.values().length];
 		for(Side side : Side.values()) {
 			final int i = side.index;
@@ -165,7 +165,7 @@ public class MenuBar extends JMenuBar {
 				TaskMode.RECOMPILE.getFullName(),
 				TaskMode.REOBFUSCATE.getFullName(),
 				TaskMode.BUILD.getFullName(),
-				"Running"
+				MCP.CURRENT_RESOURCE_BUNDLE.getString("running")
 				};
 		TaskParameter[][] params = {
 				{TaskParameter.PATCHES, TaskParameter.DECOMPILE_OVERRIDE, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES},
@@ -200,7 +200,7 @@ public class MenuBar extends JMenuBar {
 			menuOptions.add(a);
 		}
 		reloadOptions();
-		JMenuItem reset = new JMenuItem("Reset to defaults");
+		JMenuItem reset = new JMenuItem(MCP.CURRENT_RESOURCE_BUNDLE.getString("reset_defaults"));
 		reset.addActionListener(e -> {
 			mcp.getOptions().resetDefaults();
 			reloadOptions();

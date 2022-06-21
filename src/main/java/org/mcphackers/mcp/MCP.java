@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,8 +27,17 @@ public abstract class MCP {
 
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 
+	public static ResourceBundle CURRENT_RESOURCE_BUNDLE;
+
 	static {
 		loadPlugins();
+		try {
+			//CURRENT_RESOURCE_BUNDLE = ResourceBundle.getBundle("retromcp", Locale.getDefault());
+			CURRENT_RESOURCE_BUNDLE = ResourceBundle.getBundle("retromcp", Locale.FRENCH);
+		} catch (NullPointerException | MissingResourceException ex) {
+			CURRENT_RESOURCE_BUNDLE = ResourceBundle.getBundle("retromcp");
+			System.err.println("Translation for locale " + Locale.getDefault() + " is unavailable! Defaulting to English (US)");
+		}
 	}
 
 	protected MCP() {
@@ -48,7 +54,7 @@ public abstract class MCP {
 	public final boolean performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
-			System.err.println("Performing 0 tasks");
+			System.err.println(CURRENT_RESOURCE_BUNDLE.getString("performing_zero_tasks"));
 			return false;
 		}
 		
@@ -88,7 +94,7 @@ public abstract class MCP {
 					e.printStackTrace();
 				}
 				if(enableProgressBars) {
-					setProgress(barIndex, "Finished!", 100);
+					setProgress(barIndex, CURRENT_RESOURCE_BUNDLE.getString("finished"), 100);
 				}
 			});
 		}
@@ -113,7 +119,7 @@ public abstract class MCP {
 		}
 		triggerEvent(MCPEvent.FINISHED_TASKS);
 		if(completionMsg) {
-			String[] msgs2 = {"Finished successfully!", "Finished with warnings!", "Finished with errors!"};
+			String[] msgs2 = {CURRENT_RESOURCE_BUNDLE.getString("successful_finish"), CURRENT_RESOURCE_BUNDLE.getString("warning_finish"), CURRENT_RESOURCE_BUNDLE.getString("error_finish")};
 			showMessage(mode.getFullName(), msgs2[result], result);
 		}
 		setActive(true);
@@ -159,7 +165,7 @@ public abstract class MCP {
 	public void safeSetParameter(TaskParameter param, String value) {
 		if(value != null) {
 			if(getOptions().safeSetParameter(param, value)) return;
-			showMessage(param.desc, "Invalid value!", Task.ERROR);
+			showMessage(param.desc, CURRENT_RESOURCE_BUNDLE.getString("invalid_value"), Task.ERROR);
 		}
 	}
 
@@ -182,7 +188,7 @@ public abstract class MCP {
 							plugins.put(plugin.pluginId() + plugin.hashCode(), plugin);
 						}
 						else {
-							System.err.println("Incompatible plugin found: " + cls.getName());
+							System.err.println(CURRENT_RESOURCE_BUNDLE.getString("incompatible_plugin") + cls.getName());
 						}
 					}
 				}

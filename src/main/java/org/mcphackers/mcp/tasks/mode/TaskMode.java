@@ -3,10 +3,7 @@ package org.mcphackers.mcp.tasks.mode;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -205,7 +202,12 @@ public class TaskMode {
 	}
 	
 	public String getFullName() {
-		return fullName;
+		try {
+			return MCP.CURRENT_RESOURCE_BUNDLE.getString(fullName.toLowerCase().replaceAll(" ", "_") + "_task");
+		} catch (NullPointerException | MissingResourceException ex) {
+			System.err.println("Task named: " + fullName + " has invalid or no translation for the current locale.");
+			return fullName;
+		}
 	}
 	
 	public String getDesc() {

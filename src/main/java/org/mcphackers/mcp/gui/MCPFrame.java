@@ -138,7 +138,7 @@ public class MCPFrame extends JFrame {
 	
 	public void reloadVersionList() {
 
-		verLabel = new JLabel("Current version:");
+		verLabel = new JLabel(MCP.CURRENT_RESOURCE_BUNDLE.getString("current_version"));
 		verList = new JComboBox<>(new String[] {"Loading..."});
 		verLabel.setEnabled(false);
 		verList.setEnabled(false);
@@ -159,7 +159,7 @@ public class MCPFrame extends JFrame {
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
 					if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(mcp.getCurrentVersion())) {
-						int response = JOptionPane.showConfirmDialog(MCPFrame.this, "Are you sure you want to run setup for selected version?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+						int response = JOptionPane.showConfirmDialog(MCPFrame.this, MCP.CURRENT_RESOURCE_BUNDLE.getString("setup_confirmation"), MCP.CURRENT_RESOURCE_BUNDLE.getString("confirm_action_title"), JOptionPane.YES_NO_OPTION);
 						switch (response) {
 							case 0:
 								mcp.setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
@@ -185,9 +185,9 @@ public class MCPFrame extends JFrame {
 				setCurrentVersion(null);
 			}
 			verList.setMaximumRowCount(20);
-			verLabel = new JLabel("Current version:");
+			verLabel = new JLabel(MCP.CURRENT_RESOURCE_BUNDLE.getString("current_version"));
 		} catch (Exception e) {
-			verLabel = new JLabel("Unable to get version list!");
+			verLabel = new JLabel(MCP.CURRENT_RESOURCE_BUNDLE.getString("version_list_inaccessible"));
 			verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
 			verLabel.setForeground(Color.RED);
 			verList = null;
@@ -266,7 +266,7 @@ public class MCPFrame extends JFrame {
 			GridBagConstraintsBuilder cb = new GridBagConstraintsBuilder(new GridBagConstraints()).insetsUnscaled(4, 4);
 			bottom.add(progressLabels[i], cb.pos(0, i).weightX(0).anchor(GridBagConstraints.LINE_END).fill(GridBagConstraints.NONE).build());
 			bottom.add(progressBars[i], cb.pos(1, i).weightX(1).anchor(GridBagConstraints.LINE_END).fill(GridBagConstraints.HORIZONTAL).build());
-			setProgress(i, "Idle");
+			setProgress(i, MCP.CURRENT_RESOURCE_BUNDLE.getString("idle_progress_message"));
 		}
 		bottom.setVisible(true);
 	}

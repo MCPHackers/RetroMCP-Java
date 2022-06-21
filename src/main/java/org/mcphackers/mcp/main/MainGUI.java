@@ -53,7 +53,7 @@ public class MainGUI extends MCP {
 		options = new Options(MCPPaths.get(this, "options.cfg"));
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
-			JOptionPane.showMessageDialog(null, "Java Development Kit is required to recompile!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, CURRENT_RESOURCE_BUNDLE.getString("jdk_requirement"), CURRENT_RESOURCE_BUNDLE.getString("error_title"), JOptionPane.ERROR_MESSAGE);
 		}
 		frame = new MCPFrame(this);
 	}
@@ -179,12 +179,12 @@ public class MainGUI extends MCP {
 			}
 		}
 		outer.add(components);
-		JLabel label = new JLabel("Are you sure you want to update?");
+		JLabel label = new JLabel(CURRENT_RESOURCE_BUNDLE.getString("update_confirmation"));
 		label.setFont(label.getFont().deriveFont(14F));
 		label.setBorder(new EmptyBorder(10, 0, 0, 0));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		outer.add(label, BorderLayout.SOUTH);
-		return JOptionPane.showConfirmDialog(frame, outer, "New version found: " + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
+		return JOptionPane.showConfirmDialog(frame, outer, CURRENT_RESOURCE_BUNDLE.getString("new_version_found") + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
 	}
 
 	public TaskButton getButton(TaskMode task) {
@@ -193,7 +193,7 @@ public class MainGUI extends MCP {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
 				int response = 0;
 				if(TaskMode.RECOMPILE.isAvailable(this, getSide())) {
-					response = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete sources and decompile again?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+					response = JOptionPane.showConfirmDialog(frame, CURRENT_RESOURCE_BUNDLE.getString("redecompile_confirmation"), CURRENT_RESOURCE_BUNDLE.getString("confirm_action_title"), JOptionPane.YES_NO_OPTION);
 				}
 				if(response == 0) {
 					performTask(TaskMode.DECOMPILE, getSide());
@@ -203,7 +203,7 @@ public class MainGUI extends MCP {
 		}
 		else if(task == TaskMode.UPDATE_MD5) {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
-				int response = JOptionPane.showConfirmDialog(frame, "Are you sure you want to regenerate original hashes?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+				int response = JOptionPane.showConfirmDialog(frame, CURRENT_RESOURCE_BUNDLE.getString("regenerate_hashes"), CURRENT_RESOURCE_BUNDLE.getString("confirm_action_title"), JOptionPane.YES_NO_OPTION);
 				if(response == 0) {
 					performTask(task, getSide());
 				}
