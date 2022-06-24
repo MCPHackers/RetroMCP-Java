@@ -23,7 +23,7 @@ mcp.startClient=Lancer le client
 mcp.startServer=Lancer le serveur
 mcp.console=Sortie de la console
 
-côté.client=Client
+side.client=Client
 side.server=Serveur
 side.merged=Fusionné
 side.any=N'importe lequel
