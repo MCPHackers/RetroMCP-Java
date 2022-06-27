@@ -1,3 +1,4 @@
+language = Deutsch
 mcp.needJDK = Java Development Kit ist für die Neukompilierung erforderlich!
 mcp.error = Fehler
 mcp.newVersion = Neue Version gefunden:

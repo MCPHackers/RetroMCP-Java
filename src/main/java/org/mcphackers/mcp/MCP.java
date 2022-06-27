@@ -214,8 +214,8 @@ public abstract class MCP {
 		}
 	}
 
-	public final void changeLanguage(String langName) {
-		TRANSLATOR.changeLang(langName);
+	public final void changeLanguage(Language lang) {
+		TRANSLATOR.changeLang(lang);
 		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
 			TRANSLATOR.readTranslation(entry.getValue().getClass());
 		}

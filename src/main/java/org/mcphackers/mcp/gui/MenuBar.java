@@ -21,6 +21,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 
+import org.mcphackers.mcp.Language;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
@@ -39,7 +40,7 @@ public class MenuBar extends JMenuBar {
 	public final Map<Side, JMenuItem> start = new HashMap<>();
 	public final Map<TaskMode, JMenuItem> taskItems = new HashMap<>();
 	public final Map<TaskParameter, JMenuItem> optionItems = new HashMap<>();
-	private final JMenu helpMenu = new JMenu(TaskMode.HELP.getFullName());
+	private final JMenu helpMenu = new JMenu();
 	private JMenuItem[] sideItems;
 	private final MCPFrame owner;
 	private MainGUI mcp;
@@ -140,13 +141,18 @@ public class MenuBar extends JMenuBar {
 		wiki.addActionListener(e -> Util.openUrl(MCP.githubURL + "/wiki"));
 		this.helpMenu.add(githubItem);
 		this.helpMenu.add(wiki);
-		JMenuItem a = new JMenuItem("Test Language");
-		a.addActionListener(e -> {
-			MCP.TRANSLATOR.changeLang("fr_FR");
-			owner.reloadText();
-		});
-		helpMenu.add(a);
 		add(helpMenu);
+		JMenu langMenu = new JMenu();
+		translatableComponents.put(langMenu, "options.language");
+		for(Language lang : Language.values()) {
+			JMenuItem langItem = new JMenuItem(MCP.TRANSLATOR.getLangName(lang));
+			langItem.addActionListener(a -> {
+				mcp.changeLanguage(lang);
+				owner.reloadText();
+			});
+			langMenu.add(langItem);
+		}
+		add(langMenu);
 	}
 
 	private void reloadSide() {

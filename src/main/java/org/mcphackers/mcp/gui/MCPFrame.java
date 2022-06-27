@@ -14,6 +14,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class MCPFrame extends JFrame {
 	private List<TaskButton> buttons = new ArrayList<>();
 	private JLabel verLabel;
 	private JPanel topRightContainer;
+	private JPanel topLeftContainer;
 	private JPanel bottom;
 	private SideProgressBar[] progressBars = new SideProgressBar[0];
 	private JLabel[] progressLabels = new JLabel[0];
@@ -76,7 +78,7 @@ public class MCPFrame extends JFrame {
 		initFrameContents();
 		pack();
 		setMinimumSize(getMinimumSize());
-		setSize(new Dimension(940, 500));
+		//setSize(new Dimension(940, 500));
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -88,7 +90,7 @@ public class MCPFrame extends JFrame {
 		setJMenuBar(menuBar);
 		contentPane.setLayout(new BorderLayout());
 		FlowLayout layout = new WrapLayout(FlowLayout.LEFT);
-		JPanel topLeftContainer = new JPanel();
+		topLeftContainer = new JPanel();
 		topLeftContainer.setLayout(layout);
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent componentEvent) {
@@ -96,11 +98,16 @@ public class MCPFrame extends JFrame {
 			}
 		});
 
+//		Dimension preferredButtonSize = new Dimension(110, 26);
 		for(TaskMode task : MainGUI.TASKS) {
 			TaskButton button = mcp.getButton(task);
+//			preferredButtonSize.width = Math.max(button.getPreferredSize().width, preferredButtonSize.width);
 			buttons.add(button);
 			topLeftContainer.add(button);
 		}
+//		for(TaskButton button : buttons) {
+//			button.setSize(preferredButtonSize);
+//		}
 		
 		topRightContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		reloadVersionList();
@@ -110,12 +117,14 @@ public class MCPFrame extends JFrame {
 		
 		topContainer.add(topLeftContainer, BorderLayout.CENTER);
 		topContainer.add(topRightContainer, BorderLayout.EAST);
-		topContainer.setMinimumSize(new Dimension(340, 96));
-		topRightContainer.setMinimumSize(topRightContainer.getMinimumSize());
+		topLeftContainer.setSize(new Dimension(720, 0));
+		topLeftContainer.setMinimumSize(new Dimension(160, 0));
+		//topRightContainer.setMinimumSize(topRightContainer.getMinimumSize());
 		contentPane.add(topContainer, BorderLayout.NORTH);
 
 		JTextArea textArea = new JTextArea();
 		middlePanel = new JPanel();
+		middlePanel.setPreferredSize(new Dimension(0, 380));
 		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), MCP.TRANSLATOR.translateKey("mcp.console")));
 		middlePanel.setLayout(new BorderLayout());
 		textArea.setEditable(false);
@@ -208,6 +217,8 @@ public class MCPFrame extends JFrame {
 				}
 			}
 			topRightContainer.updateUI();
+			revalidate();
+			topLeftContainer.revalidate();
 		});
 		});
 	}
@@ -283,6 +294,7 @@ public class MCPFrame extends JFrame {
 		}
 		buttons.forEach(button -> button.updateName());
 		menuBar.reloadText();
+		topLeftContainer.revalidate();
 	}
 
 }

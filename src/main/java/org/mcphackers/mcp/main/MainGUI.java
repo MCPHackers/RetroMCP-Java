@@ -3,7 +3,6 @@ package org.mcphackers.mcp.main;
 import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.nio.file.InvalidPathException;
@@ -213,7 +212,6 @@ public class MainGUI extends MCP {
 		else {
 			button = new TaskButton(this, task);
 		}
-		button.setPreferredSize(new Dimension(110, 30));
 		button.setEnabled(false);
 		return button;
 	}

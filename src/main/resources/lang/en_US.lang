@@ -1,3 +1,4 @@
+language = English
 mcp.needJDK = Java Development Kit is required to recompile!
 mcp.error = Error
 mcp.newVersion = New version found:
@@ -29,6 +30,7 @@ side.merged = Merged
 side.any = Any
 
 options = Options
+options.language = Language
 options.enterValue = Enter a value
 options.enterValues = Enter a set of values
 options.enterValues.info = (Separate values with comma)

@@ -1,3 +1,4 @@
+language = Français
 mcp.needJDK=Le kit de développement Java est requis pour recompiler !
 mcp.error=Erreur
 mcp.newVersion=Nouvelle version trouvée :

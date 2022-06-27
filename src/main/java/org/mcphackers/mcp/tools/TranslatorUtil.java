@@ -9,21 +9,22 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.mcphackers.mcp.Language;
 import org.mcphackers.mcp.MCP;
 
 public class TranslatorUtil {
+    private static final Language defaultLang = Language.ENGLISH;
     private static final TranslatorUtil instance = new TranslatorUtil();
-    private static final String defaultLang = "en_US";
     private final Map<String, String> translations = new HashMap<>();
-    private String currentLang = Locale.getDefault().toString();
+    private Language currentLang = Language.get(Locale.getDefault());
     
     public TranslatorUtil() {
     	changeLang(currentLang);
 	}
     
-    public void changeLang(String langName) {
+    public void changeLang(Language lang) {
     	translations.clear();
-    	currentLang = langName;
+    	currentLang = lang;
 		readTranslation(MCP.class);
     }
 
@@ -32,8 +33,12 @@ public class TranslatorUtil {
     	readTranslation(cls, currentLang);
     }
 
-    private void readTranslation(Class cls, String lang) {
-    	InputStream resource = cls.getResourceAsStream("/lang/" + lang + ".lang");
+    private void readTranslation(Class cls, Language lang) {
+    	readTranslation(translations, cls, lang);
+    }
+
+    private void readTranslation(Map<String, String> map, Class cls, Language lang) {
+    	InputStream resource = cls.getResourceAsStream("/lang/" + lang.name + ".lang");
     	if(resource == null) {
     		return;
     	}
@@ -43,11 +48,21 @@ public class TranslatorUtil {
 
                 String key = line.split("=")[0].trim();
                 String translated = line.split("=")[1].trim();
-                this.translations.put(key, translated);
+                map.put(key, translated);
             });
     	} catch (IOException ex) {
     		ex.printStackTrace();
         }
+    }
+    
+    public String getLangName(Language lang) {
+    	Map<String, String> entries = new HashMap<>();
+    	readTranslation(entries, MCP.class, lang);
+    	String languageName = entries.get("language");
+    	if(languageName != null) {
+    		return languageName;
+    	}
+    	return "Unknown language";
     }
 
     public static TranslatorUtil getInstance() {

@@ -1,3 +1,4 @@
+language = 中文
 mcp.needJDK = 重编译需要 Java Development Kit！
 mcp.error = 错误
 mcp.newVersion = 发现更新：
