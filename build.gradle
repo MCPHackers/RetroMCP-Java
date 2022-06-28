@@ -27,7 +27,6 @@ dependencies {
 
     implementation "com.github.Lassebq:Fernflower:${project.fernflower_version}"
     implementation "com.github.MCPHackers:RetroDebugInjector:${project.rdi_version}"
-    implementation "com.github.MCPHackers:Stitch:${project.stitch_version}"
     implementation "org.fusesource.jansi:jansi:${project.jansi_version}"
     implementation "net.fabricmc:tiny-remapper:${project.tr_version}"
     implementation "org.json:json:${project.json_version}"

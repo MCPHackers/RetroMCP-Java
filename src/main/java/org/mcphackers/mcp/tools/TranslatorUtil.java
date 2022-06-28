@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.mcphackers.mcp.Language;
@@ -16,11 +15,7 @@ public class TranslatorUtil {
     private static final Language defaultLang = Language.ENGLISH;
     private static final TranslatorUtil instance = new TranslatorUtil();
     private final Map<String, String> translations = new HashMap<>();
-    private Language currentLang = Language.get(Locale.getDefault());
-    
-    public TranslatorUtil() {
-    	changeLang(currentLang);
-	}
+    private Language currentLang;
     
     public void changeLang(Language lang) {
     	translations.clear();
@@ -38,14 +33,15 @@ public class TranslatorUtil {
     }
 
     private void readTranslation(Map<String, String> map, Class cls, Language lang) {
-    	InputStream resource = cls.getResourceAsStream("/lang/" + lang.name + ".lang");
+    	String resourceName = "/lang/" + lang.name + ".lang";
+    	//FIXME Hardcoded MCP.class because Class#getResourceAsStream is not the same as ClassLoader#getResourceAsStream
+    	InputStream resource = (cls == MCP.class) ? cls.getResourceAsStream(resourceName) : cls.getClassLoader().getResourceAsStream(resourceName);
     	if(resource == null) {
     		return;
     	}
     	try(BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8))) {
             bufferedReader.lines().forEach(line -> {
                 if (line.startsWith("#") || line.trim().isEmpty()) return;
-
                 String key = line.split("=")[0].trim();
                 String translated = line.split("=")[1].trim();
                 map.put(key, translated);

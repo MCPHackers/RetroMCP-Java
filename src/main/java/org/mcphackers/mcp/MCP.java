@@ -36,8 +36,8 @@ public abstract class MCP {
 
 	protected MCP() {
 		triggerEvent(MCPEvent.ENV_STARTUP);
-		
 		Update.attemptToDeleteUpdateJar();
+		changeLanguage(Language.get(Locale.getDefault()));
 	}
 
 	public abstract Path getWorkingDir();

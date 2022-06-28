@@ -14,7 +14,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -98,16 +97,17 @@ public class MCPFrame extends JFrame {
 			}
 		});
 
-//		Dimension preferredButtonSize = new Dimension(110, 26);
+		Dimension preferredButtonSize = new Dimension(110, 26);
 		for(TaskMode task : MainGUI.TASKS) {
 			TaskButton button = mcp.getButton(task);
-//			preferredButtonSize.width = Math.max(button.getPreferredSize().width, preferredButtonSize.width);
+			button.setPreferredSize(null);
+			preferredButtonSize.width = Math.max(button.getPreferredSize().width, preferredButtonSize.width);
 			buttons.add(button);
 			topLeftContainer.add(button);
 		}
-//		for(TaskButton button : buttons) {
-//			button.setSize(preferredButtonSize);
-//		}
+		for(TaskButton button : buttons) {
+			button.setPreferredSize(preferredButtonSize);
+		}
 		
 		topRightContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		reloadVersionList();
@@ -293,7 +293,16 @@ public class MCPFrame extends JFrame {
 			verLabel.setText(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		}
 		buttons.forEach(button -> button.updateName());
+		Dimension preferredButtonSize = new Dimension(110, 26);
+		for(TaskButton button : buttons) {
+			button.setPreferredSize(null);
+			preferredButtonSize.width = Math.max(button.getPreferredSize().width, preferredButtonSize.width);
+		}
+		for(TaskButton button : buttons) {
+			button.setPreferredSize(preferredButtonSize);
+		}
 		menuBar.reloadText();
+		revalidate();
 		topLeftContainer.revalidate();
 	}
 
