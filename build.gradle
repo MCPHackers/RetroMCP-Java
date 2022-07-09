@@ -25,7 +25,7 @@ dependencies {
     implementation "org.ow2.asm:asm-tree:${project.asm_version}"
     implementation "org.ow2.asm:asm-util:${project.asm_version}"
 
-//    implementation "com.github.Lassebq:Fernflower:${project.fernflower_version}"
+    implementation "com.github.Lassebq:Fernflower:${project.fernflower_version}"
     implementation "com.github.MCPHackers:RetroDebugInjector:${project.rdi_version}"
     implementation "org.fusesource.jansi:jansi:${project.jansi_version}"
     implementation "net.fabricmc:tiny-remapper:${project.tr_version}"
