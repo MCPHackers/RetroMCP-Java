@@ -84,7 +84,7 @@ public abstract class MCP {
 			pool.execute(() -> {
 				try {
 					task.performTask();
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					result1.set(Task.ERROR);
 					e.printStackTrace();
 				}

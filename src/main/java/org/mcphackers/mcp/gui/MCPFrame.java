@@ -45,6 +45,8 @@ import org.mcphackers.mcp.tools.VersionsParser;
 
 public class MCPFrame extends JFrame {
 	
+	private static final long serialVersionUID = -3455157541499586338L;
+
 	private JComboBox<String> verList;
 	private List<TaskButton> buttons = new ArrayList<>();
 	private JLabel verLabel;
@@ -77,7 +79,7 @@ public class MCPFrame extends JFrame {
 		initFrameContents();
 		pack();
 		setMinimumSize(getMinimumSize());
-		//setSize(new Dimension(940, 500));
+		setSize(new Dimension(1040, 500));
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -97,7 +99,7 @@ public class MCPFrame extends JFrame {
 			}
 		});
 
-		Dimension preferredButtonSize = new Dimension(110, 26);
+		Dimension preferredButtonSize = new Dimension(0, 26);
 		for(TaskMode task : MainGUI.TASKS) {
 			TaskButton button = mcp.getButton(task);
 			button.setPreferredSize(null);
@@ -117,9 +119,6 @@ public class MCPFrame extends JFrame {
 		
 		topContainer.add(topLeftContainer, BorderLayout.CENTER);
 		topContainer.add(topRightContainer, BorderLayout.EAST);
-		topLeftContainer.setSize(new Dimension(720, 0));
-		topLeftContainer.setMinimumSize(new Dimension(160, 0));
-		//topRightContainer.setMinimumSize(topRightContainer.getMinimumSize());
 		contentPane.add(topContainer, BorderLayout.NORTH);
 
 		JTextArea textArea = new JTextArea();
@@ -293,7 +292,7 @@ public class MCPFrame extends JFrame {
 			verLabel.setText(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		}
 		buttons.forEach(button -> button.updateName());
-		Dimension preferredButtonSize = new Dimension(110, 26);
+		Dimension preferredButtonSize = new Dimension(0, 26);
 		for(TaskButton button : buttons) {
 			button.setPreferredSize(null);
 			preferredButtonSize.width = Math.max(button.getPreferredSize().width, preferredButtonSize.width);

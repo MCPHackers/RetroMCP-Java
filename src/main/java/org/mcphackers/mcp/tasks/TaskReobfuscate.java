@@ -4,22 +4,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.Map.Entry;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.TriFunction;
-import org.mcphackers.mcp.tools.mappings.MappingData;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
-
-import net.fabricmc.mappingio.tree.MappingTree;
-import net.fabricmc.mappingio.tree.MappingTree.ClassMapping;
+import org.mcphackers.rdi.injector.RDInjector;
+import org.mcphackers.rdi.injector.data.Mappings;
+import org.mcphackers.rdi.util.IOUtil;
+import org.objectweb.asm.ClassReader;
 
 public class TaskReobfuscate extends TaskStaged {
 
@@ -59,44 +58,50 @@ public class TaskReobfuscate extends TaskStaged {
 		Map<String, String> originalHashes = gatherMD5Hashes(false);
 		Map<String, String> recompHashes = gatherMD5Hashes(true);
 
-		Set<MappingData> mappings = new HashSet<>();
 		for(Side localSide : sides) {
-			final Path deobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_DO, localSide);
-			final Path reobfJar = MCPPaths.get(mcp, MCPPaths.REOBF_JAR, localSide);
-			if(Files.exists(deobfMappings)) {
-				MappingData mappingData = new MappingData(localSide, deobfMappings);
-				mappingData.flipMappingTree();
-				mappings.add(mappingData);
-			}
-			else {
-				Files.deleteIfExists(reobfJar);
-				FileUtil.compress(reobfBin, reobfJar);
-			}
-		}
-		for(MappingData mappingData : mappings) {
-			Side localSide = mappingData.getSide();
-			final Path reobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_RO, localSide);
+
 			final Path reobfDir = MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, localSide);
 			final Path reobfJar = MCPPaths.get(mcp, MCPPaths.REOBF_JAR, localSide);
-			MappingUtil.modifyClasses(mappingData.getTree(), reobfBin, getClassPattern(mappingData, enableObfuscation, originalHashes));
-			//MappingUtil.modifyFields(mappingData.getTree(), reobfBin, getFieldPattern(mappingData, enableObfuscation, originalHashes));
-			mappingData.save(reobfMappings);
-			
+			List<String> classNames = new ArrayList<>();
+			Files.walk(reobfBin).forEach(path -> {
+				if(path.getFileName().toString().endsWith(".class")) {
+					ClassReader classReader;
+					try {
+						classReader = new ClassReader(Files.readAllBytes(path));
+						classNames.add(classReader.getClassName());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			Mappings mappings = Mappings.read(MCPPaths.get(mcp, MCPPaths.MAPPINGS), "named", localSide.name);
+			modifyClassMappings(mappings, classNames, enableObfuscation);
 			Files.deleteIfExists(reobfJar);
-			MappingUtil.remap(reobfMappings, reobfBin, reobfJar, TaskDecompile.getLibraryPaths(mcp, localSide), "named", "official");
-			
+			RDInjector injector = new RDInjector(reobfBin);
+			injector.applyMappings(mappings);
+			injector.transform();
+			IOUtil.write(injector.getStorage(), Files.newOutputStream(reobfJar));
+
+			Map<String, String> reversedNames = new HashMap<>();
+			for(Entry<String, String> entry : mappings.classes.entrySet()) {
+				reversedNames.put(entry.getValue(), entry.getKey());
+			}
 			FileUtil.deleteDirectoryIfExists(reobfDir);
 			FileUtil.unzip(reobfJar, reobfDir, entry -> {
 				String className = entry.getName().replace(".class", "");
-				ClassMapping cls = mappingData.getTree().getClass(className, 0);
-				String deobfName = cls == null ? className : cls.getSrcName();
+				boolean presentInMappings = true;
+				String deobfName = reversedNames.get(className);
+				if(deobfName == null) {
+					deobfName = className;
+					presentInMappings = false;
+				}
 				String hash			= originalHashes.get(deobfName);
 				String hashModified = recompHashes.get(deobfName);
 				if(!entry.isDirectory()) {
 					if(hash == null) {
 						return true;
 					}
-					else if(!hash.equals(hashModified) && cls != null) {
+					else if(!hash.equals(hashModified) && presentInMappings) {
 						return true;
 					}
 				}
@@ -105,21 +110,24 @@ public class TaskReobfuscate extends TaskStaged {
 		}
 	}
 
-	private Function<String, String> getClassPattern(MappingData mappingData, boolean obf, Map<String, String> hashes) {
+	private void modifyClassMappings(Mappings mappings, List<String> classNames, boolean obf) {
 		Map<String, Integer> obfIndexes = new HashMap<>();
-		MappingTree mappingTree = mappingData.getTree();
-		return className -> {
-			if (mappingTree.getClass(className) == null && !hashes.containsKey(className)) {
+		for(String className : classNames) {
+			if (mappings.classes.containsKey(className) /*&& !hashes.containsKey(className)*/) {
 				String packageName = className.lastIndexOf("/") >= 0 ? className.substring(0, className.lastIndexOf("/") + 1) : null;
-				String obfPackage = mappingData.packages.get(packageName);
+				String obfPackage = mappings.getPackageName(packageName);
 				if (obfPackage == null) {
-					return null;
+					break;
 				}
 				String clsName = (className.lastIndexOf("/") >= 0 ? className.substring(className.lastIndexOf("/") + 1) : className);
 				if(obf) {
 					int obfIndex = obfIndexes.getOrDefault(obfPackage, 0);
 					String obfName = MappingUtil.getObfuscatedName(obfIndex);
-					while(mappingTree.getClass(obfPackage + obfName, 0) != null) {
+					List<String> obfNames = new ArrayList<>();
+					for(Entry<String, String> entry : mappings.classes.entrySet()) {
+						obfNames.add(entry.getValue());
+					}
+					while(obfNames.contains(obfPackage + obfName)) {
 						obfIndex++;
 						obfName = MappingUtil.getObfuscatedName(obfIndex);
 					}
@@ -128,31 +136,9 @@ public class TaskReobfuscate extends TaskStaged {
 					}
 					clsName = obfName;
 				}
-				return obfPackage + clsName;
+				mappings.classes.put(className, obfPackage + clsName);
 			}
-			return null; // Returning null skips remapping
-		};
-	}
-
-	private TriFunction<String, String, String, String> getFieldPattern(MappingData mappingData, boolean obf, Map<String, String> hashes) {
-		// TODO It still doesn't work
-		MappingTree mappingTree = mappingData.getTree();
-		return (className, name, desc) -> {
-			if (mappingTree.getField(className, name, desc) == null && !hashes.containsKey(className)) {
-				if(obf) {
-					int obfIndex = 0;
-					String obfName = MappingUtil.getObfuscatedName(obfIndex);
-					ClassMapping c = ((MappingTree)mappingTree).getClass(className);
-					String fName = c == null ? className : c.getDstName(0);
-					while(mappingTree.getField(fName, obfName, desc, 0) != null) {
-						obfIndex++;
-						obfName = MappingUtil.getObfuscatedName(obfIndex);
-					}
-					return obfName;
-				}
-			}
-			return null;
-		};
+		}
 	}
 	
 	public void setProgress(int progress) {

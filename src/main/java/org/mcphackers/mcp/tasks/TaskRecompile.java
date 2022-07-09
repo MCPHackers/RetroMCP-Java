@@ -162,7 +162,7 @@ public class TaskRecompile extends TaskStaged {
 		Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(src);
 		JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, recompileOptions, null, sources);
 		mgr.close();
-		boolean success = task.call();
+		task.call();
 		for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
 			if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
 				String[] kindString = {"Info", "Warning", "Error"};

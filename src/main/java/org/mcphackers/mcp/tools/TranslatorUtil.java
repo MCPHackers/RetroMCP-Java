@@ -23,16 +23,16 @@ public class TranslatorUtil {
 		readTranslation(MCP.class);
     }
 
-    public void readTranslation(Class cls) {
+    public void readTranslation(Class<?> cls) {
     	readTranslation(cls, defaultLang);
     	readTranslation(cls, currentLang);
     }
 
-    private void readTranslation(Class cls, Language lang) {
+    private void readTranslation(Class<?> cls, Language lang) {
     	readTranslation(translations, cls, lang);
     }
 
-    private void readTranslation(Map<String, String> map, Class cls, Language lang) {
+    private void readTranslation(Map<String, String> map, Class<?> cls, Language lang) {
     	String resourceName = "/lang/" + lang.name + ".lang";
     	//FIXME Hardcoded MCP.class because Class#getResourceAsStream is not the same as ClassLoader#getResourceAsStream
     	InputStream resource = (cls == MCP.class) ? cls.getResourceAsStream(resourceName) : cls.getClassLoader().getResourceAsStream(resourceName);

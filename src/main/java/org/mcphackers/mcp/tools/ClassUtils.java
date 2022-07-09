@@ -13,6 +13,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public abstract class ClassUtils {
+	@SuppressWarnings("unchecked")
 	public static <T> List<Class<T>> getClasses(Path p, Class<T> type) throws Exception {
 		String pathToJar = p.toAbsolutePath().toString();
 		JarFile jarFile = new JarFile(pathToJar);
@@ -30,9 +31,9 @@ public abstract class ClassUtils {
 			// -6 because of .class
 			String className = je.getName().substring(0,je.getName().length()-6);
 			className = className.replace('/', '.');
-			Class cls = cl.loadClass(className);
+			Class<?> cls = cl.loadClass(className);
 			if(type.isAssignableFrom(cls)) {
-				classes.add((Class<T>)cls);
+				classes.add((Class<T>) cls);
 			}
 		}
 		jarFile.close();

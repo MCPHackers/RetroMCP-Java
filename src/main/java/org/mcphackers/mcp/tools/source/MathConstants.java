@@ -63,6 +63,7 @@ public class MathConstants extends Constants {
 		return _CONSTANTS.put(String.valueOf(value), replace);
 	}
 	
+	@SuppressWarnings("unused")
 	private static String replaceValue(long value, String replace) {
 		return _CONSTANTS.put(value + "L", replace);
 	}

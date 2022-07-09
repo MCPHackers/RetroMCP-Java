@@ -10,6 +10,9 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 
 public class TaskButton extends JButton {
+
+	private static final long serialVersionUID = -2625827711322112358L;
+
 	private TaskMode linkedTask;
 	private MCP mcp;
 	

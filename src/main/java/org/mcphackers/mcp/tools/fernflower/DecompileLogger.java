@@ -1,5 +1,6 @@
 package org.mcphackers.mcp.tools.fernflower;
 
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tasks.ProgressListener;
 
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
@@ -25,7 +26,7 @@ public class DecompileLogger extends IFernflowerLogger {
 	}
 
 	public void startReadingClass(String className) {
-		listener.setProgress("Decompiling class " + className);
+		listener.setProgress(MCP.TRANSLATOR.translateKey("task.stage.decompile") + " " + className);
 	}
 
 	@Override

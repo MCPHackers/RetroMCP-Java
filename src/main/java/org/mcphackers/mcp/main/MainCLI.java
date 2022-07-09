@@ -228,6 +228,7 @@ public class MainCLI extends MCP {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static String getTable(List<String> versions) {
 		int rows = (int)Math.ceil(versions.size() / 3D);
 		List<String>[] tableList = (List<String>[]) new List[rows];

@@ -32,7 +32,6 @@ public class MCPPaths {
 	public static final String TEMP_SIDE = 	 		 TEMP + "%s";
 	public static final String DEOBF_OUT = 	 		 TEMP + "%s/deobf.jar";
 	public static final String EXC_OUT = 	 		 TEMP + "%s/exc.jar";
-	public static final String TEMP_EXC_OUT = 	 	 TEMP + "%s/exc_temp.jar";
 	public static final String SIDE_SRC = 		 	 TEMP + "%s/src.zip";
 	public static final String TEMP_SOURCES = 		 TEMP + "%s/src";
 	public static final String MD5 = 		 		 TEMP + "%s/original.md5";
@@ -43,22 +42,25 @@ public class MCPPaths {
 	public static final String SOURCES = 	 		 SRC + "minecraft_%s";
 	public static final String BIN_SIDE = 		 	 BIN + "minecraft_%s";
 	public static final String REOBF_SIDE = 		 REOBF + "minecraft_%s";
-	public static final String MAPPINGS = 			 CONF + "%s.tiny";
-	public static final String EXC = 		 		 CONF + "%s.exc";
+	public static final String MAPPINGS = 			 CONF + "mappings.tiny";
+	public static final String EXC = 		 		 CONF + "exceptions.exc";
 	public static final String PATCHES = 	 		 CONF + "patches_%s";
 	public static final String BUILD_ZIP = 	 		 BUILD + "minecraft_%s.zip";
 	public static final String BUILD_JAR = 	 		 BUILD + "minecraft_%s.jar";
 	public static final String VERSION = 	 		 CONF + "version";
 	public static final String UPDATE_JAR 		= 	 "update.jar";
 	
-	private static final Set<String> stripClient = new HashSet<String>() {{
-		add(JAR_ORIGINAL);
-		add(SOURCES);
-		add(BIN_SIDE);
-		add(REOBF_SIDE);
-		add(BUILD_ZIP);
-		add(BUILD_JAR);
-	}};
+	private static final Set<String> stripClient = new HashSet<String>() {
+		private static final long serialVersionUID = 1079122339538512318L;
+		{
+			add(JAR_ORIGINAL);
+			add(SOURCES);
+			add(BIN_SIDE);
+			add(REOBF_SIDE);
+			add(BUILD_ZIP);
+			add(BUILD_JAR);
+		}
+	};
 	
 	public static Path get(MCP mcp, String path, Side side) {
 		if(side == Side.CLIENT && stripClient.contains(path)) {

@@ -79,7 +79,7 @@ public class TaskRun extends Task {
 	}
 
 	private static List<Path> getClasspath(MCP mcp, Side side, boolean runBuild) throws IOException {
-		List cpList = new ArrayList<>();
+		List<Path> cpList = new ArrayList<>();
 		if(runBuild) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
 		}
