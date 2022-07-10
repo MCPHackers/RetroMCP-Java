@@ -95,7 +95,9 @@ public abstract class MCP {
 		}
 		
 		pool.shutdown();
-		while (!pool.isTerminated()) {}
+		while (!pool.isTerminated())
+		{
+		}
 
 		byte result = result1.byteValue();
 		
