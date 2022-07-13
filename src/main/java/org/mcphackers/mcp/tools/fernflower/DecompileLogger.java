@@ -3,12 +3,11 @@ package org.mcphackers.mcp.tools.fernflower;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tasks.ProgressListener;
 
-import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
+import de.fernflower.main.extern.IFernflowerLogger;
 
 public class DecompileLogger extends IFernflowerLogger {
 
 	private final ProgressListener listener;
-	private int total;
 
 	public DecompileLogger(ProgressListener listener) {
 		this.listener = listener;
@@ -30,12 +29,7 @@ public class DecompileLogger extends IFernflowerLogger {
 	}
 
 	@Override
-	public void startSave(int total) {
-		this.total = total;
-	}
-
-	@Override
-	public void updateSave(int current) {
+	public void updateCounters(int current, int total) {
 		listener.setProgress((int)((double)current/(double)total * 100));
 	}
 

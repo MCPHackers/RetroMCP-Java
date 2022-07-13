@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class Source {
 	
 	public final static String[] validModifiers = {"public", "protected", "private", "abstract", "static", "final", "strictfp", "transient", "volatile", "synchronized", "native"};
-	private static final Pattern _IMPORT = Pattern.compile("import [.*\\w]+;");
+	private static final Pattern IMPORT = Pattern.compile("import [.*\\w]+;");
 	
 	public static void modify(Path src, Function<String, String> editCode) throws IOException {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
@@ -31,7 +31,7 @@ public class Source {
 	
 	//TODO Handle classes with no imports
 	public static String updateImport(String code, String imp) {
-		Matcher matcher = _IMPORT.matcher(code);
+		Matcher matcher = IMPORT.matcher(code);
 		int lastIndex = -1;
 		while (matcher.find()) {
 			lastIndex = matcher.end();

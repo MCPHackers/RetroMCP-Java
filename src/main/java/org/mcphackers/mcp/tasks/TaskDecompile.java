@@ -68,9 +68,9 @@ public class TaskDecompile extends TaskStaged {
 			stage(getLocalizedStage("rdi"), 2,
 			() -> {
 				RDInjector injector = new RDInjector();
-				injector.stripLVT();
 				if(side == Side.MERGED) {
 					injector.setStorage(new ClassStorage(IOUtil.read(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER))));
+					injector.stripLVT();
 					injector.applyMappings(getMappings(injector.getStorage(), Side.SERVER));
 					injector.transform();
 					ClassStorage serverStorage = injector.getStorage();
@@ -82,6 +82,7 @@ public class TaskDecompile extends TaskStaged {
 				}
 				else {
 					injector.setStorage(new ClassStorage(IOUtil.read(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side))));
+					injector.stripLVT();
 					injector.applyMappings(getMappings(injector.getStorage(), side));
 				}
 				injector.fixAccess();
@@ -92,13 +93,17 @@ public class TaskDecompile extends TaskStaged {
 				if (Files.exists(exc)) {
 					injector.fixExceptions(exc);
 				}
+//				final Path exc = MCPPaths.get(mcp, "conf/%s.exc", side);
+//				if (Files.exists(exc)) {
+//					injector.fixExceptions(exc);
+//				}
 				injector.transform();
-				//TODO Allow copying resources from multiple sources
-				if(side != Side.MERGED) {
-					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
+				//TODO Allow copying from multiple sources
+				if(side == Side.MERGED) {
+					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
 				}
 				else {
-					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
+					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 				}
 				// Copying a fixed jar to libs
 				if(side == Side.CLIENT || side == Side.MERGED) {
@@ -108,8 +113,7 @@ public class TaskDecompile extends TaskStaged {
 			}),
 			stage(getLocalizedStage("decompile"),
 			() -> {
-				//TODO Apply both javadocs if side == Side.MERGED
-				//FIXME Javadocs
+				//FIXME Use joined.javadocs
 				final Path deobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_DO, side == Side.MERGED ? Side.CLIENT : side);
 				new Decompiler(this, excOut, srcZip, deobfMappings,
 						mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING),
@@ -125,7 +129,7 @@ public class TaskDecompile extends TaskStaged {
 			() -> {
 					List<Constants> constants = new ArrayList<>();
 					if(hasLWJGL)
-						constants.add(new GLConstants());
+					constants.add(new GLConstants());
 					constants.add(new MathConstants());
 					Constants.replace(ffOut, constants);
 			}),
@@ -149,6 +153,7 @@ public class TaskDecompile extends TaskStaged {
 	
 	private Mappings getMappings(ClassStorage storage, Side side) {
 		Mappings mappings = Mappings.read(MCPPaths.get(mcp, MCPPaths.MAPPINGS), side.name, "named");
+		//Mappings mappings = Mappings.read(MCPPaths.get(mcp, "conf/%s.tiny", side), "official", "named");
 		for(ClassNode node : storage.getClasses()) {
 			if(node.name.indexOf('/') == -1 && !mappings.classes.containsKey(node.name)) {
 				mappings.classes.put(node.name, "net/minecraft/src/" + node.name);

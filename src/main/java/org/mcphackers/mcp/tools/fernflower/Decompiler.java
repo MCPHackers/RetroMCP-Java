@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler;
-import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
-import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
-import org.jetbrains.java.decompiler.util.InterpreterUtil;
+import de.fernflower.main.decompiler.BaseDecompiler;
+import de.fernflower.main.extern.IBytecodeProvider;
+import de.fernflower.main.extern.IFernflowerPreferences;
+import de.fernflower.util.InterpreterUtil;
 import org.mcphackers.mcp.tasks.ProgressListener;
 
 public class Decompiler implements IBytecodeProvider {
@@ -24,7 +24,8 @@ public class Decompiler implements IBytecodeProvider {
 		this.source = source;
 		this.destination = out;
 		this.log = new DecompileLogger(listener);
-		mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, override ? "1" : "0");
+		//FIXME
+		//mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, override ? "1" : "0");
 		mapOptions.put(IFernflowerPreferences.NO_COMMENT_OUTPUT, "1");
 		mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, "0");
 		mapOptions.put(IFernflowerPreferences.ASCII_STRING_CHARACTERS, "1");

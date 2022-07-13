@@ -16,10 +16,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.jetbrains.java.decompiler.main.DecompilerContext;
-import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
-import org.jetbrains.java.decompiler.main.extern.IResultSaver;
-import org.jetbrains.java.decompiler.util.InterpreterUtil;
+import de.fernflower.main.DecompilerContext;
+import de.fernflower.main.extern.IFernflowerLogger;
+import de.fernflower.main.extern.IResultSaver;
+import de.fernflower.util.InterpreterUtil;
 
 public class SingleFileSaver implements IResultSaver {
   private final Path target;

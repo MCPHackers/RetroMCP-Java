@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 public class MathConstants extends Constants {
 	
 	// Used to prevent strings from being captured, such as "2.0D"
-	private static final Pattern _CONSTANT_REGEX = Pattern.compile("(?![\"'][.\\w\\s]*)-*\\d+\\.*\\w*(?![.\\w\\s]*[\"'])");
-	private static final Map<String, String> _CONSTANTS = new HashMap<>();
+	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?![\"'][.\\w\\s]*)-*\\d+\\.*\\w*(?![.\\w\\s]*[\"'])");
+	private static final Map<String, String> CONSTANTS = new HashMap<>();
 	
 	static {
 		for (int i = 1; i <= 100; i++) {
@@ -41,30 +41,30 @@ public class MathConstants extends Constants {
 	}
 	
 	protected String replace_constants(String code) {
-		return Source.replaceTextOfMatchGroup(code, _CONSTANT_REGEX, match1 -> {
+		return Source.replaceTextOfMatchGroup(code, CONSTANT_REGEX, match1 -> {
 			String constant = match1.group(0);
-			return _CONSTANTS.getOrDefault(constant, constant);
+			return CONSTANTS.getOrDefault(constant, constant);
 		});
 	}
 	
 	private static String floatCastedToDouble(float value) {
-		return _CONSTANTS.put((double)value + "D", "(double)" + value + "F");
+		return CONSTANTS.put((double)value + "D", "(double)" + value + "F");
 	}
 	
 	private static String replaceValue(double value, String replace) {
-		return _CONSTANTS.put(value + "D", replace);
+		return CONSTANTS.put(value + "D", replace);
 	}
 	
 	private static String replaceValue(float value, String replace) {
-		return _CONSTANTS.put(value + "F", replace);
+		return CONSTANTS.put(value + "F", replace);
 	}
 	
 	private static String replaceValue(int value, String replace) {
-		return _CONSTANTS.put(String.valueOf(value), replace);
+		return CONSTANTS.put(String.valueOf(value), replace);
 	}
 	
 	@SuppressWarnings("unused")
 	private static String replaceValue(long value, String replace) {
-		return _CONSTANTS.put(value + "L", replace);
+		return CONSTANTS.put(value + "L", replace);
 	}
 }

@@ -202,7 +202,7 @@ public class MenuBar extends JMenuBar {
 				"options.running"
 				};
 		TaskParameter[][] params = {
-				{TaskParameter.PATCHES, TaskParameter.DECOMPILE_OVERRIDE, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES},
+				{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES},
 				{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
 				{TaskParameter.OBFUSCATION},
 				{TaskParameter.FULL_BUILD},

@@ -122,6 +122,7 @@ public abstract class Util {
 		}
 	}
 	
+	@Deprecated
 	public static Map<String, Object> jsonToMap(JSONObject jsonobj)  throws JSONException {
 		Map<String, Object> map = new HashMap<>();
 		Iterator<String> keys = jsonobj.keys();
@@ -137,6 +138,7 @@ public abstract class Util {
 		}   return map;
 	}
 
+	@Deprecated
 	public static List<Object> jsonToList(JSONArray array) throws JSONException {
 		List<Object> list = new ArrayList<>();
 		for(int i = 0; i < array.length(); i++) {
