@@ -50,6 +50,9 @@ public class MainGUI extends MCP {
 	public MainGUI(Path dir) {
 		workingDir = dir;
 		options = new Options(MCPPaths.get(this, "options.cfg"));
+		if(options.lang != null) {
+			changeLanguage(options.lang);
+		}
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
 			JOptionPane.showMessageDialog(null, TRANSLATOR.translateKey("mcp.needJDK"), TRANSLATOR.translateKey("mcp.error"), JOptionPane.ERROR_MESSAGE);

@@ -44,8 +44,8 @@ public class TaskRecompile extends TaskStaged {
 		if(compiler == null) {
 			throw new RuntimeException("Could not find compiling API");
 		}
-		Path binPath = MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side);
-		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
+		Path binPath = MCPPaths.get(mcp, MCPPaths.COMPILED, side);
+		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		return new Stage[] {
 			stage(getLocalizedStage("recompile"), 1,
 			() -> {
@@ -106,7 +106,7 @@ public class TaskRecompile extends TaskStaged {
 	}
 	
 	public List<Path> collectResources() throws IOException {
-		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
+		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		return FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java") && !path.getFileName().toString().endsWith(".class"));
 	}
 	
@@ -142,7 +142,7 @@ public class TaskRecompile extends TaskStaged {
 	}
 	
 	public List<File> collectSource() throws IOException {
-		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
+		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		List<File> src;
 		try(Stream<Path> pathStream = Files.walk(srcPath)) {
 			src = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());

@@ -50,7 +50,7 @@ public class TaskReobfuscate extends TaskStaged {
 		
 	
 	private void reobfuscate() throws IOException {
-		final Path reobfBin = MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side);
+		final Path reobfBin = MCPPaths.get(mcp, MCPPaths.COMPILED, side);
 		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
 		
 		Side[] sides = side == Side.MERGED ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};

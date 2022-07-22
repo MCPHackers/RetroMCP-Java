@@ -47,10 +47,10 @@ public class TaskDecompile extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		final Path excOut 		= MCPPaths.get(mcp, MCPPaths.EXC_OUT, side);
-		final Path ffOut 		= MCPPaths.get(mcp, MCPPaths.TEMP_SOURCES, side);
-		final Path srcZip 		= MCPPaths.get(mcp, MCPPaths.SIDE_SRC, side);
-		final Path srcPath 		= MCPPaths.get(mcp, MCPPaths.SOURCES, side);
+		final Path excOut 		= MCPPaths.get(mcp, MCPPaths.REMAPPED, side);
+		final Path ffOut 		= MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side);
+		final Path srcZip 		= MCPPaths.get(mcp, MCPPaths.SRC_ZIP, side);
+		final Path srcPath 		= MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		final Path patchesPath 	= MCPPaths.get(mcp, MCPPaths.PATCHES, side);
 		
 		boolean hasLWJGL = side == Side.CLIENT || side == Side.MERGED;
@@ -93,12 +93,8 @@ public class TaskDecompile extends TaskStaged {
 				if (Files.exists(exc)) {
 					injector.fixExceptions(exc);
 				}
-//				final Path exc = MCPPaths.get(mcp, "conf/%s.exc", side);
-//				if (Files.exists(exc)) {
-//					injector.fixExceptions(exc);
-//				}
 				injector.transform();
-				//TODO Allow copying from multiple sources
+				//TODO Allow copying resources from multiple sources
 				if(side == Side.MERGED) {
 					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
 				}
@@ -113,25 +109,25 @@ public class TaskDecompile extends TaskStaged {
 			}),
 			stage(getLocalizedStage("decompile"),
 			() -> {
-				//FIXME Use joined.javadocs
-				final Path deobfMappings = MCPPaths.get(mcp, MCPPaths.MAPPINGS_DO, side == Side.MERGED ? Side.CLIENT : side);
-				new Decompiler(this, excOut, srcZip, deobfMappings,
+				final Path javadocs = MCPPaths.get(mcp, MCPPaths.JAVADOCS);
+				new Decompiler(this, excOut, srcZip, javadocs,
 						mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING),
 						mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE))
 				.decompile();
 			}),
 			stage(getLocalizedStage("extractsrc"), 84,
 			() -> {
-					FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.SRC));
-					FileUtil.unzipByExtension(srcZip, ffOut, ".java");
+				//TODO Add option for vanilla assets being added to source 
+				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.SRC));
+				FileUtil.unzipByExtension(srcZip, ffOut, ".java");
 			}),
 			stage(getLocalizedStage("constants"), 86,
 			() -> {
-					List<Constants> constants = new ArrayList<>();
-					if(hasLWJGL)
-					constants.add(new GLConstants());
-					constants.add(new MathConstants());
-					Constants.replace(ffOut, constants);
+				List<Constants> constants = new ArrayList<>();
+				if(hasLWJGL)
+				constants.add(new GLConstants());
+				constants.add(new MathConstants());
+				Constants.replace(ffOut, constants);
 			}),
 			stage(getLocalizedStage("patch"), 88,
 			() -> {

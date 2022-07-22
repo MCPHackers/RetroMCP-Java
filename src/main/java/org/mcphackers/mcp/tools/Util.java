@@ -93,6 +93,24 @@ public abstract class Util {
 		}
 	}
 	
+	//official named -> named client
+	public static void mergeMappings(Path client, Path out) throws IOException {
+		MemoryMappingTree clientTree = new MemoryMappingTree();
+		Tiny2Reader.read(Files.newBufferedReader(client), clientTree);
+		clientTree.setSrcNamespace("client");
+		MemoryMappingTree namedClientTree = new MemoryMappingTree();
+		{
+			Map<String, String> namespaces = new HashMap<>();
+			namespaces.put("named", "client");
+			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedClientTree, namespaces);
+			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
+			clientTree.accept(nsSwitch);
+		}
+		try(Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
+			namedClientTree.accept(writer);
+		}
+	}
+	
 	public static void copyToClipboard(String text) {
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
 	}

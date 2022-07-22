@@ -151,6 +151,7 @@ public class MenuBar extends JMenuBar {
 			langItem.addActionListener(a -> {
 				mcp.changeLanguage(lang);
 				owner.reloadText();
+				mcp.options.save();
 			});
 			langMenu.add(langItem);
 		}

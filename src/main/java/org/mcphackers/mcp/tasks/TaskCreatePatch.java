@@ -16,8 +16,8 @@ public class TaskCreatePatch extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		Path srcPathUnpatched = MCPPaths.get(mcp, MCPPaths.TEMP_SOURCES, side);
-		Path srcPathPatched = MCPPaths.get(mcp, MCPPaths.SOURCES, side);
+		Path srcPathUnpatched = MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side);
+		Path srcPathPatched = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		Path patchesOut = MCPPaths.get(mcp, "patches/patches_%s", side);
 		setProgress(getLocalizedStage("createpatch"));
 		if (Files.exists(srcPathUnpatched)) {

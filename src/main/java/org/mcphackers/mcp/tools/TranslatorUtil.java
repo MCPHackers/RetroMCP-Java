@@ -13,9 +13,8 @@ import org.mcphackers.mcp.MCP;
 
 public class TranslatorUtil {
     private static final Language defaultLang = Language.ENGLISH;
-    private static final TranslatorUtil instance = new TranslatorUtil();
     private final Map<String, String> translations = new HashMap<>();
-    private Language currentLang;
+    public Language currentLang;
     
     public void changeLang(Language lang) {
     	translations.clear();
@@ -59,10 +58,6 @@ public class TranslatorUtil {
     		return languageName;
     	}
     	return "Unknown language";
-    }
-
-    public static TranslatorUtil getInstance() {
-        return instance;
     }
 
     public boolean hasKey(String key) {

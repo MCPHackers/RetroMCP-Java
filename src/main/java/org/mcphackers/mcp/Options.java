@@ -19,6 +19,7 @@ public class Options {
 	private final Map<TaskParameter, Object> options = new HashMap<>();
 	public Path saveFile;
 	public Side side = Side.ANY;
+	public Language lang;
 	
 	public Options() {
 		for(TaskParameter param : TaskParameter.values()) {
@@ -47,6 +48,11 @@ public class Options {
 							side = Side.valueOf(value);
 						} catch (IllegalArgumentException e) {}
 					}
+					else if(key.equals("lang")) {
+						try {
+							lang = Language.valueOf(value);
+						} catch (IllegalArgumentException e) {}
+					}
 					else {
 						safeSetParameter(TaskMode.nameToParamMap.get(key), value);
 					}
@@ -61,6 +67,7 @@ public class Options {
 		if(saveFile != null) {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
+				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
 				for(Entry<TaskParameter, Object> entry : options.entrySet()) {
 					if(entry.getValue() != null) {
 						writer.append(entry.getKey().name).append('=').append(getParameter(entry.getKey()).toString()).append(String.valueOf('\n'));

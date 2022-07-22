@@ -44,7 +44,7 @@ public class TaskMode {
 			.setName("recompile")
 			.setTaskClass(TaskRecompile.class)
 			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCES, side));
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG,
@@ -58,7 +58,7 @@ public class TaskMode {
 			.setName("reobfuscate")
 			.setTaskClass(TaskReobfuscate.class)
 			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCES, side));
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG,
@@ -72,7 +72,7 @@ public class TaskMode {
 			.setName("updatemd5")
 			.setTaskClass(TaskUpdateMD5.class)
 			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side));
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, side));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG,
@@ -108,7 +108,7 @@ public class TaskMode {
 			.setTaskClass(TaskRun.class)
 			.setProgressBars(false)
 			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side)) ||  Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, Side.MERGED));
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, side)) ||  Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG,
@@ -119,7 +119,7 @@ public class TaskMode {
 			.setName("build")
 			.setTaskClass(TaskBuild.class)
 			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCES, side));
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG,
@@ -134,8 +134,8 @@ public class TaskMode {
 			.setName("createpatch")
 			.setTaskClass(TaskCreatePatch.class)
 			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCES, side))
-					&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.TEMP_SOURCES, side));
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side))
+					&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.DEBUG,

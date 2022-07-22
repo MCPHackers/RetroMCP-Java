@@ -23,12 +23,12 @@ import org.mcphackers.mcp.tools.TranslatorUtil;
 
 public abstract class MCP {
 
-	public static final String VERSION = "v1.0-pre3";
+	public static final String VERSION = "v1.0";
 	public static final String githubURL = "https://github.com/MCPHackers/RetroMCP-Java";
 
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 
-	public static final TranslatorUtil TRANSLATOR = TranslatorUtil.getInstance();
+	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
 
 	static {
 		loadPlugins();

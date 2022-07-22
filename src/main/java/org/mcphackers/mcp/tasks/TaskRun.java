@@ -83,9 +83,9 @@ public class TaskRun extends Task {
 		if(runBuild) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
 		}
-		cpList.add(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, side));
-		if(Files.exists(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, Side.MERGED))) {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.BIN_SIDE, Side.MERGED));
+		cpList.add(MCPPaths.get(mcp, MCPPaths.COMPILED, side));
+		if(Files.exists(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED))) {
+			cpList.add(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED));
 		}
 		if(side == Side.SERVER) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));

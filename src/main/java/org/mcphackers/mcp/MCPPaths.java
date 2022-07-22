@@ -25,37 +25,32 @@ public class MCPPaths {
 	public static final String LIBS =			 	 LIB + "%s/";
 	public static final String LIBS_CLIENT =		 String.format(LIBS, Side.CLIENT.name);
 	public static final String CLIENT_FIXED = 		 LIBS_CLIENT + "minecraft.jar";
-	public static final String LWJGL = 				 LIBS_CLIENT + "lwjgl.jar";
-	public static final String LWJGL_UTIL = 		 LIBS_CLIENT + "lwjgl_util.jar";
-	public static final String JINPUT = 	 		 LIBS_CLIENT + "jinput.jar";
 	public static final String NATIVES = 			 LIBS_CLIENT + "natives";
 	public static final String TEMP_SIDE = 	 		 TEMP + "%s";
-	public static final String DEOBF_OUT = 	 		 TEMP + "%s/deobf.jar";
-	public static final String EXC_OUT = 	 		 TEMP + "%s/exc.jar";
-	public static final String SIDE_SRC = 		 	 TEMP + "%s/src.zip";
-	public static final String TEMP_SOURCES = 		 TEMP + "%s/src";
+	public static final String REMAPPED = 	 		 TEMP + "%s/remapped.jar";
+	public static final String SRC_ZIP = 		 	 TEMP + "%s/src.zip";
+	public static final String TEMP_SRC = 		 	 TEMP + "%s/src";
 	public static final String MD5 = 		 		 TEMP + "%s/original.md5";
 	public static final String MD5_RO = 		 	 TEMP + "%s/modified.md5";
 	public static final String REOBF_JAR = 	 		 TEMP + "%s/reobf.jar";
-	public static final String MAPPINGS_RO =  		 TEMP + "%s/reobf.tiny";
-	public static final String MAPPINGS_DO =  		 TEMP + "%s/deobf.tiny";
-	public static final String SOURCES = 	 		 SRC + "minecraft_%s";
-	public static final String BIN_SIDE = 		 	 BIN + "minecraft_%s";
-	public static final String REOBF_SIDE = 		 REOBF + "minecraft_%s";
 	public static final String MAPPINGS = 			 CONF + "mappings.tiny";
 	public static final String EXC = 		 		 CONF + "exceptions.exc";
+	public static final String JAVADOCS = 		 	 CONF + "javadocs.txt";
 	public static final String PATCHES = 	 		 CONF + "patches_%s";
+	public static final String VERSION = 	 		 CONF + "version";
+	public static final String SOURCE = 	 		 SRC + "minecraft_%s";
+	public static final String COMPILED = 		 	 BIN + "minecraft_%s";
+	public static final String REOBF_SIDE = 		 REOBF + "minecraft_%s";
 	public static final String BUILD_ZIP = 	 		 BUILD + "minecraft_%s.zip";
 	public static final String BUILD_JAR = 	 		 BUILD + "minecraft_%s.jar";
-	public static final String VERSION = 	 		 CONF + "version";
 	public static final String UPDATE_JAR 		= 	 "update.jar";
 	
 	private static final Set<String> stripClient = new HashSet<String>() {
 		private static final long serialVersionUID = 1079122339538512318L;
 		{
 			add(JAR_ORIGINAL);
-			add(SOURCES);
-			add(BIN_SIDE);
+			add(SOURCE);
+			add(COMPILED);
 			add(REOBF_SIDE);
 			add(BUILD_ZIP);
 			add(BUILD_JAR);
