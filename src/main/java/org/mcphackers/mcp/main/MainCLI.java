@@ -27,7 +27,6 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.VersionsParser;
 
 public class MainCLI extends MCP {
-	private static final boolean FORCE_CONSOLE = false;
 	private static final Ansi LOGO =
 			new Ansi()
 			.fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____").a('\n')
@@ -48,12 +47,28 @@ public class MainCLI extends MCP {
 	private String[] progressStrings;
 	private String[] progressBarNames;
 
+    	public static native int chdir(String path);
+
 	public static void main(String[] args) throws Exception {
-		if(System.console() != null || FORCE_CONSOLE) {
+        	if (System.console() != null && System.getProperty("doNotUseConsole") == null) {
 			AnsiConsole.systemInstall();
 			new MainCLI(args);
 		}
 		else {
+		    	String jarPath = MainCLI.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+		    	String homeDir = System.getProperty("user.home");
+		    	String currentPath = Paths.get("").toAbsolutePath().toString();
+		    	String correctPath = Paths.get(jarPath).getParent().toString();
+
+		    	// HACK: This is dirty hack to detect if the path is broken
+		    	if (currentPath.equals(homeDir)) {
+				String currOs = System.getProperty("os.name");
+				if (!currOs.contains("Windows")) {
+			    		System.loadLibrary("c");
+			    		chdir(correctPath);
+				}
+		    	}            
+
 			MainGUI.main(args);
 			return;
 		}
