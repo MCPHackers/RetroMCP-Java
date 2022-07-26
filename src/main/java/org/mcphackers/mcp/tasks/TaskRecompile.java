@@ -112,15 +112,11 @@ public class TaskRecompile extends TaskStaged {
 	
 	public List<Path> collectClassPath() throws IOException {
 		List<Path> classpath = new ArrayList<>();
-		if(side == Side.SERVER) {
-			classpath.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
-		}
-		Side[] sides = (side == Side.MERGED) ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
-		for(Side sideLocal : sides) {
-			final Path libPath = MCPPaths.get(mcp, MCPPaths.LIBS, sideLocal);
-			if(Files.exists(libPath)) {
-				FileUtil.collectJars(libPath, classpath);
-			}
+		classpath.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
+
+		final Path libPath = MCPPaths.get(mcp, MCPPaths.LIB);
+		if(Files.exists(libPath)) {
+			FileUtil.collectJars(libPath, classpath);
 		}
 		return classpath;
 	}

@@ -32,6 +32,18 @@ import org.json.JSONObject;
 
 public abstract class FileUtil {
 	
+	public static void delete(Path path) throws IOException {
+		if (Files.notExists(path)) {
+			return;
+		}
+		if(Files.isDirectory(path)) {
+			deleteDirectory(path);
+		}
+		else {
+			Files.delete(path);
+		}
+	}
+	
 	public static void createDirectories(Path path) throws IOException {
 		if (Files.notExists(path)) {
 			Files.createDirectories(path);

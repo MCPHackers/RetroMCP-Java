@@ -99,8 +99,7 @@ public class TaskMode {
 			.setTaskClass(TaskCleanup.class)
 			.setProgressBars(false)
 			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG,
-				TaskParameter.SRC_CLEANUP
+				TaskParameter.DEBUG
 				})
 			.build();
 	public static TaskMode START = new TaskModeBuilder()

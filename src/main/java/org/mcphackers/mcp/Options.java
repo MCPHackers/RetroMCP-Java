@@ -32,7 +32,6 @@ public class Options {
 		saveFile = file;
 		if(Files.exists(saveFile)) {
 			load(saveFile);
-			save();
 		}
 	}
 	
@@ -91,7 +90,6 @@ public class Options {
 		Object value = null;
 		switch (param) {
 		case DEBUG:
-		case SRC_CLEANUP:
 		case FULL_BUILD:
 		case RUN_BUILD:
 		case OBFUSCATION:
@@ -134,7 +132,6 @@ public class Options {
 		else {
 			throw new IllegalArgumentException("Type mismatch");
 		}
-		save();
 	}
 
 	public Object getParameter(TaskParameter param) {

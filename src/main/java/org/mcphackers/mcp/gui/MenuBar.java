@@ -218,7 +218,10 @@ public class MenuBar extends JMenuBar {
 					b = new JRadioButtonMenuItem();
 					translatableComponents.put(b, "task.param." + param.name);
 					optionItems.put(param, b);
-					b.addActionListener(e -> mcp.options.setParameter(param, b.isSelected()));
+					b.addActionListener(e -> {
+						mcp.options.setParameter(param, b.isSelected());
+						mcp.options.save();
+					});
 				}
 				else {
 					b = new JMenuItem(param.getDesc());

@@ -7,11 +7,13 @@ import java.text.DecimalFormatSymbols;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 
 public class TaskCleanup extends Task {
@@ -24,45 +26,55 @@ public class TaskCleanup extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		cleanup(mcp.getOptions().getBooleanParameter(TaskParameter.SRC_CLEANUP));
-	}
-	
-	public void cleanup(boolean srcCleanup) throws Exception {
 		Instant startTime = Instant.now();
 
-		if (Files.exists(MCPPaths.get(mcp, "src/main/java/org/mcphackers"))) {
-			throw new IllegalStateException("RMCP attempted to perform suicide. (Probably because you ran this application in the wrong folder)");
+		boolean deleted = false;
+		List<Path> filesToDelete = new ArrayList<>();
+		for(Side side : new Side[] {Side.CLIENT, Side.SERVER, Side.MERGED}) {
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.TEMP_SIDE, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.SRC_ZIP, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.MD5, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.MD5_RO, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REOBF_JAR, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.PATCHES, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.COMPILED, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BUILD_JAR, side));
 		}
-
-		int foldersDeleted = 0;
-		Path[] pathsToDelete = new Path[] {
-				MCPPaths.get(mcp, MCPPaths.CONF),
+		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.WORKSPACE));
+		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.CONF));
+		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.LIB));
+		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.NATIVES));
+		
+		List<Path> foldersToDelete = Arrays.asList(new Path[] {
 				MCPPaths.get(mcp, MCPPaths.JARS),
-				MCPPaths.get(mcp, MCPPaths.LIB),
 				MCPPaths.get(mcp, MCPPaths.TEMP),
 				MCPPaths.get(mcp, MCPPaths.SRC),
 				MCPPaths.get(mcp, MCPPaths.BIN),
 				MCPPaths.get(mcp, MCPPaths.REOBF),
 				MCPPaths.get(mcp, MCPPaths.BUILD),
-				MCPPaths.get(mcp, "workspace")
-			};
-		if (srcCleanup) pathsToDelete = new Path[] {
-				MCPPaths.get(mcp, MCPPaths.SRC),
-				MCPPaths.get(mcp, MCPPaths.BIN),
-				MCPPaths.get(mcp, MCPPaths.REOBF),
-				MCPPaths.get(mcp, MCPPaths.BUILD)
-			};
-		for (Path path : pathsToDelete) {
-			if (Files.exists(path)) {
-				foldersDeleted++;
-				log("Deleting " + path.getFileName() + "...");
-				FileUtil.deleteDirectory(path);
+			});
+		for(Path path : filesToDelete) {
+			if(Files.exists(path)) {
+				deleted |= true;
+				FileUtil.delete(path);
 			}
 		}
-		if(!srcCleanup) mcp.setCurrentVersion(null);
+		for(Path path : foldersToDelete) {
+			if(Files.exists(path) && path.toFile().list().length == 0) {
+				deleted |= true;
+				Files.delete(path);
+			}
+		}
+		mcp.setCurrentVersion(null);
 
-		if(foldersDeleted > 0) {
-			log("Done in " + DECIMAL.format(Duration.between(startTime, Instant.now()).get(ChronoUnit.NANOS) / 1e+9F) + "s");
+		if(deleted) {
+			log("Cleanup finished in " + DECIMAL.format(Duration.between(startTime, Instant.now()).get(ChronoUnit.NANOS) / 1e+9F) + "s");
 		}
 		else {
 			log("Nothing to clear!");

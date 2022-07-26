@@ -64,7 +64,6 @@ public class TaskSetup extends Task {
 		int progress = 30;
 		setProgress(progress);
 		for(Side side : sides) {
-			FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIBS, side));
 			setProgress(MCP.TRANSLATOR.translateKeyWithFormatting("task.stage.downloadMC", side.getName().toLowerCase()));
 			String url = VersionsParser.getDownloadURL(currentVersion, side);
 			String out = MCPPaths.JAR_ORIGINAL;
@@ -83,15 +82,15 @@ public class TaskSetup extends Task {
 		}
 		
 		setProgress(getLocalizedStage("downloadLibs"), 50);
-		FileUtil.downloadFile(new URL(libsURL), MCPPaths.get(mcp, MCPPaths.LIBS + "libs.zip", Side.CLIENT));
+		FileUtil.downloadFile(new URL(libsURL), MCPPaths.get(mcp, MCPPaths.LIB + "libs.zip"));
 		String nativesURL = natives.get(Os.getOs());
 		if(nativesURL == null) {
 			throw new Exception("Could not find natives for your operating system");
 		}
 		setProgress(70);
-		FileUtil.downloadFile(new URL(nativesURL), MCPPaths.get(mcp, MCPPaths.LIBS + "natives.zip", Side.CLIENT));
-		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIBS + "libs.zip", Side.CLIENT), MCPPaths.get(mcp, MCPPaths.LIBS, Side.CLIENT), true);
-		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIBS + "natives.zip", Side.CLIENT), MCPPaths.get(mcp, MCPPaths.NATIVES), true);
+		FileUtil.downloadFile(new URL(nativesURL), MCPPaths.get(mcp, MCPPaths.LIB + "natives.zip"));
+		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIB + "libs.zip"), MCPPaths.get(mcp, MCPPaths.LIB), true);
+		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.LIB + "natives.zip"), MCPPaths.get(mcp, MCPPaths.NATIVES), true);
 
 		setProgress(getLocalizedStage("workspace"), 75);
 		FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace"));

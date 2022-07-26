@@ -6,7 +6,6 @@ public enum TaskParameter {
 	
 	DEBUG("debug", Boolean.class),
 	SIDE("side", Integer.class),
-	SRC_CLEANUP("src", Boolean.class),
 	PATCHES("patch", Boolean.class),
 	IGNORED_PACKAGES("ignore", String[].class),
 	INDENTATION_STRING("ind", String.class),

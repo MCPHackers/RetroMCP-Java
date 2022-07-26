@@ -101,11 +101,6 @@ public class TaskDecompile extends TaskStaged {
 				else {
 					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 				}
-				// Copying a fixed jar to libs
-				if(side == Side.CLIENT || side == Side.MERGED) {
-					Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED));
-					Files.copy(excOut, MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED));
-				}
 			}),
 			stage(getLocalizedStage("decompile"),
 			() -> {

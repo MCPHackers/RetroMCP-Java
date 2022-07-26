@@ -158,6 +158,7 @@ public abstract class MCP {
 
 	public void setParameter(TaskParameter param, Object value) throws IllegalArgumentException {
 		getOptions().setParameter(param, value);
+		getOptions().save();
 	}
 
 	public void safeSetParameter(TaskParameter param, String value) {

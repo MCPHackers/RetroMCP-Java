@@ -87,15 +87,12 @@ public class TaskRun extends Task {
 		if(Files.exists(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED))) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED));
 		}
-		if(side == Side.SERVER) {
+		if(!Files.exists(MCPPaths.get(mcp, MCPPaths.REMAPPED, side))) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 		}
-		else if (side == Side.CLIENT) {
-			if(!Files.exists(MCPPaths.get(mcp, MCPPaths.CLIENT_FIXED))) {
-				cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
-			}
+		else {
+			cpList.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
 		}
-		collectJars(MCPPaths.get(mcp, MCPPaths.LIBS, side), cpList);
 		collectJars(MCPPaths.get(mcp, MCPPaths.LIB), cpList);
 		return cpList;
 	}
