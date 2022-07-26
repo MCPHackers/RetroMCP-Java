@@ -19,6 +19,7 @@ public class MCPPaths {
 	public static final String REOBF = 	"reobf/";
 	public static final String CONF = 	"conf/";
 	public static final String BUILD = 	"build/";
+	public static final String BACKUP = "./";
 	
 	//Files and subdirectories
 	public static final String JAR_ORIGINAL = 		 JARS + "minecraft_%s.jar";

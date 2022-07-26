@@ -142,6 +142,14 @@ public class TaskMode {
 				TaskParameter.SIDE
 				})
 			.build();
+	public static TaskMode BACKUP_SRC = new TaskModeBuilder()
+			.setName("backupsrc")
+			.setTaskClass(TaskSourceBackup.class)
+			.setProgressBars(true)
+			.addRequirement((mcp, side) -> {
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
+			})
+			.build();
 	public static TaskMode EXIT = new TaskModeBuilder()
 			.setName("exit")
 			.setProgressBars(false)

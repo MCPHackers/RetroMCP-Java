@@ -195,9 +195,12 @@ public class MainGUI extends MCP {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
 				int response = 0;
 				if(TaskMode.RECOMPILE.isAvailable(this, getSide())) {
-					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.askSourceBackup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_CANCEL_OPTION);
 					if(response == 0) {
-						response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile2"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+						performTask(TaskMode.BACKUP_SRC, getSide());
+					}
+					if (response != 2) {	//cancel was not pressed
+						response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 					}
 				}
 				if(response == 0) {
