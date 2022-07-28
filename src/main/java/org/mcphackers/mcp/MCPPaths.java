@@ -26,15 +26,15 @@ public class MCPPaths {
 	public static final String NATIVES = 			 LIB + "natives";
 
 	public static final String TEMP_SIDE = 	 		 TEMP + "%s";
+	public static final String TEMP_SRC = 	 		 TEMP + "%s/src";
 	public static final String REMAPPED = 	 		 TEMP + "%s/remapped.jar";
-	public static final String SRC_ZIP = 		 	 TEMP + "%s/src.zip"; //TODO temp src might be skippable
-	public static final String TEMP_SRC = 		 	 TEMP + "%s/src";
 	public static final String MD5 = 		 		 TEMP + "%s/original.md5";
 	public static final String MD5_RO = 		 	 TEMP + "%s/modified.md5";
 	public static final String REOBF_JAR = 	 		 TEMP + "%s/reobf.jar";
 
 	public static final String MAPPINGS = 			 CONF + "mappings.tiny";
 	public static final String EXC = 		 		 CONF + "exceptions.exc";
+	@Deprecated
 	public static final String JAVADOCS = 		 	 CONF + "javadocs.txt";
 	public static final String PATCHES = 	 		 CONF + "patches_%s";
 	public static final String VERSION = 	 		 CONF + "version";

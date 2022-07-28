@@ -52,86 +52,21 @@ runShadow {
 
 }
 
-task decompile(type: JavaExec) {
-    group 'RetroMCP-Java'
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'decompile', '-debug'
+task jarGUI(type: Jar) {
+	manifest {
+		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainGUI'
+	}
+	archiveClassifier = 'GUI'
+	with shadowJar
 }
 
-task startClient(type: JavaExec) {
-    group 'RetroMCP-Java'
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'startclient', '-debug'
+task jarCLI(type: Jar) {
+	manifest {
+		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainCLI'
+	}
+	archiveClassifier = 'CLI'
+	with shadowJar
 }
 
-task startServer(type: JavaExec) {
-    group 'RetroMCP-Java'
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'startserver', '-debug'
-}
-
-task recompile(type: JavaExec) {
-    group 'RetroMCP-Java'
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'recompile', '-debug'
-}
-
-task reobfuscate(type: JavaExec) {
-    group 'RetroMCP-Java'
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'reobfuscate', '-debug'
-}
-
-task update_md5(type: JavaExec) {
-    group 'RetroMCP-Java'
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'updatemd5', '-debug'
-}
-
-task setup(type: JavaExec) {
-    group = 'RetroMCP-Java'
-    standardInput = System.in
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'setup', '-debug'
-}
-
-task cleanup(type: JavaExec) {
-    group = 'RetroMCP-Java'
-    standardInput = System.in
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'cleanup', '-debug'
-}
-
-task createpatch(type: JavaExec) {
-    group = 'RetroMCP-Java'
-    standardInput = System.in
-
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass.set(mainClassName)
-    workingDir 'test'
-    args 'createpatch', '-debug'
-}
+jar.dependsOn(jarCLI)
+jar.dependsOn(jarGUI)

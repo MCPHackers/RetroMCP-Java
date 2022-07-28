@@ -18,11 +18,13 @@ public class Decompiler implements IBytecodeProvider {
 	public final DecompileLogger log;
 	private final Path source;
 	private final Path destination;
+	private final File javadocs;
 	private final Map<String, Object> mapOptions = new HashMap<>();
 
 	public Decompiler(ProgressListener listener, Path source, Path out, Path javadocs, String ind, boolean override) {
 		this.source = source;
 		this.destination = out;
+		this.javadocs = javadocs.toFile();
 		this.log = new DecompileLogger(listener);
 		//FIXME
 		//mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, override ? "1" : "0");
@@ -34,7 +36,7 @@ public class Decompiler implements IBytecodeProvider {
 	}
 
 	public void decompile() throws IOException {
-		BaseDecompiler decompiler = new BaseDecompiler(this, new SingleFileSaver(destination), mapOptions, log);
+		BaseDecompiler decompiler = new BaseDecompiler(this, new DirectoryResultSaver(destination.toFile()), mapOptions, log, javadocs.exists() ? new TinyJavadocProvider(javadocs) : null);
 		decompiler.addSpace(source.toAbsolutePath().toFile(), true);
 		decompiler.decompileContext();
 	}

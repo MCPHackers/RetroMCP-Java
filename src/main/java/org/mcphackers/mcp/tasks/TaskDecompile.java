@@ -31,11 +31,10 @@ public class TaskDecompile extends TaskStaged {
 	public static final int STAGE_INIT = 0;
 	public static final int STAGE_EXCEPTOR = 1;
 	public static final int STAGE_DECOMPILE = 2;
-	public static final int STAGE_EXTRACT = 3;
-	public static final int STAGE_CONSTS = 4;
-	public static final int STAGE_PATCH = 5;
-	public static final int STAGE_COPYSRC = 6;
-	public static final int STAGE_MD5 = 7;
+	public static final int STAGE_CONSTS = 3;
+	public static final int STAGE_PATCH = 4;
+	public static final int STAGE_COPYSRC = 5;
+	public static final int STAGE_MD5 = 6;
 
 	public TaskDecompile(Side side, MCP instance) {
 		super(side, instance);
@@ -47,9 +46,8 @@ public class TaskDecompile extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		final Path excOut 		= MCPPaths.get(mcp, MCPPaths.REMAPPED, side);
+		final Path rdiOut 		= MCPPaths.get(mcp, MCPPaths.REMAPPED, side);
 		final Path ffOut 		= MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side);
-		final Path srcZip 		= MCPPaths.get(mcp, MCPPaths.SRC_ZIP, side);
 		final Path srcPath 		= MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		final Path patchesPath 	= MCPPaths.get(mcp, MCPPaths.PATCHES, side);
 		
@@ -59,11 +57,9 @@ public class TaskDecompile extends TaskStaged {
 			stage(getLocalizedStage("prepare"), 0,
 			() -> {
 				FileUtil.deleteDirectoryIfExists(srcPath);
-				for (Path path : new Path[] {excOut, srcZip}) {
-					Files.deleteIfExists(path);
-				}
-				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.TEMP_SIDE, side));
 				FileUtil.deleteDirectoryIfExists(ffOut);
+				Files.deleteIfExists(rdiOut);
+				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.TEMP_SIDE, side));
 			}),
 			stage(getLocalizedStage("rdi"), 2,
 			() -> {
@@ -96,25 +92,19 @@ public class TaskDecompile extends TaskStaged {
 				injector.transform();
 				//TODO Allow copying resources from multiple sources
 				if(side == Side.MERGED) {
-					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
+					IOUtil.write(injector.getStorage(), Files.newOutputStream(rdiOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
 				}
 				else {
-					IOUtil.write(injector.getStorage(), Files.newOutputStream(excOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
+					IOUtil.write(injector.getStorage(), Files.newOutputStream(rdiOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 				}
 			}),
 			stage(getLocalizedStage("decompile"),
 			() -> {
-				final Path javadocs = MCPPaths.get(mcp, MCPPaths.JAVADOCS);
-				new Decompiler(this, excOut, srcZip, javadocs,
+				final Path javadocs = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
+				new Decompiler(this, rdiOut, ffOut, javadocs,
 						mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING),
 						mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE))
 				.decompile();
-			}),
-			stage(getLocalizedStage("extractsrc"), 84,
-			() -> {
-				//TODO Add option for vanilla assets being added to source 
-				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.SRC));
-				FileUtil.unzipByExtension(srcZip, ffOut, ".java");
 			}),
 			stage(getLocalizedStage("constants"), 86,
 			() -> {
@@ -144,7 +134,6 @@ public class TaskDecompile extends TaskStaged {
 	
 	private Mappings getMappings(ClassStorage storage, Side side) {
 		Mappings mappings = Mappings.read(MCPPaths.get(mcp, MCPPaths.MAPPINGS), side.name, "named");
-		//Mappings mappings = Mappings.read(MCPPaths.get(mcp, "conf/%s.tiny", side), "official", "named");
 		for(ClassNode node : storage.getClasses()) {
 			if(node.name.indexOf('/') == -1 && !mappings.classes.containsKey(node.name)) {
 				mappings.classes.put(node.name, "net/minecraft/src/" + node.name);

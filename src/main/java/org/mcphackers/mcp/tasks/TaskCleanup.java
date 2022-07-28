@@ -34,7 +34,6 @@ public class TaskCleanup extends Task {
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.TEMP_SIDE, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.SRC_ZIP, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.MD5, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.MD5_RO, side));

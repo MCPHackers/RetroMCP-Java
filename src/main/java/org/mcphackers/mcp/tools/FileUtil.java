@@ -150,7 +150,7 @@ public abstract class FileUtil {
 	}
 	
 	public static void deleteDirectoryIfExists(Path path) throws IOException {
-		if (Files.exists(path)) {
+		if (Files.isDirectory(path)) {
 			deleteDirectory(path);
 		}
 	}

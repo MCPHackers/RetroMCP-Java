@@ -67,8 +67,12 @@ public abstract class Util {
 	public static void mergeMappings(Path client, Path server, Path out) throws IOException {
 		MemoryMappingTree clientTree = new MemoryMappingTree();
 		MemoryMappingTree serverTree = new MemoryMappingTree();
-		Tiny2Reader.read(Files.newBufferedReader(client), clientTree);
-		Tiny2Reader.read(Files.newBufferedReader(server), serverTree);
+		try (BufferedReader reader = Files.newBufferedReader(client)) {
+			Tiny2Reader.read(reader, clientTree);
+		}
+		try (BufferedReader reader = Files.newBufferedReader(server)) {
+			Tiny2Reader.read(reader, serverTree);
+		}
 		clientTree.setSrcNamespace("client");
 		serverTree.setSrcNamespace("server");
 		MemoryMappingTree namedClientTree = new MemoryMappingTree();
@@ -96,7 +100,9 @@ public abstract class Util {
 	//official named -> named client
 	public static void mergeMappings(Path client, Path out) throws IOException {
 		MemoryMappingTree clientTree = new MemoryMappingTree();
-		Tiny2Reader.read(Files.newBufferedReader(client), clientTree);
+		try (BufferedReader reader = Files.newBufferedReader(client)) {
+			Tiny2Reader.read(reader, clientTree);
+		}
 		clientTree.setSrcNamespace("client");
 		MemoryMappingTree namedClientTree = new MemoryMappingTree();
 		{

@@ -196,6 +196,11 @@ public class MainGUI extends MCP {
 				int response = 0;
 				if(TaskMode.RECOMPILE.isAvailable(this, getSide())) {
 					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+					if(response == 0) {
+						if(JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.askSourceBackup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION) == 0) {
+							performTask(TaskMode.BACKUP_SRC, getSide());
+						}
+					}
 				}
 				if(response == 0) {
 					performTask(TaskMode.DECOMPILE, getSide());
