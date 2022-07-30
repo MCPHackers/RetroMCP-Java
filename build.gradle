@@ -6,8 +6,6 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-mainClassName = 'org.mcphackers.mcp.main.MainCLI'
-
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
@@ -17,31 +15,32 @@ repositories {
     }
 }
 
+configurations {
+    shadow
+    implementation.extendsFrom shadow
+}
+
 dependencies {
     // Required libraries
-    implementation "org.ow2.asm:asm:${project.asm_version}"
-    implementation "org.ow2.asm:asm-analysis:${project.asm_version}"
-    implementation "org.ow2.asm:asm-commons:${project.asm_version}"
-    implementation "org.ow2.asm:asm-tree:${project.asm_version}"
-    implementation "org.ow2.asm:asm-util:${project.asm_version}"
+    shadow "org.ow2.asm:asm:${project.asm_version}"
+    shadow "org.ow2.asm:asm-analysis:${project.asm_version}"
+    shadow "org.ow2.asm:asm-commons:${project.asm_version}"
+    shadow "org.ow2.asm:asm-tree:${project.asm_version}"
+    shadow "org.ow2.asm:asm-util:${project.asm_version}"
 
-    implementation "com.github.MCPHackers:RetroFernflower:${project.fernflower_version}"
-    implementation "com.github.MCPHackers:RetroDebugInjector:${project.rdi_version}"
-    implementation "org.fusesource.jansi:jansi:${project.jansi_version}"
-    implementation "org.json:json:${project.json_version}"
-    implementation "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
-    implementation "net.fabricmc:mapping-io:${project.mapping_io_version}"
+    shadow "com.github.MCPHackers:RetroFernflower:${project.fernflower_version}"
+    shadow "com.github.MCPHackers:RetroDebugInjector:${project.rdi_version}"
+    shadow "org.fusesource.jansi:jansi:${project.jansi_version}"
+    shadow "org.json:json:${project.json_version}"
+    shadow "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
+    shadow "net.fabricmc:mapping-io:${project.mapping_io_version}"
 }
 
 application {
     // Redirect all execution into the testing folder
-    mainClass = mainClassName
+    mainClass = 'org.mcphackers.mcp.main.MainGUI'
     executableDir = 'test'
     mkdir(executableDir)
-}
-
-shadowJar {
-    minimize()
 }
 
 run {
@@ -52,20 +51,24 @@ runShadow {
 
 }
 
-task jarGUI(type: Jar) {
+task jarGUI(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
 	manifest {
 		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainGUI'
 	}
 	archiveClassifier = 'GUI'
-	with shadowJar
+	from sourceSets.main.output
+	configurations = [project.configurations.shadow]
+    minimize()
 }
 
-task jarCLI(type: Jar) {
+task jarCLI(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
 	manifest {
 		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainCLI'
 	}
 	archiveClassifier = 'CLI'
-	with shadowJar
+	from sourceSets.main.output
+	configurations = [project.configurations.shadow]
+    minimize()
 }
 
 jar.dependsOn(jarCLI)
