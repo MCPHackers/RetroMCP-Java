@@ -105,6 +105,7 @@ task.param.source = Set a specific source version
 task.param.target = Set a specific target version
 task.param.javahome = Set JAVA_HOME used for compiling
 task.param.override = Decompile @Override
+task.param.resources = Keep resources
 
 tasks.success = Finished successfully!
 tasks.warning = Finished with warnings!

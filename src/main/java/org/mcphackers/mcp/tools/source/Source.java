@@ -1,6 +1,7 @@
 package org.mcphackers.mcp.tools.source;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,7 +22,10 @@ public class Source {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
-				String code = new String(Files.readAllBytes(file));
+				if(!file.getFileName().toString().endsWith(".java")) {
+					return FileVisitResult.CONTINUE;
+				}
+				String code = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
 				code = editCode.apply(code);
 				Files.write(file, code.getBytes());
 				return FileVisitResult.CONTINUE;

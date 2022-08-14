@@ -87,39 +87,14 @@ public class Options {
 	}
 
 	public void setDefault(TaskParameter param) {
-		Object value = null;
+		Object value;
 		switch (param) {
-		case DEBUG:
-		case FULL_BUILD:
-		case RUN_BUILD:
-		case OBFUSCATION:
-		case DECOMPILE_OVERRIDE:
-			value = false;
-			break;
-		case PATCHES:
-			value = true;
-			break;
-		case IGNORED_PACKAGES:
-			value = new String[] {"paulscode", "com/jcraft", "de/jarnbjo", "isom"};
-			break;
-		case INDENTATION_STRING:
-			value = "\t";
-			break;
-		case RUN_ARGS:
-			value = new String[] {"-Xms1024M", "-Xmx1024M", "-Djava.util.Arrays.useLegacyMergeSort=true"};
-			break;
-		case SOURCE_VERSION:
-		case TARGET_VERSION:
-			value = -1;
-			break;
-		case JAVA_HOME:
-			value = "";
-			break;
 		case SIDE:
 			side = Side.ANY;
 			value = side.index;
 			break;
 		default:
+			value = param.defaultValue;
 			break;
 		}
 		options.put(param, value);

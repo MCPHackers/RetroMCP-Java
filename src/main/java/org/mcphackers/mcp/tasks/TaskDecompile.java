@@ -122,6 +122,11 @@ public class TaskDecompile extends TaskStaged {
 			}),
 			stage(getLocalizedStage("copysrc"), 90,
 			() -> {
+				if(!mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_RESOURCES)) {
+					for(Path p : FileUtil.walkDirectory(ffOut, p -> !Files.isDirectory(p) && !p.getFileName().toString().endsWith(".java"))) {
+						Files.delete(p);
+					}
+				}
 				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
 			}),

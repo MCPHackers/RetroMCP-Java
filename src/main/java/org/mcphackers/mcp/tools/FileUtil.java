@@ -216,11 +216,16 @@ public abstract class FileUtil {
 	}
 
 	public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
+		if(!Files.exists(targetFolder)) {
+			Files.createDirectories(targetFolder);
+		}
 		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {
 			pathStream.forEach(source -> {
 				Path destination = targetFolder.resolve(sourceFolder.relativize(source));
 				try {
-					Files.copy(source, destination);
+					if(!Files.isDirectory(destination)) {
+						Files.copy(source, destination);
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -265,7 +270,7 @@ public abstract class FileUtil {
 				for (String excludedFolder : excludedFolders) {
 					if(sourceFolder.relativize(source).startsWith(Paths.get(excludedFolder))) {
 						try {
-							Files.deleteIfExists(source);
+							Files.delete(source);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
