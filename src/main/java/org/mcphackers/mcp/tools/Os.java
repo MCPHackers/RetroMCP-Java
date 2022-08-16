@@ -2,26 +2,28 @@ package org.mcphackers.mcp.tools;
 
 import java.util.Locale;
 
-public enum Os {
-	LINUX,
-	OSX,
-	WINDOWS,
-	OTHER;
+public enum OS {
 
-	private static Os os = null;
+	linux,
+	windows,
+	osx,
+	unknown;
+	
+	public static OS os;
 
-	public static Os getOs() {
+
+	public static OS getOs() {
 		if (os == null) {
 			String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
 			if (osName.contains("mac") || osName.contains("darwin")) {
-				os = OSX;
+				os = osx;
 			} else if (osName.contains("win")) {
-				os = WINDOWS;
+				os = windows;
 			} else if (osName.contains("nix") || osName.contains("nux")
 					|| osName.contains("aix") || osName.contains("sunos")) {
-				os = LINUX;
+				os = linux;
 			} else {
-				os = OTHER;
+				os = unknown;
 			}
 		}
 		return os;

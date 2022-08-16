@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tools;
+package org.mcphackers.mcp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,9 +7,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.mcphackers.mcp.Language;
-import org.mcphackers.mcp.MCP;
 
 public class TranslatorUtil {
     private static final Language defaultLang = Language.ENGLISH;

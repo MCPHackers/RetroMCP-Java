@@ -13,7 +13,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Source {
+public abstract class Source {
 	
 	public final static String[] validModifiers = {"public", "protected", "private", "abstract", "static", "final", "strictfp", "transient", "volatile", "synchronized", "native"};
 	private static final Pattern IMPORT = Pattern.compile("import [.*\\w]+;");

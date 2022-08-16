@@ -29,7 +29,7 @@ import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
-import org.mcphackers.mcp.tools.Os;
+import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
 
 public class MenuBar extends JMenuBar {
@@ -78,7 +78,7 @@ public class MenuBar extends JMenuBar {
 		translatableComponents.put(browseDir, "mcp.viewDir");
 		browseDir.addActionListener(a -> {
 			try {
-				if (Os.getOs() == Os.LINUX) {
+				if (OS.getOs() == OS.linux) {
 					Util.openUrl(mcp.getWorkingDir().toAbsolutePath().toUri().toString()); // Call to xdg-open
 				} else {
 					Desktop.getDesktop().open(mcp.getWorkingDir().toAbsolutePath().toFile());

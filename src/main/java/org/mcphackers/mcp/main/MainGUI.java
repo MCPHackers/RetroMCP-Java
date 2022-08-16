@@ -29,7 +29,6 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 
 public class MainGUI extends MCP {
-	public String currentVersion;
 	public Path workingDir;
 	public MCPFrame frame;
 	public Options options;
@@ -86,7 +85,7 @@ public class MainGUI extends MCP {
 
 	@Override
 	public String getCurrentVersion() {
-		return currentVersion;
+		return options.currentVersion;
 	}
 
 	@Override
@@ -139,7 +138,7 @@ public class MainGUI extends MCP {
 
 	@Override
 	public void setCurrentVersion(String version) {
-		currentVersion = version;
+		options.currentVersion = version;
 		frame.setCurrentVersion(version);
 	}
 

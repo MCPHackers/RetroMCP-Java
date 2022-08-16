@@ -20,6 +20,7 @@ public class Options {
 	public Path saveFile;
 	public Side side = Side.ANY;
 	public Language lang;
+	public String currentVersion;
 	
 	public Options() {
 		for(TaskParameter param : TaskParameter.values()) {
@@ -65,6 +66,7 @@ public class Options {
 	public void save() {
 		if(saveFile != null) {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
+				writer.append("version").append('=').append(currentVersion).append('\n');
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
 				for(Entry<TaskParameter, Object> entry : options.entrySet()) {

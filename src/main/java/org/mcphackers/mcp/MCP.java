@@ -19,7 +19,6 @@ import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.TranslatorUtil;
 
 public abstract class MCP {
 
@@ -38,14 +37,29 @@ public abstract class MCP {
 		triggerEvent(MCPEvent.ENV_STARTUP);
 		Update.attemptToDeleteUpdateJar();
 		changeLanguage(Language.get(Locale.getDefault()));
+		System.gc();
 	}
 
 	public abstract Path getWorkingDir();
-	
+
+
+	/**
+	 * Creates instances of TaskMode and executes them
+	 * @param mode task to execute
+	 * @param side side to execute
+	 * @return <tt>true</tt> if task was successfully executed
+	 */
 	public final boolean performTask(TaskMode mode, Side side) {
 		return performTask(mode, side, true);
 	}
 
+	/**
+	 * Creates instances of TaskMode and executes them
+	 * @param mode task to execute
+	 * @param side side to execute
+	 * @param completionMsg display completion message when finished
+	 * @return <tt>true</tt> if task was successfully executed
+	 */
 	public final boolean performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
 		if(tasks.size() == 0) {
@@ -122,6 +136,7 @@ public abstract class MCP {
 		}
 		setActive(true);
 		if(enableProgressBars) clearProgressBars();
+		System.gc();
 		return result != Task.ERROR;
 	}
 

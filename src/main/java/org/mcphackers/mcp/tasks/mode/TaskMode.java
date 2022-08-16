@@ -154,18 +154,20 @@ public class TaskMode {
 			.setProgressBars(false)
 			.build();
 
-	static {
-//		new TaskModeBuilder()
-//		.setName("timestamps")
-//		.setTaskClass(TaskTimestamps.class)
-//		.build();
-	}
 	public final String name;
 	public final boolean usesProgressBars;
 	public final Class<? extends Task> taskClass;
 	public final TaskParameter[] params;
 	public final Requirement requirement;
 	
+	/**
+	 * Create a new TaskMode instance
+	 * @param name internal name
+	 * @param taskClass class of Task
+	 * @param params used parameters
+	 * @param useBars if task should display progress bars
+	 * @param requirements
+	 */
 	public TaskMode(String name, Class<? extends Task> taskClass, TaskParameter[] params, boolean useBars, Requirement requirements) {
 		this.name = name;
 		this.taskClass = taskClass;
@@ -174,11 +176,17 @@ public class TaskMode {
 		this.requirement = requirements;
 		registeredTasks.add(this);
 	}
-	
+
+	/**
+	 * @return Internal name
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * @return Translated name
+	 */
 	public String getFullName() {
 		String s = "task." + name;
 		if(MCP.TRANSLATOR.hasKey(s)) {
@@ -186,7 +194,10 @@ public class TaskMode {
 		}
 		return name;
 	}
-	
+
+	/**
+	 * @return Translated description
+	 */
 	public String getDesc() {
 		String s = "task." + name + ".desc";
 		if(MCP.TRANSLATOR.hasKey(s)) {
@@ -195,7 +206,8 @@ public class TaskMode {
 		return MCP.TRANSLATOR.translateKey("task.noDesc");
 	}
 	
-	public List<Side> allowedSides() {
+	
+	private List<Side> allowedSides() {
 		List<Side> sides = new ArrayList<>();
 		for(Side side : Side.values()) {
 			if(side != Side.ANY) {
@@ -205,6 +217,11 @@ public class TaskMode {
 		return sides;
 	}
 	
+	/** 
+	 * Create new instances of executable Tasks based on current TaskMode
+	 * @param mcp
+	 * @return List of Tasks
+	 */
 	public List<Task> getTasks(MCP mcp) {
 		List<Task> tasks = new ArrayList<>();
 		if(taskClass != null) {
@@ -232,6 +249,12 @@ public class TaskMode {
 		return tasks;
 	}
 
+	/**
+	 * Checks if all requirements are met for specified side and the task can be executed
+	 * @param mcp
+	 * @param side
+	 * @return availability
+	 */
 	public boolean isAvailable(MCP mcp, Side side) {
 		if(side == Side.ANY) {
 			return requirement.get(mcp, Side.CLIENT) || requirement.get(mcp, Side.SERVER);
@@ -243,6 +266,11 @@ public class TaskMode {
 	
 	@FunctionalInterface
 	public interface Requirement {
+		/**
+		 * Determines if the specified side can be executed in specified mcp instance
+		 * @param mcp
+		 * @param side
+		 */
 		boolean get(MCP mcp, Side side);
 	}
 }

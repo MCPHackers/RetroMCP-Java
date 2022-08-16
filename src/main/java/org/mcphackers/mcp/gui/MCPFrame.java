@@ -15,7 +15,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,19 +34,19 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
-import org.mcphackers.mcp.tools.VersionsParser;
+import org.mcphackers.mcp.tools.versions.VersionParser;
+import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 
 public class MCPFrame extends JFrame {
 	
 	private static final long serialVersionUID = -3455157541499586338L;
 
-	private JComboBox<String> verList;
+	private JComboBox<?> verList;
 	private List<TaskButton> buttons = new ArrayList<>();
 	private JLabel verLabel;
 	private JPanel topRightContainer;
@@ -149,7 +148,7 @@ public class MCPFrame extends JFrame {
 	public void reloadVersionList() {
 
 		verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
-		verList = new JComboBox<>(new String[] {MCP.TRANSLATOR.translateKey("mcp.versionList.loading")});
+		verList = new JComboBox<Object>(new String[] {MCP.TRANSLATOR.translateKey("mcp.versionList.loading")});
 		verLabel.setEnabled(false);
 		verList.setEnabled(false);
 		topRightContainer.removeAll();
@@ -158,7 +157,7 @@ public class MCPFrame extends JFrame {
 		operateOnThread(() ->  {
 		try {
 			loadingVersions = true;
-			verList = new JComboBox<>(VersionsParser.getVersionList().toArray(new String[0]));
+			verList = new JComboBox<Object>(VersionParser.INSTANCE.getVersions().toArray());
 			verList.addPopupMenuListener(new PopupMenuListener() {
 	
 				@Override
@@ -168,14 +167,14 @@ public class MCPFrame extends JFrame {
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
-					if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(mcp.getCurrentVersion())) {
+					if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(VersionParser.INSTANCE.getVersion(mcp.getCurrentVersion()))) {
 						int response = JOptionPane.showConfirmDialog(MCPFrame.this, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 						switch (response) {
 							case 0:
-								mcp.setParameter(TaskParameter.SETUP_VERSION, verList.getSelectedItem());
+								mcp.setParameter(TaskParameter.SETUP_VERSION, ((VersionData)verList.getSelectedItem()).id);
 								mcp.performTask(TaskMode.SETUP, Side.ANY);
 							default:
-								verList.setSelectedItem(mcp.getCurrentVersion());
+								verList.setSelectedItem(VersionParser.INSTANCE.getVersion(mcp.getCurrentVersion()));
 								verList.repaint();
 								break;
 						}
@@ -188,12 +187,7 @@ public class MCPFrame extends JFrame {
 				}
 				
 			});
-			if(Files.exists(MCPPaths.get(mcp, MCPPaths.VERSION))) {
-				setCurrentVersion(VersionsParser.setCurrentVersion(mcp, new String(Files.readAllBytes(MCPPaths.get(mcp, MCPPaths.VERSION)))));
-			}
-			else {
-				setCurrentVersion(null);
-			}
+			mcp.setCurrentVersion(mcp.options.currentVersion);
 			verList.setMaximumRowCount(20);
 			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		} catch (Exception e) {
@@ -240,8 +234,7 @@ public class MCPFrame extends JFrame {
 	}
 
 	public void setCurrentVersion(String version) {
-		mcp.currentVersion = version;
-		verList.setSelectedItem(version);
+		verList.setSelectedItem(VersionParser.INSTANCE.getVersion(version));
 		verList.repaint();
 	}
 

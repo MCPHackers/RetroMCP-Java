@@ -129,8 +129,8 @@ public abstract class Util {
 
 	public static void openUrl(String url) {
 		try {
-			switch (Os.getOs()) {
-				case LINUX:
+			switch (OS.getOs()) {
+				case linux:
 					new ProcessBuilder("/usr/bin/env", "xdg-open", url).start();
 					break;
 				default:
@@ -183,7 +183,7 @@ public abstract class Util {
 		return new JSONObject(content);
 	}
 
-	public static JSONObject parseJSONFile(InputStream stream) throws JSONException, IOException {
+	public static JSONObject parseJSON(InputStream stream) throws JSONException, IOException {
 		byte[] bytes = readAllBytes(stream);
 		String content = new String(bytes);
 		return new JSONObject(content);

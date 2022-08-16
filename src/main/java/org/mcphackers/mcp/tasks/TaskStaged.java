@@ -37,6 +37,11 @@ public abstract class TaskStaged extends Task {
 		}
 	}
 	
+	/**
+	 * Replaces stage operation at <tt>stageIndex</tt> with <tt>task</tt>
+	 * @param stageIndex
+	 * @param task
+	 */
 	public void overrideStage(int stageIndex, TaskRunnable task) {
 		if(stageIndex < stages.length) {
 			stages[stageIndex].setOperation(task);

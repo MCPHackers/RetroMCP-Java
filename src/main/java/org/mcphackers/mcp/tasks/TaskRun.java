@@ -13,7 +13,6 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.Util;
-import org.mcphackers.mcp.tools.VersionsParser;
 
 public class TaskRun extends Task {
 	
@@ -36,11 +35,11 @@ public class TaskRun extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		String currentVersion = mcp.getCurrentVersion();
+		//String currentVersion = mcp.getCurrentVersion();
 		String host = "localhost";
 		int port = 11700;
 		try {
-			port = VersionsParser.getProxyPort(currentVersion);
+			port = 11702; // FIXME
 			host = "betacraft.uk";
 		} catch (Exception e) {};
 		
@@ -74,6 +73,7 @@ public class TaskRun extends Task {
 		}
 	}
 	
+	// TODO
 	public static String findStartClass(MCP mcp, Side side) throws Exception {
 		return findStartClass(getClasspath(mcp, side, false), side);
 	}

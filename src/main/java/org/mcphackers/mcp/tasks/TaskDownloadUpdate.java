@@ -26,7 +26,7 @@ public class TaskDownloadUpdate extends Task {
 	public void doTask() throws Exception {
 		URL updateURL = new URL(API);
 		InputStream in = updateURL.openStream();
-		JSONObject releaseJson = Util.parseJSONFile(in);
+		JSONObject releaseJson = Util.parseJSON(in);
 		String latestVersion = releaseJson.getString("tag_name");
 		String notes = releaseJson.getString("body");
 		if(!latestVersion.equals(MCP.VERSION)) {

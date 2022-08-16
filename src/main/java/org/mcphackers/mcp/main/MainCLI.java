@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.main;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,10 +26,10 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.Util;
-import org.mcphackers.mcp.tools.VersionsParser;
+import org.mcphackers.mcp.tools.versions.VersionParser;
+import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 
 public class MainCLI extends MCP {
-	private static final boolean FORCE_CONSOLE = false;
 	private static final Ansi LOGO =
 			new Ansi()
 			.fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____").a('\n')
@@ -49,18 +51,13 @@ public class MainCLI extends MCP {
 	private String[] progressBarNames;
 
 	public static void main(String[] args) throws Exception {
-		if(System.console() != null || FORCE_CONSOLE) {
+		if(System.console() != null) {
 			AnsiConsole.systemInstall();
 			new MainCLI(args);
-		}
-		else {
-			MainGUI.main(args);
-			return;
 		}
 	}
 	
 	public MainCLI(String[] args) {
-
 		options.resetDefaults();
 		log("RetroMCP " + MCP.VERSION);
 
@@ -68,12 +65,14 @@ public class MainCLI extends MCP {
 		boolean exit = false;
 		String version = null;
 		Path versionPath = Paths.get(MCPPaths.VERSION);
-		List<String> versions = null;
+		List<VersionData> versions = VersionParser.INSTANCE.getVersions();
 		if(Files.exists(versionPath)) {
 			try {
-				currentVersion = VersionsParser.setCurrentVersion(this, new String(Files.readAllBytes(versionPath)));
-				version = new Ansi().a("Current version: ").fgBrightCyan().a(currentVersion).fgDefault().toString();
-				versions = VersionsParser.getVersionList();
+				currentVersion = new String(Files.readAllBytes(versionPath));
+				VersionData data = VersionParser.INSTANCE.getVersion(currentVersion);
+				if(data != null) {
+					version = new Ansi().a("Current version: ").fgBrightCyan().a(data.toString()).fgDefault().toString();
+				}
 			} catch (Exception e) {
 				version = new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString();
 			}
@@ -114,8 +113,7 @@ public class MainCLI extends MCP {
 			}
 			setParams(parsedArgs, mode);
 			if (mode == TaskMode.SETUP && versions != null) {
-				log(getOptions().getStringParameter(TaskParameter.SETUP_VERSION));
-				if(!versions.contains(getOptions().getStringParameter(TaskParameter.SETUP_VERSION))) {
+				if(VersionParser.INSTANCE.getVersion(getOptions().getStringParameter(TaskParameter.SETUP_VERSION)) == null) {
 					log(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
 					log(getTable(versions));
 					log(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
@@ -123,6 +121,13 @@ public class MainCLI extends MCP {
 			}
 			if (taskMode) {
 				performTask(mode, side);
+				if (mode == TaskMode.SETUP && versions != null) {
+					try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(MCPPaths.VERSION))) {
+						writer.write(getCurrentVersion());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 			else if (mode == TaskMode.HELP) {
 				if(helpCommand == null) {
@@ -229,7 +234,7 @@ public class MainCLI extends MCP {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static String getTable(List<String> versions) {
+	private static String getTable(List<VersionData> versions) {
 		int rows = (int)Math.ceil(versions.size() / 3D);
 		List<String>[] tableList = (List<String>[]) new List[rows];
 		for (int i = 0; i < tableList.length; i++)
@@ -238,8 +243,8 @@ public class MainCLI extends MCP {
 		}
 		StringBuilder table = new StringBuilder();
 		int index = 0;
-		for (String ver : versions) {
-			tableList[index % rows].add(new Ansi().fgBrightCyan().a(" - ").fgDefault().fgCyan().a(String.format("%-16s", ver)).fgDefault().toString());
+		for (VersionData ver : versions) {
+			tableList[index % rows].add(new Ansi().fgBrightCyan().a(" - ").fgDefault().fgCyan().a(String.format("%-16s", ver.id)).fgDefault().toString());
 			index++;
 		}
 		for (int i = 0; i < tableList.length; i++)

@@ -26,7 +26,7 @@ public class GLConstants extends Constants {
 	
 	private static JSONObject getJson() {
 		try {
-			return Util.parseJSONFile(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
+			return Util.parseJSON(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
 		} catch (JSONException | IOException e) {
 			cause = e;
 			return null;
