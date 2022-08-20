@@ -1,6 +1,10 @@
 package org.mcphackers.mcp.tools.versions.json;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,8 +13,8 @@ import org.mcphackers.mcp.tools.OS;
 
 public class Rule {
 	public Action action;
-	public OSName os;
-	//public Map<String, Boolean> features;
+	public OSInfo os;
+	public Map<String, Boolean> features = new HashMap<>();
 	
 	public static Rule from(JSONObject obj) {
 		if(obj == null) { 
@@ -19,20 +23,26 @@ public class Rule {
 		return new Rule() {
 			{
 				action = Action.valueOf(obj.getString("action"));
-				os = OSName.from(obj.getJSONObject("os"));
+				os = OSInfo.from(obj.optJSONObject("os"));
+				JSONObject obj2 = obj.optJSONObject("features");
+				if(obj2 != null) {
+					for(String s : obj2.keySet()) {
+						features.put(s, obj2.getBoolean(s));
+					}
+				}
 			}
 		};
 	}
 	
-	public static class OSName {
+	public static class OSInfo {
 		public OS name;
 		public String version;
 		
-		public static OSName from(JSONObject obj) {
+		public static OSInfo from(JSONObject obj) {
 			if(obj == null) { 
 				return null;
 			}
-			return new OSName() {
+			return new OSInfo() {
 				{
 					name = OS.valueOf(obj.getString("name"));
 					version = obj.optString("version");
@@ -60,16 +70,25 @@ public class Rule {
 		}
 	}
 
-	public Rule.Action getAppliedAction() {
+	public Rule.Action getAppliedAction(List<String> featuresList) {
+		boolean featuresMatch = true;
+		for(Entry<String, Boolean> entry : features.entrySet()) {
+			featuresMatch = featuresList.contains(entry.getKey()) == entry.getValue();
+			if(!featuresMatch) return null;
+		}
 		return this.os != null && !this.os.equalsOS(OS.getOs()) ? null : this.action;
 	}
-
+	
 	public static boolean apply(List<Rule> rules) {
+		return apply(rules, Collections.emptyList());
+	}
+
+	public static boolean apply(List<Rule> rules, List<String> features) {
 		if(rules != null && !rules.isEmpty()) {
 			Rule.Action lastAction = Rule.Action.disallow;
 
 			for(Rule compatibilityRule : rules) {
-				Rule.Action action = compatibilityRule.getAppliedAction();
+				Rule.Action action = compatibilityRule.getAppliedAction(features);
 				if(action != null) {
 					lastAction = action;
 				}

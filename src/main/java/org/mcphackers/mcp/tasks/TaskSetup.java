@@ -1,23 +1,23 @@
 package org.mcphackers.mcp.tasks;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
-import org.mcphackers.mcp.tools.versions.json.Download;
+import org.mcphackers.mcp.tools.versions.json.Artifact;
+import org.mcphackers.mcp.tools.versions.json.DependDownload;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class TaskSetup extends Task {
@@ -25,15 +25,6 @@ public class TaskSetup extends Task {
 	public TaskSetup(MCP instance) {
 		super(Side.ANY, instance);
 	}
-
-//	private static final Map<OS, String> natives = new HashMap<>();
-//	private static final String libsURL = "https://files.betacraft.uk/launcher/assets/libs-windows.zip";
-//
-//	static {
-//		natives.put(OS.windows, "https://files.betacraft.uk/launcher/assets/natives-windows.zip");
-//		natives.put(OS.osx, "https://files.betacraft.uk/launcher/assets/natives-osx.zip");
-//		natives.put(OS.linux, "https://files.betacraft.uk/launcher/assets/natives-linux.zip");
-//	}
 
 	@Override
 	public void doTask() throws Exception {
@@ -58,9 +49,12 @@ public class TaskSetup extends Task {
 			}
 			chosenVersion = mcp.inputString(TaskMode.SETUP.getFullName(), MCP.TRANSLATOR.translateKey("task.setup.selectVersion"));
 		}
-		
+
+		byte[] versionBytes = Util.readAllBytes(new URL(chosenVersionData.url).openStream());
+		Version versionJson = Version.from(new JSONObject(new String(versionBytes, StandardCharsets.UTF_8)));
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.CONF));
-		mcp.setCurrentVersion(chosenVersion);
+		Files.write(MCPPaths.get(mcp, MCPPaths.VERSION), versionBytes);
+		mcp.setCurrentVersion(versionJson);
 		
 		setProgress(getLocalizedStage("downloadMappings"), 2);
 		FileUtil.downloadFile(new URL(chosenVersionData.resources), MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
@@ -68,30 +62,41 @@ public class TaskSetup extends Task {
 
 		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
 		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));
-
-		Version versionJson = Version.from(Util.parseJSON(new URL(chosenVersionData.versionJson).openStream()));
-		Download[] downloads = new Download[] {versionJson.downloads.client, versionJson.downloads.server};
 		
-		setProgress(5);
-		for(int i = 0; i < 2; i++) {
-			Download dl = downloads[i];
-			if(dl == null) continue;
-			Side side = i == 0 ? Side.CLIENT : Side.SERVER;
-			setProgress(MCP.TRANSLATOR.translateKeyWithFormatting("task.stage.downloadMC", side.getName().toLowerCase()));
-			FileUtil.downloadFile(new URL(dl.url), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
+		// TODO: Downloads queue
+		setProgress(MCP.TRANSLATOR.translateKeyWithFormatting("task.stage.downloadMC", Side.CLIENT.getName().toLowerCase()));
+		if(versionJson.downloads.client != null) {
+			FileUtil.downloadFile(new URL(versionJson.downloads.client.url), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
+		}
+		setProgress(MCP.TRANSLATOR.translateKeyWithFormatting("task.stage.downloadMC", Side.SERVER.getName().toLowerCase()));
+		if(versionJson.downloads.server != null) {
+			FileUtil.downloadFile(new URL(versionJson.downloads.client.url), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));
 		}
 		
 		setProgress(getLocalizedStage("downloadLibs"), 10);
+		for(DependDownload dependencyDownload : versionJson.libraries) {
+			if(dependencyDownload.downloads.artifact == null) {
+				continue;
+			}
+			Files.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB + dependencyDownload.downloads.artifact.path).getParent());
+			FileUtil.downloadFile(new URL(dependencyDownload.downloads.artifact.url), MCPPaths.get(mcp, MCPPaths.LIB + dependencyDownload.downloads.artifact.path));
+
+			if(dependencyDownload.downloads.classifiers == null) {
+				continue;
+			}
+			Artifact artifact = dependencyDownload.downloads.classifiers.getNatives();
+			Files.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB + artifact.path).getParent());
+			FileUtil.downloadFile(new URL(artifact.url), MCPPaths.get(mcp, MCPPaths.LIB + artifact.path));
+		}
 
 		setProgress(getLocalizedStage("workspace"), 90);
 		FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace"));
 		FileUtil.copyResource(ClassUtils.getResource(MCP.class, "workspace/workspace.zip"), MCPPaths.get(mcp, "workspace.zip"));
 		FileUtil.unzip(MCPPaths.get(mcp, "workspace.zip"), MCPPaths.get(mcp, "workspace"), true);
-		setWorkspace();
+		setWorkspace(versionJson);
 	}
 
-	private void setWorkspace() throws Exception {
-		String currentVersion = mcp.getCurrentVersion();
+	private void setWorkspace(Version version) throws Exception {
 		Side[] sides = { Side.CLIENT, Side.SERVER };
 		for (Side side : sides) {
 			String project = side == Side.CLIENT ? "Client" : "Server";
@@ -130,7 +135,7 @@ public class TaskSetup extends Task {
 							lines.set(i, lines.get(i).replace("$MCP_LOC$", mcp.getWorkingDir().toAbsolutePath().toString().replace("\\", "/")));
 							break;
 						case 3:
-							if(side == Side.SERVER && !VersionParser.INSTANCE.getVersion(currentVersion).hasServer() && lines.get(i).contains("path=&quot;Server&quot;")) {
+							if(side == Side.SERVER && version.downloads.server != null && lines.get(i).contains("path=&quot;Server&quot;")) {
 								lines.remove(i);
 							}
 							break;

@@ -1,7 +1,5 @@
 package org.mcphackers.mcp.main;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,6 +16,7 @@ import javax.tools.ToolProvider;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
+import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
@@ -28,7 +27,11 @@ import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
+import org.mcphackers.mcp.tools.versions.json.Version;
 
+/**
+ * CLI implementation of MCP
+ */
 public class MainCLI extends MCP {
 	private static final Ansi LOGO =
 			new Ansi()
@@ -44,7 +47,7 @@ public class MainCLI extends MCP {
 	private TaskMode helpCommand;
 	private final Scanner consoleInput = new Scanner(System.in);
 	private final Options options = new Options();
-	private String currentVersion;
+	private Version currentVersion;
 	
 	private int[] progresses;
 	private String[] progressStrings;
@@ -68,8 +71,8 @@ public class MainCLI extends MCP {
 		List<VersionData> versions = VersionParser.INSTANCE.getVersions();
 		if(Files.exists(versionPath)) {
 			try {
-				currentVersion = new String(Files.readAllBytes(versionPath));
-				VersionData data = VersionParser.INSTANCE.getVersion(currentVersion);
+				currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(versionPath))));
+				VersionData data = VersionParser.INSTANCE.getVersion(currentVersion.id);
 				if(data != null) {
 					version = new Ansi().a("Current version: ").fgBrightCyan().a(data.toString()).fgDefault().toString();
 				}
@@ -121,13 +124,6 @@ public class MainCLI extends MCP {
 			}
 			if (taskMode) {
 				performTask(mode, side);
-				if (mode == TaskMode.SETUP && versions != null) {
-					try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(MCPPaths.VERSION))) {
-						writer.write(getCurrentVersion());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
 			}
 			else if (mode == TaskMode.HELP) {
 				if(helpCommand == null) {
@@ -236,7 +232,7 @@ public class MainCLI extends MCP {
 	@SuppressWarnings("unchecked")
 	private static String getTable(List<VersionData> versions) {
 		int rows = (int)Math.ceil(versions.size() / 3D);
-		List<String>[] tableList = (List<String>[]) new List[rows];
+		List<String>[] tableList = new List[rows];
 		for (int i = 0; i < tableList.length; i++)
 		{
 			tableList[i] = new ArrayList<>();
@@ -302,12 +298,12 @@ public class MainCLI extends MCP {
 	}
 
 	@Override
-	public String getCurrentVersion() {
+	public Version getCurrentVersion() {
 		return currentVersion;
 	}
 
 	@Override
-	public void setCurrentVersion(String version) {
+	public void setCurrentVersion(Version version) {
 		currentVersion = version;
 	}
 

@@ -2,11 +2,21 @@ package org.mcphackers.mcp.tools.mappings;
 
 public final class MappingUtil {
 
+	/**
+	 * @param number
+	 * @return Obfuscated string based on number index
+	 */
 	public static String getObfuscatedName(int number) {
 		// Default obfuscation scheme
 		return getObfuscatedName('a', 'z', number);
 	}
 
+	/**
+	 * @param from
+	 * @param to
+	 * @param number
+	 * @return Obfuscated string based on number index and character range
+	 */
 	public static String getObfuscatedName(char from, char to, int number) {
 		if(number == 0) {
 			return String.valueOf(from);

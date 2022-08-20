@@ -1,11 +1,16 @@
 package org.mcphackers.mcp.tasks.mode;
 
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.tasks.Task.Side;
 
+/**
+ * Any optional parameters which can be accessed from tasks
+ * @see {@link Options#getParameter(TaskParameter)}
+ *
+ */
 public enum TaskParameter {
 	
-	DEBUG("debug", Boolean.class, false),
 	SIDE("side", Integer.class, Side.ANY.index),
 	PATCHES("patch", Boolean.class, true),
 	IGNORED_PACKAGES("ignore", String[].class, new String[] {"paulscode", "com/jcraft", "de/jarnbjo", "isom"}),

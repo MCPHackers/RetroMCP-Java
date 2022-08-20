@@ -37,7 +37,7 @@ public class MCPPaths {
 	@Deprecated
 	public static final String JAVADOCS = 		 	 CONF + "javadocs.txt";
 	public static final String PATCHES = 	 		 CONF + "patches_%s";
-	public static final String VERSION = 	 		 CONF + "version";
+	public static final String VERSION = 	 		 CONF + "version.json";
 
 	public static final String SOURCE = 	 		 SRC + "minecraft_%s";
 	public static final String COMPILED = 		 	 BIN + "minecraft_%s";

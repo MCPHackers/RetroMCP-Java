@@ -10,9 +10,18 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.*;
 
+/**
+ * General info about task
+ */
 public class TaskMode {
+	/**
+	 * All registered tasks
+	 */
 	public static final List<TaskMode> registeredTasks = new ArrayList<>();
 	
+	/**
+	 * Cached task parameter types
+	 */
 	public static final Map<String, TaskParameter> nameToParamMap = new HashMap<>();
 	
 	public static TaskMode HELP = new TaskModeBuilder()
@@ -30,7 +39,6 @@ public class TaskMode {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 			})
 			.setParameters(new TaskParameter[]{
-				TaskParameter.DEBUG,
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
 				TaskParameter.JAVA_HOME,
@@ -47,7 +55,6 @@ public class TaskMode {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
 			})
 			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG,
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
 				TaskParameter.JAVA_HOME,
@@ -61,7 +68,6 @@ public class TaskMode {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
 			})
 			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG,
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
 				TaskParameter.JAVA_HOME,
@@ -75,7 +81,6 @@ public class TaskMode {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, side));
 			})
 			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG,
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
 				TaskParameter.JAVA_HOME,
@@ -90,17 +95,11 @@ public class TaskMode {
 	public static TaskMode SETUP = new TaskModeBuilder()
 			.setName("setup")
 			.setTaskClass(TaskSetup.class)
-			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG
-				})
 			.build();
 	public static TaskMode CLEANUP = new TaskModeBuilder()
 			.setName("cleanup")
 			.setTaskClass(TaskCleanup.class)
 			.setProgressBars(false)
-			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG
-				})
 			.build();
 	public static TaskMode START = new TaskModeBuilder()
 			.setName("start")
@@ -110,7 +109,6 @@ public class TaskMode {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, side)) ||  Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED));
 			})
 			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG,
 				TaskParameter.RUN_BUILD
 				})
 			.build();
@@ -121,7 +119,6 @@ public class TaskMode {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
 			})
 			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG,
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
 				TaskParameter.JAVA_HOME,
@@ -137,7 +134,6 @@ public class TaskMode {
 					&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side));
 			})
 			.setParameters(new TaskParameter[] {
-				TaskParameter.DEBUG,
 				TaskParameter.SIDE
 				})
 			.build();

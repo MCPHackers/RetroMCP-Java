@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+/**
+ * Deserialized version JSON
+ */
 public class Version {
 	
 	public AssetIndex assetIndex;
@@ -39,6 +42,8 @@ public class Version {
 						libraries.add(DependDownload.from((JSONObject)o));
 					}
 				}
+				mainClass = obj.getString("mainClass");
+				minecraftArguments = obj.optString("minecraftArguments", null);
 			}
 		};
 	}
@@ -68,8 +73,8 @@ public class Version {
 	}
 	
 	public static class Arguments {
-		public Object[] game;
-		public Object[] jvm;
+		public List<Object> game;
+		public List<Object> jvm;
 		
 		public static Arguments from(JSONObject obj) {
 			if(obj == null) {
@@ -77,8 +82,37 @@ public class Version {
 			}
 			return new Arguments() {
 				{
-					game = JSONUtil.getArray(obj.getJSONArray("game"));
-					jvm = JSONUtil.getArray(obj.getJSONArray("jvm"));
+					for(Object o : obj.getJSONArray("game")) {
+						if(o instanceof JSONObject) {
+							game.add(Argument.from((JSONObject)o));
+						}
+						game.add(o);
+					}
+					for(Object o : obj.getJSONArray("jvm")) {
+						if(o instanceof JSONObject) {
+							jvm.add(Argument.from((JSONObject)o));
+						}
+						jvm.add(o);
+					}
+				}
+			};
+		}
+	}
+	
+	public static class Argument {
+		public List<Rule> rules;
+		public Object value;
+		
+		public static Argument from(JSONObject obj) {
+			if(obj == null) {
+				return null;
+			}
+			return new Argument() {
+				{
+					for(Object o : obj.getJSONArray("rules")) {
+						rules.add(Rule.from((JSONObject)o));
+					}
+					value = obj.get("value");
 				}
 			};
 		}

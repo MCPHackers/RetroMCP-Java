@@ -15,6 +15,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
@@ -41,6 +44,7 @@ import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
+import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class MCPFrame extends JFrame {
 	
@@ -145,6 +149,9 @@ public class MCPFrame extends JFrame {
 		reloadText();
 	}
 	
+	/**
+	 * Reloads version list and reads current version from {@link MCPPaths#VERSION}
+	 */
 	public void reloadVersionList() {
 
 		verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
@@ -167,14 +174,15 @@ public class MCPFrame extends JFrame {
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
-					if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(VersionParser.INSTANCE.getVersion(mcp.getCurrentVersion()))) {
+					Version version = mcp.getCurrentVersion();
+					if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(version == null ? null : VersionParser.INSTANCE.getVersion(version.id))) {
 						int response = JOptionPane.showConfirmDialog(MCPFrame.this, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 						switch (response) {
 							case 0:
 								mcp.setParameter(TaskParameter.SETUP_VERSION, ((VersionData)verList.getSelectedItem()).id);
 								mcp.performTask(TaskMode.SETUP, Side.ANY);
 							default:
-								verList.setSelectedItem(VersionParser.INSTANCE.getVersion(mcp.getCurrentVersion()));
+								verList.setSelectedItem(VersionParser.INSTANCE.getVersion(version == null ? null : version.id));
 								verList.repaint();
 								break;
 						}
@@ -187,10 +195,14 @@ public class MCPFrame extends JFrame {
 				}
 				
 			});
-			mcp.setCurrentVersion(mcp.options.currentVersion);
+			if(Files.exists(MCPPaths.get(mcp, MCPPaths.VERSION))) {
+				mcp.currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(MCPPaths.get(mcp, MCPPaths.VERSION)))));
+			}
+			setCurrentVersion(mcp.currentVersion == null ? null : VersionParser.INSTANCE.getVersion(mcp.currentVersion.id));
 			verList.setMaximumRowCount(20);
 			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		} catch (Exception e) {
+			e.printStackTrace();
 			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
 			verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
 			verLabel.setForeground(Color.RED);
@@ -216,6 +228,9 @@ public class MCPFrame extends JFrame {
 		});
 	}
 
+	/**
+	 * Checks availability of all buttons and enables them
+	 */
 	public void updateButtonState() {
 		buttons.forEach(button -> button.setEnabled(button.getEnabled()));
 		menuBar.start.entrySet().forEach(entry -> entry.getValue().setEnabled(TaskMode.START.isAvailable(mcp, entry.getKey())));
@@ -225,6 +240,9 @@ public class MCPFrame extends JFrame {
 		menuBar.setComponentsEnabled(true);
 	}
 	
+	/**
+	 * Disables all buttons
+	 */
 	public void setAllButtonsInactive() {
 		buttons.forEach(button -> button.setEnabled(false));
 		if(verList != null) verList.setEnabled(false);
@@ -233,11 +251,18 @@ public class MCPFrame extends JFrame {
 		menuBar.setComponentsEnabled(false);
 	}
 
-	public void setCurrentVersion(String version) {
-		verList.setSelectedItem(VersionParser.INSTANCE.getVersion(version));
+	/**
+	 * Refreshes version list with specified versionData
+	 * @param versionData
+	 */
+	public void setCurrentVersion(VersionData versionData) {
+		verList.setSelectedItem(versionData);
 		verList.repaint();
 	}
 
+	/**
+	 * @see MCP#clearProgressBars()
+	 */
 	public void resetProgressBars() {
 		bottom.removeAll();
 		bottom.setVisible(false);
@@ -245,16 +270,31 @@ public class MCPFrame extends JFrame {
 		progressLabels = new JLabel[0];
 	}
 
+	/**
+	 * @see MCP#setProgress(int, int)
+	 * @param side
+	 * @param progress
+	 */
 	public void setProgress(int side, int progress) {
 		progressBars[side].progress = progress;
 		progressBars[side].updateProgress();
 	}
 
+	/**
+	 * @see MCP#setProgress(int, String)
+	 * @param side
+	 * @param progressMessage
+	 */
 	public void setProgress(int side, String progressMessage) {
 		progressBars[side].progressMsg = progressMessage;
 		progressBars[side].updateProgress();
 	}
 
+	/**
+	 * @see MCP#setProgressBars(List, TaskMode)
+	 * @param tasks
+	 * @param mode
+	 */
 	public void setProgressBars(List<Task> tasks, TaskMode mode) {
 		int size = tasks.size();
 		progressBars = new SideProgressBar[size];
@@ -276,6 +316,9 @@ public class MCPFrame extends JFrame {
 		bottom.setVisible(true);
 	}
 	
+	/**
+	 * Called upon {@link MCP#changeLanguage(org.mcphackers.mcp.Language)}
+	 */
 	public void reloadText() {
 		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), MCP.TRANSLATOR.translateKey("mcp.console")));
 		if(verList == null && !loadingVersions) {

@@ -13,7 +13,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mcphackers.mcp.tools.Util;
-import org.mcphackers.mcp.tools.versions.json.Version;
+import org.mcphackers.mcp.tools.versions.json.VersionMetadata;
 
 public class VersionParser {
 
@@ -21,7 +21,7 @@ public class VersionParser {
 	public static final String MAPPINGS_JSON = "file:C:\\Users\\User\\Desktop\\versions.json";
 	public static final VersionParser INSTANCE = new VersionParser();
 	
-	public List<VersionData> versions = new ArrayList<>();
+	private List<VersionData> versions = new ArrayList<>();
 	
 	public VersionParser() {
 		JSONArray json;
@@ -38,15 +38,10 @@ public class VersionParser {
 			}
 			try {
 				JSONObject j = (JSONObject)o;
-				Version ver = Version.from(Util.parseJSON(new URL(j.getString("version")).openStream()));
-				versions.add(new VersionData(
-						ver.id,
-						ver.releaseTime,
-						ver.type,
-						j.getString("version"),
-						j.getString("resources"),
-						ver.downloads.server != null
-						));
+				VersionData data = VersionData.from(j);
+				if(data.resources != null) {
+					versions.add(data);
+				}
 			}
 			catch (Exception e) {
 				// Catching exception will skip to the next version
@@ -54,13 +49,12 @@ public class VersionParser {
 			}
 		}
 		versions.sort(new VersionSorter());
-		System.gc();
 	}
 	
 	/**
 	 * Returns version data from version id/name
 	 * @param id
-	 * @return Cached VersionData
+	 * @return VersionData
 	 */
 	public VersionData getVersion(String id) {
 		for(VersionData data : versions) {
@@ -77,25 +71,23 @@ public class VersionParser {
 		return versions;
 	}
 	
-	public static class VersionData {
-		public String id;
-		public String type;
-		public String releaseTime;
-		public String versionJson;
+	public static class VersionData extends VersionMetadata {
 		public String resources;
-		public boolean hasServer;
 		
-		public VersionData(String name, String time, String type1, String ver, String res, boolean server) {
-			id = name;
-			releaseTime = time;
-			type = type1;
-			versionJson = ver;
-			resources = res;
-			hasServer = server;
-		}
-		
-		public boolean hasServer() {
-			return hasServer;
+		public static VersionData from(JSONObject obj) {
+			if(obj == null) {
+				return null;
+			}
+			return new VersionData() {
+				{
+					id = obj.getString("id");
+					time = obj.getString("time");
+					releaseTime = obj.getString("releaseTime");
+					type = obj.getString("type");
+					url = obj.getString("url");
+					resources = obj.optString("resources", null);
+				}
+			};
 		}
 		
 		public String toString() {

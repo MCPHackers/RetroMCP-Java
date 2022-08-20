@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,6 +23,7 @@ import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.versions.json.Version;
 
 public abstract class MCP {
 
@@ -34,12 +39,15 @@ public abstract class MCP {
 	}
 
 	protected MCP() {
-		triggerEvent(MCPEvent.ENV_STARTUP);
 		Update.attemptToDeleteUpdateJar();
 		changeLanguage(Language.get(Locale.getDefault()));
+		triggerEvent(MCPEvent.ENV_STARTUP);
 		System.gc();
 	}
 
+	/**
+	 * @return The working directory
+	 */
 	public abstract Path getWorkingDir();
 
 
@@ -47,7 +55,7 @@ public abstract class MCP {
 	 * Creates instances of TaskMode and executes them
 	 * @param mode task to execute
 	 * @param side side to execute
-	 * @return <tt>true</tt> if task was successfully executed
+	 * @return <code>true</code> if task was successfully executed
 	 */
 	public final boolean performTask(TaskMode mode, Side side) {
 		return performTask(mode, side, true);
@@ -58,7 +66,7 @@ public abstract class MCP {
 	 * @param mode task to execute
 	 * @param side side to execute
 	 * @param completionMsg display completion message when finished
-	 * @return <tt>true</tt> if task was successfully executed
+	 * @return <code>true</code> if task was successfully executed
 	 */
 	public final boolean performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
@@ -140,42 +148,107 @@ public abstract class MCP {
 		return result != Task.ERROR;
 	}
 
+	/**
+	 * Sets progress bars based on list of running tasks and task mode
+	 * @param tasks
+	 * @param mode
+	 */
 	public abstract void setProgressBars(List<Task> tasks, TaskMode mode);
 
+	/**
+	 * Resets progress bars to inactive state
+	 */
 	public abstract void clearProgressBars();
 
+	/**
+	 * Logs a message to console
+	 * @param msg
+	 */
 	public abstract void log(String msg);
 
+	/**
+	 * @return Instance of options
+	 */
 	public abstract Options getOptions();
 
-	public abstract String getCurrentVersion();
+	/**
+	 * @return Current version
+	 */
+	public abstract Version getCurrentVersion();
 
-	public abstract void setCurrentVersion(String version);
+	/**
+	 * Sets current version from parsed JSON data
+	 */
+	public abstract void setCurrentVersion(Version version);
 
+	/**
+	 * Sets display string for progress bar at specified barIndex
+	 * @param barIndex
+	 * @param progressMessage
+	 */
 	public abstract void setProgress(int barIndex, String progressMessage);
 
+	/**
+	 * Sets progress value for progress bar at specified barIndex (Must be in range from 0-100)
+	 * @param barIndex
+	 * @param progress
+	 */
 	public abstract void setProgress(int barIndex, int progress);
 
+	/**
+	 * Marks MCP instance as busy on a task
+	 * @param active
+	 */
 	public abstract void setActive(boolean active);
 
 	public abstract boolean yesNoInput(String title, String msg);
 
+	/**
+	 * Implementation of string input
+	 */
 	public abstract String inputString(String title, String msg);
 
+	/**
+	 * Implementation of any important messages
+	 */
 	public abstract void showMessage(String title, String msg, int type);
 
+	/**
+	 * Displayed by TaskUpdateMCP
+	 * @param changelog
+	 * @param version
+	 * @return <code>true</code> if the user chose to install update
+	 */
 	public abstract boolean updateDialogue(String changelog, String version);
 
+	/**
+	 * Sets display string and progress value for progress bar at specified barIndex (Must be in range from 0-100)
+	 * @param barIndex
+	 * @param progressMessage
+	 * @param progress
+	 */
 	public void setProgress(int barIndex, String progressMessage, int progress) {
 		setProgress(barIndex, progress);
 		setProgress(barIndex, progressMessage);
 	}
-
+	
+	/**
+	 * Changes a parameter in current options and saves changes to disk
+	 * @param param
+	 * @param value
+	 * @throws IllegalArgumentException
+	 */
 	public void setParameter(TaskParameter param, Object value) throws IllegalArgumentException {
 		getOptions().setParameter(param, value);
 		getOptions().save();
 	}
 
+	/**
+	 * Changes a parameter in current options and saves changes to disk, shows an error message if fails
+	 * @param param
+	 * @param value
+	 * @throws IllegalArgumentException
+	 */
 	public void safeSetParameter(TaskParameter param, String value) {
 		if(value != null) {
 			if(getOptions().safeSetParameter(param, value)) return;
@@ -212,24 +285,40 @@ public abstract class MCP {
 		}
 	}
 
+	/**
+	 * @see MCPPlugin#setTaskOverrides(TaskStaged)
+	 * @param task
+	 */
 	public final void setPluginOverrides(TaskStaged task) {
 		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
 			entry.getValue().setTaskOverrides(task);
 		}
 	}
 
+	/**
+	 * Triggers an MCPEvent for every plugin
+	 * @param event
+	 */
 	public final void triggerEvent(MCPEvent event) {
 		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
 			entry.getValue().onMCPEvent(event, this);
 		}
 	}
 
+	/**
+	 * Triggers a TaskEvent for every plugin
+	 * @param event
+	 */
 	public final void triggerTaskEvent(TaskEvent event, Task task) {
 		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
 			entry.getValue().onTaskEvent(event, task);
 		}
 	}
 
+	/**
+	 * Notifies language change
+	 * @param lang
+	 */
 	public final void changeLanguage(Language lang) {
 		TRANSLATOR.changeLang(lang);
 		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {

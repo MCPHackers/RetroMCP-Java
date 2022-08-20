@@ -5,6 +5,8 @@ import static org.mcphackers.mcp.tools.Util.operateOnThread;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +21,8 @@ import javax.swing.border.EmptyBorder;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
@@ -27,12 +31,18 @@ import org.mcphackers.mcp.gui.TaskButton;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tools.versions.VersionParser;
+import org.mcphackers.mcp.tools.versions.json.Version;
 
+/**
+ * GUI implementation of MCP
+ */
 public class MainGUI extends MCP {
 	public Path workingDir;
 	public MCPFrame frame;
-	public Options options;
 	public boolean isActive = true;
+	public Options options;
+	public Version currentVersion;
 	
 	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 	
@@ -55,6 +65,14 @@ public class MainGUI extends MCP {
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
 			JOptionPane.showMessageDialog(null, TRANSLATOR.translateKey("mcp.needJDK"), TRANSLATOR.translateKey("mcp.error"), JOptionPane.ERROR_MESSAGE);
+		}
+		Path versionPath = MCPPaths.get(this, MCPPaths.VERSION);
+		if(Files.exists(versionPath)) {
+			try {
+				currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(versionPath))));
+			} catch (JSONException | IOException e) {
+				e.printStackTrace();
+			}
 		}
 		frame = new MCPFrame(this);
 	}
@@ -84,8 +102,8 @@ public class MainGUI extends MCP {
 	}
 
 	@Override
-	public String getCurrentVersion() {
-		return options.currentVersion;
+	public Version getCurrentVersion() {
+		return currentVersion;
 	}
 
 	@Override
@@ -137,9 +155,9 @@ public class MainGUI extends MCP {
 	}
 
 	@Override
-	public void setCurrentVersion(String version) {
-		options.currentVersion = version;
-		frame.setCurrentVersion(version);
+	public void setCurrentVersion(Version version) {
+		currentVersion = version;
+		frame.setCurrentVersion(version == null ? null : VersionParser.INSTANCE.getVersion(version.id));
 	}
 
 	@Override

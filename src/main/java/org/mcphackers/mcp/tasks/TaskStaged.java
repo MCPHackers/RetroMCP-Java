@@ -38,7 +38,7 @@ public abstract class TaskStaged extends Task {
 	}
 	
 	/**
-	 * Replaces stage operation at <tt>stageIndex</tt> with <tt>task</tt>
+	 * Replaces stage operation at <code>stageIndex</code> with <code>task</code>
 	 * @param stageIndex
 	 * @param task
 	 */
