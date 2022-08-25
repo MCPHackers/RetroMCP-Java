@@ -181,6 +181,7 @@ public class MCPFrame extends JFrame {
 							case 0:
 								mcp.setParameter(TaskParameter.SETUP_VERSION, ((VersionData)verList.getSelectedItem()).id);
 								mcp.performTask(TaskMode.SETUP, Side.ANY);
+								break;
 							default:
 								verList.setSelectedItem(VersionParser.INSTANCE.getVersion(version == null ? null : version.id));
 								verList.repaint();

@@ -1,8 +1,9 @@
 package org.mcphackers.mcp.tools.versions.json;
 
 import org.json.JSONObject;
+import org.mcphackers.mcp.tools.versions.IDownload;
 
-public class Download {
+public class Download implements IDownload {
 	
 	public String sha1;
 	public String url;
@@ -19,5 +20,15 @@ public class Download {
 				size = obj.getLong("size");
 			}
 		};
+	}
+
+	@Override
+	public String name() {
+		return url;
+	}
+
+	@Override
+	public long size() {
+		return size;
 	}
 }

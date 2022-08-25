@@ -39,7 +39,7 @@ public class TaskDownloadUpdate extends Task {
 						if(!assetObj.getString("name").endsWith(".jar")) {
 							continue;
 						}
-						FileUtil.downloadFile(new URL(assetObj.getString("browser_download_url")), Paths.get(MCPPaths.UPDATE_JAR));
+						FileUtil.downloadFile(assetObj.getString("browser_download_url"), Paths.get(MCPPaths.UPDATE_JAR));
 						break;
 					}
 				}

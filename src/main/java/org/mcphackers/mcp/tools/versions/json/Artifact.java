@@ -18,4 +18,9 @@ public class Artifact extends Download {
 			}
 		};
 	}
+	
+	@Override
+	public String name() {
+		return path;
+	}
 }

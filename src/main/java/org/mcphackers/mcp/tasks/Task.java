@@ -112,7 +112,7 @@ public abstract class Task implements ProgressListener, TaskRunnable {
 		progressBarIndex = i;
 	}
 	
-	public String getLocalizedStage(String stage) {
-		return MCP.TRANSLATOR.translateKey("task.stage." + stage);
+	public final String getLocalizedStage(String stage, Object... formatting) {
+		return MCP.TRANSLATOR.translateKeyWithFormatting("task.stage." + stage, formatting);
 	}
 }

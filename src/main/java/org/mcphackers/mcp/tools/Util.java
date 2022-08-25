@@ -221,24 +221,52 @@ public abstract class Util {
 		}
 	}
 
-	public static String getMD5OfFile(Path file) throws IOException, NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		InputStream fs = Files.newInputStream(file);
-		BufferedInputStream bs = new BufferedInputStream(fs);
-		byte[] buffer = new byte[1024];
-		int bytesRead;
-
-		while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
-			md.update(buffer, 0, bytesRead);
+	public static String getMD5(Path file) throws IOException {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			InputStream fs = Files.newInputStream(file);
+			BufferedInputStream bs = new BufferedInputStream(fs);
+			byte[] buffer = new byte[1024];
+			int bytesRead;
+	
+			while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
+				md.update(buffer, 0, bytesRead);
+			}
+			byte[] digest = md.digest();
+	
+			StringBuilder sb = new StringBuilder();
+			for (byte bite : digest) {
+				sb.append(String.format("%02x", bite & 0xff));
+			}
+			bs.close();
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			throw new IOException(e);
 		}
-		byte[] digest = md.digest();
+	}
 
-		StringBuilder sb = new StringBuilder();
-		for (byte bite : digest) {
-			sb.append(String.format("%02x", bite & 0xff));
+	public static String getSHA1(Path file) throws IOException {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-1");
+			InputStream fs = Files.newInputStream(file);
+			BufferedInputStream bs = new BufferedInputStream(fs);
+			byte[] buffer = new byte[1024];
+			int bytesRead;
+	
+			while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
+				md.update(buffer, 0, bytesRead);
+			}
+			byte[] digest = md.digest();
+	
+			StringBuilder sb = new StringBuilder();
+			for (byte bite : digest) {
+				sb.append(Integer.toString((bite & 255) + 256, 16).substring(1).toLowerCase());
+			}
+			bs.close();
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			throw new IOException(e);
 		}
-		bs.close();
-		return sb.toString();
 	}
 	
 	public static String convertFromEscapedString(String s) {

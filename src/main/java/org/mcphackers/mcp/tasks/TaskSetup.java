@@ -14,13 +14,17 @@ import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Artifact;
 import org.mcphackers.mcp.tools.versions.json.DependDownload;
+import org.mcphackers.mcp.tools.versions.json.Rule;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class TaskSetup extends Task {
+	
+	private int libsSize = 0;
 
 	public TaskSetup(MCP instance) {
 		super(Side.ANY, instance);
@@ -28,7 +32,7 @@ public class TaskSetup extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		new TaskCleanup(mcp).doTask();
+		new TaskCleanup(mcp).cleanup();
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.JARS));
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB));
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.NATIVES));
@@ -53,41 +57,39 @@ public class TaskSetup extends Task {
 		byte[] versionBytes = Util.readAllBytes(new URL(chosenVersionData.url).openStream());
 		Version versionJson = Version.from(new JSONObject(new String(versionBytes, StandardCharsets.UTF_8)));
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.CONF));
-		Files.write(MCPPaths.get(mcp, MCPPaths.VERSION), versionBytes);
-		mcp.setCurrentVersion(versionJson);
 		
-		setProgress(getLocalizedStage("downloadMappings"), 2);
-		FileUtil.downloadFile(new URL(chosenVersionData.resources), MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
+		setProgress(getLocalizedStage("download", chosenVersionData.resources), 2);
+		FileUtil.downloadFile(chosenVersionData.resources, MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
 		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"), MCPPaths.get(mcp, MCPPaths.CONF), true);
-
-		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
-		Files.deleteIfExists(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));
 		
-		// TODO: Downloads queue
-		setProgress(MCP.TRANSLATOR.translateKeyWithFormatting("task.stage.downloadMC", Side.CLIENT.getName().toLowerCase()));
+		DownloadData dlData = new DownloadData();
 		if(versionJson.downloads.client != null) {
-			FileUtil.downloadFile(new URL(versionJson.downloads.client.url), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
+			dlData.add(versionJson.downloads.client, MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
 		}
-		setProgress(MCP.TRANSLATOR.translateKeyWithFormatting("task.stage.downloadMC", Side.SERVER.getName().toLowerCase()));
 		if(versionJson.downloads.server != null) {
-			FileUtil.downloadFile(new URL(versionJson.downloads.client.url), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));
+			dlData.add(versionJson.downloads.client, MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));
 		}
-		
-		setProgress(getLocalizedStage("downloadLibs"), 10);
 		for(DependDownload dependencyDownload : versionJson.libraries) {
-			if(dependencyDownload.downloads.artifact == null) {
+			if(!Rule.apply(dependencyDownload.rules)) {
 				continue;
 			}
-			Files.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB + dependencyDownload.downloads.artifact.path).getParent());
-			FileUtil.downloadFile(new URL(dependencyDownload.downloads.artifact.url), MCPPaths.get(mcp, MCPPaths.LIB + dependencyDownload.downloads.artifact.path));
+			if(dependencyDownload.downloads.artifact != null) {
+				dlData.add(dependencyDownload.downloads.artifact, MCPPaths.get(mcp, MCPPaths.LIB + dependencyDownload.downloads.artifact.path));
+			}
 
 			if(dependencyDownload.downloads.classifiers == null) {
 				continue;
 			}
 			Artifact artifact = dependencyDownload.downloads.classifiers.getNatives();
-			Files.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB + artifact.path).getParent());
-			FileUtil.downloadFile(new URL(artifact.url), MCPPaths.get(mcp, MCPPaths.LIB + artifact.path));
+			dlData.add(artifact, MCPPaths.get(mcp, MCPPaths.LIB + artifact.path));
 		}
+		dlData.performDownload((dl, totalSize) -> {
+			libsSize += dl.size();
+			int percent = (int)((double)libsSize / totalSize * 87D);
+			setProgress(getLocalizedStage("download", dl.name()), 3 + percent);
+		});
+		Files.write(MCPPaths.get(mcp, MCPPaths.VERSION), versionBytes);
+		mcp.setCurrentVersion(versionJson);
 
 		setProgress(getLocalizedStage("workspace"), 90);
 		FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace"));

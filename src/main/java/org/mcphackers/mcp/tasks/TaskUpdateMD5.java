@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.security.NoSuchAlgorithmException;
 import java.util.stream.Stream;
 
 import org.mcphackers.mcp.MCP;
@@ -76,15 +75,11 @@ public class TaskUpdateMD5 extends TaskStaged {
 		Files.walkFileTree(binPath, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				try {
-					String md5_hash = Util.getMD5OfFile(file);
-					String fileName = binPath.relativize(file).toString().replace("\\", "/").replace(".class", "");
-					writer.append(fileName).append(" ").append(md5_hash).append("\n");
-					progress++;
-					setProgress(50 + (int)((double)progress/(double)total * 50));
-				} catch (NoSuchAlgorithmException ex) {
-					ex.printStackTrace();
-				}
+				String md5_hash = Util.getMD5(file);
+				String fileName = binPath.relativize(file).toString().replace("\\", "/").replace(".class", "");
+				writer.append(fileName).append(" ").append(md5_hash).append("\n");
+				progress++;
+				setProgress(50 + (int)((double)progress/(double)total * 50));
 				return FileVisitResult.CONTINUE;
 			}
 		});

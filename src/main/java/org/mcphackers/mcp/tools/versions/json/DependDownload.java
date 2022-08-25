@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tools.OS;
+import org.mcphackers.mcp.tools.versions.DownloadData;
 
 public class DependDownload {
 	public DownloadLibrary downloads;

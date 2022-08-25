@@ -1,5 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -27,6 +28,20 @@ public class TaskCleanup extends Task {
 	@Override
 	public void doTask() throws Exception {
 		Instant startTime = Instant.now();
+
+		boolean deleted = cleanup();
+		
+		mcp.setCurrentVersion(null);
+
+		if(deleted) {
+			log("Cleanup finished in " + DECIMAL.format(Duration.between(startTime, Instant.now()).get(ChronoUnit.NANOS) / 1e+9F) + "s");
+		}
+		else {
+			log("Nothing to clear!");
+		}
+	}
+	
+	public boolean cleanup() throws IOException {
 
 		boolean deleted = false;
 		List<Path> filesToDelete = new ArrayList<>();
@@ -70,13 +85,6 @@ public class TaskCleanup extends Task {
 				Files.delete(path);
 			}
 		}
-		mcp.setCurrentVersion(null);
-
-		if(deleted) {
-			log("Cleanup finished in " + DECIMAL.format(Duration.between(startTime, Instant.now()).get(ChronoUnit.NANOS) / 1e+9F) + "s");
-		}
-		else {
-			log("Nothing to clear!");
-		}
+		return deleted;
 	}
 }

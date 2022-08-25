@@ -85,9 +85,7 @@ task.stage.extractsrc = Extracting sources
 task.stage.copyres = Copying resources
 task.stage.gathermd5 = Gathering MD5 hashes
 task.stage.updatemd5 = Updating MD5
-task.stage.downloadMappings = Downloading mappings
-task.stage.downloadMC = Downloading Minecraft %s
-task.stage.downloadLibs = Downloading libraries
+task.stage.download = Downloading: %s
 task.stage.workspace = Setting up workspace
 
 task.param.debug = Display additional info

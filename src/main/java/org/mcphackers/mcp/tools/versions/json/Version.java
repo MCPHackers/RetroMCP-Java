@@ -10,7 +10,7 @@ import org.json.JSONObject;
  */
 public class Version {
 	
-	public AssetIndex assetIndex;
+	public AssetIndexMeta assetIndex;
 	public String assets;
 	public VersionDownloads downloads;
 	public String id;
@@ -29,7 +29,7 @@ public class Version {
 		}
 		return new Version() {
 			{
-				assetIndex = AssetIndex.from(obj.getJSONObject("assetIndex"));
+				assetIndex = AssetIndexMeta.from(obj.getJSONObject("assetIndex"));
 				assets = obj.getString("assets");
 				downloads = VersionDownloads.from(obj.getJSONObject("downloads"));
 				id = obj.getString("id");

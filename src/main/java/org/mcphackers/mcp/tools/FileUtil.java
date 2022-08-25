@@ -109,6 +109,9 @@ public abstract class FileUtil {
 			}
 		}
 	}
+	public static void downloadFile(String url, Path output) throws IOException {
+		downloadFile(new URL(url), output);
+	}
 
 	public static void downloadFile(URL url, Path output) throws IOException {
 		ReadableByteChannel channel = Channels.newChannel(url.openStream());
