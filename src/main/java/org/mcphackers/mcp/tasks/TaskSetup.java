@@ -17,9 +17,6 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
-import org.mcphackers.mcp.tools.versions.json.Artifact;
-import org.mcphackers.mcp.tools.versions.json.DependDownload;
-import org.mcphackers.mcp.tools.versions.json.Rule;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class TaskSetup extends Task {
@@ -60,41 +57,25 @@ public class TaskSetup extends Task {
 		
 		setProgress(getLocalizedStage("download", chosenVersionData.resources), 2);
 		FileUtil.downloadFile(chosenVersionData.resources, MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
-		FileUtil.unzip(MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"), MCPPaths.get(mcp, MCPPaths.CONF), true);
+		FileUtil.extract(MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"), MCPPaths.get(mcp, MCPPaths.CONF), true);
 		
-		DownloadData dlData = new DownloadData();
-		if(versionJson.downloads.client != null) {
-			dlData.add(versionJson.downloads.client, MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
-		}
-		if(versionJson.downloads.server != null) {
-			dlData.add(versionJson.downloads.client, MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));
-		}
-		for(DependDownload dependencyDownload : versionJson.libraries) {
-			if(!Rule.apply(dependencyDownload.rules)) {
-				continue;
-			}
-			if(dependencyDownload.downloads.artifact != null) {
-				dlData.add(dependencyDownload.downloads.artifact, MCPPaths.get(mcp, MCPPaths.LIB + dependencyDownload.downloads.artifact.path));
-			}
-
-			if(dependencyDownload.downloads.classifiers == null) {
-				continue;
-			}
-			Artifact artifact = dependencyDownload.downloads.classifiers.getNatives();
-			dlData.add(artifact, MCPPaths.get(mcp, MCPPaths.LIB + artifact.path));
-		}
+		DownloadData dlData = new DownloadData(mcp, versionJson);
 		dlData.performDownload((dl, totalSize) -> {
 			libsSize += dl.size();
 			int percent = (int)((double)libsSize / totalSize * 87D);
 			setProgress(getLocalizedStage("download", dl.name()), 3 + percent);
 		});
+		Path natives = MCPPaths.get(mcp, MCPPaths.NATIVES);
+		for(Path nativeArchive : DownloadData.getNatives(mcp, versionJson)) {
+			FileUtil.extract(nativeArchive, natives);
+		}
 		Files.write(MCPPaths.get(mcp, MCPPaths.VERSION), versionBytes);
 		mcp.setCurrentVersion(versionJson);
 
 		setProgress(getLocalizedStage("workspace"), 90);
 		FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace"));
 		FileUtil.copyResource(ClassUtils.getResource(MCP.class, "workspace/workspace.zip"), MCPPaths.get(mcp, "workspace.zip"));
-		FileUtil.unzip(MCPPaths.get(mcp, "workspace.zip"), MCPPaths.get(mcp, "workspace"), true);
+		FileUtil.extract(MCPPaths.get(mcp, "workspace.zip"), MCPPaths.get(mcp, "workspace"), true);
 		setWorkspace(versionJson);
 	}
 
@@ -102,12 +83,7 @@ public class TaskSetup extends Task {
 		Side[] sides = { Side.CLIENT, Side.SERVER };
 		for (Side side : sides) {
 			String project = side == Side.CLIENT ? "Client" : "Server";
-			String startclass;
-			try {
-				startclass = TaskRun.findStartClass(mcp, side);
-			} catch (Exception e) {
-				startclass = "Start";
-			}
+			String startclass = version.mainClass;
 			Path[] filetoRead = new Path[] {
 					MCPPaths.get(mcp, "workspace/.metadata/.plugins/org.eclipse.debug.core/.launches/" + project + ".launch"),
 					MCPPaths.get(mcp, "workspace/" + project + "/.idea/workspace.xml"),

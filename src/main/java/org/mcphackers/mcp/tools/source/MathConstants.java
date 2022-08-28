@@ -40,8 +40,8 @@ public class MathConstants extends Constants {
 		replaceValue(9.0D / 256D, "9.0D / 256D");
 	}
 	
-	protected String replace_constants(String code) {
-		return Source.replaceTextOfMatchGroup(code, CONSTANT_REGEX, match1 -> {
+	protected void replace_constants(StringBuilder source) {
+		replaceTextOfMatchGroup(source, CONSTANT_REGEX, match1 -> {
 			String constant = match1.group(0);
 			return CONSTANTS.getOrDefault(constant, constant);
 		});

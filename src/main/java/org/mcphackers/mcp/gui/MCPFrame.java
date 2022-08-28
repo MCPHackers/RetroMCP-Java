@@ -24,7 +24,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -41,7 +40,6 @@ import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
-import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
@@ -174,20 +172,7 @@ public class MCPFrame extends JFrame {
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
-					Version version = mcp.getCurrentVersion();
-					if (verList.getSelectedItem() != null && !verList.getSelectedItem().equals(version == null ? null : VersionParser.INSTANCE.getVersion(version.id))) {
-						int response = JOptionPane.showConfirmDialog(MCPFrame.this, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-						switch (response) {
-							case 0:
-								mcp.setParameter(TaskParameter.SETUP_VERSION, ((VersionData)verList.getSelectedItem()).id);
-								mcp.performTask(TaskMode.SETUP, Side.ANY);
-								break;
-							default:
-								verList.setSelectedItem(VersionParser.INSTANCE.getVersion(version == null ? null : version.id));
-								verList.repaint();
-								break;
-						}
-					}
+					mcp.setupVersion((VersionData)verList.getSelectedItem());
 					});
 				}
 	

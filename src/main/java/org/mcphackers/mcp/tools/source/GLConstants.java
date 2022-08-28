@@ -44,13 +44,12 @@ public class GLConstants extends Constants {
 		return String.join("|", list);
 	}
 
-	protected String replace_constants(String code) {
+	protected void replace_constants(StringBuilder source) {
 		if (cause != null) {
 			cause.printStackTrace();
-			return code;
 		}
 		Set<String> imports = new HashSet<>();
-		code = replaceTextOfMatchGroup(code, INPUT_REGEX, match1 -> {
+		replaceTextOfMatchGroup(source, INPUT_REGEX, match1 -> {
 			String full_call = match1.group(0);
 			return replaceTextOfMatchGroup(full_call, CONSTANT_REGEX, match2 -> {
 				String replaceConst = CONSTANTS_KEYBOARD.optString(match2.group(0), null);
@@ -61,7 +60,7 @@ public class GLConstants extends Constants {
 				return "Keyboard." + replaceConst;
 			});
 		});
-		code = Source.replaceTextOfMatchGroup(code, CALL_REGEX, match1 -> {
+		replaceTextOfMatchGroup(source, CALL_REGEX, match1 -> {
 			String full_call = match1.group(0);
 			String pkg = match1.group(1);
 			String method = match1.group(2);
@@ -72,7 +71,8 @@ public class GLConstants extends Constants {
 						continue;
 					}
 					JSONArray group = (JSONArray)groupg;
-					if (group.getJSONObject(0).has(pkg) && group.getJSONObject(0).getJSONArray(pkg).toList().contains(method)) {
+					JSONObject jsonObj1 = group.getJSONObject(0);
+					if (jsonObj1.has(pkg) && jsonObj1.getJSONArray(pkg).toList().contains(method)) {
 						JSONObject jsonObj = group.getJSONObject(1);
 						Iterator<String> keys = jsonObj.keys();
 						while(keys.hasNext()) {
@@ -88,9 +88,6 @@ public class GLConstants extends Constants {
 				return full_match;
 			});
 		});
-		for(String imp : imports) {
-			code = updateImport(code, imp);
-		}
-		return code;
+		updateImports(source, imports);
 	}
 }

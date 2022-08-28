@@ -74,7 +74,7 @@ public class Rule {
 		boolean featuresMatch = true;
 		for(Entry<String, Boolean> entry : features.entrySet()) {
 			featuresMatch = featuresList.contains(entry.getKey()) == entry.getValue();
-			if(!featuresMatch) return null;
+			if(!featuresMatch) return Rule.Action.disallow;
 		}
 		return this.os != null && !this.os.equalsOS(OS.getOs()) ? null : this.action;
 	}

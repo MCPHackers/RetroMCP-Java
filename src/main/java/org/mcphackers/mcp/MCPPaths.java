@@ -11,7 +11,7 @@ public class MCPPaths {
 	
 	//Directories
 	public static final String JARS = 		"jars/";
-	public static final String LIB = 		"lib/";
+	public static final String LIB = 		"libraries/";
 	public static final String TEMP = 		"temp/";
 	public static final String SRC = 		"src/";
 	public static final String BIN = 		"bin/";
@@ -48,7 +48,7 @@ public class MCPPaths {
 
 	public static final String UPDATE_JAR =		 	 "update.jar";
 	
-	private static final Set<String> stripClient = new HashSet<String>() {
+	private static final Set<String> STRIP_SIDE_NAME = new HashSet<String>() {
 		private static final long serialVersionUID = 1079122339538512318L;
 		{
 			add(JAR_ORIGINAL);
@@ -61,8 +61,12 @@ public class MCPPaths {
 	};
 	
 	public static Path get(MCP mcp, String path, Side side) {
-		if(side == Side.CLIENT && stripClient.contains(path)) {
-			return get(mcp, path.replace("_%s", ""));
+		if(side == Side.CLIENT) {
+			for(String strip : STRIP_SIDE_NAME) {
+				if(path.startsWith(strip)) {
+					return get(mcp, path.replace("_%s", ""));
+				}
+			}
 		}
 		return get(mcp, String.format(path, side.name));
 	}

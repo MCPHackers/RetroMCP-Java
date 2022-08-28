@@ -12,18 +12,16 @@ public abstract class Constants extends Source {
 	 * @throws IOException
 	 */
 	public static void replace(Path src, List<Constants> constants) throws IOException {
-		modify(src, code -> {
+		modify(src, source -> {
 			for(Constants constantReplacer : constants) {
-				code = constantReplacer.replace_constants(code);
+				constantReplacer.replace_constants(source);
 			}
-			return code;
 		});
 	}
 	
 	/**
 	 * Implementation of constant replacing behavior
-	 * @param code string of source file
-	 * @return modified code string
+	 * @param StringBuilder of source file
 	 */
-	protected abstract String replace_constants(String code);
+	protected abstract void replace_constants(StringBuilder source);
 }

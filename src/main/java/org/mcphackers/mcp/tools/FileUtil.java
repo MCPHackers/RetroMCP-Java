@@ -8,17 +8,18 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -26,9 +27,6 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public abstract class FileUtil {
 	
@@ -76,20 +74,20 @@ public abstract class FileUtil {
 		}
 	}
 
-	public static void unzip(final Path zipFile, final Path destDir) throws IOException {
-		unzip(zipFile, destDir, false);
+	public static void extract(final Path zipFile, final Path destDir) throws IOException {
+		extract(zipFile, destDir, false);
 	}
 
-	public static void unzip(final Path zipFile, final Path destDir, boolean deleteZip) throws IOException {
-		unzip(zipFile, destDir, entry -> true);
+	public static void extract(final Path zipFile, final Path destDir, boolean deleteZip) throws IOException {
+		extract(zipFile, destDir, entry -> true);
 		if (deleteZip) Files.deleteIfExists(zipFile);
 	}
 
-	public static void unzipByExtension(final Path zipFile, final Path destDir, String extension) throws IOException {
-		unzip(zipFile, destDir, entry -> entry.toString().endsWith(extension));
+	public static void extractByExtension(final Path zipFile, final Path destDir, String extension) throws IOException {
+		extract(zipFile, destDir, entry -> entry.toString().endsWith(extension));
 	}
 
-	public static void unzip(final Path zipFile, final Path destDir, Function<ZipEntry,Boolean> match) throws IOException {
+	public static void extract(final Path zipFile, final Path destDir, Function<ZipEntry,Boolean> match) throws IOException {
 		if (Files.notExists(destDir)) {
 			Files.createDirectories(destDir);
 		}
@@ -97,6 +95,7 @@ public abstract class FileUtil {
 			ZipEntry entry;
 			while ((entry = zipInputStream.getNextEntry()) != null) {
 				Path toPath = destDir.resolve(entry.getName());
+				Files.deleteIfExists(toPath);
 				if (match.apply(entry)) {
 					if(!entry.isDirectory()) {
 						createDirectories(toPath.getParent());
@@ -121,56 +120,31 @@ public abstract class FileUtil {
 		}
 	}
 	
-	@Deprecated
-	public static void downloadGitDir(URL url, Path output) throws IOException {
-		InputStream in = url.openStream();
-		JSONArray json = Util.parseJSONArray(in);
-		for(Object object : json) {
-			if(object instanceof JSONObject) {
-				JSONObject jsonObject = (JSONObject)object;
-				if(jsonObject.getString("type").equals("dir")) {
-					Path dir = output.resolve(jsonObject.getString("name"));
-					createDirectories(dir);
-					downloadGitDir(new URL(jsonObject.getString("url")), dir);
-				}
-				else if (jsonObject.getString("type").equals("file")) {
-					downloadFile(new URL(jsonObject.getString("download_url")), output.resolve(jsonObject.getString("name")));
-				}
-			}
-		}
-	}
-	
-	public static void collectJars(Path libPath, List<Path> list, boolean walk) throws IOException {
-		try(Stream<Path> stream = walk ? Files.walk(libPath) : Files.list(libPath)
-			.filter(library -> library.getFileName().toString().endsWith(".jar"))
-			.filter(library -> !Files.isDirectory(library))) {
-				list.addAll(stream.collect(Collectors.toList()));
-		}
-	}
-	
-	public static void collectJars(Path libPath, List<Path> list) throws IOException {
-		collectJars(libPath, list, false);
-	}
-	
 	public static void deleteDirectoryIfExists(Path path) throws IOException {
 		if (Files.isDirectory(path)) {
 			deleteDirectory(path);
 		}
 	}
 
+	public static void cleanDirectory(Path path) throws IOException {
+		if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+			try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
+				for (Path entry : entries) {
+					deleteDirectory(entry);
+				}
+			}
+		}
+	}
+
 	public static void deleteDirectory(Path path) throws IOException {
-		AtomicBoolean a = new AtomicBoolean(true);
-		try (Stream<Path> pathStream = Files.walk(path)) {
-			pathStream.sorted(Comparator.reverseOrder())
-					.map(Path::toFile)
-					.forEach(f -> {
-						boolean b = f.delete();
-						if(!b) a.set(false);
-					});
+		if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+			try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
+				for (Path entry : entries) {
+					deleteDirectory(entry);
+				}
+			}
 		}
-		if(!a.get()) {
-			throw new IOException("One or more files were locked");
-		}
+		Files.delete(path);
 	}
 
 	public static List<Path> walkDirectory(Path path) throws IOException {
@@ -188,33 +162,6 @@ public abstract class FileUtil {
 		}
 		try (Stream<Path> pathStream = Files.walk(path)) {
 			return pathStream.filter(predicate).collect(Collectors.toList());
-		}
-	}
-
-	/**
-	 * @see #deletePackages(Path, String[])
-	 */
-	@Deprecated
-	public static void copyDirectory(Path sourceFolder, Path targetFolder, String[] excludedFolders) throws IOException {
-		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {
-			pathStream.filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
-				Path destination = targetFolder.resolve(sourceFolder.relativize(source));
-				boolean doCopy = true;
-				for (String excludedFolder : excludedFolders) {
-					if(targetFolder.relativize(destination).startsWith(Paths.get(excludedFolder))) {
-						doCopy = false;
-						break;
-					}
-				}
-				if(doCopy) {
-					try {
-						Files.createDirectories(destination.getParent());
-						Files.copy(source, destination);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			});
 		}
 	}
 
@@ -256,9 +203,20 @@ public abstract class FileUtil {
 		byte[] data = Util.readAllBytes(is);
 		Files.write(out, data);
 	}
+	
+	public static void collectJars(Path libPath, List<Path> list, boolean walk) throws IOException {
+		try(Stream<Path> stream = walk ? Files.walk(libPath) : Files.list(libPath)
+			.filter(library -> library.getFileName().toString().endsWith(".jar"))
+			.filter(library -> !Files.isDirectory(library))) {
+				list.addAll(stream.collect(Collectors.toList()));
+		}
+	}
+	
+	public static void collectJars(Path libPath, List<Path> list) throws IOException {
+		collectJars(libPath, list, false);
+	}
 
 	public static void deleteEmptyFolders(Path path) throws IOException {
-		//TODO Check if each folder only contains folders instead of letting File::delete to decide
 		try (Stream<Path> pathStream = Files.walk(path)) {
 			pathStream.sorted(Comparator.reverseOrder())
 					.map(Path::toFile)

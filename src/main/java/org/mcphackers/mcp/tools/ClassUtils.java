@@ -41,7 +41,7 @@ public abstract class ClassUtils {
 	}
 
 	/** 
-	 * @see Modifier#isAbstract(int) does no guarantee that all methods were implemented in the compiled class
+	 * {@link Modifier#isAbstract(int)} does no guarantee that all methods were implemented in the compiled class
 	 * And there is a chance it was compiled from a different source where one of the methods didn't exist
 	 */
 	public static boolean isClassAbstract(Class<?> type) {

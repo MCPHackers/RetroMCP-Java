@@ -1,7 +1,5 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.tools.FileUtil.collectJars;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,21 +11,10 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.versions.DownloadData;
+import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class TaskRun extends Task {
-	
-	//TODO can only have one Start and it's the client one
-	public static final String[] CLIENT_START = {
-		"Start",
-		"net.minecraft.client.Minecraft",
-		"net.minecraft.client.main.Main",
-		"com.mojang.minecraft.Minecraft"
-	};
-	
-	public static final String[] SERVER_START = {
-		"net.minecraft.server.MinecraftServer",
-		"com.mojang.minecraft.server.MinecraftServer"
-	};
 	
 	public TaskRun(Side side, MCP instance) {
 		super(side, instance);
@@ -35,16 +22,10 @@ public class TaskRun extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		//String currentVersion = mcp.getCurrentVersion();
-		String host = "localhost";
-		int port = 11700;
-		try {
-			port = 11702; // FIXME
-			host = "betacraft.uk";
-		} catch (Exception e) {};
+		Version currentVersion = mcp.getCurrentVersion();
 		
 		boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
-		List<Path> cpList = getClasspath(mcp, side, runBuild);
+		List<Path> cpList = getClasspath(mcp, currentVersion, side, runBuild);
 		
 		List<String> classPath = new ArrayList<>();
 		cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));
@@ -55,12 +36,9 @@ public class TaskRun extends Task {
 		List<String> args = new ArrayList<>(
 				Arrays.asList(
 						Util.getJava(),
-						"-Dhttp.proxyHost=" + host,
-						"-Dhttp.proxyPort=" + port,
-						"-Dorg.lwjgl.librarypath=" + natives,
-						"-Dnet.java.games.input.librarypath=" + natives,
+						"-Djava.library.path=" + natives,
 						"-cp", cp,
-						findStartClass(cpList, side)
+						currentVersion.mainClass
 						)
 				);
 		String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
@@ -72,20 +50,11 @@ public class TaskRun extends Task {
 			throw new RuntimeException("Finished with exit value " + exit);
 		}
 	}
-	
-	// TODO
-	public static String findStartClass(MCP mcp, Side side) throws Exception {
-		return findStartClass(getClasspath(mcp, side, false), side);
-	}
 
-	private static List<Path> getClasspath(MCP mcp, Side side, boolean runBuild) throws IOException {
+	private static List<Path> getClasspath(MCP mcp, Version version, Side side, boolean runBuild) throws IOException {
 		List<Path> cpList = new ArrayList<>();
 		if(runBuild) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
-		}
-		cpList.add(MCPPaths.get(mcp, MCPPaths.COMPILED, side));
-		if(Files.exists(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED))) {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED));
 		}
 		if(!Files.exists(MCPPaths.get(mcp, MCPPaths.REMAPPED, side))) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
@@ -93,42 +62,9 @@ public class TaskRun extends Task {
 		else {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
 		}
-		collectJars(MCPPaths.get(mcp, MCPPaths.LIB), cpList);
+		if(side == Side.CLIENT || side == Side.MERGED) {
+			cpList.addAll(DownloadData.getLibraries(mcp, version));
+		}
 		return cpList;
-	}
-
-	private static String findStartClass(List<Path> classPath, Side side) throws Exception {
-		String[] possibleStartClass;
-		if(side == Side.CLIENT) {
-			possibleStartClass = CLIENT_START;
-		}
-		else if(side == Side.SERVER) {
-			possibleStartClass = SERVER_START;
-		}
-		else {
-			possibleStartClass = new String[] {"Start"};
-		}
-		for(Path cp : classPath) {
-			if(!Files.exists(cp)) {
-				continue;
-			}
-			if(Files.isDirectory(cp)) {
-				for(String start : possibleStartClass) {
-					if(Files.exists(cp.resolve(start.replace(".", "/") + ".class"))) {
-						return start;
-					}
-				}
-			}
-//			else {
-//				try (FileSystem fs = FileSystems.newFileSystem(cp, (ClassLoader)null)) {
-//					for(String start : possibleStartClass) {
-//						if(Files.exists(fs.getPath("/").resolve(start.replace(".", "/") + ".class"))) {
-//							return start;
-//						}
-//					}
-//				}
-//			}
-		}
-		throw new Exception("Could not find start class");
 	}
 }

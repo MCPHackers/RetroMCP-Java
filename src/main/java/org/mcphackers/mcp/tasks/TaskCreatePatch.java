@@ -6,6 +6,7 @@ import java.nio.file.Path;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tools.FileUtil;
 
 import codechicken.diffpatch.cli.DiffOperation;
 
@@ -19,6 +20,9 @@ public class TaskCreatePatch extends Task {
 		Path srcPathUnpatched = MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side);
 		Path srcPathPatched = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		Path patchesOut = MCPPaths.get(mcp, "patches/patches_%s", side);
+		if(Files.isDirectory(patchesOut)) {
+			FileUtil.cleanDirectory(patchesOut);
+		}
 		setProgress(getLocalizedStage("createpatch"));
 		if (Files.exists(srcPathUnpatched)) {
 			if(Files.exists(srcPathPatched)) {
@@ -35,15 +39,12 @@ public class TaskCreatePatch extends Task {
 	public void createDiffOperation(Path aPath, Path bPath, Path outputPath) throws Exception {
 		ByteArrayOutputStream logger = new ByteArrayOutputStream();
 		DiffOperation diffOperation = DiffOperation.builder()
-				.aPath(aPath)
-				.bPath(bPath)
-				.outputPath(outputPath)
-				.verbose(true)
-				.logTo(logger)
-				.summary(true).build();
-		if (diffOperation.operate().exit != 0) {
-			//addMessage(logger.toString(), Task.ERROR);
-			//throw new Exception("Patches could not be created!");
-		}
+			.aPath(aPath)
+			.bPath(bPath)
+			.outputPath(outputPath)
+			.verbose(true)
+			.logTo(logger)
+			.summary(true).build();
+		diffOperation.operate();
 	}
 }

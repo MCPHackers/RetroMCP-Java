@@ -87,7 +87,7 @@ public class TaskReobfuscate extends TaskStaged {
 				reversedNames.put(entry.getValue(), entry.getKey());
 			}
 			FileUtil.deleteDirectoryIfExists(reobfDir);
-			FileUtil.unzip(reobfJar, reobfDir, entry -> {
+			FileUtil.extract(reobfJar, reobfDir, entry -> {
 				String className = entry.getName().replace(".class", "");
 				boolean presentInMappings = true;
 				String deobfName = reversedNames.get(className);

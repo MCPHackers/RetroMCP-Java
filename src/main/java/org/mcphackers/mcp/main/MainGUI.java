@@ -31,7 +31,9 @@ import org.mcphackers.mcp.gui.TaskButton;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.versions.VersionParser;
+import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 /**
@@ -204,6 +206,22 @@ public class MainGUI extends MCP {
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		outer.add(label, BorderLayout.SOUTH);
 		return JOptionPane.showConfirmDialog(frame, outer, TRANSLATOR.translateKey("mcp.newVersion") + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
+	}
+
+	public void setupVersion(VersionData versionData) {
+		Version version = getCurrentVersion();
+		if (versionData != null && !versionData.equals(version == null ? null : VersionParser.INSTANCE.getVersion(version.id))) {
+			int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+			switch (response) {
+				case 0:
+					setParameter(TaskParameter.SETUP_VERSION, versionData.id);
+					performTask(TaskMode.SETUP, Side.ANY);
+					break;
+				default:
+					frame.setCurrentVersion(VersionParser.INSTANCE.getVersion(version == null ? null : version.id));
+					break;
+			}
+		}
 	}
 
 	public TaskButton getButton(TaskMode task) {

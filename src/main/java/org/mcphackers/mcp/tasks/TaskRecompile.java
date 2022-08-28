@@ -22,6 +22,7 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.versions.DownloadData;
 
 public class TaskRecompile extends TaskStaged {
 	/*
@@ -113,11 +114,7 @@ public class TaskRecompile extends TaskStaged {
 	public List<Path> collectClassPath() throws IOException {
 		List<Path> classpath = new ArrayList<>();
 		classpath.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
-
-		final Path libPath = MCPPaths.get(mcp, MCPPaths.LIB);
-		if(Files.exists(libPath)) {
-			FileUtil.collectJars(libPath, classpath);
-		}
+		classpath.addAll(DownloadData.getLibraries(mcp, mcp.getCurrentVersion()));
 		return classpath;
 	}
 	
@@ -142,13 +139,6 @@ public class TaskRecompile extends TaskStaged {
 		List<File> src;
 		try(Stream<Path> pathStream = Files.walk(srcPath)) {
 			src = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-		}
-		if(side == Side.CLIENT || side == Side.MERGED) {
-			List<File> start;
-			try(Stream<Path> pathStream = Files.walk(MCPPaths.get(mcp, MCPPaths.CONF + "start"))) {
-				start = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());
-			}
-			src.addAll(start);
 		}
 		return src;
 	}
