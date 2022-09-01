@@ -1,5 +1,12 @@
 package org.mcphackers.mcp.tools.mappings;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
 public final class MappingUtil {
 
 	/**
@@ -30,6 +37,20 @@ public final class MappingUtil {
 			num = num / allChars - 1;
 		}
 		return retName.toString();
+	}
+	
+	// Only works with tiny v2
+	public static List<String> readNamespaces(Path mappings) throws IOException {
+		List<String> namespaces = new ArrayList<>();
+		try(BufferedReader reader = Files.newBufferedReader(mappings)) {
+			String header = reader.readLine();
+			if(header != null && header.startsWith("tiny\t2\t0\t")) {
+				for(String namespace : header.substring(9).trim().split("\t")) {
+					namespaces.add(namespace);
+				}
+			}
+		}
+		return namespaces;
 	}
 
 }

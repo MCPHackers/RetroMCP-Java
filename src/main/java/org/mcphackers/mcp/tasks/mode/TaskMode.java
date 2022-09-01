@@ -23,7 +23,7 @@ public class TaskMode {
 	 * Cached task parameter types
 	 */
 	public static final Map<String, TaskParameter> nameToParamMap = new HashMap<>();
-	
+
 	public static TaskMode HELP = new TaskModeBuilder()
 			.setName("help")
 			.setProgressBars(false)

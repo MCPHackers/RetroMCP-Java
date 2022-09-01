@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,8 +20,7 @@ import org.mcphackers.mcp.tools.versions.json.VersionMetadata;
 
 public class VersionParser {
 
-	//public static final String MAPPINGS_JSON = "https://mcphackers.github.io/versions/versions.json";
-	public static final String MAPPINGS_JSON = "file:C:\\Users\\User\\Desktop\\versions.json";
+	public static final String MAPPINGS_JSON = "https://mcphackers.github.io/versions/versions.json";
 	public static final VersionParser INSTANCE = new VersionParser();
 	
 	private List<VersionData> versions = new ArrayList<>();
@@ -32,13 +34,12 @@ public class VersionParser {
 			e.printStackTrace();
 			return; // Couldn't init json
 		}
-		for(Object o : json) {
-			if(!(o instanceof JSONObject)) {
+		for(Object j : json) {
+			if(!(j instanceof JSONObject)) {
 				continue;
 			}
 			try {
-				JSONObject j = (JSONObject)o;
-				VersionData data = VersionData.from(j);
+				VersionData data = VersionData.from((JSONObject)j);
 				if(data.resources != null) {
 					versions.add(data);
 				}
@@ -143,9 +144,15 @@ public class VersionParser {
 	}
 	
 	private static JSONArray getJson() throws IOException {
-		URLConnection connect = new URL(MAPPINGS_JSON).openConnection();
-		connect.setConnectTimeout(30000);
-		InputStream in = connect.getInputStream();
+		InputStream in;
+		Path versions = Paths.get("versions.json");
+		if(Files.exists(versions)) {
+			in = Files.newInputStream(versions);
+		} else {
+			URLConnection connect = new URL(MAPPINGS_JSON).openConnection();
+			connect.setConnectTimeout(30000);
+			in = connect.getInputStream();
+		}
 		return Util.parseJSONArray(in);
 	}
 	

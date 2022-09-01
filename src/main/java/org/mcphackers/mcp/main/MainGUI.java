@@ -228,16 +228,20 @@ public class MainGUI extends MCP {
 		TaskButton button;
 		if(task == TaskMode.DECOMPILE) {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
-				int response = 0;
+				int response = JOptionPane.YES_OPTION;
 				if(TaskMode.RECOMPILE.isAvailable(this, getSide())) {
 					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-					if(response == 0) {
-						if(JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.askSourceBackup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION) == 0) {
+					if(response == JOptionPane.YES_OPTION) {
+						int response2 = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.askSourceBackup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_CANCEL_OPTION);
+						if(response2 == JOptionPane.YES_OPTION) {
 							performTask(TaskMode.BACKUP_SRC, getSide());
+						}
+						else if(response2 != JOptionPane.NO_OPTION) {
+							response = response2;
 						}
 					}
 				}
-				if(response == 0) {
+				if(response == JOptionPane.YES_OPTION) {
 					performTask(TaskMode.DECOMPILE, getSide());
 				}
 			});
@@ -246,7 +250,7 @@ public class MainGUI extends MCP {
 		else if(task == TaskMode.UPDATE_MD5) {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
 				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmUpdateMD5"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-				if(response == 0) {
+				if(response == JOptionPane.YES_OPTION) {
 					performTask(task, getSide());
 				}
 			});

@@ -78,7 +78,8 @@ public abstract class Source {
 	
 	public static void replaceTextOfMatchGroup(StringBuilder source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
 		Stack<MatchResult> results = new Stack<>();
-		Matcher matcher = pattern.matcher(source);
+		String sourceString = source.toString();
+		Matcher matcher = pattern.matcher(sourceString);
 
 		while (matcher.find()) {
 			results.push(matcher.toMatchResult());
@@ -101,7 +102,8 @@ public abstract class Source {
 	
 	private static void addMatch(StringBuilder source, Pattern pattern, boolean after, String stringToAdd) {
 		Stack<MatchResult> results = new Stack<>();
-		Matcher matcher = pattern.matcher(source);
+		String sourceString = source.toString();
+		Matcher matcher = pattern.matcher(sourceString);
 
 		while (matcher.find()) {
 			results.push(matcher.toMatchResult());

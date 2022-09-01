@@ -118,6 +118,7 @@ public abstract class MCP {
 		
 		pool.shutdown();
 		while (!pool.isTerminated()) {}
+		triggerEvent(MCPEvent.FINISHED_TASKS);
 
 		byte result = result1.byteValue();
 		
@@ -129,12 +130,10 @@ public abstract class MCP {
 				result = retresult;
 			}
 		}
-		//TODO display this info in the pop up message (Maybe)
 		if(msgs.size() > 0) log("");
 		for(String msg : msgs) {
 			log(msg);
 		}
-		triggerEvent(MCPEvent.FINISHED_TASKS);
 		if(completionMsg) {
 			String[] msgs2 = {
 					TRANSLATOR.translateKey("tasks.success"),

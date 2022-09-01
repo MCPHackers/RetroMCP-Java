@@ -3,6 +3,7 @@ package org.mcphackers.mcp.tools.source;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+
 public abstract class Constants extends Source {
 	
 	/**

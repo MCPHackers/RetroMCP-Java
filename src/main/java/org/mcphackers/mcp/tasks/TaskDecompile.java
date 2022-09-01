@@ -12,14 +12,14 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
+import org.mcphackers.mcp.tools.injector.GLConstants;
+import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.mcp.tools.source.Constants;
-import org.mcphackers.mcp.tools.source.GLConstants;
 import org.mcphackers.mcp.tools.source.MathConstants;
 import org.mcphackers.rdi.injector.RDInjector;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
 import org.mcphackers.rdi.util.IOUtil;
-import org.objectweb.asm.tree.ClassNode;
 
 import codechicken.diffpatch.cli.CliOperation;
 import codechicken.diffpatch.cli.PatchOperation;
@@ -65,22 +65,29 @@ public class TaskDecompile extends TaskStaged {
 			() -> {
 				RDInjector injector = new RDInjector();
 				if(side == Side.MERGED) {
-					injector.setStorage(new ClassStorage(IOUtil.read(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER))));
+					Path path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER);
+					injector.setStorage(new ClassStorage(IOUtil.read(path)));
+					injector.addResources(path);
 					injector.stripLVT();
 					injector.applyMappings(getMappings(injector.getStorage(), Side.SERVER));
 					injector.transform();
 					ClassStorage serverStorage = injector.getStorage();
 					
-					injector.setStorage(new ClassStorage(IOUtil.read(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT))));
+					path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT);
+					injector.setStorage(new ClassStorage(IOUtil.read(path)));
+					injector.addResources(path);
 					injector.stripLVT();
 					injector.applyMappings(getMappings(injector.getStorage(), Side.CLIENT));
 					injector.mergeWith(serverStorage);
 				}
 				else {
-					injector.setStorage(new ClassStorage(IOUtil.read(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side))));
+					Path path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side);
+					injector.setStorage(new ClassStorage(IOUtil.read(path)));
+					injector.addResources(path);
 					injector.stripLVT();
 					injector.applyMappings(getMappings(injector.getStorage(), side));
 				}
+				if(hasLWJGL) injector.setVisitor(new GLConstants(injector.getVisitor()));
 				injector.fixAccess();
 				injector.fixInnerClasses();
 				injector.fixImplicitConstructors();
@@ -90,13 +97,7 @@ public class TaskDecompile extends TaskStaged {
 					injector.fixExceptions(exc);
 				}
 				injector.transform();
-				//TODO Allow copying resources from multiple sources
-				if(side == Side.MERGED) {
-					IOUtil.write(injector.getStorage(), Files.newOutputStream(rdiOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
-				}
-				else {
-					IOUtil.write(injector.getStorage(), Files.newOutputStream(rdiOut), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
-				}
+				injector.write(rdiOut);
 			}),
 			stage(getLocalizedStage("decompile"),
 			() -> {
@@ -109,8 +110,8 @@ public class TaskDecompile extends TaskStaged {
 			stage(getLocalizedStage("constants"), 86,
 			() -> {
 				List<Constants> constants = new ArrayList<>();
-				if(hasLWJGL)
-				constants.add(new GLConstants());
+//				if(hasLWJGL)
+//				constants.add(new GLConstants());
 				constants.add(new MathConstants());
 				Constants.replace(ffOut, constants);
 			}),
@@ -137,11 +138,13 @@ public class TaskDecompile extends TaskStaged {
 		};
 	}
 	
-	private Mappings getMappings(ClassStorage storage, Side side) {
-		Mappings mappings = Mappings.read(MCPPaths.get(mcp, MCPPaths.MAPPINGS), side.name, "named");
-		for(ClassNode node : storage.getClasses()) {
-			if(node.name.indexOf('/') == -1 && !mappings.classes.containsKey(node.name)) {
-				mappings.classes.put(node.name, "net/minecraft/src/" + node.name);
+	private Mappings getMappings(ClassStorage storage, Side side) throws IOException {
+		Path mappingsPath = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
+		boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
+		Mappings mappings = Mappings.read(mappingsPath, joined ? "official" : side.name, "named");
+		for(String name : storage.getAllClasses()) {
+			if(name.indexOf('/') == -1 && !mappings.classes.containsKey(name)) {
+				mappings.classes.put(name, "net/minecraft/src/" + name);
 			}
 		}
 		return mappings;

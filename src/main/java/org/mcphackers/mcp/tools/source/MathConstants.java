@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class MathConstants extends Constants {
 	
 	// Used to prevent strings from being captured, such as "2.0D"
-	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?![\"'][.\\w\\s]*)-*\\d+\\.*\\w*(?![.\\w\\s]*[\"'])");
+	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?<![a-zA-Z\"'])-?\\d+(?:\\.\\d+[fFdD]?|)(?![a-zA-Z\"'])");
 	private static final Map<String, String> CONSTANTS = new HashMap<>();
 	
 	static {

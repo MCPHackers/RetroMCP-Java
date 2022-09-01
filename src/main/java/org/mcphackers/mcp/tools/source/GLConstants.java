@@ -2,6 +2,7 @@ package org.mcphackers.mcp.tools.source;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -15,12 +16,13 @@ import org.mcphackers.mcp.tools.Util;
 
 public class GLConstants extends Constants {
 
+	private static final boolean COMMENT = true;
 	private static Exception cause;
 	private static final JSONObject json = getJson();
-	private static final JSONArray PACKAGES = json == null ? null : json.getJSONArray("PACKAGES");
+	private static final List<String> PACKAGES = json == null ? Collections.emptyList() : toList(json.getJSONArray("PACKAGES"));
 	private static final JSONArray CONSTANTS = json == null ? null : json.getJSONArray("CONSTANTS");
 	private static final JSONObject CONSTANTS_KEYBOARD = json == null ? null : json.getJSONObject("CONSTANTS_KEYBOARD");
-	private static final Pattern CALL_REGEX = Pattern.compile("(" + joinedPackages(PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
+	private static final Pattern CALL_REGEX = Pattern.compile("(" + String.join("|", PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
 	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
 	private static final Pattern INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[);]))|new KeyBinding\\([ \\w\"]+, .+?\\))");
 	
@@ -33,20 +35,21 @@ public class GLConstants extends Constants {
 		}
 	}
 	
-	private static String joinedPackages(JSONArray packages) {
+	private static List<String> toList(JSONArray packages) {
 		if(packages == null) {
-			return "";
+			return Collections.emptyList();
 		}
 		List<String> list = new ArrayList<>();
 		for(int i = 0; i < packages.length(); i++) {
 			list.add(packages.optString(i));
 		}
-		return String.join("|", list);
+		return list;
 	}
 
 	protected void replace_constants(StringBuilder source) {
 		if (cause != null) {
 			cause.printStackTrace();
+			return;
 		}
 		Set<String> imports = new HashSet<>();
 		replaceTextOfMatchGroup(source, INPUT_REGEX, match1 -> {
@@ -57,7 +60,8 @@ public class GLConstants extends Constants {
 					return match2.group();
 				}
 				imports.add("org.lwjgl.input.Keyboard");
-				return "Keyboard." + replaceConst;
+				String constant = "Keyboard." + replaceConst;
+				return COMMENT ? match2.group() + " /*" + constant + "*/"  : constant;
 			});
 		});
 		replaceTextOfMatchGroup(source, CALL_REGEX, match1 -> {
@@ -80,7 +84,12 @@ public class GLConstants extends Constants {
 							JSONObject value = jsonObj.getJSONObject(key);
 							if(value.has(full_match)) {
 								imports.add("org.lwjgl.opengl." + key);
-								return String.format("%s.%s", key, value.get(full_match));
+								String[] constants = value.getString(full_match).split("\\|");
+								for(int i = 0; i < constants.length; i++) {
+									constants[i] = key + '.' + constants[i].trim();
+								}
+								String constant = String.join(" | ", constants);
+								return COMMENT ? full_match + " /*" + constant + "*/"  : constant;
 							}
 						}
 					}
@@ -88,6 +97,6 @@ public class GLConstants extends Constants {
 				return full_match;
 			});
 		});
-		updateImports(source, imports);
+		if(!COMMENT) updateImports(source, imports);
 	}
 }
