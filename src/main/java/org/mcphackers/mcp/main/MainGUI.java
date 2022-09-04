@@ -32,6 +32,7 @@ import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
@@ -205,7 +206,33 @@ public class MainGUI extends MCP {
 		label.setBorder(new EmptyBorder(10, 0, 0, 0));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		outer.add(label, BorderLayout.SOUTH);
-		return JOptionPane.showConfirmDialog(frame, outer, TRANSLATOR.translateKey("mcp.newVersion") + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
+		return JOptionPane.showConfirmDialog(frame, outer, TRANSLATOR.translateKey("mcp.newVersion") + " " + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
+	}
+	
+	public void changeWorkingDirectory() {
+		String value = (String)JOptionPane.showInputDialog(frame, MCP.TRANSLATOR.translateKey("mcp.enterDir"), MCP.TRANSLATOR.translateKey("mcp.changeDir"), JOptionPane.PLAIN_MESSAGE, null, null, getWorkingDir().toAbsolutePath().toString());
+		if(value != null) {
+			Path p = Paths.get(value);
+			if(Files.exists(p)) {
+				workingDir = p;
+				options = new Options(MCPPaths.get(this, "options.cfg"));
+				options.save();
+				frame.reloadVersionList();
+				frame.updateButtonState();
+				frame.menuBar.reloadOptions();
+				frame.menuBar.reloadSide();
+			}
+		}
+	}
+	
+	public void inputOptionsValue(TaskParameter param) {
+		String s = MCP.TRANSLATOR.translateKey("options.enterValue");
+		if(param.type == String[].class) {
+			s = MCP.TRANSLATOR.translateKey("options.enterValues") + "\n" + MCP.TRANSLATOR.translateKey("options.enterValues.info");
+		}
+		String value = (String)JOptionPane.showInputDialog(frame, s, param.getDesc(), JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(String.valueOf(options.getParameter(param))));
+		safeSetParameter(param, value);
+		options.save();
 	}
 
 	public void setupVersion(VersionData versionData) {
@@ -213,7 +240,7 @@ public class MainGUI extends MCP {
 		if (versionData != null && !versionData.equals(version == null ? null : VersionParser.INSTANCE.getVersion(version.id))) {
 			int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 			switch (response) {
-				case 0:
+				case JOptionPane.YES_OPTION:
 					setParameter(TaskParameter.SETUP_VERSION, versionData.id);
 					performTask(TaskMode.SETUP, Side.ANY);
 					break;
@@ -261,5 +288,12 @@ public class MainGUI extends MCP {
 		}
 		button.setEnabled(false);
 		return button;
+	}
+	
+	public void setSide(Side side) {
+		getOptions().side = side;
+		getOptions().save();
+		frame.updateButtonState();
+		frame.menuBar.reloadSide();
 	}
 }

@@ -8,6 +8,7 @@ import de.fernflower.main.extern.IFernflowerLogger;
 public class DecompileLogger extends IFernflowerLogger {
 
 	private final ProgressListener listener;
+	private int total;
 
 	public DecompileLogger(ProgressListener listener) {
 		this.listener = listener;
@@ -29,7 +30,12 @@ public class DecompileLogger extends IFernflowerLogger {
 	}
 
 	@Override
-	public void updateCounters(int current, int total) {
+	public void startSave(int total) {
+		this.total = total;
+	}
+
+	@Override
+	public void updateSave(int current) {
 		listener.setProgress((int)((double)current/(double)total * 100));
 	}
 

@@ -17,6 +17,7 @@ import javax.tools.ToolProvider;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.json.JSONObject;
+import org.mcphackers.mcp.Language;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
@@ -62,6 +63,7 @@ public class MainCLI extends MCP {
 	
 	public MainCLI(String[] args) {
 		options.resetDefaults();
+		changeLanguage(Language.ENGLISH); // Some CLI text is hardcoded in English
 		log("RetroMCP " + MCP.VERSION);
 
 		boolean startedWithNoParams = false;

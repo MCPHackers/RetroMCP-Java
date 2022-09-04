@@ -3,10 +3,8 @@ package org.mcphackers.mcp.tools.injector;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,7 +82,7 @@ public class GLConstants extends ClassVisitor {
 					glCalls.add(invoke);
 				}
 				if(invoke.owner.equals("org/lwjgl/input/Keyboard")) {
-					if(invoke.name.equals("isKeyDown")) {
+					if(invoke.name.equals("isKeyDown") || invoke.name.equals("getKeyName")) {
 						AbstractInsnNode insn2 = invoke.getPrevious();
 						if(insn2 == null) {
 							continue;
@@ -104,14 +102,22 @@ public class GLConstants extends ClassVisitor {
 							continue;
 						}
 						AbstractInsnNode insn3 = insn2.getNext();
-						if(insn3 == null || !isIntComp(insn3.getOpcode())) {
-							continue;
+						boolean hasCompare = false;
+						int count = 0;
+						// if next instruction is compare or any instruction + iadd and then compare
+						while(insn3 != null && count < 3 && !hasCompare) {
+							if(count == 1 && insn3.getOpcode() != Opcodes.IADD) break; 
+							if(isIntComp(insn3.getOpcode())) hasCompare = true;
+							count++;
+							insn3 = insn3.getNext();
 						}
-						Integer value = intValue(insn2);
-						if(value != null) {
-							FieldInsnNode getField = getKeyboardConstant(value);
-							if(getField != null) {
-								keyboardConstants.add(new Pair<>(insn2, getField));
+						if(hasCompare) {
+							Integer value = intValue(insn2);
+							if(value != null) {
+								FieldInsnNode getField = getKeyboardConstant(value);
+								if(getField != null) {
+									keyboardConstants.add(new Pair<>(insn2, getField));
+								}
 							}
 						}
 					}

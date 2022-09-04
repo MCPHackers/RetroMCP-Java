@@ -20,6 +20,7 @@ public class Decompiler implements IBytecodeProvider {
 	public final DecompileLogger log;
 	private final Path source;
 	private final Path destination;
+	@SuppressWarnings("unused")
 	private final File javadocs;
 	private final Map<String, Object> mapOptions = new HashMap<>();
 
@@ -38,7 +39,7 @@ public class Decompiler implements IBytecodeProvider {
 	}
 
 	public void decompile() throws IOException {
-		BaseDecompiler decompiler = new BaseDecompiler(this, new DirectoryResultSaver(destination.toFile()), mapOptions, log, javadocs.exists() ? new TinyJavadocProvider(javadocs) : null);
+		BaseDecompiler decompiler = new BaseDecompiler(this, new DirectoryResultSaver(destination.toFile()), mapOptions, log/*, javadocs.exists() ? new TinyJavadocProvider(javadocs) : null*/);
 		decompiler.addSpace(source.toAbsolutePath().toFile(), true);
 		decompiler.decompileContext();
 	}

@@ -56,7 +56,7 @@ public class MCPFrame extends JFrame {
 	private JPanel bottom;
 	private SideProgressBar[] progressBars = new SideProgressBar[0];
 	private JLabel[] progressLabels = new JLabel[0];
-	private MenuBar menuBar;
+	public MenuBar menuBar;
 	public MainGUI mcp;
 	public boolean loadingVersions = true;
 	private JPanel middlePanel;

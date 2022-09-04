@@ -5,9 +5,6 @@ import static org.mcphackers.mcp.tools.Util.operateOnThread;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,13 +15,10 @@ import java.util.Map.Entry;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 
 import org.mcphackers.mcp.Language;
 import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
@@ -90,19 +84,9 @@ public class MenuBar extends JMenuBar {
 		JMenuItem changeDir = new JMenuItem();
 		translatableComponents.put(changeDir, "mcp.changeDir");
 		changeDir.addActionListener(a -> operateOnThread(() -> {
-				String value = (String)JOptionPane.showInputDialog(owner, MCP.TRANSLATOR.translateKey("mcp.enterDir"), MCP.TRANSLATOR.translateKey("mcp.changeDir"), JOptionPane.PLAIN_MESSAGE, null, null, mcp.getWorkingDir().toAbsolutePath().toString());
-				if(value != null) {
-					Path p = Paths.get(value);
-					if(Files.exists(p)) {
-						mcp.workingDir = p;
-						mcp.options = new Options(MCPPaths.get(mcp, "options.cfg"));
-						reloadOptions();
-						reloadSide();
-						mcp.options.save();
-						owner.reloadVersionList();
-						owner.updateButtonState();
-					}
-				}
+				mcp.changeWorkingDirectory();
+				reloadOptions();
+				reloadSide();
 			})
 		);
 		mcpMenu.add(update);
@@ -158,7 +142,7 @@ public class MenuBar extends JMenuBar {
 		add(langMenu);
 	}
 
-	private void reloadSide() {
+	public void reloadSide() {
 		for (JMenuItem sideItem : sideItems) {
 			if(sideItem != null) {
 				sideItem.setSelected(false);
@@ -171,11 +155,10 @@ public class MenuBar extends JMenuBar {
 		sideItems[itemNumber].setSelected(true);
 	}
 	
-	private void setSide(Side side) {
-		mcp.getOptions().side = side;
-		mcp.getOptions().save();
-		reloadSide();
-		owner.updateButtonState();
+	public void reloadOptions() {
+		for(Map.Entry<TaskParameter, JMenuItem> entry : optionItems.entrySet()) {
+			entry.getValue().setSelected(mcp.options.getBooleanParameter(entry.getKey()));
+		}
 	}
 
 	private void initOptions() {
@@ -186,12 +169,12 @@ public class MenuBar extends JMenuBar {
 			final int i = side.index;
 			if(i >= 0) {
 				sideItems[i] = new JRadioButtonMenuItem(side.getName());
-				sideItems[i].addActionListener(e -> setSide(side));
+				sideItems[i].addActionListener(e -> mcp.setSide(side));
 				sideMenu.add(sideItems[i]);
 			}
 		}
 		sideItems[sideItems.length - 1] = new JRadioButtonMenuItem(Side.ANY.getName());
-		sideItems[sideItems.length - 1].addActionListener(e -> setSide(Side.ANY));
+		sideItems[sideItems.length - 1].addActionListener(e -> mcp.setSide(Side.ANY));
 		sideMenu.add(sideItems[sideItems.length - 1]);
 		menuOptions.add(sideMenu);
 		
@@ -226,13 +209,7 @@ public class MenuBar extends JMenuBar {
 				else {
 					b = new JMenuItem(param.getDesc());
 					b.addActionListener(u -> {
-						String s = MCP.TRANSLATOR.translateKey("options.enterValue");
-						if(param.type == String[].class) {
-							s = MCP.TRANSLATOR.translateKey("options.enterValues") + "\n" + MCP.TRANSLATOR.translateKey("options.enterValues.info");
-						}
-						String value = (String)JOptionPane.showInputDialog(owner, s, param.getDesc(), JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(String.valueOf(mcp.options.getParameter(param))));
-						mcp.safeSetParameter(param, value);
-						
+						mcp.inputOptionsValue(param);
 					});
 				}
 				a.add(b);
@@ -249,12 +226,6 @@ public class MenuBar extends JMenuBar {
 			owner.updateButtonState();
 		});
 		menuOptions.add(reset);
-	}
-	
-	private void reloadOptions() {
-		for(Map.Entry<TaskParameter, JMenuItem> entry : optionItems.entrySet()) {
-			entry.getValue().setSelected(mcp.options.getBooleanParameter(entry.getKey()));
-		}
 	}
 
 	public void setComponentsEnabled(boolean b) {
