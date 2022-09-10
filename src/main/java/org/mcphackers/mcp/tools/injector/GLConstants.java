@@ -30,8 +30,8 @@ public class GLConstants extends ClassVisitor {
 	private static final List<String> PACKAGES = json == null ? Collections.emptyList() : toList(json.getJSONArray("PACKAGES"));
 	private static final JSONArray CONSTANTS = json == null ? null : json.getJSONArray("CONSTANTS");
 	private static final JSONObject CONSTANTS_KEYBOARD = json == null ? null : json.getJSONObject("CONSTANTS_KEYBOARD");
-	
-	private String className;
+
+	private ClassNode classNode;
 	
 	private static JSONObject getJson() {
 		try {
@@ -66,7 +66,7 @@ public class GLConstants extends ClassVisitor {
 	}
 	
 	protected void visitClass(ClassNode node) {
-		className = node.name;
+		classNode = node;
 	}
 
 	protected void visitMethod(MethodNode node) {
@@ -132,7 +132,7 @@ public class GLConstants extends ClassVisitor {
 		
 		try {
 			if(glCalls.isEmpty()) return;
-			IdentifyCall sources = IdentifyCall.getInputs(className, node);
+			IdentifyCall sources = IdentifyCall.getInputs(classNode.name, node);
 			for(MethodInsnNode invoke : glCalls) {
 	
 				for(AbstractInsnNode insn : sources.getAllInputsOf(invoke)) {

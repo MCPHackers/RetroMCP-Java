@@ -113,7 +113,7 @@ public class MenuBar extends JMenuBar {
 		}
 		JMenuItem exit = new JMenuItem();
 		translatableComponents.put(exit, "task.exit");
-		exit.addActionListener(a -> System.exit(0));
+		exit.addActionListener(a -> mcp.exit());
 		mcpMenu.add(exit);
 		togglableComponents.add(update);
 		togglableComponents.add(changeDir);

@@ -12,10 +12,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.main.MainGUI;
@@ -42,9 +42,8 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
-import org.mcphackers.mcp.tools.versions.json.Version;
 
-public class MCPFrame extends JFrame {
+public class MCPFrame extends JFrame implements WindowListener {
 	
 	private static final long serialVersionUID = -3455157541499586338L;
 
@@ -75,7 +74,8 @@ public class MCPFrame extends JFrame {
 	public MCPFrame(MainGUI mcp) {
 		super("RetroMCP " + MCP.VERSION);
 		this.mcp = mcp;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(this);
 		setIconImage(ICON);
 		initFrameContents();
 		pack();
@@ -181,9 +181,6 @@ public class MCPFrame extends JFrame {
 				}
 				
 			});
-			if(Files.exists(MCPPaths.get(mcp, MCPPaths.VERSION))) {
-				mcp.currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(MCPPaths.get(mcp, MCPPaths.VERSION)))));
-			}
 			setCurrentVersion(mcp.currentVersion == null ? null : VersionParser.INSTANCE.getVersion(mcp.currentVersion.id));
 			verList.setMaximumRowCount(20);
 			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
@@ -325,6 +322,35 @@ public class MCPFrame extends JFrame {
 		menuBar.reloadText();
 		revalidate();
 		topLeftContainer.revalidate();
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		mcp.exit();
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
 	}
 
 }

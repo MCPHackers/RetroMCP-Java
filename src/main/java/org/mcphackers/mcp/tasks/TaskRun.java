@@ -56,7 +56,10 @@ public class TaskRun extends Task {
 		if(runBuild) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
 		}
-		if(!Files.exists(MCPPaths.get(mcp, MCPPaths.REMAPPED, side))) {
+		else {
+			cpList.add(MCPPaths.get(mcp, MCPPaths.BIN, side));
+		}
+		if(Files.notExists(MCPPaths.get(mcp, MCPPaths.REMAPPED, side))) {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 		}
 		else {

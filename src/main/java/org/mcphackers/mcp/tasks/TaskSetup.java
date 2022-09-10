@@ -1,5 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
+import java.io.BufferedWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -51,8 +52,9 @@ public class TaskSetup extends Task {
 			chosenVersion = mcp.inputString(TaskMode.SETUP.getFullName(), MCP.TRANSLATOR.translateKey("task.setup.selectVersion"));
 		}
 
-		byte[] versionBytes = Util.readAllBytes(new URL(chosenVersionData.url).openStream());
-		Version versionJson = Version.from(new JSONObject(new String(versionBytes, StandardCharsets.UTF_8)));
+		JSONObject versionJsonObj = new JSONObject(new String(Util.readAllBytes(new URL(chosenVersionData.url).openStream()), StandardCharsets.UTF_8));
+		VersionParser.fixLibraries(versionJsonObj);
+		Version versionJson = Version.from(versionJsonObj);
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.CONF));
 		
 		setProgress(getLocalizedStage("download", chosenVersionData.resources), 2);
@@ -69,7 +71,9 @@ public class TaskSetup extends Task {
 		for(Path nativeArchive : DownloadData.getNatives(mcp, versionJson)) {
 			FileUtil.extract(nativeArchive, natives);
 		}
-		Files.write(MCPPaths.get(mcp, MCPPaths.VERSION), versionBytes);
+		try(BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, MCPPaths.VERSION))) {
+			versionJsonObj.write(writer, 1, 0);
+		}
 		mcp.setCurrentVersion(versionJson);
 
 		setProgress(getLocalizedStage("workspace"), 90);

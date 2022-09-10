@@ -55,7 +55,7 @@ public class TaskCleanup extends Task {
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REOBF_JAR, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.PATCHES, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.COMPILED, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BIN, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BUILD_JAR, side));
@@ -69,7 +69,6 @@ public class TaskCleanup extends Task {
 				MCPPaths.get(mcp, MCPPaths.JARS),
 				MCPPaths.get(mcp, MCPPaths.TEMP),
 				MCPPaths.get(mcp, MCPPaths.SRC),
-				MCPPaths.get(mcp, MCPPaths.BIN),
 				MCPPaths.get(mcp, MCPPaths.REOBF),
 				MCPPaths.get(mcp, MCPPaths.BUILD),
 			});

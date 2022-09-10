@@ -58,10 +58,10 @@ public class TaskUpdateMD5 extends TaskStaged {
 	}
 
 	public void updateMD5(boolean reobf) throws IOException {
-		final Path binPath 	= MCPPaths.get(mcp, MCPPaths.COMPILED, side);
+		final Path binPath 	= MCPPaths.get(mcp, MCPPaths.BIN, side);
 		final Path md5 = MCPPaths.get(mcp, reobf ? MCPPaths.MD5_RO : MCPPaths.MD5, side);
 
-		if (!Files.exists(binPath)) {
+		if (Files.notExists(binPath)) {
 			throw new IOException(side.name + " classes not found!");
 		}
 		BufferedWriter writer = Files.newBufferedWriter(md5);

@@ -22,7 +22,7 @@ public class TaskBuild extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		Path bin = 			MCPPaths.get(mcp, MCPPaths.COMPILED, side);
+		Path bin = 			MCPPaths.get(mcp, MCPPaths.BIN, side);
 		return new Stage[] {
 			stage(getLocalizedStage("recompile"),
 			() -> {

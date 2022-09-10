@@ -45,15 +45,15 @@ public class TaskRecompile extends TaskStaged {
 		if(compiler == null) {
 			throw new RuntimeException("Could not find compiling API");
 		}
-		Path binPath = MCPPaths.get(mcp, MCPPaths.COMPILED, side);
+		Path binPath = MCPPaths.get(mcp, MCPPaths.BIN, side);
 		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		return new Stage[] {
 			stage(getLocalizedStage("recompile"), 1,
 			() -> {
-				FileUtil.deleteDirectoryIfExists(binPath);
 				Files.createDirectories(binPath);
+				FileUtil.cleanDirectory(binPath);
 				setProgress(2);
-				if (!Files.exists(srcPath)) {
+				if (Files.notExists(srcPath)) {
 					throw new IOException(side.getName() + " sources not found!");
 				}
 

@@ -5,6 +5,7 @@ import static org.mcphackers.mcp.tools.Util.operateOnThread;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -132,7 +134,7 @@ public class MainGUI extends MCP {
 	@Override
 	public boolean yesNoInput(String title, String msg) {
 		//frame.setExtendedState(Frame.NORMAL);
-		return JOptionPane.showConfirmDialog(frame, msg, title, JOptionPane.YES_NO_OPTION) == 0;
+		return JOptionPane.showConfirmDialog(frame, msg, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	@Override
@@ -155,6 +157,14 @@ public class MainGUI extends MCP {
 			break;
 		}
 		JOptionPane.showMessageDialog(frame, msg, title, type);
+	}
+	
+	public void exit() {
+		if(!isActive) {
+			if(!yesNoInput(MCP.TRANSLATOR.translateKey("mcp.confirmAction"), MCP.TRANSLATOR.translateKey("mcp.confirmExit"))) return;
+		}
+		frame.dispose();
+		System.exit(0);
 	}
 
 	@Override
@@ -210,10 +220,12 @@ public class MainGUI extends MCP {
 	}
 	
 	public void changeWorkingDirectory() {
-		String value = (String)JOptionPane.showInputDialog(frame, MCP.TRANSLATOR.translateKey("mcp.enterDir"), MCP.TRANSLATOR.translateKey("mcp.changeDir"), JOptionPane.PLAIN_MESSAGE, null, null, getWorkingDir().toAbsolutePath().toString());
-		if(value != null) {
-			Path p = Paths.get(value);
-			if(Files.exists(p)) {
+        JFileChooser f = new JFileChooser(getWorkingDir().toAbsolutePath().toFile());
+        f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        if(f.showDialog(frame, MCP.TRANSLATOR.translateKey("mcp.selectDir")) == JFileChooser.APPROVE_OPTION) {
+        	File file = f.getSelectedFile();
+        	Path p = file.toPath();
+			if(Files.isDirectory(p)) {
 				workingDir = p;
 				options = new Options(MCPPaths.get(this, "options.cfg"));
 				options.save();

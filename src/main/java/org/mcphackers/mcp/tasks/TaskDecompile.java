@@ -56,8 +56,8 @@ public class TaskDecompile extends TaskStaged {
 		return new Stage[] {
 			stage(getLocalizedStage("prepare"), 0,
 			() -> {
-				FileUtil.deleteDirectoryIfExists(srcPath);
-				FileUtil.deleteDirectoryIfExists(ffOut);
+				FileUtil.cleanDirectory(srcPath);
+				FileUtil.cleanDirectory(ffOut);
 				Files.deleteIfExists(rdiOut);
 				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.TEMP_SIDE, side));
 			}),
@@ -87,7 +87,7 @@ public class TaskDecompile extends TaskStaged {
 					injector.stripLVT();
 					injector.applyMappings(getMappings(injector.getStorage(), side));
 				}
-				if(hasLWJGL) injector.setVisitor(new GLConstants(injector.getVisitor()));
+				if(hasLWJGL) injector.addVisitor(new GLConstants(null));
 				injector.fixAccess();
 				injector.fixInnerClasses();
 				injector.fixImplicitConstructors();

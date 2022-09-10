@@ -33,15 +33,11 @@ public class TaskReobfuscate extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-			stage(getLocalizedStage("recompile"),
-			() -> {
-				new TaskRecompile(side, mcp, this).doTask();
-			}),
-			stage(getLocalizedStage("gathermd5"), 30,
+			stage(getLocalizedStage("gathermd5"),
 			() -> {
 				new TaskUpdateMD5(side, mcp, this).updateMD5(true);
 			}),
-			stage(getLocalizedStage("reobf"), 52,
+			stage(getLocalizedStage("reobf"), 43,
 			() -> {
 				reobfuscate();
 			})
@@ -50,7 +46,7 @@ public class TaskReobfuscate extends TaskStaged {
 		
 	
 	private void reobfuscate() throws IOException {
-		final Path reobfBin = MCPPaths.get(mcp, MCPPaths.COMPILED, side);
+		final Path reobfBin = MCPPaths.get(mcp, MCPPaths.BIN, side);
 		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
 		
 		Side[] sides = side == Side.MERGED ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
@@ -74,7 +70,9 @@ public class TaskReobfuscate extends TaskStaged {
 					}
 				}
 			});
-			Mappings mappings = Mappings.read(MCPPaths.get(mcp, MCPPaths.MAPPINGS), "named", localSide.name);
+			Path mappingsPath = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
+			boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
+			Mappings mappings = Mappings.read(mappingsPath, "named", joined ? "official" : localSide.name);
 			modifyClassMappings(mappings, classNames, enableObfuscation);
 			Files.deleteIfExists(reobfJar);
 			RDInjector injector = new RDInjector(reobfBin);
@@ -86,14 +84,12 @@ public class TaskReobfuscate extends TaskStaged {
 			for(Entry<String, String> entry : mappings.classes.entrySet()) {
 				reversedNames.put(entry.getValue(), entry.getKey());
 			}
-			FileUtil.deleteDirectoryIfExists(reobfDir);
+			FileUtil.cleanDirectory(reobfDir);
 			FileUtil.extract(reobfJar, reobfDir, entry -> {
 				String className = entry.getName().replace(".class", "");
-				boolean presentInMappings = true;
 				String deobfName = reversedNames.get(className);
 				if(deobfName == null) {
 					deobfName = className;
-					presentInMappings = false;
 				}
 				String hash			= originalHashes.get(deobfName);
 				String hashModified = recompHashes.get(deobfName);
@@ -101,7 +97,7 @@ public class TaskReobfuscate extends TaskStaged {
 					if(hash == null) {
 						return true;
 					}
-					else if(!hash.equals(hashModified) && presentInMappings) {
+					else if(!hash.equals(hashModified)) {
 						return true;
 					}
 				}
@@ -112,14 +108,14 @@ public class TaskReobfuscate extends TaskStaged {
 
 	private void modifyClassMappings(Mappings mappings, List<String> classNames, boolean obf) {
 		Map<String, Integer> obfIndexes = new HashMap<>();
+		Map<String, String> packageMappings = getPackageMappings(mappings.classes);
 		for(String className : classNames) {
-			if (mappings.classes.containsKey(className) /*&& !hashes.containsKey(className)*/) {
-				String packageName = className.lastIndexOf("/") >= 0 ? className.substring(0, className.lastIndexOf("/") + 1) : null;
-				String obfPackage = mappings.getPackageName(packageName);
-				if (obfPackage == null) {
-					break;
-				}
-				String clsName = (className.lastIndexOf("/") >= 0 ? className.substring(className.lastIndexOf("/") + 1) : className);
+			String reobfName = mappings.classes.get(className);
+			if (reobfName == null /*&& !hashes.containsKey(className)*/) {
+				int i1 = className.indexOf('/');
+				String packageName = i1 == -1 ? "" : className.substring(0, i1 + 1);
+				String obfPackage = packageMappings.get(packageName);
+				String clsName = i1 == -1 ? className : className.substring(i1 + 1);
 				if(obf) {
 					int obfIndex = obfIndexes.getOrDefault(obfPackage, 0);
 					String obfName = MappingUtil.getObfuscatedName(obfIndex);
@@ -136,20 +132,33 @@ public class TaskReobfuscate extends TaskStaged {
 					}
 					clsName = obfName;
 				}
-				mappings.classes.put(className, obfPackage + clsName);
+				if(obf || obfPackage != null) {
+					String className2 = (obfPackage == null ? packageName : obfPackage) + clsName;
+					mappings.classes.put(className, className2);
+				}
 			}
 		}
+	}
+	
+	private static Map<String, String> getPackageMappings(Map<String, String> classMappings) {
+		Map<String, String> packageMappings = new HashMap<>();
+		for(Entry<String, String> entry : classMappings.entrySet()) {
+			System.out.println(entry.getKey() + " : " + entry.getValue());
+		}
+		for(Entry<String, String> entry : classMappings.entrySet()) {
+			int i1 = entry.getKey().indexOf('/');
+			int i2 = entry.getValue().indexOf('/');
+			String name1 = i1 == -1 ? "" : entry.getKey().substring(0, i1 + 1);
+			String name2 = i2 == -1 ? "" : entry.getKey().substring(0, i2 + 1);
+			packageMappings.put(name1, name2);
+		}
+		return packageMappings;
 	}
 	
 	public void setProgress(int progress) {
 		switch (step) {
 		case 0: {
-			int percent = (int)((double)progress * 0.5D);
-			super.setProgress(1 + percent);
-			break;
-		}
-		case 1: {
-			int percent = (int)((double)progress * 0.22D);
+			int percent = (int)((double)progress * 0.42D);
 			super.setProgress(1 + percent);
 			break;
 		}

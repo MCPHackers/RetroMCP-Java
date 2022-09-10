@@ -53,7 +53,7 @@ public abstract class FileUtil {
 			for(Path file : files) {
 				Path fileInsideZipPath = fs.getPath("/" + relativeTo.relativize(file).toString());
 				Files.deleteIfExists(fileInsideZipPath);
-				if(fileInsideZipPath.getParent() != null && !Files.exists(fileInsideZipPath.getParent()))
+				if(fileInsideZipPath.getParent() != null && Files.notExists(fileInsideZipPath.getParent()))
 					Files.createDirectories(fileInsideZipPath.getParent());
 				Files.copy(file, fileInsideZipPath);
 			}
@@ -166,7 +166,7 @@ public abstract class FileUtil {
 	}
 
 	public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
-		if(!Files.exists(targetFolder)) {
+		if(Files.notExists(targetFolder)) {
 			Files.createDirectories(targetFolder);
 		}
 		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {

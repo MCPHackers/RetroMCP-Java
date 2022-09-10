@@ -78,7 +78,7 @@ public class TaskMode {
 			.setName("updatemd5")
 			.setTaskClass(TaskUpdateMD5.class)
 			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, side));
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, side));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.SOURCE_VERSION,
@@ -106,7 +106,7 @@ public class TaskMode {
 			.setTaskClass(TaskRun.class)
 			.setProgressBars(false)
 			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, side)) ||  Files.isReadable(MCPPaths.get(mcp, MCPPaths.COMPILED, Side.MERGED));
+				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, side)) ||  Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, Side.MERGED));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.RUN_BUILD

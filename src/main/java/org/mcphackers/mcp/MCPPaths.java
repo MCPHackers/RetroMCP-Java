@@ -1,9 +1,6 @@
 package org.mcphackers.mcp;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.mcphackers.mcp.tasks.Task.Side;
 
@@ -14,7 +11,6 @@ public class MCPPaths {
 	public static final String LIB = 		"libraries/";
 	public static final String TEMP = 		"temp/";
 	public static final String SRC = 		"src/";
-	public static final String BIN = 		"bin/";
 	public static final String REOBF = 		"reobf/";
 	public static final String CONF = 		"conf/";
 	public static final String BUILD = 		"build/";
@@ -27,10 +23,12 @@ public class MCPPaths {
 
 	public static final String TEMP_SIDE = 	 		 TEMP + "%s";
 	public static final String TEMP_SRC = 	 		 TEMP + "%s/src";
+	public static final String BIN =				 TEMP + "%s/bin";
+	//public static final String COMPILED = 		 	 TEMP + "%s/compiled.jar";
 	public static final String REMAPPED = 	 		 TEMP + "%s/remapped.jar";
 	public static final String MD5 = 		 		 TEMP + "%s/original.md5";
 	public static final String MD5_RO = 		 	 TEMP + "%s/modified.md5";
-	public static final String REOBF_JAR = 	 		 TEMP + "%s/reobf.jar";
+	public static final String REOBF_JAR = 	 		 TEMP + "%s/reobfuscated.jar";
 
 	public static final String MAPPINGS = 			 CONF + "mappings.tiny";
 	public static final String EXC = 		 		 CONF + "exceptions.exc";
@@ -40,7 +38,6 @@ public class MCPPaths {
 	public static final String VERSION = 	 		 CONF + "version.json";
 
 	public static final String SOURCE = 	 		 SRC + "minecraft_%s";
-	public static final String COMPILED = 		 	 BIN + "minecraft_%s";
 
 	public static final String REOBF_SIDE = 		 REOBF + "minecraft_%s";
 	public static final String BUILD_ZIP = 	 		 BUILD + "minecraft_%s.zip";
@@ -48,30 +45,15 @@ public class MCPPaths {
 
 	public static final String UPDATE_JAR =		 	 "update.jar";
 	
-	private static final Set<String> STRIP_SIDE_NAME = new HashSet<String>() {
-		private static final long serialVersionUID = 1079122339538512318L;
-		{
-			add(JAR_ORIGINAL);
-			add(SOURCE);
-			add(COMPILED);
-			add(REOBF_SIDE);
-			add(BUILD_ZIP);
-			add(BUILD_JAR);
-		}
-	};
-	
 	public static Path get(MCP mcp, String path, Side side) {
+		String newPath = path;
 		if(side == Side.CLIENT) {
-			for(String strip : STRIP_SIDE_NAME) {
-				if(path.startsWith(strip)) {
-					return get(mcp, path.replace("_%s", ""));
-				}
-			}
+			newPath = path.replace("minecraft_%s", "minecraft");
 		}
-		return get(mcp, String.format(path, side.name));
+		return get(mcp, String.format(newPath, side.name));
 	}
 
 	public static Path get(MCP mcp, String path) {
-		return mcp.getWorkingDir().resolve(Paths.get(path));
+		return mcp.getWorkingDir().resolve(path);
 	}
 }
