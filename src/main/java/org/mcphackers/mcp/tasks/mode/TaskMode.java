@@ -131,7 +131,7 @@ public class TaskMode {
 			.setTaskClass(TaskCreatePatch.class)
 			.addRequirement((mcp, side) -> {
 				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side))
-					&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side));
+					&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE_UNPATCHED, side));
 			})
 			.setParameters(new TaskParameter[] {
 				TaskParameter.SIDE

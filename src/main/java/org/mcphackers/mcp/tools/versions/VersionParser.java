@@ -1,6 +1,5 @@
 package org.mcphackers.mcp.tools.versions;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -25,6 +24,7 @@ public class VersionParser {
 	public static final VersionParser INSTANCE = new VersionParser();
 	
 	private List<VersionData> versions = new ArrayList<>();
+	public Exception failureCause;
 	
 	public VersionParser() {
 		JSONArray json;
@@ -32,7 +32,7 @@ public class VersionParser {
 			json = getJson();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			failureCause = e;
 			return; // Couldn't init json
 		}
 		for(Object j : json) {
@@ -41,9 +41,7 @@ public class VersionParser {
 			}
 			try {
 				VersionData data = VersionData.from((JSONObject)j);
-				if(data.resources != null) {
-					versions.add(data);
-				}
+				versions.add(data);
 			}
 			catch (Exception e) {
 				// Catching exception will skip to the next version
@@ -165,7 +163,7 @@ public class VersionParser {
 		return obj;
 	}
 	
-	private static JSONArray getJson() throws IOException {
+	private static JSONArray getJson() throws Exception {
 		InputStream in;
 		Path versions = Paths.get("versions.json");
 		if(Files.exists(versions)) {

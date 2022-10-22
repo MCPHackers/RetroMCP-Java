@@ -1,10 +1,11 @@
 package org.mcphackers.mcp.tasks;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.mcphackers.mcp.MCP;
@@ -14,8 +15,9 @@ import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.injector.GLConstants;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
-import org.mcphackers.mcp.tools.source.Constants;
 import org.mcphackers.mcp.tools.source.MathConstants;
+import org.mcphackers.mcp.tools.source.Source;
+import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.rdi.injector.RDInjector;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
@@ -47,29 +49,35 @@ public class TaskDecompile extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		final Path rdiOut 		= MCPPaths.get(mcp, MCPPaths.REMAPPED, side);
-		final Path ffOut 		= MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side);
+		final Path ffOut 		= MCPPaths.get(mcp, MCPPaths.SOURCE_UNPATCHED, side);
 		final Path srcPath 		= MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		final Path patchesPath 	= MCPPaths.get(mcp, MCPPaths.PATCHES, side);
 		
-		boolean hasLWJGL = side == Side.CLIENT || side == Side.MERGED;
+		final boolean guessGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS);
+		final boolean hasLWJGL = side == Side.CLIENT || side == Side.MERGED;
 		
 		return new Stage[] {
 			stage(getLocalizedStage("prepare"), 0,
 			() -> {
-				FileUtil.cleanDirectory(srcPath);
-				FileUtil.cleanDirectory(ffOut);
-				Files.deleteIfExists(rdiOut);
-				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.TEMP_SIDE, side));
+				FileUtil.cleanDirectory(MCPPaths.get(mcp, MCPPaths.PROJECT, side));
+				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.JARS_DIR, side));
+				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.MD5_DIR, side));
 			}),
 			stage(getLocalizedStage("rdi"), 2,
 			() -> {
 				RDInjector injector = new RDInjector();
+				Path path;
+				Mappings mappings;
+				
 				if(side == Side.MERGED) {
-					Path path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER);
+					path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER);
 					injector.setStorage(new ClassStorage(IOUtil.read(path)));
 					injector.addResources(path);
 					injector.stripLVT();
-					injector.applyMappings(getMappings(injector.getStorage(), Side.SERVER));
+					mappings = getMappings(injector.getStorage(), Side.SERVER);
+					if(mappings != null) {
+						injector.applyMappings(mappings);
+					}
 					injector.transform();
 					ClassStorage serverStorage = injector.getStorage();
 					
@@ -77,21 +85,29 @@ public class TaskDecompile extends TaskStaged {
 					injector.setStorage(new ClassStorage(IOUtil.read(path)));
 					injector.addResources(path);
 					injector.stripLVT();
-					injector.applyMappings(getMappings(injector.getStorage(), Side.CLIENT));
+					mappings = getMappings(injector.getStorage(), Side.CLIENT);
+					if(mappings != null) {
+						injector.applyMappings(mappings);
+					}
 					injector.mergeWith(serverStorage);
 				}
 				else {
-					Path path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side);
+					path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side);
 					injector.setStorage(new ClassStorage(IOUtil.read(path)));
 					injector.addResources(path);
 					injector.stripLVT();
-					injector.applyMappings(getMappings(injector.getStorage(), side));
+					mappings = getMappings(injector.getStorage(), side);
+					if(mappings != null) {
+						injector.applyMappings(mappings);
+					}
 				}
 				if(hasLWJGL) injector.addVisitor(new GLConstants(null));
-				injector.fixAccess();
+				injector.restoreSourceFile();
 				injector.fixInnerClasses();
 				injector.fixImplicitConstructors();
-				//injector.guessGenerics();
+				if(guessGenerics) {
+					injector.guessGenerics();
+				}
 				final Path exc = MCPPaths.get(mcp, MCPPaths.EXC);
 				if (Files.exists(exc)) {
 					injector.fixExceptions(exc);
@@ -101,19 +117,15 @@ public class TaskDecompile extends TaskStaged {
 			}),
 			stage(getLocalizedStage("decompile"),
 			() -> {
-				final Path javadocs = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
-				new Decompiler(this, rdiOut, ffOut, javadocs,
+				new Decompiler(this, rdiOut, ffOut,
 						mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING),
-						mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE))
+						guessGenerics)
 				.decompile();
+				createProject(side);
 			}),
 			stage(getLocalizedStage("constants"), 86,
 			() -> {
-				List<Constants> constants = new ArrayList<>();
-//				if(hasLWJGL)
-//				constants.add(new GLConstants());
-				constants.add(new MathConstants());
-				Constants.replace(ffOut, constants);
+				Source.modify(ffOut, Collections.singletonList(new MathConstants()));
 			}),
 			stage(getLocalizedStage("patch"), 88,
 			() -> {
@@ -140,6 +152,9 @@ public class TaskDecompile extends TaskStaged {
 	
 	private Mappings getMappings(ClassStorage storage, Side side) throws IOException {
 		Path mappingsPath = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
+		if(!Files.exists(mappingsPath)) {
+			return null;
+		}
 		boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
 		Mappings mappings = Mappings.read(mappingsPath, joined ? "official" : side.name, "named");
 		for(String name : storage.getAllClasses()) {
@@ -163,6 +178,29 @@ public class TaskDecompile extends TaskStaged {
 		if (result.exit != 0) {
 			addMessage(logger.toString(), Task.INFO);
 			addMessage("Patching failed!", Task.ERROR);
+		}
+	}
+	
+	private void createProject(Side side) throws IOException {
+		List<String> libraries = DownloadData.getLibraries(mcp.getCurrentVersion());
+		
+		try (BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, MCPPaths.PROJECT, side).resolve(".classpath"))) {
+			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); writer.newLine();
+			writer.write("<classpath>"); writer.newLine();
+			writer.write("\t<classpathentry kind=\"src\" path=\"src\">"); writer.newLine();
+			writer.write("\t\t<attributes>"); writer.newLine();
+			writer.write("\t\t\t<attribute name=\"org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY\" value=\"../libraries/natives\"/>"); writer.newLine();
+			writer.write("\t\t</attributes>"); writer.newLine();
+			writer.write("\t</classpathentry>"); writer.newLine();
+			writer.write("\t<classpathentry kind=\"lib\" path=\"jars/deobfuscated.jar\"/>"); writer.newLine();
+			for(String lib : libraries) {
+				if(Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
+					writer.write("\t<classpathentry kind=\"lib\" path=\"../libraries/" + lib + ".jar\"/>"); writer.newLine();
+				}
+			}
+			writer.write("\t<classpathentry kind=\"con\" path=\"org.eclipse.jdt.launching.JRE_CONTAINER\"/>"); writer.newLine();
+			writer.write("\t<classpathentry kind=\"output\" path=\"output\"/>"); writer.newLine();
+			writer.write("</classpath>"); writer.newLine();
 		}
 	}
 	

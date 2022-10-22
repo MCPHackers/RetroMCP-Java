@@ -1,6 +1,5 @@
 package org.mcphackers.mcp.tools;
 
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -51,9 +50,5 @@ public abstract class ClassUtils {
 			}
 		}
 		return false;
-	}
-	
-	public static InputStream getResource(Class<?> sourceClass, String location) {
-		return sourceClass.getClassLoader().getResourceAsStream(location);
 	}
 }

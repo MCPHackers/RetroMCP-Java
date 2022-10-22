@@ -19,14 +19,12 @@ import java.util.regex.Pattern;
 
 public abstract class Source {
 
-	private static final Pattern PACKAGE = Pattern.compile("package ([.*\\w]+);(\\r|)\\n");
-	private static final Pattern IMPORT = Pattern.compile("import ([.*\\w]+);((\\r|)\\n)+");
+	public static final Pattern PACKAGE = Pattern.compile("package ([.*\\w]+);(\\r|)\\n");
+	public static final Pattern IMPORT = Pattern.compile("import ([.*\\w]+);((\\r|)\\n)+");
+
+	public abstract void apply(StringBuilder source);
 	
-	public interface SourceModify {
-		void apply(StringBuilder source);
-	}
-	
-	public static void modify(Path src, SourceModify modify) throws IOException {
+	public static void modify(Path src, List<Source> modify) throws IOException {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
@@ -34,14 +32,16 @@ public abstract class Source {
 					return FileVisitResult.CONTINUE;
 				}
 				StringBuilder source = new StringBuilder(new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
-				modify.apply(source);
+				for(Source srcModify : modify) {
+					srcModify.apply(source);
+				}
 				Files.write(file, source.toString().getBytes());
 				return FileVisitResult.CONTINUE;
 			}
 		});
 	}
 	
-	public static void updateImports(StringBuilder source, Set<String> imports) {
+	protected void updateImports(StringBuilder source, Set<String> imports) {
 		replaceTextOfMatchGroup(source, IMPORT, match -> {
 			// Add import to the set
 			imports.add(match.group(1));
@@ -70,13 +70,13 @@ public abstract class Source {
 		else source.insert(0, sb.toString());
 	}
 	
-	public static String replaceTextOfMatchGroup(String source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
+	protected String replaceTextOfMatchGroup(String source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
 		StringBuilder sb = new StringBuilder(source);
 		replaceTextOfMatchGroup(sb, pattern, replaceStrategy);
 		return sb.toString();
 	}
 	
-	public static void replaceTextOfMatchGroup(StringBuilder source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
+	protected void replaceTextOfMatchGroup(StringBuilder source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
 		Stack<MatchResult> results = new Stack<>();
 		String sourceString = source.toString();
 		Matcher matcher = pattern.matcher(sourceString);
@@ -92,15 +92,15 @@ public abstract class Source {
 		}
 	}
 	
-	public static void addAfterMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
-		addMatch(source, pattern, true, stringToAdd);
+	protected void addAfterMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
+		addMatch(source, pattern, stringToAdd, true);
 	}
 	
-	public static void addBeforeMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
-		addMatch(source, pattern, false, stringToAdd);
+	protected void addBeforeMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
+		addMatch(source, pattern, stringToAdd, false);
 	}
 	
-	private static void addMatch(StringBuilder source, Pattern pattern, boolean after, String stringToAdd) {
+	private static void addMatch(StringBuilder source, Pattern pattern, String stringToAdd, boolean after) {
 		Stack<MatchResult> results = new Stack<>();
 		String sourceString = source.toString();
 		Matcher matcher = pattern.matcher(sourceString);
@@ -110,15 +110,11 @@ public abstract class Source {
 		}
 		while (!results.isEmpty()) {
 			MatchResult match = results.pop();
-			if(after) {
-				if (match.end() >= 0) {
-					source.insert(match.end(), stringToAdd);
-				}
+			if(after && match.end() >= 0) {
+				source.insert(match.end(), stringToAdd);
 			}
-			else {
-				if (match.start() >= 0) {
-					source.insert(match.start(), stringToAdd);
-				}
+			else if (match.start() >= 0) {
+				source.insert(match.start(), stringToAdd);
 			}
 		}
 	}

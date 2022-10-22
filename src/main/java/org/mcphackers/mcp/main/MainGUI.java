@@ -49,7 +49,23 @@ public class MainGUI extends MCP {
 	public Options options;
 	public Version currentVersion;
 	
-	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
+	public static final TaskMode[] TASKS = {
+			TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
+
+	public static final String[] TABS = {
+			"task.decompile",
+			"task.recompile",
+			"task.reobfuscate",
+			"task.build",
+			"options.running"
+			};
+	public static final TaskParameter[][] TAB_PARAMETERS = {
+			{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS},
+			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
+			{TaskParameter.OBFUSCATION},
+			{TaskParameter.FULL_BUILD},
+			{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS}
+	};
 	
 	public static void main(String[] args) throws Exception {
 		Path workingDir = Paths.get("");

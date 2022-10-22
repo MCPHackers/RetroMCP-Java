@@ -16,6 +16,7 @@ import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.rdi.injector.RDInjector;
+import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
 import org.mcphackers.rdi.util.IOUtil;
 import org.objectweb.asm.ClassReader;
@@ -47,7 +48,6 @@ public class TaskReobfuscate extends TaskStaged {
 	
 	private void reobfuscate() throws IOException {
 		final Path reobfBin = MCPPaths.get(mcp, MCPPaths.BIN, side);
-		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
 		
 		Side[] sides = side == Side.MERGED ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
 		
@@ -70,13 +70,12 @@ public class TaskReobfuscate extends TaskStaged {
 					}
 				}
 			});
-			Path mappingsPath = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
-			boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
-			Mappings mappings = Mappings.read(mappingsPath, "named", joined ? "official" : localSide.name);
-			modifyClassMappings(mappings, classNames, enableObfuscation);
 			Files.deleteIfExists(reobfJar);
 			RDInjector injector = new RDInjector(reobfBin);
-			injector.applyMappings(mappings);
+			Mappings mappings = getMappings(injector.getStorage(), localSide);
+			if(mappings != null) {
+				injector.applyMappings(mappings);
+			}
 			injector.transform();
 			IOUtil.write(injector.getStorage(), Files.newOutputStream(reobfJar));
 
@@ -104,6 +103,18 @@ public class TaskReobfuscate extends TaskStaged {
 				return false;
 			});
 		}
+	}
+	
+	private Mappings getMappings(ClassStorage storage, Side side) throws IOException {
+		Path mappingsPath = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
+		if(!Files.exists(mappingsPath)) {
+			return null;
+		}
+		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
+		boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
+		Mappings mappings = Mappings.read(mappingsPath, "named", joined ? "official" : side.name);
+		modifyClassMappings(mappings, storage.getAllClasses(), enableObfuscation);
+		return mappings;
 	}
 
 	private void modifyClassMappings(Mappings mappings, List<String> classNames, boolean obf) {

@@ -17,9 +17,9 @@ public class TaskCreatePatch extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		Path srcPathUnpatched = MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side);
+		Path srcPathUnpatched = MCPPaths.get(mcp, MCPPaths.SOURCE_UNPATCHED, side);
 		Path srcPathPatched = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
-		Path patchesOut = MCPPaths.get(mcp, "patches/patches_%s", side);
+		Path patchesOut = MCPPaths.get(mcp, MCPPaths.PATCH, side);
 		if(Files.isDirectory(patchesOut)) {
 			FileUtil.cleanDirectory(patchesOut);
 		}

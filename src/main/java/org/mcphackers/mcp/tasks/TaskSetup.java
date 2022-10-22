@@ -12,7 +12,6 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
-import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.DownloadData;
@@ -57,9 +56,10 @@ public class TaskSetup extends Task {
 		Version versionJson = Version.from(versionJsonObj);
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.CONF));
 		
-		setProgress(getLocalizedStage("download", chosenVersionData.resources), 2);
-		FileUtil.downloadFile(chosenVersionData.resources, MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"));
-		FileUtil.extract(MCPPaths.get(mcp, MCPPaths.CONF + "conf.zip"), MCPPaths.get(mcp, MCPPaths.CONF), true);
+		if(chosenVersionData.resources != null) {
+			setProgress(getLocalizedStage("download", chosenVersionData.resources), 2);
+			FileUtil.extract(new URL(chosenVersionData.resources).openStream(), MCPPaths.get(mcp, MCPPaths.CONF));
+		}
 		
 		DownloadData dlData = new DownloadData(mcp, versionJson);
 		dlData.performDownload((dl, totalSize) -> {
@@ -77,62 +77,11 @@ public class TaskSetup extends Task {
 		mcp.setCurrentVersion(versionJson);
 
 		setProgress(getLocalizedStage("workspace"), 90);
-		FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace"));
-		FileUtil.copyResource(ClassUtils.getResource(MCP.class, "workspace/workspace.zip"), MCPPaths.get(mcp, "workspace.zip"));
-		FileUtil.extract(MCPPaths.get(mcp, "workspace.zip"), MCPPaths.get(mcp, "workspace"), true);
 		setWorkspace(versionJson);
 	}
 
 	private void setWorkspace(Version version) throws Exception {
-		Side[] sides = { Side.CLIENT, Side.SERVER };
-		for (Side side : sides) {
-			String project = side == Side.CLIENT ? "Client" : "Server";
-			String startclass = version.mainClass;
-			Path[] filetoRead = new Path[] {
-					MCPPaths.get(mcp, "workspace/.metadata/.plugins/org.eclipse.debug.core/.launches/" + project + ".launch"),
-					MCPPaths.get(mcp, "workspace/" + project + "/.idea/workspace.xml"),
-					MCPPaths.get(mcp, "workspace/" + project + "/" + project + ".iml"),
-					MCPPaths.get(mcp, "workspace/.metadata/.plugins/org.eclipse.debug.ui/launchConfigurationHistory.xml")};
-			for(int j = 0; j < filetoRead.length; j++) {
-				if (Files.exists(filetoRead[j])) {
-					List<String> lines = Files.readAllLines(filetoRead[j]);
-					for (int i = 0; i < lines.size(); i++) {
-						switch (j) {
-						//TODO This should be remade completely
-						case 0:
-							if (side == Side.SERVER) {
-								String[] replace = {"value=\"/Server/src/%s.java\"", "key=\"org.eclipse.jdt.launching.MAIN_TYPE\" value=\"%s\""};
-								lines.set(i, lines.get(i).replace(replace[0], String.format(replace[0], startclass.replace(".", "/"))));
-								lines.set(i, lines.get(i).replace(replace[1], String.format(replace[1], startclass)));
-							}
-						case 1:
-							String replace = "-Dhttp.proxyPort=%s";
-							lines.set(i, lines.get(i).replace(replace, String.format(replace, "11702" /*FIXME*/)));
-							if (side == Side.SERVER) {
-								String replace2 = "name=\"MAIN_CLASS_NAME\" value=\"%s\"";
-								lines.set(i, lines.get(i).replace(replace2, String.format(replace2, startclass)));
-							}
-							break;
-						case 2:
-							lines.set(i, lines.get(i).replace("$MCP_LOC$", mcp.getWorkingDir().toAbsolutePath().toString().replace("\\", "/")));
-							break;
-						case 3:
-							if(side == Side.SERVER && version.downloads.server != null && lines.get(i).contains("path=&quot;Server&quot;")) {
-								lines.remove(i);
-							}
-							break;
-						}
-					}
-					Files.write(filetoRead[j], lines);
-				}
-			}
-		}
-		if(!TaskMode.DECOMPILE.requirement.get(mcp, Side.SERVER)) {
-			FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace/Server"));
-			FileUtil.deleteDirectoryIfExists(MCPPaths.get(mcp, "workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/Server"));
-			Files.deleteIfExists(MCPPaths.get(mcp, "workspace/.metadata/.plugins/org.eclipse.debug.core/.launches/Server.launch"));
-			Files.deleteIfExists(MCPPaths.get(mcp, "workspace/.metadata/.plugins/org.eclipse.core.resources/.root/0.tree"));
-			FileUtil.copyResource(ClassUtils.getResource(MCP.class, "workspace/0.tree"), MCPPaths.get(mcp, "workspace/.metadata/.plugins/org.eclipse.core.resources/.root/0.tree"));
-		}
+		//FileUtil.extract(TaskSetup.class.getClassLoader().getResourceAsStream("gradle.zip"), mcp.getWorkingDir().toAbsolutePath());
+		//TODO generate build.gradle
 	}
 }

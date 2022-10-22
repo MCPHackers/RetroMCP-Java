@@ -53,7 +53,7 @@ public class TaskRecompile extends TaskStaged {
 				Files.createDirectories(binPath);
 				FileUtil.cleanDirectory(binPath);
 				setProgress(2);
-				if (Files.notExists(srcPath)) {
+				if (!Files.exists(srcPath)) {
 					throw new IOException(side.getName() + " sources not found!");
 				}
 
@@ -114,7 +114,9 @@ public class TaskRecompile extends TaskStaged {
 	public List<Path> collectClassPath() throws IOException {
 		List<Path> classpath = new ArrayList<>();
 		classpath.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
-		classpath.addAll(DownloadData.getLibraries(mcp, mcp.getCurrentVersion()));
+		if(mcp.getCurrentVersion() != null) {
+			classpath.addAll(DownloadData.getLibraries(mcp, mcp.getCurrentVersion()));
+		}
 		return classpath;
 	}
 	

@@ -24,7 +24,8 @@ public enum TaskParameter {
 	TARGET_VERSION("target", Integer.class, -1),
 	JAVA_HOME("javahome", String.class, ""),
 	DECOMPILE_OVERRIDE("override", Boolean.class, false),
-	DECOMPILE_RESOURCES("resources", Boolean.class, false);
+	DECOMPILE_RESOURCES("resources", Boolean.class, false),
+	GUESS_GENERICS("generics", Boolean.class, false);
 
 	public final String name;
 	public final Class<?> type;

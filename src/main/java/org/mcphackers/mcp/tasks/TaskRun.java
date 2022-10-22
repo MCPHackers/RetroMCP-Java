@@ -29,7 +29,6 @@ public class TaskRun extends Task {
 		
 		List<String> classPath = new ArrayList<>();
 		cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));
-		String cp = String.join(System.getProperty("path.separator"), classPath);
 
 		Path natives = MCPPaths.get(mcp, MCPPaths.NATIVES).toAbsolutePath();
 
@@ -37,7 +36,7 @@ public class TaskRun extends Task {
 				Arrays.asList(
 						Util.getJava(),
 						"-Djava.library.path=" + natives,
-						"-cp", cp,
+						"-cp", String.join(System.getProperty("path.separator"), classPath),
 						currentVersion.mainClass
 						)
 				);
@@ -59,11 +58,11 @@ public class TaskRun extends Task {
 		else {
 			cpList.add(MCPPaths.get(mcp, MCPPaths.BIN, side));
 		}
-		if(Files.notExists(MCPPaths.get(mcp, MCPPaths.REMAPPED, side))) {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
+		if(Files.exists(MCPPaths.get(mcp, MCPPaths.REMAPPED, side))) {
+			cpList.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
 		}
 		else {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
+			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
 		}
 		if(side == Side.CLIENT || side == Side.MERGED) {
 			cpList.addAll(DownloadData.getLibraries(mcp, version));

@@ -45,42 +45,29 @@ public class TaskCleanup extends Task {
 
 		boolean deleted = false;
 		List<Path> filesToDelete = new ArrayList<>();
-		for(Side side : new Side[] {Side.CLIENT, Side.SERVER, Side.MERGED}) {
+		for(Side side : Side.ALL) {
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.TEMP_SIDE, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.TEMP_SRC, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.MD5, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.MD5_RO, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REOBF_JAR, side));
+			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.PROJECT, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.PATCHES, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BIN, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
 			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BUILD_JAR, side));
 		}
-		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.WORKSPACE));
 		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.CONF));
 		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.LIB));
 		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.NATIVES));
 		
 		List<Path> foldersToDelete = Arrays.asList(new Path[] {
 				MCPPaths.get(mcp, MCPPaths.JARS),
-				MCPPaths.get(mcp, MCPPaths.TEMP),
-				MCPPaths.get(mcp, MCPPaths.SRC),
-				MCPPaths.get(mcp, MCPPaths.REOBF),
-				MCPPaths.get(mcp, MCPPaths.BUILD),
 			});
 		for(Path path : filesToDelete) {
 			if(Files.exists(path)) {
-				deleted |= true;
+				deleted = true;
 				FileUtil.delete(path);
 			}
 		}
 		for(Path path : foldersToDelete) {
 			if(Files.exists(path) && path.toFile().list().length == 0) {
-				deleted |= true;
+				deleted = true;
 				Files.delete(path);
 			}
 		}

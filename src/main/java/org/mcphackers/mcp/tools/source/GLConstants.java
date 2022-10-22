@@ -14,7 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.tools.Util;
 
-public class GLConstants extends Constants {
+public class GLConstants extends Source {
 
 	private static final boolean COMMENT = true;
 	private static Exception cause;
@@ -46,7 +46,7 @@ public class GLConstants extends Constants {
 		return list;
 	}
 
-	protected void replace_constants(StringBuilder source) {
+	public void apply(StringBuilder source) {
 		if (cause != null) {
 			cause.printStackTrace();
 			return;

@@ -60,15 +60,16 @@ public class MCPFrame extends JFrame implements WindowListener {
 	public boolean loadingVersions = true;
 	private JPanel middlePanel;
 	
-	public static BufferedImage ICON;
+	public static final BufferedImage ICON;
 	
 	static {
+		BufferedImage image = null;
 		try {
+			//TODO read all images from .ico
 			URL resource = MCPFrame.class.getResource("/icon/rmcp.png");
-			ICON = ImageIO.read(resource);
-		} catch (Exception e) {
-			System.err.println("Can't load icon");
-		}
+			image = ImageIO.read(resource);
+		} catch (Exception e) {}
+		ICON = image;
 	}
 	
 	public MCPFrame(MainGUI mcp) {
@@ -80,7 +81,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		initFrameContents();
 		pack();
 		setMinimumSize(getMinimumSize());
-		setSize(new Dimension(1040, 500));
+		setSize(new Dimension(1024, 500));
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -160,8 +161,14 @@ public class MCPFrame extends JFrame implements WindowListener {
 		topRightContainer.add(this.verLabel);
 		topRightContainer.add(this.verList);
 		operateOnThread(() ->  {
-		try {
-			loadingVersions = true;
+		loadingVersions = true;
+		if(VersionParser.INSTANCE.failureCause != null) {
+			VersionParser.INSTANCE.failureCause.printStackTrace();
+			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
+			verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
+			verLabel.setForeground(Color.RED);
+			verList = null;
+		} else {
 			verList = new JComboBox<Object>(VersionParser.INSTANCE.getVersions().toArray());
 			verList.addPopupMenuListener(new PopupMenuListener() {
 	
@@ -179,17 +186,11 @@ public class MCPFrame extends JFrame implements WindowListener {
 				@Override
 				public void popupMenuCanceled(PopupMenuEvent e) {
 				}
-				
 			});
+			
 			setCurrentVersion(mcp.currentVersion == null ? null : VersionParser.INSTANCE.getVersion(mcp.currentVersion.id));
 			verList.setMaximumRowCount(20);
 			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
-			verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
-			verLabel.setForeground(Color.RED);
-			verList = null;
 		}
 		SwingUtilities.invokeLater(() -> {
 			topRightContainer.removeAll();

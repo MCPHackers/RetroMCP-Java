@@ -31,7 +31,7 @@ import java.util.zip.ZipOutputStream;
 public abstract class FileUtil {
 	
 	public static void delete(Path path) throws IOException {
-		if (Files.notExists(path)) {
+		if (!Files.exists(path)) {
 			return;
 		}
 		if(Files.isDirectory(path)) {
@@ -43,7 +43,7 @@ public abstract class FileUtil {
 	}
 	
 	public static void createDirectories(Path path) throws IOException {
-		if (Files.notExists(path)) {
+		if (!Files.exists(path)) {
 			Files.createDirectories(path);
 		}
 	}
@@ -53,7 +53,7 @@ public abstract class FileUtil {
 			for(Path file : files) {
 				Path fileInsideZipPath = fs.getPath("/" + relativeTo.relativize(file).toString());
 				Files.deleteIfExists(fileInsideZipPath);
-				if(fileInsideZipPath.getParent() != null && Files.notExists(fileInsideZipPath.getParent()))
+				if(fileInsideZipPath.getParent() != null && !Files.exists(fileInsideZipPath.getParent()))
 					Files.createDirectories(fileInsideZipPath.getParent());
 				Files.copy(file, fileInsideZipPath);
 			}
@@ -87,8 +87,28 @@ public abstract class FileUtil {
 		extract(zipFile, destDir, entry -> entry.toString().endsWith(extension));
 	}
 
+	public static void extract(final InputStream zipFile, final Path destDir) throws IOException {
+		if (!Files.exists(destDir)) {
+			Files.createDirectories(destDir);
+		}
+		try (ZipInputStream zipInputStream = new ZipInputStream(zipFile)) {
+			ZipEntry entry;
+			while ((entry = zipInputStream.getNextEntry()) != null) {
+				Path toPath = destDir.resolve(entry.getName());
+				Files.deleteIfExists(toPath);
+				if(!entry.isDirectory()) {
+					createDirectories(toPath.getParent());
+					Files.copy(zipInputStream, toPath);
+				}
+				else {
+					createDirectories(toPath);
+				}
+			}
+		}
+	}
+
 	public static void extract(final Path zipFile, final Path destDir, Function<ZipEntry,Boolean> match) throws IOException {
-		if (Files.notExists(destDir)) {
+		if (!Files.exists(destDir)) {
 			Files.createDirectories(destDir);
 		}
 		try (ZipInputStream zipInputStream = new ZipInputStream(Files.newInputStream(zipFile))) {
@@ -166,7 +186,7 @@ public abstract class FileUtil {
 	}
 
 	public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
-		if(Files.notExists(targetFolder)) {
+		if(!Files.exists(targetFolder)) {
 			Files.createDirectories(targetFolder);
 		}
 		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {

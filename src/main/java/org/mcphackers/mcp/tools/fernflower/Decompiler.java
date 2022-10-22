@@ -20,19 +20,14 @@ public class Decompiler implements IBytecodeProvider {
 	public final DecompileLogger log;
 	private final Path source;
 	private final Path destination;
-	@SuppressWarnings("unused")
-	private final File javadocs;
 	private final Map<String, Object> mapOptions = new HashMap<>();
 
-	public Decompiler(ProgressListener listener, Path source, Path out, Path javadocs, String ind, boolean override) {
+	public Decompiler(ProgressListener listener, Path source, Path out, String ind, boolean guessGenerics) {
 		this.source = source;
 		this.destination = out;
-		this.javadocs = javadocs.toFile();
 		this.log = new DecompileLogger(listener);
-		//FIXME
-		//mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, override ? "1" : "0");
 		mapOptions.put(IFernflowerPreferences.NO_COMMENT_OUTPUT, "1");
-		mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, "0");
+		mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, guessGenerics ? "1" : "0");
 		mapOptions.put(IFernflowerPreferences.ASCII_STRING_CHARACTERS, "1");
 		mapOptions.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1");
 		mapOptions.put(IFernflowerPreferences.INDENT_STRING, ind);

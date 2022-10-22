@@ -68,7 +68,7 @@ public class Options {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
 				for(Entry<TaskParameter, Object> entry : options.entrySet()) {
-					if(entry.getValue() != null) {
+					if(entry.getValue() != null && entry.getKey() != TaskParameter.SIDE) {
 						writer.append(entry.getKey().name).append('=').append(getParameter(entry.getKey()).toString()).append(String.valueOf('\n'));
 					}
 				}

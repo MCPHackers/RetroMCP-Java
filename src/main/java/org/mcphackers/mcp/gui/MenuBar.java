@@ -44,7 +44,6 @@ public class MenuBar extends JMenuBar {
 	public MenuBar(MCPFrame frame) {
 		owner = frame;
 		mcp = frame.mcp;
-		this.menuOptions.setMnemonic(KeyEvent.VK_O);
 		this.helpMenu.setMnemonic(KeyEvent.VK_H);
 		this.mcpMenu.setMnemonic(KeyEvent.VK_M);
 		translatableComponents.put(menuOptions, "options");
@@ -178,20 +177,8 @@ public class MenuBar extends JMenuBar {
 		sideMenu.add(sideItems[sideItems.length - 1]);
 		menuOptions.add(sideMenu);
 		
-		String[] names = {
-				"task.decompile",
-				"task.recompile",
-				"task.reobfuscate",
-				"task.build",
-				"options.running"
-				};
-		TaskParameter[][] params = {
-				{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.DECOMPILE_RESOURCES},
-				{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
-				{TaskParameter.OBFUSCATION},
-				{TaskParameter.FULL_BUILD},
-				{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS}
-		};
+		String[] names = MainGUI.TABS;
+		TaskParameter[][] params = MainGUI.TAB_PARAMETERS;
 		for(int i = 0; i < names.length; i++) {
 			JMenu a = new JMenu();
 			translatableComponents.put(a, names[i]);

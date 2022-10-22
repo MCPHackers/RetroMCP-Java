@@ -20,8 +20,6 @@ public class TaskUpdateMD5 extends TaskStaged {
 	public static final int STAGE_RECOMPILE = 0;
 	public static final int STAGE_MD5 = 1;
 
-	private int progress = 0;
-
 	public TaskUpdateMD5(Side side, MCP instance) {
 		super(side, instance);
 	}
@@ -57,32 +55,34 @@ public class TaskUpdateMD5 extends TaskStaged {
 		}
 	}
 
+	private int progress = 0;
+
 	public void updateMD5(boolean reobf) throws IOException {
 		final Path binPath 	= MCPPaths.get(mcp, MCPPaths.BIN, side);
 		final Path md5 = MCPPaths.get(mcp, reobf ? MCPPaths.MD5_RO : MCPPaths.MD5, side);
 
-		if (Files.notExists(binPath)) {
+		if (!Files.exists(binPath)) {
 			throw new IOException(side.name + " classes not found!");
 		}
-		BufferedWriter writer = Files.newBufferedWriter(md5);
-		progress = 0;
-		int total;
-		try(Stream<Path> pathStream = Files.walk(binPath)) {
-			total = (int) pathStream.parallel()
-					.filter(p -> !p.toFile().isDirectory())
-					.count();
-		}
-		Files.walkFileTree(binPath, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				String md5_hash = Util.getMD5(file);
-				String fileName = binPath.relativize(file).toString().replace("\\", "/").replace(".class", "");
-				writer.append(fileName).append(" ").append(md5_hash).append("\n");
-				progress++;
-				setProgress(50 + (int)((double)progress/(double)total * 50));
-				return FileVisitResult.CONTINUE;
+		try(BufferedWriter writer = Files.newBufferedWriter(md5)) {
+			progress = 0;
+			int total;
+			try(Stream<Path> pathStream = Files.walk(binPath)) {
+				total = (int) pathStream.parallel()
+						.filter(p -> !p.toFile().isDirectory())
+						.count();
 			}
-		});
-		writer.close();
+			Files.walkFileTree(binPath, new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+					String md5_hash = Util.getMD5(file);
+					String fileName = binPath.relativize(file).toString().replace("\\", "/").replace(".class", "");
+					writer.append(fileName).append(" ").append(md5_hash).append("\n");
+					progress++;
+					setProgress(50 + (int)((double)progress/(double)total * 50));
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		}
 	}
 }

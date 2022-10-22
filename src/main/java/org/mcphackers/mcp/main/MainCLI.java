@@ -182,7 +182,13 @@ public class MainCLI extends MCP {
 				}
 			}
 			else {
-				safeSetParameter(TaskMode.nameToParamMap.get(name), value.toString());
+				TaskParameter param = TaskMode.nameToParamMap.get(name);
+				if(param != null) {
+					safeSetParameter(param, value.toString());
+				}
+				else {
+					log("Unrecognized option: " + name);
+				}
 			}
 		}
 	}

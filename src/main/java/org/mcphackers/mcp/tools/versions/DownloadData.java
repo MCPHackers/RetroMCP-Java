@@ -66,7 +66,7 @@ public class DownloadData {
 		try {
 			Path assetIndex = MCPPaths.get(mcp, MCPPaths.JARS + "assets/indexes/" + version.assets + ".json");
 			String assetIndexString;
-			if (Files.notExists(assetIndex) || !version.assetIndex.sha1.equals(Util.getSHA1(assetIndex))) {
+			if (!Files.exists(assetIndex) || !version.assetIndex.sha1.equals(Util.getSHA1(assetIndex))) {
 				assetIndexString = new String(Util.readAllBytes(new URL(version.assetIndex.url).openStream()));
 				Files.write(assetIndex, assetIndexString.getBytes());
 			}
@@ -103,7 +103,7 @@ public class DownloadData {
 			Path file = dl.path;
 			Download dlObj = dl.dlObject;
 			listener.notify(dlObj, totalSize);
-			if(Files.notExists(file) || (dl.verifySHA1 && !dlObj.sha1.equals(Util.getSHA1(file)))) {
+			if(!Files.exists(file) || (dl.verifySHA1 && !dlObj.sha1.equals(Util.getSHA1(file)))) {
 				Path parent = file.getParent();
 				if(parent != null) Files.createDirectories(parent);
 				FileUtil.downloadFile(dlObj.url, file);
@@ -116,13 +116,25 @@ public class DownloadData {
 				String filename = assets.map_to_resources ? "resources/" + entry.getKey() : "assets/objects/" + hash;
 				Path file = assetsPath.resolve(filename);
 				listener.notify(asset, totalSize);
-				if(Files.notExists(file)) {
+				if(!Files.exists(file)) {
 					Path parent = file.getParent();
 					if(parent != null) Files.createDirectories(parent);
 					FileUtil.downloadFile("http://resources.download.minecraft.net/" + hash, file);
 				}
 			}
 		}
+	}
+	
+	public static List<String> getLibraries(Version version) {
+		List<String> retList = new ArrayList<>();
+		for(DependDownload dependencyDownload : version.libraries) {
+			if(Rule.apply(dependencyDownload.rules)) {
+				String[] path = dependencyDownload.name.split(":");
+				String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
+				retList.add(lib);
+			}
+		}
+		return retList;
 	}
 	
 	public static List<Path> getLibraries(MCP mcp, Version version) {

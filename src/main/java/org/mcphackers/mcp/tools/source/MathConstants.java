@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class MathConstants extends Constants {
+public class MathConstants extends Source {
 	
 	// Used to prevent strings from being captured, such as "2.0D"
 	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?<![a-zA-Z\"'])-?\\d+(?:\\.\\d+[fFdD]?|)(?![a-zA-Z\"'])");
@@ -40,7 +40,7 @@ public class MathConstants extends Constants {
 		replaceValue(9.0D / 256D, "9.0D / 256D");
 	}
 	
-	protected void replace_constants(StringBuilder source) {
+	public void apply(StringBuilder source) {
 		replaceTextOfMatchGroup(source, CONSTANT_REGEX, match1 -> {
 			String constant = match1.group(0);
 			return CONSTANTS.getOrDefault(constant, constant);

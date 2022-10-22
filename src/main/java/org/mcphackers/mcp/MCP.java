@@ -249,7 +249,7 @@ public abstract class MCP {
 	 * @throws IllegalArgumentException
 	 */
 	public void safeSetParameter(TaskParameter param, String value) {
-		if(value != null) {
+		if(param != null && value != null) {
 			if(getOptions().safeSetParameter(param, value)) return;
 			showMessage(param.getDesc(), TRANSLATOR.translateKey("options.invalidValue"), Task.ERROR);
 		}
