@@ -211,7 +211,7 @@ public abstract class Util {
 	
 	public static String firstUpperCase(String s) {
 		if(s == null) {
-			return s;
+			return null;
 		}
 		if(s.length() <= 1) {
 			return s.toUpperCase();

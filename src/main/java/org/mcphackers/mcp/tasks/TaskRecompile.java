@@ -113,7 +113,7 @@ public class TaskRecompile extends TaskStaged {
 		return FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java") && !path.getFileName().toString().endsWith(".class"));
 	}
 
-	public static List<Path> collectClassPath(MCP mcp, Side side) throws IOException {
+	public static List<Path> collectClassPath(MCP mcp, Side side) {
 		List<Path> classpath = new ArrayList<>();
 		classpath.add(MCPPaths.get(mcp, REMAPPED, side));
 		if(mcp.getCurrentVersion() != null) {

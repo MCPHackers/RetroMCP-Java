@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,14 +75,10 @@ public final class MappingUtil {
 			String header = reader.readLine();
 			if(header != null) {
 				if(header.startsWith("tiny\t2\t0\t")) {
-					for(String namespace : header.substring(9).trim().split("\t")) {
-						namespaces.add(namespace);
-					}
+					namespaces.addAll(Arrays.asList(header.substring(9).trim().split("\t")));
 				}
 				else if(header.startsWith("v1\t")) {
-					for(String namespace : header.substring(3).trim().split("\t")) {
-						namespaces.add(namespace);
-					}
+					namespaces.addAll(Arrays.asList(header.substring(3).trim().split("\t")));
 				}
 				else {
 					invalid  = true;

@@ -6,7 +6,7 @@ import org.mcphackers.mcp.tasks.Task.Side;
 
 /**
  * Any optional parameters which can be accessed from tasks
- * @see {@link Options#getParameter(TaskParameter)}
+ * @see Options#getParameter(TaskParameter)
  *
  */
 public enum TaskParameter {
@@ -26,6 +26,8 @@ public enum TaskParameter {
 	DECOMPILE_OVERRIDE("override", Boolean.class, false),
 	DECOMPILE_RESOURCES("resources", Boolean.class, false),
 	GUESS_GENERICS("generics", Boolean.class, false);
+
+	public static final TaskParameter[] VALUES = TaskParameter.values();
 
 	public final String name;
 	public final Class<?> type;

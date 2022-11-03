@@ -48,8 +48,7 @@ public abstract class Source {
 			// Remove import from source
 			return "";
 		});
-		List<String> importsList = new ArrayList<>();
-		importsList.addAll(imports);
+		List<String> importsList = new ArrayList<>(imports);
 		importsList.sort(Comparator.naturalOrder());
 		StringBuilder sb = new StringBuilder();
 		String n = System.lineSeparator();
@@ -67,7 +66,7 @@ public abstract class Source {
 		if(source.toString().startsWith("package")) {
 			addAfterMatch(source, PACKAGE, sb.toString());
 		}
-		else source.insert(0, sb.toString());
+		else source.insert(0, sb);
 	}
 
 	protected String replaceTextOfMatchGroup(String source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {

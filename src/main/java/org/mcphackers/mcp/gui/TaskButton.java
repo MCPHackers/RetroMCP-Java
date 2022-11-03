@@ -13,8 +13,8 @@ public class TaskButton extends JButton {
 
 	private static final long serialVersionUID = -2625827711322112358L;
 
-	private TaskMode linkedTask;
-	private MCP mcp;
+	private final TaskMode linkedTask;
+	private final MCP mcp;
 
 	public TaskButton(MCP owner, TaskMode task) {
 		super(task.getFullName());

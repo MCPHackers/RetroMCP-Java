@@ -41,7 +41,7 @@ public class Decompiler implements IBytecodeProvider {
 		BaseDecompiler decompiler = new BaseDecompiler(this, new DirectoryResultSaver(destination.toFile()), mapOptions, log/*, javadocs.exists() ? new TinyJavadocProvider(javadocs) : null*/);
 		for(Path lib : libraries) {
 			if(Files.exists(lib))
-			decompiler.addSpace(lib.toAbsolutePath().toFile(), false);
+				decompiler.addSpace(lib.toAbsolutePath().toFile(), false);
 		}
 		decompiler.addSpace(source.toAbsolutePath().toFile(), true);
 		decompiler.decompileContext();

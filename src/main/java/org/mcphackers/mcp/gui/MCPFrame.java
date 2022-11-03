@@ -50,7 +50,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 	private static final long serialVersionUID = -3455157541499586338L;
 
 	private JComboBox<?> verList;
-	private List<TaskButton> buttons = new ArrayList<>();
+	private final List<TaskButton> buttons = new ArrayList<>();
 	private JLabel verLabel;
 	private JPanel topRightContainer;
 	private JPanel topLeftContainer;
@@ -70,7 +70,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 			//TODO read all images from .ico
 			URL resource = MCPFrame.class.getResource("/icon/rmcp.png");
 			image = ImageIO.read(resource);
-		} catch (Exception e) {}
+		} catch (Exception ignored) {}
 		ICON = image;
 	}
 
@@ -172,7 +172,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 			verLabel.setForeground(Color.RED);
 			verList = null;
 		} else {
-			verList = new JComboBox<Object>(VersionParser.INSTANCE.getVersions().toArray());
+			verList = new JComboBox<>(VersionParser.INSTANCE.getVersions().toArray());
 			verList.addPopupMenuListener(new PopupMenuListener() {
 
 				@Override
@@ -181,9 +181,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-					operateOnThread(() ->  {
-					mcp.setupVersion((VersionData)verList.getSelectedItem());
-					});
+					operateOnThread(() -> mcp.setupVersion((VersionData)verList.getSelectedItem()));
 				}
 
 				@Override
@@ -220,7 +218,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 	 */
 	public void updateButtonState() {
 		buttons.forEach(button -> button.setEnabled(button.getEnabled()));
-		menuBar.start.entrySet().forEach(entry -> entry.getValue().setEnabled(TaskMode.START.isAvailable(mcp, entry.getKey())));
+		menuBar.start.forEach((key, value) -> value.setEnabled(TaskMode.START.isAvailable(mcp, key)));
 		if(verList != null && !loadingVersions) verList.setEnabled(true);
 		if(!loadingVersions) verLabel.setEnabled(true);
 		menuBar.menuOptions.setEnabled(true);
@@ -314,7 +312,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		else {
 			verLabel.setText(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		}
-		buttons.forEach(button -> button.updateName());
+		buttons.forEach(TaskButton::updateName);
 		Dimension preferredButtonSize = new Dimension(0, 26);
 		for(TaskButton button : buttons) {
 			button.setPreferredSize(null);

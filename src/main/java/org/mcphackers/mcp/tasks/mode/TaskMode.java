@@ -51,9 +51,7 @@ public class TaskMode {
 	public static TaskMode RECOMPILE = new TaskModeBuilder()
 			.setName("recompile")
 			.setTaskClass(TaskRecompile.class)
-			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
-			})
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
 			.setParameters(new TaskParameter[] {
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
@@ -64,9 +62,7 @@ public class TaskMode {
 	public static TaskMode REOBFUSCATE = new TaskModeBuilder()
 			.setName("reobfuscate")
 			.setTaskClass(TaskReobfuscate.class)
-			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
-			})
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
 			.setParameters(new TaskParameter[] {
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
@@ -77,9 +73,7 @@ public class TaskMode {
 	public static TaskMode UPDATE_MD5 = new TaskModeBuilder()
 			.setName("updatemd5")
 			.setTaskClass(TaskUpdateMD5.class)
-			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, side));
-			})
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, side)))
 			.setParameters(new TaskParameter[] {
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
@@ -105,9 +99,7 @@ public class TaskMode {
 			.setName("start")
 			.setTaskClass(TaskRun.class)
 			.setProgressBars(false)
-			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, side)) ||  Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, Side.MERGED));
-			})
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, side)) ||  Files.isReadable(MCPPaths.get(mcp, MCPPaths.BIN, Side.MERGED)))
 			.setParameters(new TaskParameter[] {
 				TaskParameter.RUN_BUILD
 				})
@@ -115,9 +107,7 @@ public class TaskMode {
 	public static TaskMode BUILD = new TaskModeBuilder()
 			.setName("build")
 			.setTaskClass(TaskBuild.class)
-			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
-			})
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
 			.setParameters(new TaskParameter[] {
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
@@ -129,10 +119,8 @@ public class TaskMode {
 	public static TaskMode CREATE_PATCH = new TaskModeBuilder()
 			.setName("createpatch")
 			.setTaskClass(TaskCreatePatch.class)
-			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side))
-					&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE_UNPATCHED, side));
-			})
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side))
+				&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE_UNPATCHED, side)))
 			.setParameters(new TaskParameter[] {
 				TaskParameter.SIDE
 				})
@@ -141,9 +129,7 @@ public class TaskMode {
 			.setName("backupsrc")
 			.setTaskClass(TaskSourceBackup.class)
 			.setProgressBars(true)
-			.addRequirement((mcp, side) -> {
-				return Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side));
-			})
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
 			.build();
 	public static TaskMode EXIT = new TaskModeBuilder()
 			.setName("exit")
@@ -205,7 +191,7 @@ public class TaskMode {
 
 	private List<Side> allowedSides() {
 		List<Side> sides = new ArrayList<>();
-		for(Side side : Side.values()) {
+		for(Side side : Side.VALUES) {
 			if(side != Side.ANY) {
 				sides.add(side);
 			}

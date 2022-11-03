@@ -44,7 +44,7 @@ public class AssetIndex {
 		};
 	}
 
-	public class Asset implements IDownload {
+	public static class Asset implements IDownload {
 		public String hash;
 		public long size;
 		public boolean reconstruct;

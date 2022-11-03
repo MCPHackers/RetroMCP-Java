@@ -82,7 +82,7 @@ public class MainCLI extends MCP {
 				version = new Ansi().fgBrightRed().a("Unable to get current version!").fgDefault().toString();
 			}
 		}
-		if (args.length <= 0) {
+		if (args.length == 0) {
 			startedWithNoParams = true;
 			log(LOGO.toString());
 			JavaCompiler c = ToolProvider.getSystemJavaCompiler();

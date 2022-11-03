@@ -57,10 +57,10 @@ public abstract class TaskStaged extends Task {
 		return new Stage(name, -1, task);
 	}
 
-	public class Stage {
+	public static class Stage {
 		private TaskRunnable runnable;
-		private String stageName;
-		private int completion;
+		private final String stageName;
+		private final int completion;
 
 		public Stage(String name, int i, TaskRunnable task) {
 			setOperation(task);
