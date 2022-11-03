@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import java.util.stream.Stream;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
@@ -37,13 +38,9 @@ public class TaskReobfuscate extends TaskStaged {
 	protected Stage[] setStages() {
 		return new Stage[] {
 			stage(getLocalizedStage("gathermd5"),
-			() -> {
-				new TaskUpdateMD5(side, mcp, this).updateMD5(true);
-			}),
+			() -> new TaskUpdateMD5(side, mcp, this).updateMD5(true)),
 			stage(getLocalizedStage("reobf"), 43,
-			() -> {
-				reobfuscate();
-			})
+					this::reobfuscate)
 		};
 	}
 
@@ -61,17 +58,19 @@ public class TaskReobfuscate extends TaskStaged {
 			final Path reobfDir = MCPPaths.get(mcp, REOBF_SIDE, localSide);
 			final Path reobfJar = MCPPaths.get(mcp, REOBF_JAR, localSide);
 			List<String> classNames = new ArrayList<>();
-			Files.walk(reobfBin).forEach(path -> {
-				if(path.getFileName().toString().endsWith(".class")) {
-					ClassReader classReader;
-					try {
-						classReader = new ClassReader(Files.readAllBytes(path));
-						classNames.add(classReader.getClassName());
-					} catch (IOException e) {
-						e.printStackTrace();
+			try (Stream<Path> paths = Files.walk(reobfBin)) {
+				paths.forEach(path -> {
+					if(path.getFileName().toString().endsWith(".class")) {
+						ClassReader classReader;
+						try {
+							classReader = new ClassReader(Files.readAllBytes(path));
+							classNames.add(classReader.getClassName());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
-				}
-			});
+				});
+			}
 			Files.deleteIfExists(reobfJar);
 			RDInjector injector = new RDInjector(reobfBin);
 			Mappings mappings = getMappings(injector.getStorage(), localSide);
@@ -98,9 +97,7 @@ public class TaskReobfuscate extends TaskStaged {
 					if(hash == null) {
 						return true;
 					}
-					else if(!hash.equals(hashModified)) {
-						return true;
-					}
+					else return !hash.equals(hashModified);
 				}
 				return false;
 			});

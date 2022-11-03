@@ -34,13 +34,9 @@ public class TaskUpdateMD5 extends TaskStaged {
 	protected Stage[] setStages() {
 		return new Stage[] {
 			stage(getLocalizedStage("recompile"),
-			() -> {
-				new TaskRecompile(side, mcp, this).doTask();
-			}),
+			() -> new TaskRecompile(side, mcp, this).doTask()),
 			stage(getLocalizedStage("updatemd5"), 50,
-			() -> {
-				updateMD5(false);
-			})
+			() -> updateMD5(false))
 		};
 	}
 

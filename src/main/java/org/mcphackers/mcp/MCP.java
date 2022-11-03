@@ -263,7 +263,7 @@ public abstract class MCP {
 		}
 	}
 
-	private final static void loadPlugins() {
+	private static void loadPlugins() {
 		Path pluginsDir = Paths.get("plugins");
 		if(Files.exists(pluginsDir)) {
 			List<Path> jars = new ArrayList<>();

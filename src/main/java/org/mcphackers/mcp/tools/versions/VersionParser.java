@@ -23,7 +23,7 @@ public class VersionParser {
 	public static final String MAPPINGS_JSON = "https://mcphackers.github.io/versions/versions.json";
 	public static final VersionParser INSTANCE = new VersionParser();
 
-	private List<VersionData> versions = new ArrayList<>();
+	private final List<VersionData> versions = new ArrayList<>();
 	public Exception failureCause;
 
 	public VersionParser() {
@@ -160,7 +160,7 @@ public class VersionParser {
 				}
 			}
 		}
-		catch (JSONException e) {
+		catch (JSONException ignored) {
 		}
 		return obj;
 	}

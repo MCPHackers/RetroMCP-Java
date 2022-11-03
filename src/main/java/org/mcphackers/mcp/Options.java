@@ -22,7 +22,7 @@ public class Options {
 	public Language lang;
 
 	public Options() {
-		for(TaskParameter param : TaskParameter.values()) {
+		for(TaskParameter param : TaskParameter.VALUES) {
 			setDefault(param);
 		}
 	}
@@ -41,16 +41,16 @@ public class Options {
 				int sep = line.indexOf("=");
 				if(sep >= 0) {
 					String key = line.substring(0, sep);
-					String value = sep == line.length() ? "" : line.substring(sep + 1);
+					String value = line.substring(sep + 1);
 					if(key.equals(TaskParameter.SIDE.name)) {
 						try {
 							side = Side.valueOf(value);
-						} catch (IllegalArgumentException e) {}
+						} catch (IllegalArgumentException ignored) {}
 					}
 					else if(key.equals("lang")) {
 						try {
 							lang = Language.valueOf(value);
-						} catch (IllegalArgumentException e) {}
+						} catch (IllegalArgumentException ignored) {}
 					}
 					else {
 						safeSetParameter(TaskMode.nameToParamMap.get(key), value);
@@ -80,7 +80,7 @@ public class Options {
 
 	public void resetDefaults() {
 		side = Side.ANY;
-		for(TaskParameter param : TaskParameter.values()) {
+		for(TaskParameter param : TaskParameter.VALUES) {
 			setDefault(param);
 		}
 		save();
@@ -159,8 +159,7 @@ public class Options {
 				setParameter(param, valueInt);
 				return true;
 			}
-			catch (NumberFormatException ignored) {}
-			catch (IllegalArgumentException e) {}
+			catch (IllegalArgumentException ignored) {}
 		}
 		else if(param.type == Boolean.class) {
 			if(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
@@ -169,7 +168,7 @@ public class Options {
 					setParameter(param, valueBoolean);
 					return true;
 				}
-				catch (IllegalArgumentException e) {}
+				catch (IllegalArgumentException ignored) {}
 			}
 		}
 		else if(param.type == String[].class) {
@@ -181,7 +180,7 @@ public class Options {
 				setParameter(param, values);
 				return true;
 			}
-			catch (IllegalArgumentException e) {}
+			catch (IllegalArgumentException ignored) {}
 		}
 		else if(param.type == String.class) {
 			try {
@@ -189,7 +188,7 @@ public class Options {
 				setParameter(param, value);
 				return true;
 			}
-			catch (IllegalArgumentException e) {}
+			catch (IllegalArgumentException ignored) {}
 		}
 		return false;
 	}

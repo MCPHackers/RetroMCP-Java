@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -54,17 +55,13 @@ public class TaskRun extends Task {
 
 		List<String> args = new ArrayList<>();
 		args.add(Util.getJava());
-		for (String arg : runArgs) {
-			args.add(arg);
-		}
+		Collections.addAll(args, runArgs);
 		args.add("-Djava.library.path=" + natives);
 		args.add("-cp");
 		args.add(String.join(System.getProperty("path.separator"), classPath));
 		args.add(main);
 		if(side == Side.CLIENT) {
-			for (String arg : getLaunchArgs(mcp)) {
-				args.add(arg);
-			}
+			args.addAll(getLaunchArgs(mcp));
 		}
 
 		Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, JARS), true);
@@ -75,7 +72,7 @@ public class TaskRun extends Task {
 			return version.mainClass;
 		}
 		if(side == Side.SERVER) {
-			Path jarPath = MCPPaths.get(mcp, JAR_ORIGINAL, side);
+			Path jarPath = MCPPaths.get(mcp, JAR_ORIGINAL, Side.SERVER);
 			try (ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(jarPath))) {
 				ZipEntry zipEntry;
 				while ((zipEntry = zipIn.getNextEntry()) != null) {
@@ -94,9 +91,8 @@ public class TaskRun extends Task {
 	/**
 	 * @param mcp
 	 * @return arguments for launching client
-	 * @throws IOException
 	 */
-	public static List<String> getLaunchArgs(MCP mcp) throws IOException {
+	public static List<String> getLaunchArgs(MCP mcp) {
 		Version ver = mcp.getCurrentVersion();
 		Arguments args = ver.arguments;
 		String mcArgs = ver.minecraftArguments;
@@ -137,7 +133,7 @@ public class TaskRun extends Task {
 	}
 
 
-	public static Path getMCDir(MCP mcp, Side side) throws IOException {
+	public static Path getMCDir(MCP mcp, Side side) {
 		Path mcDir = MCPPaths.get(mcp, GAMEDIR, side);
 		if(mcDir != null) {
 			return mcDir;
@@ -175,7 +171,7 @@ public class TaskRun extends Task {
 		}
 	}
 
-	private static List<Path> getClasspath(MCP mcp, Version version, Side side, boolean runBuild) throws IOException {
+	private static List<Path> getClasspath(MCP mcp, Version version, Side side, boolean runBuild) {
 		List<Path> cpList = new ArrayList<>();
 		if(runBuild) {
 			cpList.add(MCPPaths.get(mcp, BUILD_ZIP, side));

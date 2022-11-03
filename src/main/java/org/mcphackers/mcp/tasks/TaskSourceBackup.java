@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -43,11 +44,13 @@ public class TaskSourceBackup extends Task {
 		Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 		try(ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(backupPath))) {
 			List<String> srcFiles = new ArrayList<>();
-			Files.walk(srcPath).forEach(file -> {
-				if(file.getFileName().toString().endsWith(".java")){
-					srcFiles.add(file.toString());
-				}
-			});
+			try (Stream<Path> paths = Files.walk(srcPath)) {
+				paths.forEach(file -> {
+					if(file.getFileName().toString().endsWith(".java")){
+						srcFiles.add(file.toString());
+					}
+				});
+			}
 			long nFiles = srcFiles.size();
 
 			int i = 0;

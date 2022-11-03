@@ -75,7 +75,7 @@ public class DownloadData {
 			}
 			addAssets(AssetIndex.from(new JSONObject(assetIndexString)), MCPPaths.get(mcp, MCPPaths.JARS));
 		}
-		catch (IOException e) {};
+		catch (IOException ignored) {}
 	}
 
 	public void addAssets(AssetIndex assets, Path path) {

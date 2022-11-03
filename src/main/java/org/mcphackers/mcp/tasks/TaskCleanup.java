@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,9 +56,9 @@ public class TaskCleanup extends Task {
 		filesToDelete.add(MCPPaths.get(mcp, LIB));
 		filesToDelete.add(MCPPaths.get(mcp, NATIVES));
 
-		List<Path> foldersToDelete = Arrays.asList(new Path[] {
+		Path[] foldersToDelete = new Path[] {
 				MCPPaths.get(mcp, JARS),
-			});
+			};
 		for(Path path : filesToDelete) {
 			if(Files.exists(path)) {
 				deleted = true;

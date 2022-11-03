@@ -76,7 +76,7 @@ public class MainGUI extends MCP {
 		if(args.length >= 1) {
 			try {
 				workingDir = Paths.get(args[0]);
-			} catch (InvalidPathException e) {}
+			} catch (InvalidPathException ignored) {}
 		}
 		new MainGUI(workingDir);
 	}

@@ -10,13 +10,14 @@ import org.mcphackers.mcp.MCP;
 
 public abstract class Task implements ProgressListener, TaskRunnable {
 
-	public static enum Side {
+	public enum Side {
 		ANY(-1, "any"),
 		CLIENT(0, "client"),
 		SERVER(1, "server"),
 		MERGED(2, "merged");
 
 		public static final Side[] ALL = {CLIENT, SERVER, MERGED};
+		public static final Side[] VALUES = Side.values();
 
 		public final int index;
 		public final String name;

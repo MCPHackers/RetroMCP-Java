@@ -251,11 +251,11 @@ public final class GLConstants extends ClassVisitor {
 
         final char[] value = string.toCharArray();
         for (int i = fromIndex; i < max; i++) {
-            for (int i2 = 0; i2 < ch.length; i2++) {
-	            if (value[i] == ch[i2]) {
-	                return i;
-	            }
-            }
+			for (char c : ch) {
+				if (value[i] == c) {
+					return i;
+				}
+			}
         }
         return -1;
     }
@@ -319,7 +319,7 @@ public final class GLConstants extends ClassVisitor {
 				int i = Integer.parseInt(key);
 				map.put(i, value);
 			}
-			catch (NumberFormatException e) {}
+			catch (NumberFormatException ignored) {}
 		}
 		return map;
 	}

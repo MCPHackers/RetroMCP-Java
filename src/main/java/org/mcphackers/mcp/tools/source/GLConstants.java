@@ -22,7 +22,7 @@ public class GLConstants extends Source {
 	private static final List<String> PACKAGES = json == null ? Collections.emptyList() : toList(json.getJSONArray("PACKAGES"));
 	private static final JSONArray CONSTANTS = json == null ? null : json.getJSONArray("CONSTANTS");
 	private static final JSONObject CONSTANTS_KEYBOARD = json == null ? null : json.getJSONObject("CONSTANTS_KEYBOARD");
-	private static final Pattern CALL_REGEX = Pattern.compile("(" + String.join("|", PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
+	private static final Pattern CALL_REGEX = Pattern.compile("(" + String.join("|", PACKAGES) + ")\\.(\\w+)\\(.+?\\)");
 	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
 	private static final Pattern INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[);]))|new KeyBinding\\([ \\w\"]+, .+?\\))");
 

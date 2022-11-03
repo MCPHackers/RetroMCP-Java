@@ -13,12 +13,14 @@ public enum Language {
 	FRENCH("fr_FR"),
 	CHINESE("zh_CN");
 
+	public static final Language[] VALUES = Language.values();
+
 	/**
 	 * Internal name
 	 */
-	public String name;
+	public final String name;
 
-	private Language(String langName) {
+	Language(String langName) {
 		name = langName;
 	}
 
@@ -27,7 +29,7 @@ public enum Language {
 	 * @return A language enum from a locale
 	 */
 	public static Language get(Locale locale) {
-		for(Language lang : values()) {
+		for(Language lang : VALUES) {
 			if(lang.name.equals(locale.toString())) {
 				return lang;
 			}

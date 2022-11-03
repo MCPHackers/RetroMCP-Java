@@ -61,7 +61,7 @@ public class Rule {
 						if(!matcher.matches()) {
 							return false;
 						}
-					} catch (Throwable var3) {
+					} catch (Throwable ignored) {
 					}
 				}
 
@@ -71,7 +71,7 @@ public class Rule {
 	}
 
 	public Rule.Action getAppliedAction(List<String> featuresList) {
-		boolean featuresMatch = true;
+		boolean featuresMatch;
 		for(Entry<String, Boolean> entry : features.entrySet()) {
 			featuresMatch = featuresList.contains(entry.getKey()) == entry.getValue();
 			if(!featuresMatch) return Rule.Action.disallow;
@@ -100,8 +100,8 @@ public class Rule {
 	}
 
 
-	public static enum Action {
+	public enum Action {
 		allow,
-		disallow;
+		disallow
 	}
 }

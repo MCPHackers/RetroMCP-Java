@@ -39,7 +39,7 @@ public class MenuBar extends JMenuBar {
 	private final JMenu helpMenu = new JMenu();
 	private JMenuItem[] sideItems;
 	private final MCPFrame owner;
-	private MainGUI mcp;
+	private final MainGUI mcp;
 
 	public MenuBar(MCPFrame frame) {
 		owner = frame;
@@ -57,12 +57,10 @@ public class MenuBar extends JMenuBar {
 			JMenuItem start = new JMenuItem();
 			translatableComponents.put(start, side == Side.CLIENT ? "mcp.startClient" : "mcp.startServer");
 			togglableComponents.add(start);
-			start.addActionListener(a -> {
-				operateOnThread(() -> {
-					mcp.performTask(TaskMode.START, side, false);
-					reloadSide();
-				});
-			});
+			start.addActionListener(a -> operateOnThread(() -> {
+                mcp.performTask(TaskMode.START, side, false);
+                reloadSide();
+            }));
 			mcpMenu.add(start);
 			this.start.put(side, start);
 		}
@@ -129,7 +127,7 @@ public class MenuBar extends JMenuBar {
 		add(helpMenu);
 		JMenu langMenu = new JMenu();
 		translatableComponents.put(langMenu, "options.language");
-		for(Language lang : Language.values()) {
+		for(Language lang : Language.VALUES) {
 			JMenuItem langItem = new JMenuItem(MCP.TRANSLATOR.getLangName(lang));
 			langItem.addActionListener(a -> {
 				mcp.changeLanguage(lang);
@@ -163,8 +161,8 @@ public class MenuBar extends JMenuBar {
 	private void initOptions() {
 		JMenu sideMenu = new JMenu();
 		translatableComponents.put(sideMenu, "mcp.side");
-		sideItems = new JMenuItem[Side.values().length];
-		for(Side side : Side.values()) {
+		sideItems = new JMenuItem[Side.VALUES.length];
+		for(Side side : Side.VALUES) {
 			final int i = side.index;
 			if(i >= 0) {
 				sideItems[i] = new JRadioButtonMenuItem(side.getName());
@@ -195,9 +193,7 @@ public class MenuBar extends JMenuBar {
 				}
 				else {
 					b = new JMenuItem(param.getDesc());
-					b.addActionListener(u -> {
-						mcp.inputOptionsValue(param);
-					});
+					b.addActionListener(u -> mcp.inputOptionsValue(param));
 				}
 				a.add(b);
 			}

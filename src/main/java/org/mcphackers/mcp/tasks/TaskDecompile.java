@@ -87,9 +87,7 @@ public class TaskDecompile extends TaskStaged {
 				createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 			}),
 			stage(getLocalizedStage("constants"), 86,
-			() -> {
-				Source.modify(ffOut, Collections.singletonList(new MathConstants()));
-			}),
+			() -> Source.modify(ffOut, Collections.singletonList(new MathConstants()))),
 			stage(getLocalizedStage("patch"), 88,
 			() -> {
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
@@ -107,9 +105,7 @@ public class TaskDecompile extends TaskStaged {
 				FileUtil.copyDirectory(ffOut, srcPath);
 			}),
 			stage(getLocalizedStage("recompile"),
-			() -> {
-				new TaskUpdateMD5(side, mcp, this).doTask();
-			}),
+			() -> new TaskUpdateMD5(side, mcp, this).doTask()),
 		};
 	}
 
@@ -202,7 +198,7 @@ public class TaskDecompile extends TaskStaged {
 		}
 	}
 
-	public static String getLaunchArgs(MCP mcp) throws IOException {
+	public static String getLaunchArgs(MCP mcp) {
 		List<String> args = TaskRun.getLaunchArgs(mcp);
 		for(int i = 0; i < args.size(); i++) {
 			String arg = args.get(i);
