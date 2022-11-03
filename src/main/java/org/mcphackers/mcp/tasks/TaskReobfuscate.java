@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,7 +49,7 @@ public class TaskReobfuscate extends TaskStaged {
 
 
 	private void reobfuscate() throws IOException {
-		final Path reobfBin = MCPPaths.get(mcp, MCPPaths.BIN, side);
+		final Path reobfBin = MCPPaths.get(mcp, BIN, side);
 
 		Side[] sides = side == Side.MERGED ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
 
@@ -56,8 +58,8 @@ public class TaskReobfuscate extends TaskStaged {
 
 		for(Side localSide : sides) {
 
-			final Path reobfDir = MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, localSide);
-			final Path reobfJar = MCPPaths.get(mcp, MCPPaths.REOBF_JAR, localSide);
+			final Path reobfDir = MCPPaths.get(mcp, REOBF_SIDE, localSide);
+			final Path reobfJar = MCPPaths.get(mcp, REOBF_JAR, localSide);
 			List<String> classNames = new ArrayList<>();
 			Files.walk(reobfBin).forEach(path -> {
 				if(path.getFileName().toString().endsWith(".class")) {
@@ -106,7 +108,7 @@ public class TaskReobfuscate extends TaskStaged {
 	}
 
 	private Mappings getMappings(ClassStorage storage, Side side) throws IOException {
-		Path mappingsPath = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
+		Path mappingsPath = MCPPaths.get(mcp, MAPPINGS);
 		if(!Files.exists(mappingsPath)) {
 			return null;
 		}

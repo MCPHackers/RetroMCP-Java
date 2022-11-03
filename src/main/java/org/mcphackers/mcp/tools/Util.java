@@ -26,12 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.fabricmc.mappingio.adapter.MappingNsCompleter;
-import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.Tiny2Reader;
-import net.fabricmc.mappingio.format.Tiny2Writer;
-import net.fabricmc.mappingio.tree.MemoryMappingTree;
-
 public abstract class Util {
 
 	public static int runCommand(String[] cmd, Path dir, boolean killOnShutdown) throws IOException {
@@ -61,60 +55,6 @@ public abstract class Util {
 	public static void runCommand(String[] cmd) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
 		procBuilder.start();
-	}
-
-	//official named -> named client server
-	public static void mergeMappings(Path client, Path server, Path out) throws IOException {
-		MemoryMappingTree clientTree = new MemoryMappingTree();
-		MemoryMappingTree serverTree = new MemoryMappingTree();
-		try (BufferedReader reader = Files.newBufferedReader(client)) {
-			Tiny2Reader.read(reader, clientTree);
-		}
-		try (BufferedReader reader = Files.newBufferedReader(server)) {
-			Tiny2Reader.read(reader, serverTree);
-		}
-		clientTree.setSrcNamespace("client");
-		serverTree.setSrcNamespace("server");
-		MemoryMappingTree namedClientTree = new MemoryMappingTree();
-		{
-			Map<String, String> namespaces = new HashMap<>();
-			namespaces.put("named", "client");
-			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedClientTree, namespaces);
-			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
-			clientTree.accept(nsSwitch);
-		}
-		MemoryMappingTree namedServerTree = new MemoryMappingTree();
-		{
-			Map<String, String> namespaces = new HashMap<>();
-			namespaces.put("named", "server");
-			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedServerTree, namespaces);
-			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
-			serverTree.accept(nsSwitch);
-		}
-		namedServerTree.accept(namedClientTree);
-		try(Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
-			namedClientTree.accept(writer);
-		}
-	}
-
-	//official named -> named client
-	public static void mergeMappings(Path client, Path out) throws IOException {
-		MemoryMappingTree clientTree = new MemoryMappingTree();
-		try (BufferedReader reader = Files.newBufferedReader(client)) {
-			Tiny2Reader.read(reader, clientTree);
-		}
-		clientTree.setSrcNamespace("client");
-		MemoryMappingTree namedClientTree = new MemoryMappingTree();
-		{
-			Map<String, String> namespaces = new HashMap<>();
-			namespaces.put("named", "client");
-			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedClientTree, namespaces);
-			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
-			clientTree.accept(nsSwitch);
-		}
-		try(Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
-			namedClientTree.accept(writer);
-		}
 	}
 
 	public static void copyToClipboard(String text) {
@@ -266,6 +206,17 @@ public abstract class Util {
 			return sb.toString();
 		} catch (NoSuchAlgorithmException e) {
 			throw new IOException(e);
+		}
+	}
+	
+	public static String firstUpperCase(String s) {
+		if(s == null) {
+			return s;
+		}
+		if(s.length() <= 1) {
+			return s.toUpperCase();
+		} else {
+			return Character.toUpperCase(s.charAt(0)) + s.substring(1);
 		}
 	}
 

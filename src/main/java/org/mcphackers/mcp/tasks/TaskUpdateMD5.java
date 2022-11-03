@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -59,8 +61,8 @@ public class TaskUpdateMD5 extends TaskStaged {
 	private int progress = 0;
 
 	public void updateMD5(boolean reobf) throws IOException {
-		final Path binPath 	= MCPPaths.get(mcp, MCPPaths.BIN, side);
-		final Path md5 = MCPPaths.get(mcp, reobf ? MCPPaths.MD5_RO : MCPPaths.MD5, side);
+		final Path binPath 	= MCPPaths.get(mcp, BIN, side);
+		final Path md5 = MCPPaths.get(mcp, reobf ? MD5_RO : MD5, side);
 
 		if (!Files.exists(binPath)) {
 			throw new IOException(side.name + " classes not found!");

@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.XMLWriter;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.injector.GLConstants;
@@ -54,19 +57,19 @@ public class TaskDecompile extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		final Path rdiOut 		= MCPPaths.get(mcp, MCPPaths.REMAPPED, side);
-		final Path ffOut 		= MCPPaths.get(mcp, MCPPaths.SOURCE_UNPATCHED, side);
-		final Path srcPath 		= MCPPaths.get(mcp, MCPPaths.SOURCE, side);
-		final Path patchesPath 	= MCPPaths.get(mcp, MCPPaths.PATCHES, side);
+		final Path rdiOut 		= MCPPaths.get(mcp, REMAPPED, side);
+		final Path ffOut 		= MCPPaths.get(mcp, SOURCE_UNPATCHED, side);
+		final Path srcPath 		= MCPPaths.get(mcp, SOURCE, side);
+		final Path patchesPath 	= MCPPaths.get(mcp, PATCHES, side);
 
 		final boolean guessGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS);
 
 		return new Stage[] {
 			stage(getLocalizedStage("prepare"), 0,
 			() -> {
-				FileUtil.cleanDirectory(MCPPaths.get(mcp, MCPPaths.PROJECT, side));
-				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.JARS_DIR, side));
-				FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.MD5_DIR, side));
+				FileUtil.cleanDirectory(MCPPaths.get(mcp, PROJECT, side));
+				FileUtil.createDirectories(MCPPaths.get(mcp, JARS_DIR, side));
+				FileUtil.createDirectories(MCPPaths.get(mcp, MD5_DIR, side));
 			}),
 			stage(getLocalizedStage("rdi"), 2,
 			() -> {
@@ -111,7 +114,7 @@ public class TaskDecompile extends TaskStaged {
 	}
 
 	public ClassStorage applyInjector() throws IOException {
-		final Path rdiOut = MCPPaths.get(mcp, MCPPaths.REMAPPED, side);
+		final Path rdiOut = MCPPaths.get(mcp, REMAPPED, side);
 		final boolean guessGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS);
 		final boolean hasLWJGL = side == Side.CLIENT || side == Side.MERGED;
 
@@ -120,7 +123,7 @@ public class TaskDecompile extends TaskStaged {
 		Mappings mappings;
 
 		if(side == Side.MERGED) {
-			path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER);
+			path = MCPPaths.get(mcp, JAR_ORIGINAL, Side.SERVER);
 			injector.setStorage(new ClassStorage(IOUtil.read(path)));
 			injector.addResources(path);
 			injector.stripLVT();
@@ -131,7 +134,7 @@ public class TaskDecompile extends TaskStaged {
 			injector.transform();
 			ClassStorage serverStorage = injector.getStorage();
 
-			path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT);
+			path = MCPPaths.get(mcp, JAR_ORIGINAL, Side.CLIENT);
 			injector.setStorage(new ClassStorage(IOUtil.read(path)));
 			injector.addResources(path);
 			injector.stripLVT();
@@ -142,7 +145,7 @@ public class TaskDecompile extends TaskStaged {
 			injector.mergeWith(serverStorage);
 		}
 		else {
-			path = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side);
+			path = MCPPaths.get(mcp, JAR_ORIGINAL, side);
 			injector.setStorage(new ClassStorage(IOUtil.read(path)));
 			injector.addResources(path);
 			injector.stripLVT();
@@ -158,7 +161,7 @@ public class TaskDecompile extends TaskStaged {
 		if(guessGenerics) {
 			injector.guessGenerics();
 		}
-		final Path exc = MCPPaths.get(mcp, MCPPaths.EXC);
+		final Path exc = MCPPaths.get(mcp, EXC);
 		if (Files.exists(exc)) {
 			injector.fixExceptions(exc);
 		}
@@ -168,7 +171,7 @@ public class TaskDecompile extends TaskStaged {
 	}
 
 	public Mappings getMappings(ClassStorage storage, Side side) throws IOException {
-		Path mappingsPath = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
+		Path mappingsPath = MCPPaths.get(mcp, MAPPINGS);
 		if(!Files.exists(mappingsPath)) {
 			return null;
 		}
@@ -190,7 +193,6 @@ public class TaskDecompile extends TaskStaged {
 				.outputPath(out)
 				.mode(PatchMode.OFFSET)
 				.filter(p -> p.endsWith(".java"))
-				.verbose(true)
 				.build();
 		boolean success = patchOperation.doPatch();
 		patchOperation.getSummary().print(new PrintStream(logger), false);
@@ -200,10 +202,25 @@ public class TaskDecompile extends TaskStaged {
 		}
 	}
 
+	public static String getLaunchArgs(MCP mcp) throws IOException {
+		List<String> args = TaskRun.getLaunchArgs(mcp);
+		for(int i = 0; i < args.size(); i++) {
+			String arg = args.get(i);
+			if(arg.contains(" ")) {
+				arg = "\"" + arg + "\"";
+			}
+			args.set(i, arg);
+		}
+		return String.join(" ", args).replace("\"", "&quot;");
+	}
+
 	public static void createProject(MCP mcp, Side side, int sourceVersion) throws IOException {
-		Path proj = MCPPaths.get(mcp, MCPPaths.PROJECT, side);
-		String natives = MCPPaths.get(mcp, MCPPaths.NATIVES).toAbsolutePath().toString();
+		Path proj = MCPPaths.get(mcp, PROJECT, side);
+		String natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath().toString();
 		List<String> libraries = DownloadData.getLibraries(mcp.getCurrentVersion());
+		String clientArgs = getLaunchArgs(mcp);
+		Side[] launchSides = side == Side.MERGED ? new Side[]{Side.CLIENT, Side.SERVER} : new Side[]{side};
+		
 		String projectName = "Minecraft " +
 				( side == Side.CLIENT ? "Client"
 				: side == Side.SERVER ? "Server"
@@ -249,25 +266,30 @@ public class TaskDecompile extends TaskStaged {
 			writer.closeAttribute("projectDescription");
 		}
 
-		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve("Launch.launch")))) {
-			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-			writer.startAttribute("launchConfiguration type=\"org.eclipse.jdt.launching.localJavaApplication\"");
-				writer.startAttribute("listAttribute key=\"org.eclipse.debug.core.MAPPED_RESOURCE_PATHS\"");
-					writer.writeAttribute("listEntry value=\"/"+ projectName +"\"");
-				writer.closeAttribute("listAttribute");
-				writer.startAttribute("listAttribute key=\"org.eclipse.debug.core.MAPPED_RESOURCE_TYPES\"");
-					writer.writeAttribute("listEntry value=\"4\"");
-				writer.closeAttribute("listAttribute");
-				writer.startAttribute("listAttribute key=\"org.eclipse.debug.ui.favoriteGroups\"");
-					writer.writeAttribute("listEntry value=\"org.eclipse.debug.ui.launchGroup.debug\"");
-				writer.closeAttribute("listAttribute");
-				writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE\" value=\"false\"");
-				writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES\" value=\"true\"");
-				writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD\" value=\"true\"");
-				writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MAIN_TYPE\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), side) + "\"");
-				writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MODULE_NAME\" value=\""+ projectName +"\"");
-				writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROJECT_ATTR\" value=\""+ projectName +"\"");
-			writer.closeAttribute("launchConfiguration");
+		for(Side launchSide : launchSides) {
+			try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(Util.firstUpperCase(launchSide.name) + ".launch")))) {
+				writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+				writer.startAttribute("launchConfiguration type=\"org.eclipse.jdt.launching.localJavaApplication\"");
+					writer.startAttribute("listAttribute key=\"org.eclipse.debug.core.MAPPED_RESOURCE_PATHS\"");
+						writer.writeAttribute("listEntry value=\"/"+ projectName +"\"");
+					writer.closeAttribute("listAttribute");
+					writer.startAttribute("listAttribute key=\"org.eclipse.debug.core.MAPPED_RESOURCE_TYPES\"");
+						writer.writeAttribute("listEntry value=\"4\"");
+					writer.closeAttribute("listAttribute");
+					writer.startAttribute("listAttribute key=\"org.eclipse.debug.ui.favoriteGroups\"");
+						writer.writeAttribute("listEntry value=\"org.eclipse.debug.ui.launchGroup.debug\"");
+					writer.closeAttribute("listAttribute");
+					writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE\" value=\"false\"");
+					writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES\" value=\"true\"");
+					writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD\" value=\"true\"");
+					writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MAIN_TYPE\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), launchSide) + "\"");
+					writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MODULE_NAME\" value=\""+ projectName +"\"");
+					if(launchSide == Side.CLIENT) {
+						writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROGRAM_ARGUMENTS\" value=\""+ clientArgs +"\"");
+					}
+					writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROJECT_ATTR\" value=\""+ projectName +"\"");
+				writer.closeAttribute("launchConfiguration");
+			}
 		}
 
 		Path settings = proj.resolve(".settings");

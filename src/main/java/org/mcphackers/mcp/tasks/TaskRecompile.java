@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,8 +47,8 @@ public class TaskRecompile extends TaskStaged {
 		if(compiler == null) {
 			throw new RuntimeException("Could not find compiling API");
 		}
-		Path binPath = MCPPaths.get(mcp, MCPPaths.BIN, side);
-		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
+		Path binPath = MCPPaths.get(mcp, BIN, side);
+		Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 		return new Stage[] {
 			stage(getLocalizedStage("recompile"), 1,
 			() -> {
@@ -107,13 +109,13 @@ public class TaskRecompile extends TaskStaged {
 	}
 
 	public List<Path> collectResources() throws IOException {
-		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
+		Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 		return FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java") && !path.getFileName().toString().endsWith(".class"));
 	}
 
 	public static List<Path> collectClassPath(MCP mcp, Side side) throws IOException {
 		List<Path> classpath = new ArrayList<>();
-		classpath.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
+		classpath.add(MCPPaths.get(mcp, REMAPPED, side));
 		if(mcp.getCurrentVersion() != null) {
 			classpath.addAll(DownloadData.getLibraries(mcp, mcp.getCurrentVersion()));
 		}
@@ -137,7 +139,7 @@ public class TaskRecompile extends TaskStaged {
 	}
 
 	public List<File> collectSource() throws IOException {
-		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
+		Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 		List<File> src;
 		try(Stream<Path> pathStream = Files.walk(srcPath)) {
 			src = pathStream.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".java")).map(Path::toFile).collect(Collectors.toList());

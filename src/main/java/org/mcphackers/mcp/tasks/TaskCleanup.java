@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,8 +37,7 @@ public class TaskCleanup extends Task {
 
 		if(deleted) {
 			log("Cleanup finished in " + DECIMAL.format(Duration.between(startTime, Instant.now()).get(ChronoUnit.NANOS) / 1e+9F) + "s");
-		}
-		else {
+		} else {
 			log("Nothing to clear!");
 		}
 	}
@@ -46,18 +47,18 @@ public class TaskCleanup extends Task {
 		boolean deleted = false;
 		List<Path> filesToDelete = new ArrayList<>();
 		for(Side side : Side.ALL) {
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.PROJECT, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.PATCHES, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
-			filesToDelete.add(MCPPaths.get(mcp, MCPPaths.BUILD_JAR, side));
+			filesToDelete.add(MCPPaths.get(mcp, JAR_ORIGINAL, side));
+			filesToDelete.add(MCPPaths.get(mcp, PROJECT, side));
+			filesToDelete.add(MCPPaths.get(mcp, PATCHES, side));
+			filesToDelete.add(MCPPaths.get(mcp, BUILD_ZIP, side));
+			filesToDelete.add(MCPPaths.get(mcp, BUILD_JAR, side));
 		}
-		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.CONF));
-		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.LIB));
-		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.NATIVES));
+		filesToDelete.add(MCPPaths.get(mcp, CONF));
+		filesToDelete.add(MCPPaths.get(mcp, LIB));
+		filesToDelete.add(MCPPaths.get(mcp, NATIVES));
 
 		List<Path> foldersToDelete = Arrays.asList(new Path[] {
-				MCPPaths.get(mcp, MCPPaths.JARS),
+				MCPPaths.get(mcp, JARS),
 			});
 		for(Path path : filesToDelete) {
 			if(Files.exists(path)) {

@@ -1,10 +1,12 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +34,13 @@ public class TaskSourceBackup extends Task {
 	}
 
 	private void packSourceIntoZip() throws IOException {
-		String filename = "src-backup-" + side.name + "-" + DATE_FORMATTER.format(Instant.now());
+		String filename = "src-backup-" + side.name + "-" + DATE_FORMATTER.format(LocalDate.now());
 		Path backupPath = MCPPaths.get(mcp, filename + ".zip");
 		for(int i = 1; Files.exists(backupPath); i++) {
 			backupPath = MCPPaths.get(mcp, filename + "-" + i + ".zip");
 		}
 
-		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
+		Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 		try(ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(backupPath))) {
 			List<String> srcFiles = new ArrayList<>();
 			Files.walk(srcPath).forEach(file -> {

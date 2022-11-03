@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,9 +18,9 @@ public class TaskCreatePatch extends Task {
 
 	@Override
 	public void doTask() throws Exception {
-		Path srcPathUnpatched = MCPPaths.get(mcp, MCPPaths.SOURCE_UNPATCHED, side);
-		Path srcPathPatched = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
-		Path patchesOut = MCPPaths.get(mcp, MCPPaths.PATCH, side);
+		Path srcPathUnpatched = MCPPaths.get(mcp, SOURCE_UNPATCHED, side);
+		Path srcPathPatched = MCPPaths.get(mcp, SOURCE, side);
+		Path patchesOut = MCPPaths.get(mcp, PATCH, side);
 		setProgress(getLocalizedStage("createpatch"));
 		if(!Files.exists(srcPathPatched)) {
 			throw new IOException("Patched " + side.name + " sources cannot be found!");

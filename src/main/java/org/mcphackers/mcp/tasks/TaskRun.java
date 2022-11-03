@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +50,7 @@ public class TaskRun extends Task {
 		List<String> classPath = new ArrayList<>();
 		cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));
 
-		Path natives = MCPPaths.get(mcp, MCPPaths.NATIVES).toAbsolutePath();
+		Path natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath();
 
 		List<String> args = new ArrayList<>();
 		args.add(Util.getJava());
@@ -65,7 +67,7 @@ public class TaskRun extends Task {
 			}
 		}
 
-		Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, MCPPaths.JARS), true);
+		Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, JARS), true);
 	}
 
 	public static String getMain(MCP mcp, Version version, Side side) throws IOException {
@@ -73,7 +75,7 @@ public class TaskRun extends Task {
 			return version.mainClass;
 		}
 		if(side == Side.SERVER) {
-			Path jarPath = MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side);
+			Path jarPath = MCPPaths.get(mcp, JAR_ORIGINAL, side);
 			try (ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(jarPath))) {
 				ZipEntry zipEntry;
 				while ((zipEntry = zipIn.getNextEntry()) != null) {
@@ -136,7 +138,7 @@ public class TaskRun extends Task {
 
 
 	public static Path getMCDir(MCP mcp, Side side) throws IOException {
-		Path mcDir = MCPPaths.get(mcp, MCPPaths.GAMEDIR, side);
+		Path mcDir = MCPPaths.get(mcp, GAMEDIR, side);
 		if(mcDir != null) {
 			return mcDir;
 		}
@@ -176,16 +178,16 @@ public class TaskRun extends Task {
 	private static List<Path> getClasspath(MCP mcp, Version version, Side side, boolean runBuild) throws IOException {
 		List<Path> cpList = new ArrayList<>();
 		if(runBuild) {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, side));
+			cpList.add(MCPPaths.get(mcp, BUILD_ZIP, side));
 		}
 		else {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.BIN, side));
+			cpList.add(MCPPaths.get(mcp, BIN, side));
 		}
-		if(Files.exists(MCPPaths.get(mcp, MCPPaths.REMAPPED, side))) {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
+		if(Files.exists(MCPPaths.get(mcp, REMAPPED, side))) {
+			cpList.add(MCPPaths.get(mcp, REMAPPED, side));
 		}
 		else {
-			cpList.add(MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, side));
+			cpList.add(MCPPaths.get(mcp, JAR_ORIGINAL, side));
 		}
 		if(side == Side.CLIENT || side == Side.MERGED) {
 			cpList.addAll(DownloadData.getLibraries(mcp, version));

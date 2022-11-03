@@ -1,5 +1,7 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -22,7 +24,7 @@ public class TaskBuild extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		Path bin = 			MCPPaths.get(mcp, MCPPaths.BIN, side);
+		Path bin = 			MCPPaths.get(mcp, BIN, side);
 		return new Stage[] {
 			stage(getLocalizedStage("recompile"),
 			() -> {
@@ -32,11 +34,11 @@ public class TaskBuild extends TaskStaged {
 			() -> {
 				Side[] sides = side == Side.MERGED ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
 				for(Side localSide : sides) {
-					Path originalJar =  MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, localSide);
-					Path reobfDir = 	MCPPaths.get(mcp, MCPPaths.REOBF_SIDE, localSide);
-					Path buildJar = 	MCPPaths.get(mcp, MCPPaths.BUILD_JAR, localSide);
-					Path buildZip = 	MCPPaths.get(mcp, MCPPaths.BUILD_ZIP, localSide);
-					FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.BUILD));
+					Path originalJar =  MCPPaths.get(mcp, JAR_ORIGINAL, localSide);
+					Path reobfDir = 	MCPPaths.get(mcp, REOBF_SIDE, localSide);
+					Path buildJar = 	MCPPaths.get(mcp, BUILD_JAR, localSide);
+					Path buildZip = 	MCPPaths.get(mcp, BUILD_ZIP, localSide);
+					FileUtil.createDirectories(MCPPaths.get(mcp, BUILD));
 					if(mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD)) {
 						Files.deleteIfExists(buildJar);
 						Files.copy(originalJar, buildJar);

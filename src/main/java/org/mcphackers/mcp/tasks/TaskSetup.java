@@ -1,10 +1,14 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
 import java.io.BufferedWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -30,9 +34,9 @@ public class TaskSetup extends Task {
 	@Override
 	public void doTask() throws Exception {
 		new TaskCleanup(mcp).cleanup();
-		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.JARS));
-		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB));
-		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.NATIVES));
+		FileUtil.createDirectories(MCPPaths.get(mcp, JARS));
+		FileUtil.createDirectories(MCPPaths.get(mcp, LIB));
+		FileUtil.createDirectories(MCPPaths.get(mcp, NATIVES));
 
 		setProgress(getLocalizedStage("setup"), 1);
 		List<VersionData> versions = VersionParser.INSTANCE.getVersions();
@@ -54,34 +58,34 @@ public class TaskSetup extends Task {
 		JSONObject versionJsonObj = new JSONObject(new String(Util.readAllBytes(new URL(chosenVersionData.url).openStream()), StandardCharsets.UTF_8));
 		VersionParser.fixLibraries(versionJsonObj);
 		Version versionJson = Version.from(versionJsonObj);
-		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.CONF));
+		FileUtil.createDirectories(MCPPaths.get(mcp, CONF));
 
 		if(chosenVersionData.resources != null) {
 			setProgress(getLocalizedStage("download", chosenVersionData.resources), 2);
-			FileUtil.extract(new URL(chosenVersionData.resources).openStream(), MCPPaths.get(mcp, MCPPaths.CONF));
+			try {
+				URL url = new URL(chosenVersionData.resources);
+				FileUtil.extract(url.openStream(), MCPPaths.get(mcp, CONF));
+			} catch (MalformedURLException e) {
+				Path p = Paths.get(chosenVersionData.resources);
+				if(Files.exists(p)) {
+					FileUtil.extract(p, MCPPaths.get(mcp, CONF));
+				}
+			}
 		}
 
 		DownloadData dlData = new DownloadData(mcp, versionJson);
 		dlData.performDownload((dl, totalSize) -> {
 			libsSize += dl.size();
-			int percent = (int)((double)libsSize / totalSize * 87D);
+			int percent = (int)((double)libsSize / totalSize * 97D);
 			setProgress(getLocalizedStage("download", dl.name()), 3 + percent);
 		});
-		Path natives = MCPPaths.get(mcp, MCPPaths.NATIVES);
+		Path natives = MCPPaths.get(mcp, NATIVES);
 		for(Path nativeArchive : DownloadData.getNatives(mcp, versionJson)) {
 			FileUtil.extract(nativeArchive, natives);
 		}
-		try(BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, MCPPaths.VERSION))) {
+		try(BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, VERSION))) {
 			versionJsonObj.write(writer, 1, 0);
 		}
 		mcp.setCurrentVersion(versionJson);
-
-		setProgress(getLocalizedStage("workspace"), 90);
-		setWorkspace(versionJson);
-	}
-
-	private void setWorkspace(Version version) throws Exception {
-		//FileUtil.extract(TaskSetup.class.getClassLoader().getResourceAsStream("gradle.zip"), mcp.getWorkingDir().toAbsolutePath());
-		//TODO generate build.gradle
 	}
 }

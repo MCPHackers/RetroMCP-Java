@@ -309,7 +309,7 @@ public class MainGUI extends MCP {
 					if(response == JOptionPane.YES_OPTION) {
 						int response2 = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.askSourceBackup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_CANCEL_OPTION);
 						if(response2 == JOptionPane.YES_OPTION) {
-							performTask(TaskMode.BACKUP_SRC, getSide());
+							performTask(TaskMode.BACKUP_SRC, getSide(), false);
 						}
 						else if(response2 != JOptionPane.NO_OPTION) {
 							response = response2;

@@ -75,12 +75,7 @@ public abstract class FileUtil {
 	}
 
 	public static void extract(final Path zipFile, final Path destDir) throws IOException {
-		extract(zipFile, destDir, false);
-	}
-
-	public static void extract(final Path zipFile, final Path destDir, boolean deleteZip) throws IOException {
 		extract(zipFile, destDir, entry -> true);
-		if (deleteZip) Files.deleteIfExists(zipFile);
 	}
 
 	public static void extractByExtension(final Path zipFile, final Path destDir, String extension) throws IOException {

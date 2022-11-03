@@ -5,7 +5,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import net.fabricmc.mappingio.adapter.MappingNsCompleter;
+import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.format.Tiny2Reader;
+import net.fabricmc.mappingio.format.Tiny2Writer;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public final class MappingUtil {
 
@@ -87,6 +95,60 @@ public final class MappingUtil {
 			throw new IllegalStateException("No valid tiny header in " + mappings);
 		}
 		return namespaces;
+	}
+
+	//official named -> named client server
+	public static void mergeMappings(Path client, Path server, Path out) throws IOException {
+		MemoryMappingTree clientTree = new MemoryMappingTree();
+		MemoryMappingTree serverTree = new MemoryMappingTree();
+		try (BufferedReader reader = Files.newBufferedReader(client)) {
+			Tiny2Reader.read(reader, clientTree);
+		}
+		try (BufferedReader reader = Files.newBufferedReader(server)) {
+			Tiny2Reader.read(reader, serverTree);
+		}
+		clientTree.setSrcNamespace("client");
+		serverTree.setSrcNamespace("server");
+		MemoryMappingTree namedClientTree = new MemoryMappingTree();
+		{
+			Map<String, String> namespaces = new HashMap<>();
+			namespaces.put("named", "client");
+			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedClientTree, namespaces);
+			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
+			clientTree.accept(nsSwitch);
+		}
+		MemoryMappingTree namedServerTree = new MemoryMappingTree();
+		{
+			Map<String, String> namespaces = new HashMap<>();
+			namespaces.put("named", "server");
+			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedServerTree, namespaces);
+			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
+			serverTree.accept(nsSwitch);
+		}
+		namedServerTree.accept(namedClientTree);
+		try(Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
+			namedClientTree.accept(writer);
+		}
+	}
+
+	//official named -> named client
+	public static void mergeMappings(Path client, Path out) throws IOException {
+		MemoryMappingTree clientTree = new MemoryMappingTree();
+		try (BufferedReader reader = Files.newBufferedReader(client)) {
+			Tiny2Reader.read(reader, clientTree);
+		}
+		clientTree.setSrcNamespace("client");
+		MemoryMappingTree namedClientTree = new MemoryMappingTree();
+		{
+			Map<String, String> namespaces = new HashMap<>();
+			namespaces.put("named", "client");
+			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedClientTree, namespaces);
+			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
+			clientTree.accept(nsSwitch);
+		}
+		try(Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
+			namedClientTree.accept(writer);
+		}
 	}
 
 }
