@@ -10,7 +10,7 @@ public class AssetIndex {
 	public Map<String, Asset> objects = new LinkedHashMap<>();
 	public boolean virtual;
 	public boolean map_to_resources;
-	
+
 	public static AssetIndex from(JSONObject obj) {
 		if(obj == null) {
 			return null;
@@ -28,7 +28,7 @@ public class AssetIndex {
 			}
 		};
 	}
-	
+
 	public Asset assetFrom(JSONObject obj) {
 		if(obj == null) {
 			return null;

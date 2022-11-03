@@ -10,7 +10,7 @@ import org.mcphackers.mcp.tasks.Task.Side;
  *
  */
 public enum TaskParameter {
-	
+
 	SIDE("side", Integer.class, Side.ANY.index),
 	PATCHES("patch", Boolean.class, true),
 	IGNORED_PACKAGES("ignore", String[].class, new String[] {"paulscode", "com/jcraft", "de/jarnbjo", "isom"}),
@@ -37,7 +37,7 @@ public enum TaskParameter {
 		this.type = c;
 		this.defaultValue = value;
 	}
-	
+
 	public String getDesc() {
 		String s = "task.param." + name;
 		if(MCP.TRANSLATOR.hasKey(s)) {

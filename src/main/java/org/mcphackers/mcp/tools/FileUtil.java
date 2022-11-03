@@ -29,7 +29,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public abstract class FileUtil {
-	
+
 	public static void delete(Path path) throws IOException {
 		if (!Files.exists(path)) {
 			return;
@@ -41,13 +41,13 @@ public abstract class FileUtil {
 			Files.delete(path);
 		}
 	}
-	
+
 	public static void createDirectories(Path path) throws IOException {
 		if (!Files.exists(path)) {
 			Files.createDirectories(path);
 		}
 	}
-	
+
 	public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
 		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader)null)) {
 			for(Path file : files) {
@@ -59,14 +59,14 @@ public abstract class FileUtil {
 			}
 		}
 	}
-	
+
 	public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
 		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader)null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.deleteIfExists(fileInsideZipPath);
 		}
 	}
-	
+
 	public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
 		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader)null)) {
 			Path fileInsideZipPath = fs.getPath(file);
@@ -139,7 +139,7 @@ public abstract class FileUtil {
 			fileChannel.transferFrom(channel, 0, Long.MAX_VALUE);
 		}
 	}
-	
+
 	public static void deleteDirectoryIfExists(Path path) throws IOException {
 		if (Files.isDirectory(path)) {
 			deleteDirectory(path);
@@ -218,12 +218,12 @@ public abstract class FileUtil {
 		});
 		outputStream.close();
 	}
-	
+
 	public static void copyResource(InputStream is, Path out) throws IOException {
 		byte[] data = Util.readAllBytes(is);
 		Files.write(out, data);
 	}
-	
+
 	public static void collectJars(Path libPath, List<Path> list, boolean walk) throws IOException {
 		try(Stream<Path> stream = walk ? Files.walk(libPath) : Files.list(libPath)
 			.filter(library -> library.getFileName().toString().endsWith(".jar"))
@@ -231,7 +231,7 @@ public abstract class FileUtil {
 				list.addAll(stream.collect(Collectors.toList()));
 		}
 	}
-	
+
 	public static void collectJars(Path libPath, List<Path> list) throws IOException {
 		collectJars(libPath, list, false);
 	}

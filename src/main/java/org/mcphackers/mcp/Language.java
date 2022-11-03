@@ -12,12 +12,12 @@ public enum Language {
 	GERMAN("de_DE"),
 	FRENCH("fr_FR"),
 	CHINESE("zh_CN");
-	
+
 	/**
 	 * Internal name
 	 */
 	public String name;
-	
+
 	private Language(String langName) {
 		name = langName;
 	}

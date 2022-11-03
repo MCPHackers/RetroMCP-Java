@@ -57,11 +57,12 @@ public class TaskBuild extends TaskStaged {
 			})
 		};
 	}
-	
+
+	@Override
 	public void setProgress(int progress) {
 		switch (step) {
 		case 0: {
-			int percent = (int)((double)progress * 0.49D);
+			int percent = (int)(progress * 0.49D);
 			super.setProgress(1 + percent);
 			break;
 		}

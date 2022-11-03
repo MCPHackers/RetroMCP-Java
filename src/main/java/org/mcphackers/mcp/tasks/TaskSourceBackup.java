@@ -47,7 +47,7 @@ public class TaskSourceBackup extends Task {
 				}
 			});
 			long nFiles = srcFiles.size();
-	
+
 			int i = 0;
 			for (String path : srcFiles) {
 				if(path.endsWith(".java")) {

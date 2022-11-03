@@ -30,7 +30,7 @@ public class TaskRecompile extends TaskStaged {
 	 */
 	public static final int STAGE_RECOMPILE = 0;
 	public static final int STAGE_COPYRES = 1;
-	
+
 	public TaskRecompile(Side side, MCP instance) {
 		super(side, instance);
 	}
@@ -58,7 +58,7 @@ public class TaskRecompile extends TaskStaged {
 				}
 
 				final List<File> src = collectSource();
-				final List<Path> classpath = collectClassPath();
+				final List<Path> classpath = collectClassPath(mcp, side);
 				final List<Path> bootclasspath = collectBootClassPath();
 
 				List<String> cp = new ArrayList<>();
@@ -105,13 +105,13 @@ public class TaskRecompile extends TaskStaged {
 			})
 		};
 	}
-	
+
 	public List<Path> collectResources() throws IOException {
 		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		return FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java") && !path.getFileName().toString().endsWith(".class"));
 	}
-	
-	public List<Path> collectClassPath() throws IOException {
+
+	public static List<Path> collectClassPath(MCP mcp, Side side) throws IOException {
 		List<Path> classpath = new ArrayList<>();
 		classpath.add(MCPPaths.get(mcp, MCPPaths.REMAPPED, side));
 		if(mcp.getCurrentVersion() != null) {
@@ -119,7 +119,7 @@ public class TaskRecompile extends TaskStaged {
 		}
 		return classpath;
 	}
-	
+
 	public List<Path> collectBootClassPath() throws IOException {
 		List<Path> bootclasspath = new ArrayList<>();
 		String javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
@@ -135,7 +135,7 @@ public class TaskRecompile extends TaskStaged {
 		}
 		return bootclasspath;
 	}
-	
+
 	public List<File> collectSource() throws IOException {
 		Path srcPath = MCPPaths.get(mcp, MCPPaths.SOURCE, side);
 		List<File> src;
@@ -154,7 +154,7 @@ public class TaskRecompile extends TaskStaged {
 		for (Diagnostic<? extends JavaFileObject> diagnostic : ds.getDiagnostics())
 			if(diagnostic.getKind() == Diagnostic.Kind.ERROR || diagnostic.getKind() == Diagnostic.Kind.WARNING) {
 				String[] kindString = {"Info", "Warning", "Error"};
-				byte kind = (byte) (diagnostic.getKind() == Diagnostic.Kind.ERROR ? Task.ERROR : Task.WARNING);
+				byte kind = diagnostic.getKind() == Diagnostic.Kind.ERROR ? Task.ERROR : Task.WARNING;
 				JavaFileObject source = diagnostic.getSource();
 				if (source == null) {
 					addMessage(kindString[kind] + String.format("%n%s%n",

@@ -20,7 +20,7 @@ import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class TaskSetup extends Task {
-	
+
 	private int libsSize = 0;
 
 	public TaskSetup(MCP instance) {
@@ -33,7 +33,7 @@ public class TaskSetup extends Task {
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.JARS));
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.LIB));
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.NATIVES));
-		
+
 		setProgress(getLocalizedStage("setup"), 1);
 		List<VersionData> versions = VersionParser.INSTANCE.getVersions();
 		String chosenVersion = mcp.getOptions().getStringParameter(TaskParameter.SETUP_VERSION);
@@ -55,12 +55,12 @@ public class TaskSetup extends Task {
 		VersionParser.fixLibraries(versionJsonObj);
 		Version versionJson = Version.from(versionJsonObj);
 		FileUtil.createDirectories(MCPPaths.get(mcp, MCPPaths.CONF));
-		
+
 		if(chosenVersionData.resources != null) {
 			setProgress(getLocalizedStage("download", chosenVersionData.resources), 2);
 			FileUtil.extract(new URL(chosenVersionData.resources).openStream(), MCPPaths.get(mcp, MCPPaths.CONF));
 		}
-		
+
 		DownloadData dlData = new DownloadData(mcp, versionJson);
 		dlData.performDownload((dl, totalSize) -> {
 			libsSize += dl.size();

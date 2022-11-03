@@ -44,13 +44,13 @@ public class TaskReobfuscate extends TaskStaged {
 			})
 		};
 	}
-		
-	
+
+
 	private void reobfuscate() throws IOException {
 		final Path reobfBin = MCPPaths.get(mcp, MCPPaths.BIN, side);
-		
+
 		Side[] sides = side == Side.MERGED ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
-		
+
 		Map<String, String> originalHashes = gatherMD5Hashes(false);
 		Map<String, String> recompHashes = gatherMD5Hashes(true);
 
@@ -104,7 +104,7 @@ public class TaskReobfuscate extends TaskStaged {
 			});
 		}
 	}
-	
+
 	private Mappings getMappings(ClassStorage storage, Side side) throws IOException {
 		Path mappingsPath = MCPPaths.get(mcp, MCPPaths.MAPPINGS);
 		if(!Files.exists(mappingsPath)) {
@@ -150,7 +150,7 @@ public class TaskReobfuscate extends TaskStaged {
 			}
 		}
 	}
-	
+
 	private static Map<String, String> getPackageMappings(Map<String, String> classMappings) {
 		Map<String, String> packageMappings = new HashMap<>();
 		for(Entry<String, String> entry : classMappings.entrySet()) {
@@ -165,11 +165,12 @@ public class TaskReobfuscate extends TaskStaged {
 		}
 		return packageMappings;
 	}
-	
+
+	@Override
 	public void setProgress(int progress) {
 		switch (step) {
 		case 0: {
-			int percent = (int)((double)progress * 0.42D);
+			int percent = (int)(progress * 0.42D);
 			super.setProgress(1 + percent);
 			break;
 		}

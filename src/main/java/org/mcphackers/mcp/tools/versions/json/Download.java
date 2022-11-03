@@ -4,13 +4,13 @@ import org.json.JSONObject;
 import org.mcphackers.mcp.tools.versions.IDownload;
 
 public class Download implements IDownload {
-	
+
 	public String sha1;
 	public String url;
 	public long size;
-	
+
 	public static Download from(JSONObject obj) {
-		if(obj == null) { 
+		if(obj == null) {
 			return null;
 		}
 		return new Download() {

@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -18,6 +20,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.tools.JavaCompiler;
@@ -48,7 +52,7 @@ public class MainGUI extends MCP {
 	public boolean isActive = true;
 	public Options options;
 	public Version currentVersion;
-	
+
 	public static final TaskMode[] TASKS = {
 			TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 
@@ -66,7 +70,7 @@ public class MainGUI extends MCP {
 			{TaskParameter.FULL_BUILD},
 			{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS}
 	};
-	
+
 	public static void main(String[] args) throws Exception {
 		Path workingDir = Paths.get("");
 		if(args.length >= 1) {
@@ -76,7 +80,7 @@ public class MainGUI extends MCP {
 		}
 		new MainGUI(workingDir);
 	}
-	
+
 	public MainGUI(Path dir) {
 		workingDir = dir;
 		options = new Options(MCPPaths.get(this, "options.cfg"));
@@ -97,11 +101,11 @@ public class MainGUI extends MCP {
 		}
 		frame = new MCPFrame(this);
 	}
-	
+
 	public Side getSide() {
 		return getOptions().side;
 	}
-	
+
 	@Override
 	public void setProgressBars(List<Task> tasks, TaskMode mode) {
 		frame.setProgressBars(tasks, mode);
@@ -112,6 +116,7 @@ public class MainGUI extends MCP {
 		frame.resetProgressBars();
 	}
 
+	@Override
 	public void setActive(boolean active) {
 		isActive = active;
 		if(active) {
@@ -159,6 +164,7 @@ public class MainGUI extends MCP {
 		return JOptionPane.showInputDialog(frame, msg, title, JOptionPane.PLAIN_MESSAGE);
 	}
 
+	@Override
 	public void showMessage(String title, String msg, int type) {
 		//frame.setExtendedState(Frame.NORMAL);
 		switch (type) {
@@ -174,7 +180,21 @@ public class MainGUI extends MCP {
 		}
 		JOptionPane.showMessageDialog(frame, msg, title, type);
 	}
-	
+
+	@Override
+	public void showMessage(String title, String msg, Throwable e) {
+		JPanel panel = new JPanel(new BorderLayout());
+		JTextArea text = new JTextArea();
+		text.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		text.append(sw.toString());
+		panel.add(new JLabel(msg), BorderLayout.NORTH);
+		panel.add(new JScrollPane(text), BorderLayout.CENTER);
+		JOptionPane.showMessageDialog(frame, panel, title, JOptionPane.ERROR_MESSAGE);
+	}
+
 	public void exit() {
 		if(!isActive) {
 			if(!yesNoInput(MCP.TRANSLATOR.translateKey("mcp.confirmAction"), MCP.TRANSLATOR.translateKey("mcp.confirmExit"))) return;
@@ -234,10 +254,10 @@ public class MainGUI extends MCP {
 		outer.add(label, BorderLayout.SOUTH);
 		return JOptionPane.showConfirmDialog(frame, outer, TRANSLATOR.translateKey("mcp.newVersion") + " " + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
 	}
-	
+
 	public void changeWorkingDirectory() {
         JFileChooser f = new JFileChooser(getWorkingDir().toAbsolutePath().toFile());
-        f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if(f.showDialog(frame, MCP.TRANSLATOR.translateKey("mcp.selectDir")) == JFileChooser.APPROVE_OPTION) {
         	File file = f.getSelectedFile();
         	Path p = file.toPath();
@@ -252,7 +272,7 @@ public class MainGUI extends MCP {
 			}
 		}
 	}
-	
+
 	public void inputOptionsValue(TaskParameter param) {
 		String s = MCP.TRANSLATOR.translateKey("options.enterValue");
 		if(param.type == String[].class) {
@@ -317,7 +337,7 @@ public class MainGUI extends MCP {
 		button.setEnabled(false);
 		return button;
 	}
-	
+
 	public void setSide(Side side) {
 		getOptions().side = side;
 		getOptions().save();

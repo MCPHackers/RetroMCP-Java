@@ -8,9 +8,9 @@ public class AssetIndexMeta {
 	public long size;
 	public long totalSize;
 	public String url;
-	
+
 	public static AssetIndexMeta from(JSONObject obj) {
-		if(obj == null) { 
+		if(obj == null) {
 			return null;
 		}
 		return new AssetIndexMeta() {

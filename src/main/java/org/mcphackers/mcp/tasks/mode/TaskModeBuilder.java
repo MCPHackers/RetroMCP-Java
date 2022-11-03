@@ -4,7 +4,7 @@ import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.mode.TaskMode.Requirement;
 
 public class TaskModeBuilder {
-	
+
 	private String name;
 	private boolean usesProgressBars = true;
 	private Class<? extends Task> taskClass;

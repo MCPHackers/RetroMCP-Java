@@ -28,7 +28,7 @@ import org.mcphackers.mcp.tools.Util;
 
 public class MenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1517569620808224744L;
-	
+
 	public final JMenu menuOptions = new JMenu();
 	public final JMenu mcpMenu = new JMenu("MCP");
 	public final List<JMenuItem> togglableComponents = new ArrayList<>();
@@ -153,7 +153,7 @@ public class MenuBar extends JMenuBar {
 		}
 		sideItems[itemNumber].setSelected(true);
 	}
-	
+
 	public void reloadOptions() {
 		for(Map.Entry<TaskParameter, JMenuItem> entry : optionItems.entrySet()) {
 			entry.getValue().setSelected(mcp.options.getBooleanParameter(entry.getKey()));
@@ -176,7 +176,7 @@ public class MenuBar extends JMenuBar {
 		sideItems[sideItems.length - 1].addActionListener(e -> mcp.setSide(Side.ANY));
 		sideMenu.add(sideItems[sideItems.length - 1]);
 		menuOptions.add(sideMenu);
-		
+
 		String[] names = MainGUI.TABS;
 		TaskParameter[][] params = MainGUI.TAB_PARAMETERS;
 		for(int i = 0; i < names.length; i++) {

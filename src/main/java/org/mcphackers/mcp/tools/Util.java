@@ -62,7 +62,7 @@ public abstract class Util {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
 		procBuilder.start();
 	}
-	
+
 	//official named -> named client server
 	public static void mergeMappings(Path client, Path server, Path out) throws IOException {
 		MemoryMappingTree clientTree = new MemoryMappingTree();
@@ -96,7 +96,7 @@ public abstract class Util {
 			namedClientTree.accept(writer);
 		}
 	}
-	
+
 	//official named -> named client
 	public static void mergeMappings(Path client, Path out) throws IOException {
 		MemoryMappingTree clientTree = new MemoryMappingTree();
@@ -116,7 +116,7 @@ public abstract class Util {
 			namedClientTree.accept(writer);
 		}
 	}
-	
+
 	public static void copyToClipboard(String text) {
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
 	}
@@ -145,7 +145,7 @@ public abstract class Util {
 			throw new IllegalArgumentException(ex);
 		}
 	}
-	
+
 	@Deprecated
 	public static Map<String, Object> jsonToMap(JSONObject jsonobj)  throws JSONException {
 		Map<String, Object> map = new HashMap<>();
@@ -157,7 +157,7 @@ public abstract class Util {
 				value = jsonToList((JSONArray) value);
 			} else if (value instanceof JSONObject) {
 				value = jsonToMap((JSONObject) value);
-			}   
+			}
 			map.put(key, value);
 		}   return map;
 	}
@@ -194,7 +194,7 @@ public abstract class Util {
 		String content = new String(bytes);
 		return new JSONArray(content);
 	}
-	
+
 	public static byte[] readAllBytes(InputStream inputStream) throws IOException {
 		final int bufLen = 4 * 0x400; // 4KB
 		byte[] buf = new byte[bufLen];
@@ -228,12 +228,12 @@ public abstract class Util {
 			BufferedInputStream bs = new BufferedInputStream(fs);
 			byte[] buffer = new byte[1024];
 			int bytesRead;
-	
+
 			while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
 				md.update(buffer, 0, bytesRead);
 			}
 			byte[] digest = md.digest();
-	
+
 			StringBuilder sb = new StringBuilder();
 			for (byte bite : digest) {
 				sb.append(String.format("%02x", bite & 0xff));
@@ -252,12 +252,12 @@ public abstract class Util {
 			BufferedInputStream bs = new BufferedInputStream(fs);
 			byte[] buffer = new byte[1024];
 			int bytesRead;
-	
+
 			while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
 				md.update(buffer, 0, bytesRead);
 			}
 			byte[] digest = md.digest();
-	
+
 			StringBuilder sb = new StringBuilder();
 			for (byte bite : digest) {
 				sb.append(Integer.toString((bite & 255) + 256, 16).substring(1).toLowerCase());
@@ -268,11 +268,11 @@ public abstract class Util {
 			throw new IOException(e);
 		}
 	}
-	
+
 	public static String convertFromEscapedString(String s) {
 		return s.replace("\\n", "\n").replace("\\t", "\t");
 	}
-	
+
 	public static String convertToEscapedString(String s) {
 		return s.replace("\n", "\\n").replace("\t", "\\t");
 	}

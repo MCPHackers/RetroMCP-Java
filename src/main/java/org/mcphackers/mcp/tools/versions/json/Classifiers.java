@@ -10,7 +10,7 @@ public class Classifiers {
 	public Artifact natives_osx;
 	public Artifact natives_windows;
 	public Artifact sources;
-	
+
 	public static Classifiers from(JSONObject obj) {
 		if(obj == null) {
 			return null;
@@ -26,7 +26,7 @@ public class Classifiers {
 			}
 		};
 	}
-	
+
 	public Artifact getNatives() {
 		switch (OS.getOs()) {
 			case windows:

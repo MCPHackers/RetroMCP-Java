@@ -15,7 +15,7 @@ public class TaskButton extends JButton {
 
 	private TaskMode linkedTask;
 	private MCP mcp;
-	
+
 	public TaskButton(MCP owner, TaskMode task) {
 		super(task.getFullName());
 		linkedTask = task;
@@ -29,7 +29,7 @@ public class TaskButton extends JButton {
 		mcp = owner;
 		addActionListener(defaultActionListener);
 	}
-	
+
 	public static ActionListener performTask(MCP mcp, TaskMode mode) {
 		return event -> operateOnThread(() -> mcp.performTask(mode, mcp.getOptions().side));
 	}
@@ -37,7 +37,7 @@ public class TaskButton extends JButton {
 	public boolean getEnabled() {
 		return linkedTask.isAvailable(mcp, mcp.getOptions().side);
 	}
-	
+
 	public void updateName() {
 		setText(linkedTask.getFullName());
 	}

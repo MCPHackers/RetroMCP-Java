@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * Deserialized version JSON
  */
 public class Version {
-	
+
 	public AssetIndexMeta assetIndex;
 	public String assets;
 	public VersionDownloads downloads;
@@ -22,7 +22,7 @@ public class Version {
 	public String mainClass;
 	public String minecraftArguments;
 	public Arguments arguments;
-	
+
 	public static Version from(JSONObject obj) {
 		if(obj == null) {
 			return null;
@@ -47,7 +47,7 @@ public class Version {
 			}
 		};
 	}
-	
+
 	public static class VersionDownloads {
 
 		public Download client;
@@ -55,7 +55,7 @@ public class Version {
 		public Download windows_server;
 		public Download client_mappings;
 		public Download server_mappings;
-		
+
 		public static VersionDownloads from(JSONObject obj) {
 			if(obj == null) {
 				return null;
@@ -71,11 +71,11 @@ public class Version {
 			};
 		}
 	}
-	
+
 	public static class Arguments {
 		public List<Object> game;
 		public List<Object> jvm;
-		
+
 		public static Arguments from(JSONObject obj) {
 			if(obj == null) {
 				return null;
@@ -98,11 +98,11 @@ public class Version {
 			};
 		}
 	}
-	
+
 	public static class Argument {
 		public List<Rule> rules;
 		public Object value;
-		
+
 		public static Argument from(JSONObject obj) {
 			if(obj == null) {
 				return null;

@@ -41,11 +41,12 @@ public class TaskUpdateMD5 extends TaskStaged {
 			})
 		};
 	}
-	
+
+	@Override
 	public void setProgress(int progress) {
 		switch (step) {
 		case 0: {
-			int percent = (int)((double)progress * 0.50D);
+			int percent = (int)(progress * 0.50D);
 			super.setProgress(percent);
 			break;
 		}

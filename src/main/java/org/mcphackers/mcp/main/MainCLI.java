@@ -49,7 +49,7 @@ public class MainCLI extends MCP {
 	private final Scanner consoleInput = new Scanner(System.in);
 	private final Options options = new Options();
 	private Version currentVersion;
-	
+
 	private int[] progresses;
 	private String[] progressStrings;
 	private String[] progressBarNames;
@@ -60,7 +60,7 @@ public class MainCLI extends MCP {
 			new MainCLI(args);
 		}
 	}
-	
+
 	public MainCLI(String[] args) {
 		options.resetDefaults();
 		changeLanguage(Language.ENGLISH); // Some CLI text is hardcoded in English
@@ -285,6 +285,7 @@ public class MainCLI extends MCP {
 		return line == null ? "" : line.toLowerCase();
 	}
 
+	@Override
 	public void showMessage(String title, String msg, int type) {
 		Ansi typeName = new Ansi();
 		switch (type) {
@@ -299,6 +300,14 @@ public class MainCLI extends MCP {
 			break;
 		}
 		log("[" + typeName + "]: " + msg);
+	}
+
+	@Override
+	public void showMessage(String title, String msg, Throwable e) {
+		Ansi typeName = new Ansi().fgRed().a("ERROR").fgDefault();
+		if(msg != null) {
+			log("[" + typeName + "]: " + msg);
+		}
 	}
 
 	@Override
@@ -336,7 +345,7 @@ public class MainCLI extends MCP {
 	@Override
 	public void setProgress(int side, String progressMessage) {
 		//TODO logging messages while progress bar is active still breaks;
-		synchronized (this) { 
+		synchronized (this) {
 			progressStrings[side] = progressMessage;
 			System.out.print(new Ansi().cursorUpLine(progresses.length));
 			for(int i = 0; i < progresses.length; i++) {
@@ -348,7 +357,7 @@ public class MainCLI extends MCP {
 	@Override
 	public void setProgress(int side, int progress) {
 		//TODO logging messages while progress bar is active still breaks;
-		synchronized (this) { 
+		synchronized (this) {
 			progresses[side] = progress;
 			System.out.print(new Ansi().cursorUpLine(progresses.length));
 			for(int i = 0; i < progresses.length; i++) {

@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import org.mcphackers.mcp.tools.Util;
 
 public class Update {
-	
+
 	public static void main(String[] args) {
 		if(args.length >= 1) {
 			boolean keepTrying = true;

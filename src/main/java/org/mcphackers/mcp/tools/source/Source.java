@@ -23,7 +23,7 @@ public abstract class Source {
 	public static final Pattern IMPORT = Pattern.compile("import ([.*\\w]+);((\\r|)\\n)+");
 
 	public abstract void apply(StringBuilder source);
-	
+
 	public static void modify(Path src, List<Source> modify) throws IOException {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
 			@Override
@@ -40,7 +40,7 @@ public abstract class Source {
 			}
 		});
 	}
-	
+
 	protected void updateImports(StringBuilder source, Set<String> imports) {
 		replaceTextOfMatchGroup(source, IMPORT, match -> {
 			// Add import to the set
@@ -69,13 +69,13 @@ public abstract class Source {
 		}
 		else source.insert(0, sb.toString());
 	}
-	
+
 	protected String replaceTextOfMatchGroup(String source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
 		StringBuilder sb = new StringBuilder(source);
 		replaceTextOfMatchGroup(sb, pattern, replaceStrategy);
 		return sb.toString();
 	}
-	
+
 	protected void replaceTextOfMatchGroup(StringBuilder source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
 		Stack<MatchResult> results = new Stack<>();
 		String sourceString = source.toString();
@@ -91,15 +91,15 @@ public abstract class Source {
 			}
 		}
 	}
-	
+
 	protected void addAfterMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
 		addMatch(source, pattern, stringToAdd, true);
 	}
-	
+
 	protected void addBeforeMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
 		addMatch(source, pattern, stringToAdd, false);
 	}
-	
+
 	private static void addMatch(StringBuilder source, Pattern pattern, String stringToAdd, boolean after) {
 		Stack<MatchResult> results = new Stack<>();
 		String sourceString = source.toString();

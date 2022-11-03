@@ -14,17 +14,20 @@ public class DecompileLogger extends IFernflowerLogger {
 		this.listener = listener;
 	}
 
+	@Override
 	public void writeMessage(String message, Severity severity) {
 		if(severity.ordinal() >= Severity.WARN.ordinal()) {
 //			System.out.println(message);
 		}
 	}
 
+	@Override
 	public void writeMessage(String message, Throwable t) {
 //		System.out.println(message);
 //		t.printStackTrace();
 	}
 
+	@Override
 	public void startReadingClass(String className) {
 		listener.setProgress(MCP.TRANSLATOR.translateKey("task.stage.decompile") + " " + className);
 	}

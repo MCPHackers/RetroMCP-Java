@@ -24,12 +24,12 @@ import org.mcphackers.mcp.tools.versions.json.Rule;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class DownloadData {
-	
+
 	public static class DownloadEntry {
 		public final Download dlObject;
 		public final Path path;
 		public final boolean verifySHA1;
-		
+
 		public DownloadEntry(Download dl, Path filePath, boolean verify) {
 			path = filePath;
 			dlObject = dl;
@@ -41,7 +41,7 @@ public class DownloadData {
 	protected AssetIndex assets;
 	protected Path assetsPath;
 	public int totalSize;
-	
+
 	public DownloadData(MCP mcp, Version version) {
 		if(version.downloads.client != null) {
 			add(version.downloads.client, MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
@@ -54,7 +54,7 @@ public class DownloadData {
 				if(dependencyDownload.downloads.artifact != null) {
 					add(dependencyDownload.downloads.artifact, MCPPaths.get(mcp, MCPPaths.LIB + dependencyDownload.downloads.artifact.path));
 				}
-	
+
 				if(dependencyDownload.downloads.classifiers != null) {
 					Artifact artifact = dependencyDownload.downloads.classifiers.getNatives();
 					if(artifact != null) {
@@ -97,7 +97,7 @@ public class DownloadData {
 		totalSize += dl.size();
 		downloadQueue.add(new DownloadEntry(dl, path, verify));
 	}
-	
+
 	public void performDownload(DownloadListener listener) throws IOException {
 		for(DownloadEntry dl : downloadQueue) {
 			Path file = dl.path;
@@ -124,7 +124,7 @@ public class DownloadData {
 			}
 		}
 	}
-	
+
 	public static List<String> getLibraries(Version version) {
 		List<String> retList = new ArrayList<>();
 		for(DependDownload dependencyDownload : version.libraries) {
@@ -136,7 +136,7 @@ public class DownloadData {
 		}
 		return retList;
 	}
-	
+
 	public static List<Path> getLibraries(MCP mcp, Version version) {
 		List<Path> retList = new ArrayList<>();
 		for(DependDownload dependencyDownload : version.libraries) {
@@ -148,7 +148,7 @@ public class DownloadData {
 		}
 		return retList;
 	}
-	
+
 	public static List<Path> getNatives(MCP mcp, Version version) {
 		List<Path> retList = new ArrayList<>();
 		for(DependDownload dependencyDownload : version.libraries) {

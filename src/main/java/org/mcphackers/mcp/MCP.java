@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.mcphackers.mcp.plugin.MCPPlugin;
 import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
@@ -74,9 +75,9 @@ public abstract class MCP {
 			System.err.println("Performing 0 tasks");
 			return false;
 		}
-		
+
 		boolean enableProgressBars = mode.usesProgressBars;
-		
+
 		List<Task> performedTasks = new ArrayList<>();
 		for (Task task : tasks) {
 			if (task.side == side || task.side == Side.ANY) {
@@ -96,6 +97,7 @@ public abstract class MCP {
 		triggerEvent(MCPEvent.STARTED_TASKS);
 
 		AtomicInteger result1 = new AtomicInteger(Task.INFO);
+		AtomicReference<Throwable> e = new AtomicReference<>();
 
 		for(int i = 0; i < performedTasks.size(); i++) {
 			Task task = performedTasks.get(i);
@@ -106,22 +108,22 @@ public abstract class MCP {
 			pool.execute(() -> {
 				try {
 					task.performTask();
-				} catch (Throwable e) {
+				} catch (Throwable e1) {
 					result1.set(Task.ERROR);
-					e.printStackTrace();
+					e.set(e1);
 				}
 				if(enableProgressBars) {
 					setProgress(barIndex, TRANSLATOR.translateKey("task.stage.finished"), 100);
 				}
 			});
 		}
-		
+
 		pool.shutdown();
 		while (!pool.isTerminated()) {}
 		triggerEvent(MCPEvent.FINISHED_TASKS);
 
 		byte result = result1.byteValue();
-		
+
 		List<String> msgs = new ArrayList<>();
 		for(Task task : performedTasks) {
 			msgs.addAll(task.getMessageList());
@@ -139,7 +141,11 @@ public abstract class MCP {
 					TRANSLATOR.translateKey("tasks.success"),
 					TRANSLATOR.translateKey("tasks.warning"),
 					TRANSLATOR.translateKey("tasks.error")};
-			showMessage(mode.getFullName(), msgs2[result], result);
+			if(e.get() != null) {
+				showMessage(mode.getFullName(), msgs2[result], e.get());
+			} else {
+				showMessage(mode.getFullName(), msgs2[result], result);
+			}
 		}
 		setActive(true);
 		if(enableProgressBars) clearProgressBars();
@@ -212,6 +218,8 @@ public abstract class MCP {
 	 */
 	public abstract void showMessage(String title, String msg, int type);
 
+	public abstract void showMessage(String title, String msg, Throwable e);
+
 	/**
 	 * Displayed by TaskUpdateMCP
 	 * @param changelog
@@ -230,7 +238,7 @@ public abstract class MCP {
 		setProgress(barIndex, progress);
 		setProgress(barIndex, progressMessage);
 	}
-	
+
 	/**
 	 * Changes a parameter in current options and saves changes to disk
 	 * @param param

@@ -25,7 +25,7 @@ public class GLConstants extends Source {
 	private static final Pattern CALL_REGEX = Pattern.compile("(" + String.join("|", PACKAGES) + ")\\.([\\w]+)\\(.+?\\)");
 	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
 	private static final Pattern INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[);]))|new KeyBinding\\([ \\w\"]+, .+?\\))");
-	
+
 	private static JSONObject getJson() {
 		try {
 			return Util.parseJSON(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
@@ -34,7 +34,7 @@ public class GLConstants extends Source {
 			return null;
 		}
 	}
-	
+
 	private static List<String> toList(JSONArray packages) {
 		if(packages == null) {
 			return Collections.emptyList();
@@ -46,6 +46,7 @@ public class GLConstants extends Source {
 		return list;
 	}
 
+	@Override
 	public void apply(StringBuilder source) {
 		if (cause != null) {
 			cause.printStackTrace();

@@ -5,14 +5,14 @@ import java.nio.file.Path;
 import org.mcphackers.mcp.tasks.Task.Side;
 
 public class MCPPaths {
-	
+
 	//Directories
 	public static final String JARS = 		"jars/";
 	public static final String LIB = 		"libraries/";
 	public static final String CONF = 		"conf/";
 	public static final String BUILD = 		"build/";
 	public static final String PROJECT = 	"minecraft_%s/";
-	
+
 	//Files and subdirectories
 	public static final String JAR_ORIGINAL = 		 JARS + "minecraft_%s.jar";
 
@@ -31,16 +31,17 @@ public class MCPPaths {
 	public static final String REMAPPED = 	 		 PROJECT + "jars/deobfuscated.jar";
 	public static final String REOBF_JAR = 	 		 PROJECT + "jars/reobfuscated.jar";
 	public static final String REOBF_SIDE = 	 	 PROJECT + "reobf";
+	public static final String GAMEDIR =			 PROJECT + "game/";
 
 	public static final String MAPPINGS = 			 CONF + "mappings.tiny";
 	public static final String EXC = 		 		 CONF + "exceptions.exc";
-	public static final String PATCHES = 	 		 CONF + "patches_%s";
+	public static final String PATCHES = 	 		 CONF + "%s.patch";
 	public static final String VERSION = 	 		 CONF + "version.json";
-	
-	public static final String PATCH =				 "patches/patches_%s";
+
+	public static final String PATCH =				 "patches/%s.patch";
 
 	public static final String UPDATE_JAR =		 	 "update.jar";
-	
+
 	public static Path get(MCP mcp, String path, Side side) {
 		String newPath = path;
 		if(side == Side.CLIENT) {

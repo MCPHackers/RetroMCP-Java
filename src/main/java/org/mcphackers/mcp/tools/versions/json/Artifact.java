@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 public class Artifact extends Download {
 	public String path;
-	
+
 	public static Artifact from(JSONObject obj) {
 		if(obj == null) {
 			return null;
@@ -18,7 +18,7 @@ public class Artifact extends Download {
 			}
 		};
 	}
-	
+
 	@Override
 	public String name() {
 		return path;

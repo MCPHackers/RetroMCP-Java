@@ -15,9 +15,9 @@ public class Rule {
 	public Action action;
 	public OSInfo os;
 	public Map<String, Boolean> features = new HashMap<>();
-	
+
 	public static Rule from(JSONObject obj) {
-		if(obj == null) { 
+		if(obj == null) {
 			return null;
 		}
 		return new Rule() {
@@ -33,13 +33,13 @@ public class Rule {
 			}
 		};
 	}
-	
+
 	public static class OSInfo {
 		public OS name;
 		public String version;
-		
+
 		public static OSInfo from(JSONObject obj) {
-			if(obj == null) { 
+			if(obj == null) {
 				return null;
 			}
 			return new OSInfo() {
@@ -78,7 +78,7 @@ public class Rule {
 		}
 		return this.os != null && !this.os.equalsOS(OS.getOs()) ? null : this.action;
 	}
-	
+
 	public static boolean apply(List<Rule> rules) {
 		return apply(rules, Collections.emptyList());
 	}

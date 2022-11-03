@@ -10,7 +10,7 @@ public class DependDownload {
 	public DownloadLibrary downloads;
 	public String name;
 	public List<Rule> rules = new ArrayList<>();
-	
+
 	public static DependDownload from(JSONObject obj) {
 		if(obj == null) {
 			return null;

@@ -12,7 +12,7 @@ public class TranslatorUtil {
 	private static final Language defaultLang = Language.ENGLISH;
 	private final Map<String, String> translations = new HashMap<>();
 	public Language currentLang;
-	
+
 	public void changeLang(Language lang) {
 		translations.clear();
 		currentLang = lang;
@@ -46,7 +46,7 @@ public class TranslatorUtil {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public String getLangName(Language lang) {
 		Map<String, String> entries = new HashMap<>();
 		readTranslation(entries, MCP.class, lang);

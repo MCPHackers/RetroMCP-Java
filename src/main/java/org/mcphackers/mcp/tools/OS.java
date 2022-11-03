@@ -8,7 +8,7 @@ public enum OS {
 	windows,
 	osx,
 	unknown;
-	
+
 	public static OS os;
 
 

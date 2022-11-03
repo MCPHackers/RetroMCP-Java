@@ -18,7 +18,7 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tools.FileUtil;
 
 public class TaskCleanup extends Task {
-	
+
 	private static final DecimalFormat DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
 	public TaskCleanup(MCP instance) {
@@ -30,7 +30,7 @@ public class TaskCleanup extends Task {
 		Instant startTime = Instant.now();
 
 		boolean deleted = cleanup();
-		
+
 		mcp.setCurrentVersion(null);
 
 		if(deleted) {
@@ -40,7 +40,7 @@ public class TaskCleanup extends Task {
 			log("Nothing to clear!");
 		}
 	}
-	
+
 	public boolean cleanup() throws IOException {
 
 		boolean deleted = false;
@@ -55,7 +55,7 @@ public class TaskCleanup extends Task {
 		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.CONF));
 		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.LIB));
 		filesToDelete.add(MCPPaths.get(mcp, MCPPaths.NATIVES));
-		
+
 		List<Path> foldersToDelete = Arrays.asList(new Path[] {
 				MCPPaths.get(mcp, MCPPaths.JARS),
 			});

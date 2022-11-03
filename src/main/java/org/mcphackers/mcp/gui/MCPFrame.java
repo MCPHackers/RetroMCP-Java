@@ -29,7 +29,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -44,7 +46,7 @@ import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 
 public class MCPFrame extends JFrame implements WindowListener {
-	
+
 	private static final long serialVersionUID = -3455157541499586338L;
 
 	private JComboBox<?> verList;
@@ -59,9 +61,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 	public MainGUI mcp;
 	public boolean loadingVersions = true;
 	private JPanel middlePanel;
-	
+
 	public static final BufferedImage ICON;
-	
+
 	static {
 		BufferedImage image = null;
 		try {
@@ -71,11 +73,11 @@ public class MCPFrame extends JFrame implements WindowListener {
 		} catch (Exception e) {}
 		ICON = image;
 	}
-	
+
 	public MCPFrame(MainGUI mcp) {
 		super("RetroMCP " + MCP.VERSION);
 		this.mcp = mcp;
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
 		setIconImage(ICON);
 		initFrameContents();
@@ -85,7 +87,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
-	
+
 	private void initFrameContents() {
 
 		Container contentPane = getContentPane();
@@ -96,6 +98,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		topLeftContainer = new JPanel();
 		topLeftContainer.setLayout(layout);
 		this.addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent componentEvent) {
 				SwingUtilities.invokeLater(() -> topLeftContainer.revalidate());
 			}
@@ -112,13 +115,13 @@ public class MCPFrame extends JFrame implements WindowListener {
 		for(TaskButton button : buttons) {
 			button.setPreferredSize(preferredButtonSize);
 		}
-		
+
 		topRightContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		reloadVersionList();
 		updateButtonState();
-		
+
 		JPanel topContainer = new JPanel(new BorderLayout());
-		
+
 		topContainer.add(topLeftContainer, BorderLayout.CENTER);
 		topContainer.add(topRightContainer, BorderLayout.EAST);
 		contentPane.add(topContainer, BorderLayout.NORTH);
@@ -147,7 +150,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		contentPane.add(bottom, BorderLayout.SOUTH);
 		reloadText();
 	}
-	
+
 	/**
 	 * Reloads version list and reads current version from {@link MCPPaths#VERSION}
 	 */
@@ -171,23 +174,23 @@ public class MCPFrame extends JFrame implements WindowListener {
 		} else {
 			verList = new JComboBox<Object>(VersionParser.INSTANCE.getVersions().toArray());
 			verList.addPopupMenuListener(new PopupMenuListener() {
-	
+
 				@Override
 				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 				}
-	
+
 				@Override
 				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 					operateOnThread(() ->  {
 					mcp.setupVersion((VersionData)verList.getSelectedItem());
 					});
 				}
-	
+
 				@Override
 				public void popupMenuCanceled(PopupMenuEvent e) {
 				}
 			});
-			
+
 			setCurrentVersion(mcp.currentVersion == null ? null : VersionParser.INSTANCE.getVersion(mcp.currentVersion.id));
 			verList.setMaximumRowCount(20);
 			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
@@ -223,7 +226,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		menuBar.menuOptions.setEnabled(true);
 		menuBar.setComponentsEnabled(true);
 	}
-	
+
 	/**
 	 * Disables all buttons
 	 */
@@ -289,7 +292,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 				name = tasks.get(i).side.getName();
 			}
 			progressBars[i] = new SideProgressBar();
-			progressLabels[i] = new JLabel(name + ":", JLabel.TRAILING);
+			progressLabels[i] = new JLabel(name + ":", SwingConstants.TRAILING);
 			progressLabels[i].setVisible(true);
 			progressBars[i].setVisible(true);
 			GridBagConstraintsBuilder cb = new GridBagConstraintsBuilder(new GridBagConstraints()).insetsUnscaled(4, 4);
@@ -299,7 +302,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		}
 		bottom.setVisible(true);
 	}
-	
+
 	/**
 	 * Called upon {@link MCP#changeLanguage(org.mcphackers.mcp.Language)}
 	 */

@@ -5,15 +5,15 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class MathConstants extends Source {
-	
+
 	// Used to prevent strings from being captured, such as "2.0D"
 	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?<![a-zA-Z\"'])-?\\d+(?:\\.\\d+[fFdD]?|)(?![a-zA-Z\"'])");
 	private static final Map<String, String> CONSTANTS = new HashMap<>();
-	
+
 	static {
 		for (int i = 1; i <= 100; i++) {
 			double d = i * 0.01D;
-			if(d != (double)(float)d) { // if imprecise
+			if(d != (float)d) { // if imprecise
 				floatCastedToDouble((float)d);
 			}
 		}
@@ -39,30 +39,31 @@ public class MathConstants extends Source {
 		replaceValue(8.0D / 256D, "8.0D / 256D");
 		replaceValue(9.0D / 256D, "9.0D / 256D");
 	}
-	
+
+	@Override
 	public void apply(StringBuilder source) {
 		replaceTextOfMatchGroup(source, CONSTANT_REGEX, match1 -> {
 			String constant = match1.group(0);
 			return CONSTANTS.getOrDefault(constant, constant);
 		});
 	}
-	
+
 	private static String floatCastedToDouble(float value) {
 		return CONSTANTS.put((double)value + "D", "(double)" + value + "F");
 	}
-	
+
 	private static String replaceValue(double value, String replace) {
 		return CONSTANTS.put(value + "D", replace);
 	}
-	
+
 	private static String replaceValue(float value, String replace) {
 		return CONSTANTS.put(value + "F", replace);
 	}
-	
+
 	private static String replaceValue(int value, String replace) {
 		return CONSTANTS.put(String.valueOf(value), replace);
 	}
-	
+
 	@SuppressWarnings("unused")
 	private static String replaceValue(long value, String replace) {
 		return CONSTANTS.put(value + "L", replace);

@@ -20,13 +20,13 @@ public class Options {
 	public Path saveFile;
 	public Side side = Side.ANY;
 	public Language lang;
-	
+
 	public Options() {
 		for(TaskParameter param : TaskParameter.values()) {
 			setDefault(param);
 		}
 	}
-	
+
 	public Options(Path file) {
 		this();
 		saveFile = file;
@@ -34,7 +34,7 @@ public class Options {
 			load(saveFile);
 		}
 	}
-	
+
 	private void load(Path file) {
 		try (BufferedReader reader = Files.newBufferedReader(file)) {
 			for(String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -61,7 +61,7 @@ public class Options {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void save() {
 		if(saveFile != null) {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
@@ -99,7 +99,7 @@ public class Options {
 		}
 		options.put(param, value);
 	}
-	
+
 	public void setParameter(TaskParameter param, Object value) throws IllegalArgumentException {
 		if(value == null || param.type.isInstance(value)) {
 			options.put(param, value);

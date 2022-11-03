@@ -39,7 +39,7 @@ public abstract class ClassUtils {
 		return classes;
 	}
 
-	/** 
+	/**
 	 * {@link Modifier#isAbstract(int)} does no guarantee that all methods were implemented in the compiled class
 	 * And there is a chance it was compiled from a different source where one of the methods didn't exist
 	 */
@@ -50,5 +50,12 @@ public abstract class ClassUtils {
 			}
 		}
 		return false;
+	}
+
+	public static int getSourceFromClassVersion(int classVersion) {
+		if(classVersion >= 45) {
+			return classVersion - 44;
+		}
+		return -1;
 	}
 }

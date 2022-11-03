@@ -18,7 +18,7 @@ public class TaskMode {
 	 * All registered tasks
 	 */
 	public static final List<TaskMode> registeredTasks = new ArrayList<>();
-	
+
 	/**
 	 * Cached task parameter types
 	 */
@@ -155,7 +155,7 @@ public class TaskMode {
 	public final Class<? extends Task> taskClass;
 	public final TaskParameter[] params;
 	public final Requirement requirement;
-	
+
 	/**
 	 * Create a new TaskMode instance
 	 * @param name internal name
@@ -179,7 +179,7 @@ public class TaskMode {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * @return Translated name
 	 */
@@ -201,8 +201,8 @@ public class TaskMode {
 		}
 		return MCP.TRANSLATOR.translateKey("task.noDesc");
 	}
-	
-	
+
+
 	private List<Side> allowedSides() {
 		List<Side> sides = new ArrayList<>();
 		for(Side side : Side.values()) {
@@ -212,8 +212,8 @@ public class TaskMode {
 		}
 		return sides;
 	}
-	
-	/** 
+
+	/**
 	 * Create new instances of executable Tasks based on current TaskMode
 	 * @param mcp
 	 * @return List of Tasks
@@ -259,7 +259,7 @@ public class TaskMode {
 			return requirement.get(mcp, side);
 		}
 	}
-	
+
 	@FunctionalInterface
 	public interface Requirement {
 		/**

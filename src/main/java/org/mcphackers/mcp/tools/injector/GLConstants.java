@@ -35,7 +35,7 @@ public final class GLConstants extends ClassVisitor {
 	private static final Map<Integer, String> CONSTANTS_KEYBOARD;
 	private static final List<String> PACKAGES;
 	private static final char[] OPERATORS = {'|', '&', '^'};
-	
+
 	static {
 		JSONObject json = getJson();
 		if(json != null) {
@@ -52,15 +52,17 @@ public final class GLConstants extends ClassVisitor {
 	}
 
 	private ClassNode classNode;
-	
+
 	public GLConstants(ClassVisitor classVisitor) {
 		super(classVisitor);
 	}
 
+	@Override
 	protected void visitClass(ClassNode node) {
 		classNode = node;
 	}
 
+	@Override
 	protected void visitMethod(MethodNode node) {
 		if(!INIT) return;
 		InsnList instructions = node.instructions;
@@ -118,7 +120,7 @@ public final class GLConstants extends ClassVisitor {
 				}
 			}
 		}
-		
+
 		for(Pair<AbstractInsnNode, FieldInsnNode> pair : keyboardConstants) {
 			instructions.set(pair.getLeft(), pair.getRight());
 		}
@@ -145,7 +147,7 @@ public final class GLConstants extends ClassVisitor {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static boolean isICmp(int opcode) {
 		switch (opcode) {
 		case Opcodes.IF_ICMPEQ:
@@ -158,7 +160,7 @@ public final class GLConstants extends ClassVisitor {
 		}
 		return false;
 	}
-	
+
 	public static Integer intValue(AbstractInsnNode insn) {
 		if(insn.getOpcode() == Opcodes.ICONST_0) {
 			return 0;
@@ -192,12 +194,12 @@ public final class GLConstants extends ClassVisitor {
 		}
 		return null;
 	}
-	
+
 	public static FieldInsnNode getKeyboardInsn(int constant) {
 		String constantString = CONSTANTS_KEYBOARD.get(constant);
 		return constantString == null ? null : new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/input/Keyboard", constantString, "I");
 	}
-	
+
 	public static InsnList getGLInsn(MethodInsnNode invoke, int constant) {
 		String pkg = invoke.owner.substring(17); //invoke.owner.replace("org/lwjgl/opengl/", "");
 		for (Pair<Map<String, List<String>>, Map<String, Map<Integer, String>>> group : CONSTANTS) {
@@ -238,7 +240,7 @@ public final class GLConstants extends ClassVisitor {
 		}
 		return null;
 	}
-	
+
     public static int indexOf(char[] ch, int fromIndex, String string) {
         final int max = string.length();
         if (fromIndex < 0) {
@@ -257,7 +259,7 @@ public final class GLConstants extends ClassVisitor {
         }
         return -1;
     }
-    
+
     // Private methods for initialization
 
 	private static JSONObject getJson() {
@@ -288,7 +290,7 @@ public final class GLConstants extends ClassVisitor {
 				if(value == null) continue;
 				map.put(key, toList(value));
 			}
-			
+
 			Map<String, Map<Integer, String>> map2 = new HashMap<>();
 			Iterator<String> keys2 = methodValues.keys();
 			while(keys2.hasNext()) {
@@ -297,12 +299,12 @@ public final class GLConstants extends ClassVisitor {
 				if(value == null) continue;
 				map2.put(key, toMap(value));
 			}
-			
+
 			list.add(Pair.of(map, map2));
 		}
 		return list;
 	}
-	
+
 	private static Map<Integer, String> toMap(JSONObject jsonObject) {
 		if(jsonObject == null) {
 			return Collections.emptyMap();
@@ -321,7 +323,7 @@ public final class GLConstants extends ClassVisitor {
 		}
 		return map;
 	}
-	
+
 	private static List<String> toList(JSONArray packages) {
 		if(packages == null) {
 			return Collections.emptyList();

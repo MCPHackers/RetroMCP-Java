@@ -38,7 +38,7 @@ public final class MappingUtil {
 		}
 		return retName.toString();
 	}
-	
+
 	/**
 	 * @param chars
 	 * @param number
@@ -58,7 +58,7 @@ public final class MappingUtil {
 		}
 		return retName.toString();
 	}
-	
+
 	public static List<String> readNamespaces(Path mappings) throws IOException {
 		List<String> namespaces = new ArrayList<>();
 		boolean invalid = false;

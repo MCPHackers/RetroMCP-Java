@@ -22,10 +22,10 @@ public class VersionParser {
 
 	public static final String MAPPINGS_JSON = "https://mcphackers.github.io/versions/versions.json";
 	public static final VersionParser INSTANCE = new VersionParser();
-	
+
 	private List<VersionData> versions = new ArrayList<>();
 	public Exception failureCause;
-	
+
 	public VersionParser() {
 		JSONArray json;
 		try {
@@ -50,7 +50,7 @@ public class VersionParser {
 		}
 		versions.sort(new VersionSorter());
 	}
-	
+
 	/**
 	 * Returns version data from version id/name
 	 * @param id
@@ -70,10 +70,10 @@ public class VersionParser {
 	public List<VersionData> getVersions() {
 		return versions;
 	}
-	
+
 	public static class VersionData extends VersionMetadata {
 		public String resources;
-		
+
 		public static VersionData from(JSONObject obj) {
 			if(obj == null) {
 				return null;
@@ -89,7 +89,8 @@ public class VersionParser {
 				}
 			};
 		}
-		
+
+		@Override
 		public String toString() {
 			String typ;
 			String ver;
@@ -124,12 +125,13 @@ public class VersionParser {
 			return typ + " " + ver;
 		}
 	}
-	
+
 	/**
 	 * Sorts versions by date
 	 */
 	public static class VersionSorter implements Comparator<VersionData> {
 
+		@Override
 		public int compare(VersionData t1, VersionData t2) {
 			try {
 				Instant i1 = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(t1.releaseTime));
@@ -141,7 +143,7 @@ public class VersionParser {
 			}
 		}
 	}
-	
+
 	public static JSONObject fixLibraries(JSONObject obj) {
 		try {
 			for(Object o : obj.getJSONArray("libraries")) {
@@ -162,7 +164,7 @@ public class VersionParser {
 		}
 		return obj;
 	}
-	
+
 	private static JSONArray getJson() throws Exception {
 		InputStream in;
 		Path versions = Paths.get("versions.json");
@@ -175,5 +177,5 @@ public class VersionParser {
 		}
 		return Util.parseJSONArray(in);
 	}
-	
+
 }

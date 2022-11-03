@@ -9,7 +9,7 @@ public class VersionMetadata {
 	public String releaseTime;
 	public String url;
 
-	
+
 	public static VersionMetadata from(JSONObject obj) {
 		if(obj == null) {
 			return null;
