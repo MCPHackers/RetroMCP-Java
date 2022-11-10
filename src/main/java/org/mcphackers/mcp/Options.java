@@ -56,9 +56,7 @@ public class Options {
 					else if(key.equals("theme")) {
 						try {
 							theme = Theme.valueOf(value);
-						} catch (IllegalArgumentException ignored) {
-							ignored.printStackTrace();
-						}
+						} catch (IllegalArgumentException ignored) {}
 					}
 					else {
 						safeSetParameter(TaskMode.nameToParamMap.get(key), value);

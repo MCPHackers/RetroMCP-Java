@@ -111,6 +111,7 @@ public class TaskDecompile extends TaskStaged {
 
 	public ClassStorage applyInjector() throws IOException {
 		final Path rdiOut = MCPPaths.get(mcp, REMAPPED, side);
+		final Path mappingsPath = MCPPaths.get(mcp, MAPPINGS);
 		final boolean guessGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS);
 		final boolean hasLWJGL = side == Side.CLIENT || side == Side.MERGED;
 
@@ -123,7 +124,7 @@ public class TaskDecompile extends TaskStaged {
 			injector.setStorage(new ClassStorage(IOUtil.read(path)));
 			injector.addResources(path);
 			injector.stripLVT();
-			mappings = getMappings(injector.getStorage(), Side.SERVER);
+			mappings = getMappings(mappingsPath, injector.getStorage(), Side.SERVER);
 			if(mappings != null) {
 				injector.applyMappings(mappings);
 			}
@@ -134,7 +135,7 @@ public class TaskDecompile extends TaskStaged {
 			injector.setStorage(new ClassStorage(IOUtil.read(path)));
 			injector.addResources(path);
 			injector.stripLVT();
-			mappings = getMappings(injector.getStorage(), Side.CLIENT);
+			mappings = getMappings(mappingsPath, injector.getStorage(), Side.CLIENT);
 			if(mappings != null) {
 				injector.applyMappings(mappings);
 			}
@@ -145,7 +146,7 @@ public class TaskDecompile extends TaskStaged {
 			injector.setStorage(new ClassStorage(IOUtil.read(path)));
 			injector.addResources(path);
 			injector.stripLVT();
-			mappings = getMappings(injector.getStorage(), side);
+			mappings = getMappings(mappingsPath, injector.getStorage(), side);
 			if(mappings != null) {
 				injector.applyMappings(mappings);
 			}
@@ -166,8 +167,7 @@ public class TaskDecompile extends TaskStaged {
 		return injector.getStorage();
 	}
 
-	public Mappings getMappings(ClassStorage storage, Side side) throws IOException {
-		Path mappingsPath = MCPPaths.get(mcp, MAPPINGS);
+	public static Mappings getMappings(Path mappingsPath, ClassStorage storage, Side side) throws IOException {
 		if(!Files.exists(mappingsPath)) {
 			return null;
 		}

@@ -139,9 +139,11 @@ public class MenuBar extends JMenuBar {
 		}
 		add(langMenu);
 
-		JMenu themeMenu = new JMenu(MCP.TRANSLATOR.translateKey("options.theme"));
+		JMenu themeMenu = new JMenu();
+		translatableComponents.put(themeMenu, "options.theme");
 		for (Theme theme : Theme.VALUES) {
-			JMenuItem themeItem = new JMenuItem(MCP.TRANSLATOR.translateKey("options.theme." + theme.themeName));
+			JMenuItem themeItem = new JMenuItem();
+			translatableComponents.put(themeItem, "options.theme." + theme.themeName);
 			themeItem.addActionListener((actionEvent) -> {
 				mcp.changeTheme(theme);
 				owner.reloadText();

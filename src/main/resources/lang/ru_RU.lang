@@ -34,6 +34,7 @@ side.any = Любой
 
 options = Настройки
 options.language = Язык
+options.theme = Тема
 options.enterValue = Введите значение
 options.enterValues = Введите группу значении
 options.enterValues.info = (Разделяйте значения запятой)
