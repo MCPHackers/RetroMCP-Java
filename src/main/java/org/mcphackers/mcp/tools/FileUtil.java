@@ -61,14 +61,14 @@ public abstract class FileUtil {
 	}
 
 	public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.deleteIfExists(fileInsideZipPath);
 		}
 	}
 
 	public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.copy(fileInsideZipPath, out);
 		}
