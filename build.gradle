@@ -34,6 +34,8 @@ dependencies {
     shadow "org.json:json:${project.json_version}"
     shadow "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
     shadow "net.fabricmc:mapping-io:${project.mapping_io_version}"
+
+    shadow 'com.formdev:flatlaf:2.6'
 }
 
 application {

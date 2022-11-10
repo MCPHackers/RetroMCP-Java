@@ -19,6 +19,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import org.mcphackers.mcp.Language;
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.Theme;
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
@@ -137,6 +138,18 @@ public class MenuBar extends JMenuBar {
 			langMenu.add(langItem);
 		}
 		add(langMenu);
+
+		JMenu themeMenu = new JMenu(MCP.TRANSLATOR.translateKey("options.theme"));
+		for (Theme theme : Theme.VALUES) {
+			JMenuItem themeItem = new JMenuItem(MCP.TRANSLATOR.translateKey("options.theme." + theme.themeName));
+			themeItem.addActionListener((actionEvent) -> {
+				mcp.changeTheme(theme);
+				owner.reloadText();
+				mcp.options.save();
+			});
+			themeMenu.add(themeItem);
+		}
+		add(themeMenu);
 	}
 
 	public void reloadSide() {

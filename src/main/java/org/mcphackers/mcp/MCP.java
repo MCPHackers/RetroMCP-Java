@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.plugin.MCPPlugin;
 import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
@@ -26,6 +27,8 @@ import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
+import javax.swing.*;
+
 public abstract class MCP {
 
 	public static final String VERSION = "v1.0";
@@ -34,6 +37,7 @@ public abstract class MCP {
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
+	public static Theme THEME = Theme.SWING;
 
 	static {
 		loadPlugins();
@@ -330,6 +334,20 @@ public abstract class MCP {
 		TRANSLATOR.changeLang(lang);
 		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
 			TRANSLATOR.readTranslation(entry.getValue().getClass());
+		}
+	}
+
+	public final void changeTheme(Theme theme) {
+		try {
+			UIManager.setLookAndFeel(theme.themeClass);
+			// If you dare call this on CLI, I will steal your kneecaps
+			JFrame frame = ((MainGUI) this).frame;
+			if (frame != null) {
+				SwingUtilities.updateComponentTreeUI(frame);
+			}
+			THEME = theme;
+		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -34,12 +34,18 @@ side.any = Any
 
 options = Options
 options.language = Language
+options.theme = Theme
 options.enterValue = Enter a value
 options.enterValues = Enter a set of values
 options.enterValues.info = (Separate values with comma)
 options.running = Running
 options.resetDefaults = Reset to defaults
 options.invalidValue = Invalid value!
+
+options.theme.swing = Swing
+options.theme.flatlightlaf = FlatLightLaf
+options.theme.flatdarklaf = FlatDarkLaf
+options.theme.flatdarculalaf = FlatDarculaLaf
 
 task.help = Help
 task.help.desc = Displays command usage
