@@ -4,6 +4,7 @@ import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class MainGUI extends MCP {
 	public Version currentVersion;
 
 	public static final TaskMode[] TASKS = {
-			TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
+			TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 
 	public static final String[] TABS = {
 			"task.decompile",
@@ -62,7 +63,7 @@ public class MainGUI extends MCP {
 			"task.reobfuscate",
 			"task.build",
 			"options.running"
-			};
+	};
 	public static final TaskParameter[][] TAB_PARAMETERS = {
 			{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS},
 			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
@@ -157,19 +158,19 @@ public class MainGUI extends MCP {
 
 	@Override
 	public boolean yesNoInput(String title, String msg) {
-		//frame.setExtendedState(Frame.NORMAL);
+		frame.setState(Frame.NORMAL);
 		return JOptionPane.showConfirmDialog(frame, msg, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	@Override
 	public String inputString(String title, String msg) {
-		//frame.setExtendedState(Frame.NORMAL);
+		frame.setState(Frame.NORMAL);
 		return JOptionPane.showInputDialog(frame, msg, title, JOptionPane.PLAIN_MESSAGE);
 	}
 
 	@Override
 	public void showMessage(String title, String msg, int type) {
-		//frame.setExtendedState(Frame.NORMAL);
+		frame.setState(Frame.NORMAL);
 		switch (type) {
 		case Task.INFO:
 			type = JOptionPane.INFORMATION_MESSAGE;

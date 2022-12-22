@@ -18,7 +18,6 @@ import org.mcphackers.rdi.util.IdentifyCall;
 import org.mcphackers.rdi.util.Pair;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
@@ -26,7 +25,6 @@ import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
 
 public final class GLConstants extends ClassVisitor {
 
@@ -51,15 +49,8 @@ public final class GLConstants extends ClassVisitor {
 		}
 	}
 
-	private ClassNode classNode;
-
 	public GLConstants(ClassVisitor classVisitor) {
 		super(classVisitor);
-	}
-
-	@Override
-	protected void visitClass(ClassNode node) {
-		classNode = node;
 	}
 
 	@Override
@@ -125,11 +116,10 @@ public final class GLConstants extends ClassVisitor {
 			instructions.set(pair.getLeft(), pair.getRight());
 		}
 
-		if(glCalls.isEmpty()) return;
-		try {
-			IdentifyCall sources = IdentifyCall.getInputs(classNode.name, node);
-			for(MethodInsnNode invoke : glCalls) {
-				for(AbstractInsnNode insn : sources.getAllInputsOf(invoke)) {
+		for(MethodInsnNode invoke : glCalls) {
+			IdentifyCall identifiedCall = new IdentifyCall(invoke);
+			for(AbstractInsnNode[] insns : identifiedCall.getArguments()) {
+				for(AbstractInsnNode insn : insns) {
 					if(insn == null) {
 						continue;
 					}
@@ -143,8 +133,6 @@ public final class GLConstants extends ClassVisitor {
 					}
 				}
 			}
-		} catch (AnalyzerException e) {
-			e.printStackTrace();
 		}
 	}
 

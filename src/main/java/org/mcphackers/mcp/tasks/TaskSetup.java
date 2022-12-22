@@ -80,7 +80,7 @@ public class TaskSetup extends Task {
 			setProgress(getLocalizedStage("download", dl.name()), 3 + percent);
 		});
 		Path natives = MCPPaths.get(mcp, NATIVES);
-		for(Path nativeArchive : DownloadData.getNatives(mcp, versionJson)) {
+		for(Path nativeArchive : DownloadData.getNatives(MCPPaths.get(mcp, LIB), versionJson)) {
 			FileUtil.extract(nativeArchive, natives);
 		}
 		try(BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, VERSION))) {

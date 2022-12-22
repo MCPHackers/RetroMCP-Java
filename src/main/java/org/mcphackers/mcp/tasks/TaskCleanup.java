@@ -53,7 +53,6 @@ public class TaskCleanup extends Task {
 			filesToDelete.add(MCPPaths.get(mcp, BUILD_JAR, side));
 		}
 		filesToDelete.add(MCPPaths.get(mcp, CONF));
-		filesToDelete.add(MCPPaths.get(mcp, LIB));
 		filesToDelete.add(MCPPaths.get(mcp, NATIVES));
 
 		Path[] foldersToDelete = new Path[] {

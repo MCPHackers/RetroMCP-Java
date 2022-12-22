@@ -140,7 +140,6 @@ public class MCPFrame extends JFrame implements WindowListener {
 		System.setErr(interceptor);
 		Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 		textArea.setFont(font);
-		textArea.setForeground(Color.BLACK);
 		JScrollPane scroll = new JScrollPane(textArea);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		middlePanel.add(scroll);
@@ -303,6 +302,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 
 	/**
 	 * Called upon {@link MCP#changeLanguage(org.mcphackers.mcp.Language)}
+	 * Reloads text on all translatable components
 	 */
 	public void reloadText() {
 		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), MCP.TRANSLATOR.translateKey("mcp.console")));

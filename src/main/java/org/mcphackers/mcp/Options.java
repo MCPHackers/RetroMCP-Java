@@ -55,7 +55,7 @@ public class Options {
 					}
 					else if(key.equals("theme")) {
 						try {
-							theme = Theme.valueOf(value);
+							theme = Theme.THEMES_MAP.get(value);
 						} catch (IllegalArgumentException ignored) {}
 					}
 					else {
@@ -73,7 +73,7 @@ public class Options {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
-				writer.append("theme").append('=').append(MCP.THEME.themeName.toUpperCase()).append('\n');
+				writer.append("theme").append('=').append(MCP.THEME.themeClass).append('\n');
 				for(Entry<TaskParameter, Object> entry : options.entrySet()) {
 					if(entry.getValue() != null && entry.getKey() != TaskParameter.SIDE) {
 						writer.append(entry.getKey().name).append('=').append(getParameter(entry.getKey()).toString()).append(String.valueOf('\n'));

@@ -42,7 +42,7 @@ public class MenuBar extends JMenuBar {
 	private final MCPFrame owner;
 	private final MainGUI mcp;
 
-	public MenuBar(MCPFrame frame) {
+	protected MenuBar(MCPFrame frame) {
 		owner = frame;
 		mcp = frame.mcp;
 		this.helpMenu.setMnemonic(KeyEvent.VK_H);
@@ -141,9 +141,8 @@ public class MenuBar extends JMenuBar {
 
 		JMenu themeMenu = new JMenu();
 		translatableComponents.put(themeMenu, "options.theme");
-		for (Theme theme : Theme.VALUES) {
-			JMenuItem themeItem = new JMenuItem();
-			translatableComponents.put(themeItem, "options.theme." + theme.themeName);
+		for (Theme theme : Theme.THEMES) {
+			JMenuItem themeItem = new JMenuItem(theme.themeName);
 			themeItem.addActionListener((actionEvent) -> {
 				mcp.changeTheme(theme);
 				owner.reloadText();
@@ -226,12 +225,15 @@ public class MenuBar extends JMenuBar {
 		menuOptions.add(reset);
 	}
 
-	public void setComponentsEnabled(boolean b) {
+	protected void setComponentsEnabled(boolean b) {
 		for(JMenuItem item : togglableComponents) {
 			item.setEnabled(b);
 		}
 	}
 
+	/**
+	 * Reloads text on all translatable components
+	 */
 	public void reloadText() {
 		for(Entry<JMenuItem, String> entry : translatableComponents.entrySet()) {
 			entry.getKey().setText(MCP.TRANSLATOR.translateKey(entry.getValue()));

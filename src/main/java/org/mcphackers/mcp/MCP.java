@@ -25,6 +25,7 @@ import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ public abstract class MCP {
 	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
 
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
-	public static Theme THEME = Theme.SWING;
+	public static Theme THEME = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
 
 	static {
 		loadPlugins();
@@ -349,5 +350,13 @@ public abstract class MCP {
 		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<Path> getLibraries() {
+		return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
+	}
+
+	public List<Path> getNatives() {
+		return DownloadData.getNatives(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
 	}
 }

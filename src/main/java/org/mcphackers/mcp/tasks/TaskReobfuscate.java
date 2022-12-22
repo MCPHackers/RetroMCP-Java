@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import java.util.stream.Stream;
+
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
@@ -21,8 +21,9 @@ import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.rdi.injector.RDInjector;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
-import org.mcphackers.rdi.util.IOUtil;
+import org.mcphackers.rdi.util.ClassStorageWriter;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 
 public class TaskReobfuscate extends TaskStaged {
 
@@ -78,7 +79,7 @@ public class TaskReobfuscate extends TaskStaged {
 				injector.applyMappings(mappings);
 			}
 			injector.transform();
-			IOUtil.write(injector.getStorage(), Files.newOutputStream(reobfJar));
+			new ClassStorageWriter(injector.getStorage(), ClassWriter.COMPUTE_MAXS).write(Files.newOutputStream(reobfJar));
 
 			Map<String, String> reversedNames = new HashMap<>();
 			for(Entry<String, String> entry : mappings.classes.entrySet()) {

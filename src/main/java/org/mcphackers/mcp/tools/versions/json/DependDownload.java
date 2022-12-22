@@ -18,7 +18,7 @@ public class DependDownload {
 		return new DependDownload() {
 			{
 				name = obj.getString("name");
-				downloads = DownloadLibrary.from(obj.getJSONObject("downloads"));
+				downloads = DownloadLibrary.from(obj.optJSONObject("downloads"));
 				JSONArray a = obj.optJSONArray("rules");
 				if(a != null) {
 					for(Object o : a) {

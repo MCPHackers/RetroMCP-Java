@@ -39,32 +39,38 @@ public class DownloadData {
 
 	protected List<DownloadEntry> downloadQueue = new ArrayList<>();
 	protected AssetIndex assets;
-	protected Path assetsPath;
+	private Path gameDir;
 	public int totalSize;
-
+	public List<DownloadEntry> natives = new ArrayList<>();
+	
 	public DownloadData(MCP mcp, Version version) {
-		if(version.downloads.client != null) {
-			add(version.downloads.client, MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT));
+		this(MCPPaths.get(mcp, MCPPaths.LIB), MCPPaths.get(mcp, MCPPaths.JARS), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER), version);
+	}
+
+	public DownloadData(Path libraries, Path gameDir, Path client, Path server, Version version) {
+		this.gameDir = gameDir;
+		if(version.downloads.client != null && client != null) {
+			queueDownload(version.downloads.client, client, true); // TODO may want to make verify flag togglable
 		}
-		if(version.downloads.server != null) {
-			add(version.downloads.client, MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER));
+		if(version.downloads.server != null && server != null) {
+			queueDownload(version.downloads.server, server, true);
 		}
 		for(DependDownload dependencyDownload : version.libraries) {
 			if(Rule.apply(dependencyDownload.rules)) {
-				if(dependencyDownload.downloads.artifact != null) {
-					add(dependencyDownload.downloads.artifact, MCPPaths.get(mcp, MCPPaths.LIB + dependencyDownload.downloads.artifact.path));
+				if(dependencyDownload.downloads != null && dependencyDownload.downloads.artifact != null) {
+					queueDownload(dependencyDownload.downloads.artifact, libraries.resolve(dependencyDownload.downloads.artifact.path), true);
 				}
 
-				if(dependencyDownload.downloads.classifiers != null) {
+				if(dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null) {
 					Artifact artifact = dependencyDownload.downloads.classifiers.getNatives();
 					if(artifact != null) {
-						add(artifact, MCPPaths.get(mcp, MCPPaths.LIB + artifact.path));
+						natives.add(queueDownload(artifact, libraries.resolve(artifact.path), true));
 					}
 				}
 			}
 		}
 		try {
-			Path assetIndex = MCPPaths.get(mcp, MCPPaths.JARS + "assets/indexes/" + version.assets + ".json");
+			Path assetIndex = gameDir.resolve("assets/indexes/" + version.assets + ".json");
 			String assetIndexString;
 			if (!Files.exists(assetIndex) || !version.assetIndex.sha1.equals(Util.getSHA1(assetIndex))) {
 				assetIndexString = new String(Util.readAllBytes(new URL(version.assetIndex.url).openStream()));
@@ -73,29 +79,29 @@ public class DownloadData {
 			else {
 				assetIndexString = new String(Files.readAllBytes(assetIndex));
 			}
-			addAssets(AssetIndex.from(new JSONObject(assetIndexString)), MCPPaths.get(mcp, MCPPaths.JARS));
+			setAssets(AssetIndex.from(new JSONObject(assetIndexString)));
 		}
 		catch (IOException ignored) {}
 	}
 
-	public void addAssets(AssetIndex assets, Path path) {
+	public void setAssets(AssetIndex assets) {
+		if(this.assets != null) {
+			return;
+		}
 		this.assets = assets;
-		assetsPath = path;
 		for(Entry<String, Asset> entry : assets.objects.entrySet()) {
 			totalSize += entry.getValue().size();
 		}
 	}
 
-	public void add(Download dl, Path path) {
-		add(dl, path, true);
-	}
-
-	public void add(Download dl, Path path, boolean verify) {
+	public DownloadEntry queueDownload(Download dl, Path path, boolean verify) {
 		if(dl == null) {
-			return;
+			return null;
 		}
+		DownloadEntry entry = new DownloadEntry(dl, path, verify);
 		totalSize += dl.size();
-		downloadQueue.add(new DownloadEntry(dl, path, verify));
+		downloadQueue.add(entry);
+		return entry;
 	}
 
 	public void performDownload(DownloadListener listener) throws IOException {
@@ -114,7 +120,7 @@ public class DownloadData {
 				Asset asset = entry.getValue();
 				String hash = asset.hash.substring(0, 2) + "/" + asset.hash;
 				String filename = assets.map_to_resources ? "resources/" + entry.getKey() : "assets/objects/" + hash;
-				Path file = assetsPath.resolve(filename);
+				Path file = gameDir.resolve(filename);
 				listener.notify(asset, totalSize);
 				if(!Files.exists(file)) {
 					Path parent = file.getParent();
@@ -137,26 +143,26 @@ public class DownloadData {
 		return retList;
 	}
 
-	public static List<Path> getLibraries(MCP mcp, Version version) {
+	public static List<Path> getLibraries(Path libDir, Version version) {
 		List<Path> retList = new ArrayList<>();
 		for(DependDownload dependencyDownload : version.libraries) {
 			if(Rule.apply(dependencyDownload.rules)) {
 				String[] path = dependencyDownload.name.split(":");
 				String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2] + ".jar";
-				retList.add(MCPPaths.get(mcp, MCPPaths.LIB + lib));
+				retList.add((libDir.resolve(lib)));
 			}
 		}
 		return retList;
 	}
 
-	public static List<Path> getNatives(MCP mcp, Version version) {
+	public static List<Path> getNatives(Path libDir, Version version) {
 		List<Path> retList = new ArrayList<>();
 		for(DependDownload dependencyDownload : version.libraries) {
 			if(Rule.apply(dependencyDownload.rules)) {
-				if(dependencyDownload.downloads.classifiers != null) {
+				if(dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null) {
 					Artifact artifact = dependencyDownload.downloads.classifiers.getNatives();
 					if(artifact != null) {
-						retList.add(MCPPaths.get(mcp, MCPPaths.LIB + artifact.path));
+						retList.add(libDir.resolve(artifact.path));
 					}
 				}
 			}

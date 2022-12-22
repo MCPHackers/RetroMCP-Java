@@ -18,7 +18,6 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
-import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 import org.mcphackers.mcp.tools.versions.json.Version.Arguments;
 
@@ -186,7 +185,7 @@ public class TaskRun extends Task {
 			cpList.add(MCPPaths.get(mcp, JAR_ORIGINAL, side));
 		}
 		if(side == Side.CLIENT || side == Side.MERGED) {
-			cpList.addAll(DownloadData.getLibraries(mcp, version));
+			cpList.addAll(mcp.getLibraries());
 		}
 		return cpList;
 	}

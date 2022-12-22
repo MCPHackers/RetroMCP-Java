@@ -37,7 +37,7 @@ public class AssetIndex {
 			{
 				hash = obj.getString("hash");
 				size = obj.getLong("size");
-				reconstruct = obj.getBoolean("reconstruct");
+				reconstruct = obj.optBoolean("reconstruct");
 				compressedHash = obj.optString("compressedHash", null);
 				compressedSize = obj.optLong("compressedSize");
 			}

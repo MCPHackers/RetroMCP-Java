@@ -24,7 +24,6 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.versions.DownloadData;
 
 public class TaskRecompile extends TaskStaged {
 	/*
@@ -117,7 +116,7 @@ public class TaskRecompile extends TaskStaged {
 		List<Path> classpath = new ArrayList<>();
 		classpath.add(MCPPaths.get(mcp, REMAPPED, side));
 		if(mcp.getCurrentVersion() != null) {
-			classpath.addAll(DownloadData.getLibraries(mcp, mcp.getCurrentVersion()));
+			classpath.addAll(mcp.getLibraries());
 		}
 		return classpath;
 	}

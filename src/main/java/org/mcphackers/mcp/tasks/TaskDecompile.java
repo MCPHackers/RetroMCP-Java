@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
 import org.mcphackers.mcp.MCP;
@@ -21,12 +20,11 @@ import org.mcphackers.mcp.tools.XMLWriter;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.injector.GLConstants;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
-import org.mcphackers.mcp.tools.source.MathConstants;
-import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.rdi.injector.RDInjector;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
+import org.mcphackers.rdi.injector.transform.Transform;
 import org.mcphackers.rdi.util.IOUtil;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -40,10 +38,9 @@ public class TaskDecompile extends TaskStaged {
 	public static final int STAGE_INIT = 0;
 	public static final int STAGE_EXCEPTOR = 1;
 	public static final int STAGE_DECOMPILE = 2;
-	public static final int STAGE_CONSTS = 3;
-	public static final int STAGE_PATCH = 4;
-	public static final int STAGE_COPYSRC = 5;
-	public static final int STAGE_MD5 = 6;
+	public static final int STAGE_PATCH = 3;
+	public static final int STAGE_COPYSRC = 4;
+	public static final int STAGE_MD5 = 5;
 
 	private int classVersion = -1;
 
@@ -80,14 +77,12 @@ public class TaskDecompile extends TaskStaged {
 			}),
 			stage(getLocalizedStage("decompile"),
 			() -> {
-				new Decompiler(this, rdiOut, ffOut, DownloadData.getLibraries(mcp, mcp.getCurrentVersion()),
+				new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(),
 						mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING),
 						guessGenerics)
 				.decompile();
 				createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 			}),
-			stage(getLocalizedStage("constants"), 86,
-			() -> Source.modify(ffOut, Collections.singletonList(new MathConstants()))),
 			stage(getLocalizedStage("patch"), 88,
 			() -> {
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
@@ -151,6 +146,8 @@ public class TaskDecompile extends TaskStaged {
 				injector.applyMappings(mappings);
 			}
 		}
+		injector.addTransform(storage -> Transform.decomposeVars(storage));
+		injector.addTransform(storage -> Transform.replaceCommonConstants(storage));
 		if(hasLWJGL) injector.addVisitor(new GLConstants(null));
 		injector.restoreSourceFile();
 		injector.fixInnerClasses();
@@ -316,7 +313,7 @@ public class TaskDecompile extends TaskStaged {
 	public void setProgress(int progress) {
 		switch (step) {
 		case STAGE_DECOMPILE: {
-			int percent = (int)(progress * 0.8D);
+			int percent = (int)(progress * 0.82D);
 			super.setProgress(3 + percent);
 			break;
 		}
