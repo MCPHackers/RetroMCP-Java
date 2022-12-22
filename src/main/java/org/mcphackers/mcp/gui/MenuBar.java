@@ -28,8 +28,6 @@ import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
 
 public class MenuBar extends JMenuBar {
-	private static final long serialVersionUID = 1517569620808224744L;
-
 	public final JMenu menuOptions = new JMenu();
 	public final JMenu mcpMenu = new JMenu("MCP");
 	public final List<JMenuItem> togglableComponents = new ArrayList<>();
@@ -117,15 +115,6 @@ public class MenuBar extends JMenuBar {
 		togglableComponents.add(changeDir);
 		add(mcpMenu);
 		add(menuOptions);
-		JMenuItem githubItem = new JMenuItem();
-		JMenuItem wiki = new JMenuItem();
-		translatableComponents.put(githubItem, "mcp.github");
-		translatableComponents.put(wiki, "mcp.wiki");
-		githubItem.addActionListener(e -> Util.openUrl(MCP.githubURL));
-		wiki.addActionListener(e -> Util.openUrl(MCP.githubURL + "/wiki"));
-		this.helpMenu.add(githubItem);
-		this.helpMenu.add(wiki);
-		add(helpMenu);
 		JMenu langMenu = new JMenu();
 		translatableComponents.put(langMenu, "options.language");
 		for(Language lang : Language.VALUES) {
@@ -151,6 +140,15 @@ public class MenuBar extends JMenuBar {
 			themeMenu.add(themeItem);
 		}
 		add(themeMenu);
+		JMenuItem githubItem = new JMenuItem();
+		JMenuItem wiki = new JMenuItem();
+		translatableComponents.put(githubItem, "mcp.github");
+		translatableComponents.put(wiki, "mcp.wiki");
+		githubItem.addActionListener(e -> Util.openUrl(MCP.githubURL));
+		wiki.addActionListener(e -> Util.openUrl(MCP.githubURL + "/wiki"));
+		this.helpMenu.add(githubItem);
+		this.helpMenu.add(wiki);
+		add(helpMenu);
 	}
 
 	public void reloadSide() {
