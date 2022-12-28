@@ -22,18 +22,19 @@ public abstract class Source {
 	public static final Pattern PACKAGE = Pattern.compile("package ([.*\\w]+);(\\r|)\\n");
 	public static final Pattern IMPORT = Pattern.compile("import ([.*\\w]+);((\\r|)\\n)+");
 
-	public abstract void apply(StringBuilder source);
+	public abstract void apply(String className, StringBuilder source);
 
 	public static void modify(Path src, List<Source> modify) throws IOException {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
-				if(!file.getFileName().toString().endsWith(".java")) {
+				if(!file.toString().endsWith(".java")) {
 					return FileVisitResult.CONTINUE;
 				}
+				String className = file.toString().substring(0, file.toString().length() - 5);
 				StringBuilder source = new StringBuilder(new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
 				for(Source srcModify : modify) {
-					srcModify.apply(source);
+					srcModify.apply(className, source);
 				}
 				Files.write(file, source.toString().getBytes());
 				return FileVisitResult.CONTINUE;
@@ -63,10 +64,10 @@ public abstract class Source {
 			sb.append("import ").append(imp).append(";").append(n);
 		}
 		// Re-add all imports
-		if(source.toString().startsWith("package")) {
-			addAfterMatch(source, PACKAGE, sb.toString());
+		String importsString = sb.toString();
+		if(!addAfterFirstMatch(source, PACKAGE, importsString)) {
+			source.insert(0, importsString);
 		}
-		else source.insert(0, sb);
 	}
 
 	protected String replaceTextOfMatchGroup(String source, Pattern pattern, Function<MatchResult,String> replaceStrategy) {
@@ -91,30 +92,44 @@ public abstract class Source {
 		}
 	}
 
-	protected void addAfterMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
-		addMatch(source, pattern, stringToAdd, true);
+	protected boolean addAfterFirstMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
+		return addMatch(source, pattern, stringToAdd, true, true);
 	}
 
-	protected void addBeforeMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
-		addMatch(source, pattern, stringToAdd, false);
+	protected boolean addBeforeFirstMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
+		return addMatch(source, pattern, stringToAdd, false, true);
 	}
 
-	private static void addMatch(StringBuilder source, Pattern pattern, String stringToAdd, boolean after) {
+	protected boolean addAfterMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
+		return addMatch(source, pattern, stringToAdd, true, false);
+	}
+
+	protected boolean addBeforeMatch(StringBuilder source, Pattern pattern, String stringToAdd) {
+		return addMatch(source, pattern, stringToAdd, false, false);
+	}
+
+	private static boolean addMatch(StringBuilder source, Pattern pattern, String stringToAdd, boolean after, boolean onlyFirst) {
 		Stack<MatchResult> results = new Stack<>();
 		String sourceString = source.toString();
 		Matcher matcher = pattern.matcher(sourceString);
 
 		while (matcher.find()) {
-			results.push(matcher.toMatchResult());
+			MatchResult match = matcher.toMatchResult();
+			results.push(match);
+			if(onlyFirst) {
+				break;
+			}
 		}
+		boolean result = !results.isEmpty();
 		while (!results.isEmpty()) {
 			MatchResult match = results.pop();
 			if(after && match.end() >= 0) {
 				source.insert(match.end(), stringToAdd);
 			}
-			else if (match.start() >= 0) {
+			else if (!after && match.start() >= 0) {
 				source.insert(match.start(), stringToAdd);
 			}
 		}
+		return result;
 	}
 }

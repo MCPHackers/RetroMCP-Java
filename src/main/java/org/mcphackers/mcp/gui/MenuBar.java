@@ -28,6 +28,8 @@ import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
 
 public class MenuBar extends JMenuBar {
+	private static final long serialVersionUID = 5993064672172544233L;
+
 	public final JMenu menuOptions = new JMenu();
 	public final JMenu mcpMenu = new JMenu("MCP");
 	public final List<JMenuItem> togglableComponents = new ArrayList<>();

@@ -2,18 +2,8 @@ package org.mcphackers.mcp.gui;
 
 import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 import java.net.URL;
@@ -21,17 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -52,6 +32,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 	private JComboBox<?> verList;
 	private final List<TaskButton> buttons = new ArrayList<>();
 	private JLabel verLabel;
+	//private JButton verCleanup;
 	private JPanel topRightContainer;
 	private JPanel topLeftContainer;
 	private JPanel bottom;
@@ -104,16 +85,10 @@ public class MCPFrame extends JFrame implements WindowListener {
 			}
 		});
 
-		Dimension preferredButtonSize = new Dimension(0, 26);
 		for(TaskMode task : MainGUI.TASKS) {
 			TaskButton button = mcp.getButton(task);
-			button.setPreferredSize(null);
-			preferredButtonSize.width = Math.max(button.getPreferredSize().width, preferredButtonSize.width);
 			buttons.add(button);
 			topLeftContainer.add(button);
-		}
-		for(TaskButton button : buttons) {
-			button.setPreferredSize(preferredButtonSize);
 		}
 
 		topRightContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -157,11 +132,14 @@ public class MCPFrame extends JFrame implements WindowListener {
 
 		verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		verList = new JComboBox<Object>(new String[] {MCP.TRANSLATOR.translateKey("mcp.versionList.loading")});
+		//verCleanup = mcp.getButton(TaskMode.CLEANUP);
+		//verCleanup.setEnabled(false);
 		verLabel.setEnabled(false);
 		verList.setEnabled(false);
 		topRightContainer.removeAll();
 		topRightContainer.add(this.verLabel);
 		topRightContainer.add(this.verList);
+		//topRightContainer.add(this.verCleanup);
 		operateOnThread(() ->  {
 		loadingVersions = true;
 		if(VersionParser.INSTANCE.failureCause != null) {
@@ -198,11 +176,13 @@ public class MCPFrame extends JFrame implements WindowListener {
 			if(verList != null) {
 				topRightContainer.add(this.verList);
 			}
+			//topRightContainer.add(this.verCleanup);
 			loadingVersions = false;
 			synchronized (mcp) {
 				if(mcp.isActive) {
 					if(verList != null) verList.setEnabled(true);
 					verLabel.setEnabled(true);
+					//verCleanup.setEnabled(true);
 				}
 			}
 			topRightContainer.updateUI();
@@ -220,6 +200,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		menuBar.start.forEach((key, value) -> value.setEnabled(TaskMode.START.isAvailable(mcp, key)));
 		if(verList != null && !loadingVersions) verList.setEnabled(true);
 		if(!loadingVersions) verLabel.setEnabled(true);
+		//if(!loadingVersions) verCleanup.setEnabled(true);
 		menuBar.menuOptions.setEnabled(true);
 		menuBar.setComponentsEnabled(true);
 	}
@@ -231,6 +212,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		buttons.forEach(button -> button.setEnabled(false));
 		if(verList != null) verList.setEnabled(false);
 		verLabel.setEnabled(false);
+		//verCleanup.setEnabled(false);
 		menuBar.menuOptions.setEnabled(false);
 		menuBar.setComponentsEnabled(false);
 	}
@@ -240,6 +222,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 	 * @param versionData
 	 */
 	public void setCurrentVersion(VersionData versionData) {
+		if(verList == null) {
+			return;
+		}
 		verList.setSelectedItem(versionData);
 		verList.repaint();
 	}
@@ -316,7 +301,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 		Dimension preferredButtonSize = new Dimension(0, 26);
 		for(TaskButton button : buttons) {
 			button.setPreferredSize(null);
-			preferredButtonSize.width = Math.max(button.getPreferredSize().width, preferredButtonSize.width);
+			Dimension preferredButtonSize2 = button.getPreferredSize();
+			preferredButtonSize.width = Math.max(preferredButtonSize2.width, preferredButtonSize.width);
+			preferredButtonSize.height = Math.max(preferredButtonSize2.height, preferredButtonSize.height);
 		}
 		for(TaskButton button : buttons) {
 			button.setPreferredSize(preferredButtonSize);

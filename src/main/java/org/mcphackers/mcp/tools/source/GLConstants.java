@@ -47,7 +47,7 @@ public class GLConstants extends Source {
 	}
 
 	@Override
-	public void apply(StringBuilder source) {
+	public void apply(String className, StringBuilder source) {
 		if (cause != null) {
 			cause.printStackTrace();
 			return;

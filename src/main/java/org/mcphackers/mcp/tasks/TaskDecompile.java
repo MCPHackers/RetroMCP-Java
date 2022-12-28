@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Random;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -116,7 +117,7 @@ public class TaskDecompile extends TaskStaged {
 
 		if(side == Side.MERGED) {
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, Side.SERVER);
-			injector.setStorage(new ClassStorage(IOUtil.read(path)));
+			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
 			injector.stripLVT();
 			mappings = getMappings(mappingsPath, injector.getStorage(), Side.SERVER);
@@ -127,7 +128,7 @@ public class TaskDecompile extends TaskStaged {
 			ClassStorage serverStorage = injector.getStorage();
 
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, Side.CLIENT);
-			injector.setStorage(new ClassStorage(IOUtil.read(path)));
+			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
 			injector.stripLVT();
 			mappings = getMappings(mappingsPath, injector.getStorage(), Side.CLIENT);
@@ -138,7 +139,7 @@ public class TaskDecompile extends TaskStaged {
 		}
 		else {
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, side);
-			injector.setStorage(new ClassStorage(IOUtil.read(path)));
+			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
 			injector.stripLVT();
 			mappings = getMappings(mappingsPath, injector.getStorage(), side);
@@ -256,6 +257,22 @@ public class TaskDecompile extends TaskStaged {
 				writer.startAttribute("natures");
 					writer.stringAttribute("nature", "org.eclipse.jdt.core.javanature");
 				writer.closeAttribute("natures");
+				// Filter out src and jars
+				long id = new Random().nextLong();
+				writer.startAttribute("filteredResources");
+				String[] matches = {"src", "jars"};
+				for(int i = 0; i < matches.length; i++) {
+					writer.startAttribute("filter");
+						writer.stringAttribute("id", Long.toString(id++));
+						writer.stringAttribute("name", "");
+						writer.stringAttribute("type", "9");
+						writer.startAttribute("matcher");
+							writer.stringAttribute("id", "org.eclipse.ui.ide.multiFilter");
+							writer.stringAttribute("arguments", "1.0-name-matches-false-false-" + matches[i]);
+						writer.closeAttribute("matcher");
+					writer.closeAttribute("filter");
+				}
+				writer.closeAttribute("filteredResources");
 			writer.closeAttribute("projectDescription");
 		}
 

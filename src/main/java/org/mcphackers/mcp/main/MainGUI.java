@@ -326,6 +326,15 @@ public class MainGUI extends MCP {
 			});
 			button = new TaskButton(this, task, defaultActionListener);
 		}
+		else if(task == TaskMode.CLEANUP) {
+			ActionListener defaultActionListener = event -> operateOnThread(() -> {
+				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmCleanup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+				if(response == JOptionPane.YES_OPTION) {
+					performTask(task, Side.ANY);
+				}
+			});
+			button = new TaskButton(this, task, defaultActionListener);
+		}
 		else if(task == TaskMode.UPDATE_MD5) {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
 				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmUpdateMD5"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);

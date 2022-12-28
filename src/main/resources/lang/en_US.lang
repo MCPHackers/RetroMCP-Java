@@ -8,6 +8,7 @@ mcp.confirmUpdateMD5 = Are you sure you want to regenerate original hashes?
 mcp.confirmAction = Confirm Action
 mcp.confirmDecompile = Are you sure you want to delete sources and decompile again?
 mcp.confirmSetup = Are you sure you want to run setup for selected version?
+mcp.confirmCleanup = Are you sure you want to delete all sources and clear currently active version?
 mcp.askSourceBackup = Make a backup of the source files?
 mcp.incompatiblePlugin = Incompatible plugin found:
 mcp.versionList.currentVersion = Current version:

@@ -41,7 +41,7 @@ public class MathConstants extends Source {
 	}
 
 	@Override
-	public void apply(StringBuilder source) {
+	public void apply(String className, StringBuilder source) {
 		replaceTextOfMatchGroup(source, CONSTANT_REGEX, match1 -> {
 			String constant = match1.group(0);
 			return CONSTANTS.getOrDefault(constant, constant);

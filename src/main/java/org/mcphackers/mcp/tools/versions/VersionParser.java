@@ -13,7 +13,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.json.VersionMetadata;
@@ -142,27 +141,6 @@ public class VersionParser {
 				return -1;
 			}
 		}
-	}
-
-	public static JSONObject fixLibraries(JSONObject obj) {
-		try {
-			for(Object o : obj.getJSONArray("libraries")) {
-				if(o instanceof JSONObject) {
-					JSONObject lib = (JSONObject)o;
-					if("org.ow2.asm:asm-all:4.1".equals(lib.getString("name"))) {
-						lib.put("name", "org.ow2.asm:asm-all:5.2");
-						JSONObject artifact = lib.getJSONObject("downloads").getJSONObject("artifact");
-						artifact.put("path", "org/ow2/asm/asm-all/5.2/asm-all-5.2.jar");
-						artifact.put("sha1", "2ea49e08b876bbd33e0a7ce75c8f371d29e1f10a");
-						artifact.put("url", "https://repository.ow2.org/nexus/service/local/repositories/releases/content/org/ow2/asm/asm-all/5.2/asm-all-5.2.jar");
-						artifact.put("size", 247787);
-					}
-				}
-			}
-		}
-		catch (JSONException ignored) {
-		}
-		return obj;
 	}
 
 	private static JSONArray getJson() throws Exception {

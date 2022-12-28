@@ -56,7 +56,6 @@ public class TaskSetup extends Task {
 		}
 
 		JSONObject versionJsonObj = new JSONObject(new String(Util.readAllBytes(new URL(chosenVersionData.url).openStream()), StandardCharsets.UTF_8));
-		VersionParser.fixLibraries(versionJsonObj);
 		Version versionJson = Version.from(versionJsonObj);
 		FileUtil.createDirectories(MCPPaths.get(mcp, CONF));
 
