@@ -35,7 +35,7 @@ dependencies {
     shadow "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
     shadow "net.fabricmc:mapping-io:${project.mapping_io_version}"
 
-    //shadow 'com.formdev:flatlaf:2.6'
+    shadow 'com.formdev:flatlaf:2.6'
 }
 
 application {
@@ -58,7 +58,9 @@ shadowJar {
 		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainGUI'
 	}
 	archiveClassifier = 'GUI'
-    minimize()
+    minimize {
+		exclude(dependency('com.formdev:.*:.*'))
+	}
 }
 
 task jarCLI(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
@@ -68,7 +70,9 @@ task jarCLI(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
 	archiveClassifier = 'CLI'
 	from sourceSets.main.output
 	configurations = [project.configurations.shadow]
-    minimize()
+    minimize {
+		exclude(dependency('com.formdev:.*:.*'))
+	}
 }
 
 jar.dependsOn(jarCLI)
