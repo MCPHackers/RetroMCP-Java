@@ -19,7 +19,7 @@ import org.mcphackers.mcp.tools.versions.json.VersionMetadata;
 
 public class VersionParser {
 
-	public static final String MAPPINGS_JSON = "https://mcphackers.github.io/versions/versions.json";
+	public static final String MAPPINGS_JSON = "https://mcphackers.github.io/versionsV2/versions.json";
 	public static final VersionParser INSTANCE = new VersionParser();
 
 	private final List<VersionData> versions = new ArrayList<>();
