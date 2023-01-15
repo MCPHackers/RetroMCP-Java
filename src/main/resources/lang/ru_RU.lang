@@ -106,6 +106,8 @@ task.param.target = Задать версию для аргумента комп
 task.param.javahome = Задать JAVA_HOME для компилирования
 task.param.override = Декомпиляция с @Override
 task.param.resources = Оставлять ресурсы
+task.param.generics = Отгадывать дженерики
+task.param.stripgenerics = Удалить дженерики
 
 tasks.success = Завершено успешно!
 tasks.warning = Завершено с предупреждениями!

@@ -25,7 +25,8 @@ public enum TaskParameter {
 	JAVA_HOME("javahome", String.class, ""),
 	DECOMPILE_OVERRIDE("override", Boolean.class, false),
 	DECOMPILE_RESOURCES("resources", Boolean.class, false),
-	GUESS_GENERICS("generics", Boolean.class, false);
+	GUESS_GENERICS("generics", Boolean.class, false),
+	STRIP_GENERICS("stripgenerics", Boolean.class, false);
 
 	public static final TaskParameter[] VALUES = TaskParameter.values();
 

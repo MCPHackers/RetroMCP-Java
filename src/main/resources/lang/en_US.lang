@@ -113,6 +113,7 @@ task.param.javahome = Set JAVA_HOME used for compiling
 task.param.override = Add @Override
 task.param.resources = Keep resources
 task.param.generics = Guess generics
+task.param.stripgenerics = Strip generics
 
 tasks.success = Finished successfully!
 tasks.warning = Finished with warnings!

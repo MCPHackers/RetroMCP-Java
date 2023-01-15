@@ -109,6 +109,7 @@ public class TaskDecompile extends TaskStaged {
 		final Path rdiOut = MCPPaths.get(mcp, REMAPPED, side);
 		final Path mappingsPath = MCPPaths.get(mcp, MAPPINGS);
 		final boolean guessGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS);
+		final boolean stripGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.STRIP_GENERICS);
 		final boolean hasLWJGL = side == Side.CLIENT || side == Side.MERGED;
 
 		RDInjector injector = new RDInjector();
@@ -119,7 +120,10 @@ public class TaskDecompile extends TaskStaged {
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, Side.SERVER);
 			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
-			injector.stripLVT();
+			if(stripGenerics) {
+				injector.stripLVT();
+				injector.addTransform(storage -> Transform.stripSignatures(storage));
+			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), Side.SERVER);
 			if(mappings != null) {
 				injector.applyMappings(mappings);
@@ -130,7 +134,10 @@ public class TaskDecompile extends TaskStaged {
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, Side.CLIENT);
 			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
-			injector.stripLVT();
+			if(stripGenerics) {
+				injector.stripLVT();
+				injector.addTransform(storage -> Transform.stripSignatures(storage));
+			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), Side.CLIENT);
 			if(mappings != null) {
 				injector.applyMappings(mappings);
@@ -141,7 +148,10 @@ public class TaskDecompile extends TaskStaged {
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, side);
 			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
-			injector.stripLVT();
+			if(stripGenerics) {
+				injector.stripLVT();
+				injector.addTransform(storage -> Transform.stripSignatures(storage));
+			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), side);
 			if(mappings != null) {
 				injector.applyMappings(mappings);
@@ -153,9 +163,7 @@ public class TaskDecompile extends TaskStaged {
 		injector.restoreSourceFile();
 		injector.fixInnerClasses();
 		injector.fixImplicitConstructors();
-		if(guessGenerics) {
-			injector.guessGenerics();
-		}
+		if(guessGenerics) injector.guessGenerics();
 		final Path exc = MCPPaths.get(mcp, EXC);
 		if (Files.exists(exc)) {
 			injector.fixExceptions(exc);
