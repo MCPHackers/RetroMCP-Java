@@ -39,6 +39,8 @@ public class MenuBar extends JMenuBar {
 	public final Map<TaskParameter, JMenuItem> optionItems = new HashMap<>();
 	private final JMenu helpMenu = new JMenu();
 	private JMenuItem[] sideItems;
+	private JMenuItem[] themeItems;
+	private JMenuItem[] langItems;
 	private final MCPFrame owner;
 	private final MainGUI mcp;
 
@@ -119,27 +121,49 @@ public class MenuBar extends JMenuBar {
 		add(menuOptions);
 		JMenu langMenu = new JMenu();
 		translatableComponents.put(langMenu, "options.language");
+		int i = 0;
+		langItems = new JMenuItem[Language.VALUES.length];
 		for(Language lang : Language.VALUES) {
-			JMenuItem langItem = new JMenuItem(MCP.TRANSLATOR.getLangName(lang));
+			JMenuItem langItem = new JRadioButtonMenuItem(MCP.TRANSLATOR.getLangName(lang));
 			langItem.addActionListener(a -> {
 				mcp.changeLanguage(lang);
 				owner.reloadText();
+				for(JMenuItem item : langItems) {
+					item.setSelected(false);
+				}
+				langItem.setSelected(true);
 				mcp.options.save();
 			});
+			if(lang.equals(MCP.TRANSLATOR.currentLang)) {
+				langItem.setSelected(true);
+			}
+			langItems[i] = langItem;
 			langMenu.add(langItem);
+			i++;
 		}
 		add(langMenu);
 
 		JMenu themeMenu = new JMenu();
 		translatableComponents.put(themeMenu, "options.theme");
+		themeItems = new JMenuItem[Theme.THEMES.size()];
+		i = 0;
 		for (Theme theme : Theme.THEMES) {
-			JMenuItem themeItem = new JMenuItem(theme.themeName);
+			JMenuItem themeItem = new JRadioButtonMenuItem(theme.themeName);
 			themeItem.addActionListener((actionEvent) -> {
 				mcp.changeTheme(theme);
 				owner.reloadText();
+				for(JMenuItem item : themeItems) {
+					item.setSelected(false);
+				}
+				themeItem.setSelected(true);
 				mcp.options.save();
 			});
+			if(theme.equals(MCP.THEME)) {
+				themeItem.setSelected(true);
+			}
+			themeItems[i] = themeItem;
 			themeMenu.add(themeItem);
+			i++;
 		}
 		add(themeMenu);
 		JMenuItem githubItem = new JMenuItem();

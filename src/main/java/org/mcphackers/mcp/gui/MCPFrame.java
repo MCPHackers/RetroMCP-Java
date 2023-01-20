@@ -2,16 +2,35 @@ package org.mcphackers.mcp.gui;
 
 import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -64,7 +83,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		initFrameContents();
 		pack();
 		setMinimumSize(getMinimumSize());
-		setSize(new Dimension(1024, 500));
+		setSize(new Dimension(900, 520));
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -101,20 +120,14 @@ public class MCPFrame extends JFrame implements WindowListener {
 		topContainer.add(topRightContainer, BorderLayout.EAST);
 		contentPane.add(topContainer, BorderLayout.NORTH);
 
-		JTextArea textArea = new JTextArea();
+		JTextPane textArea = mcp.textPane;
+		Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+		textArea.setFont(font);
+		textArea.setEditable(false);
 		middlePanel = new JPanel();
 		middlePanel.setPreferredSize(new Dimension(0, 380));
 		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), MCP.TRANSLATOR.translateKey("mcp.console")));
 		middlePanel.setLayout(new BorderLayout());
-		textArea.setEditable(false);
-		PrintStream origOut = System.out;
-		PrintStream interceptor = new TextAreaOutputStream(textArea, origOut);
-		System.setOut(interceptor);
-		origOut = System.err;
-		interceptor = new TextAreaOutputStream(textArea, origOut);
-		System.setErr(interceptor);
-		Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-		textArea.setFont(font);
 		JScrollPane scroll = new JScrollPane(textArea);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		middlePanel.add(scroll);

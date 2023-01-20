@@ -66,6 +66,10 @@ public class DownloadData {
 					if(artifact != null) {
 						natives.add(queueDownload(artifact, libraries.resolve(artifact.path), true));
 					}
+					artifact = dependencyDownload.downloads.classifiers.sources;
+					if(artifact != null) {
+						queueDownload(artifact, libraries.resolve(artifact.path), true);
+					}
 				}
 			}
 		}

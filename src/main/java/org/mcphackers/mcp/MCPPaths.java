@@ -21,7 +21,7 @@ public class MCPPaths {
 	public static final String BUILD_ZIP = 	 		 BUILD + "minecraft_%s.zip";
 	public static final String BUILD_JAR = 	 		 BUILD + "minecraft_%s.jar";
 
-	public static final String SOURCE_UNPATCHED = 	 PROJECT + "src_original";
+	public static final String SOURCE_UNPATCHED = 	 PROJECT + "source";
 	public static final String SOURCE = 	 		 PROJECT + "src";
 	public static final String BIN =				 PROJECT + "bin";
 	public static final String MD5_DIR = 	 		 PROJECT + "md5";
@@ -30,6 +30,7 @@ public class MCPPaths {
 	public static final String JARS_DIR = 	 		 PROJECT + "jars";
 	public static final String REMAPPED = 	 		 PROJECT + "jars/deobfuscated.jar";
 	public static final String REOBF_JAR = 	 		 PROJECT + "jars/reobfuscated.jar";
+	public static final String SOURCE_JAR = 	 	 PROJECT + "jars/deobfuscated-source.jar";
 	public static final String REOBF_SIDE = 	 	 PROJECT + "reobf";
 	public static final String GAMEDIR =			 PROJECT + "game/";
 

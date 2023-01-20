@@ -3,39 +3,43 @@ package org.mcphackers.mcp.gui;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 public class TextAreaOutputStream extends PrintStream {
-	private final JTextArea textArea;
+	private JTextPane textPane;
 
-	public TextAreaOutputStream(JTextArea textArea, OutputStream out) {
+	public TextAreaOutputStream(JTextPane textArea, OutputStream out) {
 		super(out, true);
-		this.textArea = textArea;
+		this.textPane = textArea;
 	}
 
 	@Override
 	public void print(Object o) {
-		textArea.append(String.valueOf(o));
+		printString(String.valueOf(o));
 		super.print(o);
 	}
 
 	@Override
 	public void println(Object o) {
 		super.println(o);
-		textArea.append("\n");
-		textArea.setCaretPosition(textArea.getDocument().getLength());
+		printString("\n");
 	}
 
 	@Override
 	public void print(String s) {
-		textArea.append(s);
+		printString(s);
 		super.print(s);
 	}
 
 	@Override
 	public void println(String s) {
 		super.println(s);
-		textArea.append("\n");
-		textArea.setCaretPosition(textArea.getDocument().getLength());
+		printString("\n");
 	}
+
+    private void printString(String msg) {
+        int len = textPane.getDocument().getLength();
+        textPane.setCaretPosition(len);
+        textPane.replaceSelection(msg);
+    }
 }

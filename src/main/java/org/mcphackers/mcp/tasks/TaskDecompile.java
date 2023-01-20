@@ -21,7 +21,9 @@ import org.mcphackers.mcp.tools.XMLWriter;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.injector.GLConstants;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
-import org.mcphackers.mcp.tools.versions.DownloadData;
+import org.mcphackers.mcp.tools.versions.json.DependDownload;
+import org.mcphackers.mcp.tools.versions.json.Rule;
+import org.mcphackers.mcp.tools.versions.json.Version;
 import org.mcphackers.rdi.injector.RDInjector;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
@@ -97,6 +99,7 @@ public class TaskDecompile extends TaskStaged {
 						Files.delete(p);
 					}
 				}
+				FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
 				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
 			}),
@@ -219,7 +222,7 @@ public class TaskDecompile extends TaskStaged {
 	public static void createProject(MCP mcp, Side side, int sourceVersion) throws IOException {
 		Path proj = MCPPaths.get(mcp, PROJECT, side);
 		String natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath().toString();
-		List<String> libraries = DownloadData.getLibraries(mcp.getCurrentVersion());
+		Version version = mcp.getCurrentVersion();
 		String clientArgs = getLaunchArgs(mcp);
 		Side[] launchSides = side == Side.MERGED ? new Side[]{Side.CLIENT, Side.SERVER} : new Side[]{side};
 		
@@ -237,12 +240,24 @@ public class TaskDecompile extends TaskStaged {
 						writer.writeAttribute("attribute name=\"org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY\" value=\"" + natives + "\"");
 					writer.closeAttribute("attributes");
 				writer.closeAttribute("classpathentry");
-				writer.writeAttribute("classpathentry kind=\"lib\" path=\"jars/deobfuscated.jar\"");
-				for(String lib : libraries) {
-					if(Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
-						writer.writeAttribute("classpathentry kind=\"lib\" path=\"../libraries/" + lib + ".jar\"");
+				for(DependDownload dependencyDownload : version.libraries) {
+					if(Rule.apply(dependencyDownload.rules)) {
+						String[] path = dependencyDownload.name.split(":");
+						String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
+						String src = null;
+						if(dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
+							src = dependencyDownload.downloads.classifiers.sources.path;
+						}
+						if(Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
+							if(src != null) {
+								writer.writeAttribute("classpathentry kind=\"lib\" path=\"../libraries/" + lib + ".jar\" sourcepath=\"../libraries/" + src + "\"");
+							} else {
+								writer.writeAttribute("classpathentry kind=\"lib\" path=\"../libraries/" + lib + ".jar\"");
+							}
+						}
 					}
 				}
+				writer.writeAttribute("classpathentry kind=\"lib\" path=\"jars/deobfuscated.jar\" sourcepath=\"jars/deobfuscated-source.jar\"");
 				writer.writeAttribute("classpathentry kind=\"con\" path=\"org.eclipse.jdt.launching.JRE_CONTAINER\"");
 				writer.writeAttribute("classpathentry kind=\"output\" path=\"output\"");
 			writer.closeAttribute("classpath");
@@ -268,7 +283,7 @@ public class TaskDecompile extends TaskStaged {
 				// Filter out src and jars
 				long id = new Random().nextLong();
 				writer.startAttribute("filteredResources");
-				String[] matches = {"src", "jars"};
+				String[] matches = {"src", "jars", "source"};
 				for(int i = 0; i < matches.length; i++) {
 					writer.startAttribute("filter");
 						writer.stringAttribute("id", Long.toString(id++));

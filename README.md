@@ -6,22 +6,23 @@ RetroMCP-Java is a complete re-design of RetroMCP in Java.
 # Using
 
 Using RetroMCP-Java is simple!
-1. Download and install the latest version of Java from OpenJDK. MCPHackers recommend [Azul Zulu](https://www.azul.com/downloads/?version=java-8-lts&package=jdk)
-   > Oracle JDK isn't suggested as not only does Oracle require signing up for the latest Java 8, but Oracle JDK tries to advertise
-   scams inside the installer, the JDK is of poor quality in comparison to OpenJDK, and unilaterally breaks JAR file associations.
+1. Download and install JDK 8. MCPHackers recommend [Azul Zulu](https://www.azul.com/downloads/?version=java-8-lts&package=jdk)
 2. Run the latest release from the command line or via double click. If you run it via double click and RMCP errors, make sure your PATH
 and your JAR file associations are properly configured
-3. Run the setup command and choose the version you wish to decompile.
-4. Run the decompile command
+	> Be careful! Using "Open with" context menu on Windows will not use a proper directory, be sure to change the default .jar file associations
+3. Run setup and choose the version you wish to decompile.
+4. Run decompile
 5. Mod away! Now it's Yourcraft!
 
 For more info you can check [RetroMCP Wiki](https://github.com/MCPHackers/RetroMCP-Java/wiki).
 
 # Features
 
-* Automatically download Minecraft .jar's from official download links
-* A wrapper for applet versions
+* Automatically download Minecraft .jar and libraries from version JSONs
+* An improved launch method using [LaunchWrapper](https://github.com/MCPHackers/LaunchWrapper)
 * Reobfuscation for all available versions
+* Automatic project creation
+* Merged codebase generation
 
 # Contributing
 

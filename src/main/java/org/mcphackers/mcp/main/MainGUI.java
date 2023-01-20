@@ -8,6 +8,7 @@ import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -23,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.tools.JavaCompiler;
@@ -35,6 +37,7 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.gui.MCPFrame;
 import org.mcphackers.mcp.gui.TaskButton;
+import org.mcphackers.mcp.gui.TextAreaOutputStream;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
@@ -53,6 +56,7 @@ public class MainGUI extends MCP {
 	public boolean isActive = true;
 	public Options options;
 	public Version currentVersion;
+	public JTextPane textPane = new JTextPane();
 
 	public static final TaskMode[] TASKS = {
 			TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
@@ -83,6 +87,13 @@ public class MainGUI extends MCP {
 	}
 
 	public MainGUI(Path dir) {
+		PrintStream origOut = System.out;
+		PrintStream interceptor = new TextAreaOutputStream(textPane, origOut);
+		System.setOut(interceptor);
+		origOut = System.err;
+		interceptor = new TextAreaOutputStream(textPane, origOut);
+		System.setErr(interceptor);
+
 		workingDir = dir;
 		options = new Options(MCPPaths.get(this, "options.cfg"));
 		if(options.lang != null) {
