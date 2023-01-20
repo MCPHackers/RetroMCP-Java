@@ -102,6 +102,7 @@ public class TaskDecompile extends TaskStaged {
 				FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
 				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
+				Files.createDirectories(MCPPaths.get(mcp, GAMEDIR, side));
 			}),
 			stage(getLocalizedStage("recompile"),
 			() -> new TaskUpdateMD5(side, mcp, this).doTask()),
@@ -250,9 +251,9 @@ public class TaskDecompile extends TaskStaged {
 						}
 						if(Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
 							if(src != null) {
-								writer.writeAttribute("classpathentry kind=\"lib\" path=\"../libraries/" + lib + ".jar\" sourcepath=\"../libraries/" + src + "\"");
+								writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\" sourcepath=\"libraries/" + src + "\"");
 							} else {
-								writer.writeAttribute("classpathentry kind=\"lib\" path=\"../libraries/" + lib + ".jar\"");
+								writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\"");
 							}
 						}
 					}
@@ -280,6 +281,13 @@ public class TaskDecompile extends TaskStaged {
 				writer.startAttribute("natures");
 					writer.stringAttribute("nature", "org.eclipse.jdt.core.javanature");
 				writer.closeAttribute("natures");
+				writer.startAttribute("linkedResources");
+					writer.startAttribute("link");
+						writer.stringAttribute("name", "libraries");
+						writer.stringAttribute("type", "2");
+						writer.stringAttribute("locationURI", "$%7BPARENT-1-PROJECT_LOC%7D/libraries");
+					writer.closeAttribute("link");
+				writer.closeAttribute("linkedResources");
 				// Filter out src and jars
 				long id = new Random().nextLong();
 				writer.startAttribute("filteredResources");
