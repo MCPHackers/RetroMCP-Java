@@ -87,20 +87,25 @@ public class TaskReobfuscate extends TaskStaged {
 			}
 			FileUtil.cleanDirectory(reobfDir);
 			FileUtil.extract(reobfJar, reobfDir, entry -> {
+				if(entry.isDirectory()) {
+					return false;
+				}
 				String className = entry.getName().replace(".class", "");
+				// Force inner classes to compare outer class hash
+				int index;
+				if((index = className.indexOf('$')) != -1) {
+					className = className.substring(0, index);
+				}
 				String deobfName = reversedNames.get(className);
 				if(deobfName == null) {
 					deobfName = className;
 				}
 				String hash			= originalHashes.get(deobfName);
 				String hashModified = recompHashes.get(deobfName);
-				if(!entry.isDirectory()) {
-					if(hash == null) {
-						return true;
-					}
-					else return !hash.equals(hashModified);
+				if(hash == null) {
+					return true;
 				}
-				return false;
+				else return !hash.equals(hashModified);
 			});
 		}
 	}

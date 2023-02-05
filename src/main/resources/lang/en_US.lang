@@ -114,6 +114,7 @@ task.param.override = Add @Override
 task.param.resources = Keep resources
 task.param.generics = Guess generics
 task.param.stripgenerics = Strip generics
+task.param.outputsrc = Output source
 
 tasks.success = Finished successfully!
 tasks.warning = Finished with warnings!

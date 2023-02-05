@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
 
 public class TextAreaOutputStream extends PrintStream {
 	private JTextPane textPane;
@@ -38,8 +39,10 @@ public class TextAreaOutputStream extends PrintStream {
 	}
 
     private void printString(String msg) {
-        int len = textPane.getDocument().getLength();
-        textPane.setCaretPosition(len);
-        textPane.replaceSelection(msg);
+        try {
+            textPane.getStyledDocument().insertString(textPane.getStyledDocument().getLength(), msg, null);
+        } catch (BadLocationException ex) {
+            ex.printStackTrace();
+        }
     }
 }

@@ -57,6 +57,9 @@ public class TaskRecompile extends TaskStaged {
 				if (!Files.exists(srcPath)) {
 					throw new IOException(side.getName() + " sources not found!");
 				}
+				if(Files.list(srcPath).collect(Collectors.toList()).isEmpty()) {
+					return;
+				}
 
 				final List<File> src = collectSource();
 				final List<Path> classpath = collectClassPath(mcp, side);
@@ -112,7 +115,7 @@ public class TaskRecompile extends TaskStaged {
 		return FileUtil.walkDirectory(srcPath, path -> !Files.isDirectory(path) && !path.getFileName().toString().endsWith(".java") && !path.getFileName().toString().endsWith(".class"));
 	}
 
-	public static List<Path> collectClassPath(MCP mcp, Side side) {
+	public static List<Path> collectClassPath(MCP mcp, Side side) throws IOException {
 		List<Path> classpath = new ArrayList<>();
 		classpath.add(MCPPaths.get(mcp, REMAPPED, side));
 		if(mcp.getCurrentVersion() != null) {

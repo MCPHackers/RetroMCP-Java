@@ -1,6 +1,17 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.MCPPaths.*;
+import static org.mcphackers.mcp.MCPPaths.EXC;
+import static org.mcphackers.mcp.MCPPaths.GAMEDIR;
+import static org.mcphackers.mcp.MCPPaths.JARS_DIR;
+import static org.mcphackers.mcp.MCPPaths.JAR_ORIGINAL;
+import static org.mcphackers.mcp.MCPPaths.MAPPINGS;
+import static org.mcphackers.mcp.MCPPaths.MD5_DIR;
+import static org.mcphackers.mcp.MCPPaths.PATCHES;
+import static org.mcphackers.mcp.MCPPaths.PROJECT;
+import static org.mcphackers.mcp.MCPPaths.REMAPPED;
+import static org.mcphackers.mcp.MCPPaths.SOURCE;
+import static org.mcphackers.mcp.MCPPaths.SOURCE_JAR;
+import static org.mcphackers.mcp.MCPPaths.SOURCE_UNPATCHED;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -100,8 +111,11 @@ public class TaskDecompile extends TaskStaged {
 					}
 				}
 				FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
-				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
-				FileUtil.copyDirectory(ffOut, srcPath);
+				Files.createDirectories(srcPath);
+				if(mcp.getOptions().getBooleanParameter(TaskParameter.OUTPUT_SRC)) {
+					FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
+					FileUtil.copyDirectory(ffOut, srcPath);
+				}
 				Files.createDirectories(MCPPaths.get(mcp, GAMEDIR, side));
 			}),
 			stage(getLocalizedStage("recompile"),
@@ -222,7 +236,6 @@ public class TaskDecompile extends TaskStaged {
 
 	public static void createProject(MCP mcp, Side side, int sourceVersion) throws IOException {
 		Path proj = MCPPaths.get(mcp, PROJECT, side);
-		String natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath().toString();
 		Version version = mcp.getCurrentVersion();
 		String clientArgs = getLaunchArgs(mcp);
 		Side[] launchSides = side == Side.MERGED ? new Side[]{Side.CLIENT, Side.SERVER} : new Side[]{side};
@@ -238,7 +251,7 @@ public class TaskDecompile extends TaskStaged {
 			writer.startAttribute("classpath");
 				writer.startAttribute("classpathentry kind=\"src\" path=\"src\"");
 					writer.startAttribute("attributes");
-						writer.writeAttribute("attribute name=\"org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY\" value=\"" + natives + "\"");
+						writer.writeAttribute("attribute name=\"org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY\" value=\"" + projectName + "/libraries/natives\"");
 					writer.closeAttribute("attributes");
 				writer.closeAttribute("classpathentry");
 				for(DependDownload dependencyDownload : version.libraries) {
@@ -318,6 +331,7 @@ public class TaskDecompile extends TaskStaged {
 						writer.writeAttribute("listEntry value=\"4\"");
 					writer.closeAttribute("listAttribute");
 					writer.startAttribute("listAttribute key=\"org.eclipse.debug.ui.favoriteGroups\"");
+						writer.writeAttribute("listEntry value=\"org.eclipse.debug.ui.launchGroup.run\"");
 						writer.writeAttribute("listEntry value=\"org.eclipse.debug.ui.launchGroup.debug\"");
 					writer.closeAttribute("listAttribute");
 					writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE\" value=\"false\"");

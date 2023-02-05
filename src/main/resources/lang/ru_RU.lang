@@ -108,6 +108,7 @@ task.param.override = Декомпиляция с @Override
 task.param.resources = Оставлять ресурсы
 task.param.generics = Отгадывать дженерики
 task.param.stripgenerics = Удалить дженерики
+task.param.outputsrc = Выводить исходный код
 
 tasks.success = Завершено успешно!
 tasks.warning = Завершено с предупреждениями!
