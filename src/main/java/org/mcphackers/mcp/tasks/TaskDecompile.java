@@ -176,6 +176,7 @@ public class TaskDecompile extends TaskStaged {
 			}
 		}
 		injector.addTransform(storage -> Transform.decomposeVars(storage));
+		injector.addTransform(storage -> Transform.fixTryCatchRange(storage));
 		injector.addTransform(storage -> Transform.replaceCommonConstants(storage));
 		if(hasLWJGL) injector.addVisitor(new GLConstants(null));
 		injector.restoreSourceFile();

@@ -57,8 +57,10 @@ public class TaskRecompile extends TaskStaged {
 				if (!Files.exists(srcPath)) {
 					throw new IOException(side.getName() + " sources not found!");
 				}
-				if(Files.list(srcPath).collect(Collectors.toList()).isEmpty()) {
-					return;
+				try(Stream<Path> paths = Files.list(srcPath)) {
+					if(paths.collect(Collectors.toList()).isEmpty()) {
+						return;
+					}
 				}
 
 				final List<File> src = collectSource();
