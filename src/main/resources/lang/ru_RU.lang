@@ -67,6 +67,8 @@ task.createpatch = Создать патч
 task.createpatch.desc = Создать патч на основе измененного кода
 task.backupsrc = Бэкап
 task.backupsrc.desc = Упаковать исходный код в архив
+task.applypatch = Наложить патч
+task.applypatch.desc = Применяет патч из директории "patches"
 task.noDesc = Нет описания
 
 task.stage.idle = Простой
@@ -99,7 +101,7 @@ task.param.ind = Задать строку отступа
 task.param.obf = Обфусицировать мод
 task.param.fullbuild = Полная сборка
 task.param.runbuild = Запускать сборку
-task.param.runargs = Аргументы для запуска
+task.param.runargs = JVM аргументы
 task.param.setup = Настройка версии
 task.param.source = Задать версию для аргумента компилятора "source"
 task.param.target = Задать версию для аргумента компилятора "target"

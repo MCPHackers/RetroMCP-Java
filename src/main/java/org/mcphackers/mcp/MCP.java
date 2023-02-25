@@ -90,7 +90,7 @@ public abstract class MCP {
 			}
 			else if (side == Side.ANY) {
 				if (task.side == Side.SERVER || task.side == Side.CLIENT) {
-					if(mode.requirement.get(this, task.side)) {
+					if(mode.requirement == null || mode.requirement.get(this, task.side)) {
 						performedTasks.add(task);
 					}
 				}
@@ -156,6 +156,10 @@ public abstract class MCP {
 		if(enableProgressBars) clearProgressBars();
 		System.gc();
 		return result != Task.ERROR;
+	}
+
+	public Side getSide() {
+		return getOptions().side;
 	}
 
 	/**

@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 
 public class TaskButton extends JButton {
@@ -14,16 +15,16 @@ public class TaskButton extends JButton {
 	private static final long serialVersionUID = -2625827711322112358L;
 
 	private final TaskMode linkedTask;
-	private final MCP mcp;
+	private final MainGUI mcp;
 
-	public TaskButton(MCP owner, TaskMode task) {
+	public TaskButton(MainGUI owner, TaskMode task) {
 		super(task.getFullName());
 		linkedTask = task;
 		mcp = owner;
 		addActionListener(performTask(mcp, linkedTask));
 	}
 
-	public TaskButton(MCP owner, TaskMode task, ActionListener defaultActionListener) {
+	public TaskButton(MainGUI owner, TaskMode task, ActionListener defaultActionListener) {
 		super(task.getFullName());
 		linkedTask = task;
 		mcp = owner;
@@ -35,7 +36,7 @@ public class TaskButton extends JButton {
 	}
 
 	public boolean getEnabled() {
-		return linkedTask.isAvailable(mcp, mcp.getOptions().side);
+		return linkedTask.isAvailable(mcp, mcp.getSide());
 	}
 
 	public void updateName() {

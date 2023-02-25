@@ -19,6 +19,7 @@ public enum TaskParameter {
 	FULL_BUILD("fullbuild", Boolean.class, false),
 	RUN_BUILD("runbuild", Boolean.class, false),
 	RUN_ARGS("runargs", String[].class, new String[] {"-Xms1024M", "-Xmx1024M"}),
+	GAME_ARGS("gameargs", String.class, ""),
 	SETUP_VERSION("setup", String.class, null),
 	SOURCE_VERSION("source", Integer.class, -1),
 	TARGET_VERSION("target", Integer.class, -1),

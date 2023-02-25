@@ -61,9 +61,10 @@ public class TaskRun extends Task {
 		args.add(main);
 		if(side == Side.CLIENT) {
 			args.addAll(getLaunchArgs(mcp));
+			Collections.addAll(args, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
 		}
 
-		Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, JARS), true);
+		Util.runCommand(args.toArray(new String[0]), getMCDir(mcp, mcpSide), true);
 	}
 
 	public static String getMain(MCP mcp, Version version, Side side) throws IOException {
@@ -106,7 +107,7 @@ public class TaskRun extends Task {
 			argsList.addAll(Arrays.asList(mcArgs.split(" ")));
 		}
 
-		Path gameDir = getMCDir(mcp, Side.CLIENT).toAbsolutePath();
+		Path gameDir = getMCDir(mcp, mcp.getOptions().side).toAbsolutePath();
 		Path assets = gameDir.resolve("assets");
 
 		for(int i = 0; i < argsList.size(); i++) {
@@ -172,19 +173,18 @@ public class TaskRun extends Task {
 
 	private static List<Path> getClasspath(MCP mcp, Version version, Side side, Side runSide, boolean runBuild) {
 		List<Path> cpList = new ArrayList<>();
+		cpList.addAll(mcp.getLibraries());
 		if(runBuild) {
 			cpList.add(MCPPaths.get(mcp, BUILD_ZIP, side));
+			cpList.add(MCPPaths.get(mcp, JAR_ORIGINAL, runSide));
+			return cpList;
 		}
 		else {
 			cpList.add(MCPPaths.get(mcp, BIN, side));
+			if(Files.exists(MCPPaths.get(mcp, REMAPPED, side))) {
+				cpList.add(MCPPaths.get(mcp, REMAPPED, side));
+			}
+			return cpList;
 		}
-		if(Files.exists(MCPPaths.get(mcp, REMAPPED, side))) {
-			cpList.add(MCPPaths.get(mcp, REMAPPED, side));
-		}
-		else {
-			cpList.add(MCPPaths.get(mcp, JAR_ORIGINAL, runSide));
-		}
-		cpList.addAll(mcp.getLibraries());
-		return cpList;
 	}
 }

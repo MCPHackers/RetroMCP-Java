@@ -100,7 +100,7 @@ public class TaskDecompile extends TaskStaged {
 			stage(getLocalizedStage("patch"), 88,
 			() -> {
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
-					patch(this, ffOut, ffOut, patchesPath);
+					TaskApplyPatch.patch(this, ffOut, ffOut, patchesPath);
 				}
 			}),
 			stage(getLocalizedStage("copysrc"), 90,
@@ -176,7 +176,6 @@ public class TaskDecompile extends TaskStaged {
 			}
 		}
 		injector.addTransform(storage -> Transform.decomposeVars(storage));
-		injector.addTransform(storage -> Transform.fixTryCatchRange(storage));
 		injector.addTransform(storage -> Transform.replaceCommonConstants(storage));
 		if(hasLWJGL) injector.addVisitor(new GLConstants(null));
 		injector.restoreSourceFile();
@@ -186,6 +185,21 @@ public class TaskDecompile extends TaskStaged {
 		final Path exc = MCPPaths.get(mcp, EXC);
 		if (Files.exists(exc)) {
 			injector.fixExceptions(exc);
+		}
+		if(side == Side.MERGED) {
+			Path acc = MCPPaths.get(mcp, MCPPaths.ACCESS, Side.CLIENT);
+			if (Files.exists(acc)) {
+				injector.fixAccess(acc);
+			}
+			acc = MCPPaths.get(mcp, MCPPaths.ACCESS, Side.SERVER);
+			if (Files.exists(acc)) {
+				injector.fixAccess(acc);
+			}
+		} else {
+			final Path acc = MCPPaths.get(mcp, MCPPaths.ACCESS, side);
+			if (Files.exists(acc)) {
+				injector.fixAccess(acc);
+			}
 		}
 		injector.transform();
 		injector.write(rdiOut);
@@ -204,23 +218,6 @@ public class TaskDecompile extends TaskStaged {
 			}
 		}
 		return mappings;
-	}
-
-	public static void patch(Task task, Path base, Path out, Path patches) throws IOException {
-		ByteArrayOutputStream logger = new ByteArrayOutputStream();
-		PatchOperation patchOperation = PatchOperation.builder()
-				.basePath(base)
-				.patchesPath(patches)
-				.outputPath(out)
-				.mode(PatchMode.OFFSET)
-				.filter(p -> p.endsWith(".java"))
-				.build();
-		boolean success = patchOperation.doPatch();
-		patchOperation.getSummary().print(new PrintStream(logger), false);
-		if (!success) {
-			task.addMessage(logger.toString(), Task.INFO);
-			task.addMessage("Patching failed!", Task.ERROR);
-		}
 	}
 
 	public static String getLaunchArgs(MCP mcp) {

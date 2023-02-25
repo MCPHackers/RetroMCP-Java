@@ -210,7 +210,6 @@ public class MCPFrame extends JFrame implements WindowListener {
 	 */
 	public void updateButtonState() {
 		buttons.forEach(button -> button.setEnabled(button.getEnabled()));
-		menuBar.start.forEach((key, value) -> value.setEnabled(TaskMode.START.isAvailable(mcp, key)));
 		if(verList != null && !loadingVersions) verList.setEnabled(true);
 		if(!loadingVersions) verLabel.setEnabled(true);
 		//if(!loadingVersions) verCleanup.setEnabled(true);

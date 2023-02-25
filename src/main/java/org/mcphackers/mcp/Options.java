@@ -180,6 +180,10 @@ public class Options {
 		}
 		else if(param.type == String[].class) {
 			try {
+				if(value.isEmpty()) {
+					setParameter(param, new String[0]);
+					return true;
+				}
 				String[] values = value.split(",");
 				for(int i2 = 0 ; i2 < values.length; i2++) {
 					values[i2] = Util.convertFromEscapedString(values[i2]).trim();

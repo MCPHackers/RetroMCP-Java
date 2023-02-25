@@ -250,6 +250,8 @@ public class MenuBar extends JMenuBar {
 	}
 
 	protected void setComponentsEnabled(boolean b) {
+		start.forEach((key, value) -> value.setEnabled(TaskMode.START.isAvailable(mcp, key)));
+		taskItems.forEach((key, value) -> value.setEnabled(key.isAvailable(mcp, mcp.getSide())));
 		for(JMenuItem item : togglableComponents) {
 			item.setEnabled(b);
 		}

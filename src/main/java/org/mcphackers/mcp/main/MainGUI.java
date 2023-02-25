@@ -73,7 +73,7 @@ public class MainGUI extends MCP {
 			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
 			{TaskParameter.OBFUSCATION},
 			{TaskParameter.FULL_BUILD},
-			{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS}
+			{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
 	};
 
 	public static void main(String[] args) throws Exception {
@@ -115,10 +115,6 @@ public class MainGUI extends MCP {
 			}
 		}
 		frame = new MCPFrame(this);
-	}
-
-	public Side getSide() {
-		return getOptions().side;
 	}
 
 	@Override

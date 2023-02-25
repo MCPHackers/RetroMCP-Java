@@ -125,6 +125,16 @@ public class TaskMode {
 				TaskParameter.SIDE
 				})
 			.build();
+	public static TaskMode APPLY_PATCH = new TaskModeBuilder()
+			.setName("applypatch")
+			.setTaskClass(TaskApplyPatch.class)
+			.setProgressBars(false)
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.PATCH, side))
+				&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
+			.setParameters(new TaskParameter[] {
+				TaskParameter.SIDE
+				})
+			.build();
 	public static TaskMode BACKUP_SRC = new TaskModeBuilder()
 			.setName("backupsrc")
 			.setTaskClass(TaskSourceBackup.class)
@@ -238,6 +248,7 @@ public class TaskMode {
 	 * @return availability
 	 */
 	public boolean isAvailable(MCP mcp, Side side) {
+		if(requirement == null) return true;
 		if(side == Side.ANY) {
 			return requirement.get(mcp, Side.CLIENT) || requirement.get(mcp, Side.SERVER);
 		}
