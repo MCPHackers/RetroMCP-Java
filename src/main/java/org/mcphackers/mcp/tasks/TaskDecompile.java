@@ -110,6 +110,8 @@ public class TaskDecompile extends TaskStaged {
 						Files.delete(p);
 					}
 				}
+				// Create Minecraft dir
+				Files.createDirectories(ffOut.getParent());
 				FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
 				Files.createDirectories(srcPath);
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.OUTPUT_SRC)) {
@@ -140,7 +142,7 @@ public class TaskDecompile extends TaskStaged {
 			injector.addResources(path);
 			if(stripGenerics) {
 				injector.stripLVT();
-				injector.addTransform(storage -> Transform.stripSignatures(storage));
+				injector.addTransform(Transform::stripSignatures);
 			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), Side.SERVER);
 			if(mappings != null) {
@@ -154,7 +156,7 @@ public class TaskDecompile extends TaskStaged {
 			injector.addResources(path);
 			if(stripGenerics) {
 				injector.stripLVT();
-				injector.addTransform(storage -> Transform.stripSignatures(storage));
+				injector.addTransform(Transform::stripSignatures);
 			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), Side.CLIENT);
 			if(mappings != null) {
@@ -168,15 +170,15 @@ public class TaskDecompile extends TaskStaged {
 			injector.addResources(path);
 			if(stripGenerics) {
 				injector.stripLVT();
-				injector.addTransform(storage -> Transform.stripSignatures(storage));
+				injector.addTransform(Transform::stripSignatures);
 			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), side);
 			if(mappings != null) {
 				injector.applyMappings(mappings);
 			}
 		}
-		injector.addTransform(storage -> Transform.decomposeVars(storage));
-		injector.addTransform(storage -> Transform.replaceCommonConstants(storage));
+		injector.addTransform(Transform::decomposeVars);
+		injector.addTransform(Transform::replaceCommonConstants);
 		if(hasLWJGL) injector.addVisitor(new GLConstants(null));
 		injector.restoreSourceFile();
 		injector.fixInnerClasses();
