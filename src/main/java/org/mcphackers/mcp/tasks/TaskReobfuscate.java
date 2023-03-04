@@ -90,10 +90,11 @@ public class TaskReobfuscate extends TaskStaged {
 				if(entry.isDirectory()) {
 					return false;
 				}
-				String className = entry.getName().replace(".class", "");
+				String obfClassName = entry.getName().replace(".class", "");
 				// Force inner classes to compare outer class hash
-				int index;
-				if((index = className.indexOf('$')) != -1) {
+				String className = obfClassName;
+				int index = className.indexOf('$');
+				if(index != -1) {
 					className = className.substring(0, index);
 				}
 				String deobfName = reversedNames.get(className);
@@ -102,10 +103,11 @@ public class TaskReobfuscate extends TaskStaged {
 				}
 				String hash			= originalHashes.get(deobfName);
 				String hashModified = recompHashes.get(deobfName);
-				if(hash == null) {
-					return true;
+				boolean extract = (hash == null) || !hash.equals(hashModified);
+				if(extract) {
+					System.out.println(reversedNames.get(obfClassName) + " : " + obfClassName);
 				}
-				else return !hash.equals(hashModified);
+				return extract;
 			});
 		}
 	}
@@ -158,9 +160,6 @@ public class TaskReobfuscate extends TaskStaged {
 
 	private static Map<String, String> getPackageMappings(Map<String, String> classMappings) {
 		Map<String, String> packageMappings = new HashMap<>();
-		for(Entry<String, String> entry : classMappings.entrySet()) {
-			System.out.println(entry.getKey() + " : " + entry.getValue());
-		}
 		for(Entry<String, String> entry : classMappings.entrySet()) {
 			int i1 = entry.getKey().indexOf('/');
 			int i2 = entry.getValue().indexOf('/');

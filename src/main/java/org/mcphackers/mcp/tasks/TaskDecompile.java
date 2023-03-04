@@ -110,10 +110,8 @@ public class TaskDecompile extends TaskStaged {
 						Files.delete(p);
 					}
 				}
-				// Create Minecraft dir
-				Files.createDirectories(ffOut.getParent());
-				FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
 				Files.createDirectories(srcPath);
+				FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
 				if(mcp.getOptions().getBooleanParameter(TaskParameter.OUTPUT_SRC)) {
 					FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 					FileUtil.copyDirectory(ffOut, srcPath);

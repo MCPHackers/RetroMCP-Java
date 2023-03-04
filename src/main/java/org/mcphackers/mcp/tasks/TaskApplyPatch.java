@@ -34,7 +34,6 @@ public class TaskApplyPatch extends Task {
 				.patchesPath(patches)
 				.outputPath(out)
 				.mode(PatchMode.OFFSET)
-				.filter(p -> p.endsWith(".java"))
 				.build();
 		boolean success = patchOperation.doPatch();
 		patchOperation.getSummary().print(new PrintStream(logger), false);
