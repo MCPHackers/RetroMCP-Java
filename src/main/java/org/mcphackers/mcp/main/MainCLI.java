@@ -100,7 +100,12 @@ public class MainCLI extends MCP {
 				System.out.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
 				String str = null;
 				try {
-					str = consoleInput.nextLine();
+					if (consoleInput.hasNext()) {
+						str = consoleInput.nextLine();
+					} else {
+						// Only seems to occur during EOF, might occur in other cases?
+						System.exit(0);
+					}
 				} catch (NoSuchElementException ignored) {
 				}
 				if (str == null) {
