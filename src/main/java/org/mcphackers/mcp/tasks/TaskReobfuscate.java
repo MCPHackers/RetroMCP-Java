@@ -18,9 +18,10 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
-import org.mcphackers.rdi.injector.RDInjector;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
+import org.mcphackers.rdi.nio.MappingsIO;
+import org.mcphackers.rdi.nio.RDInjector;
 import org.mcphackers.rdi.util.ClassStorageWriter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -119,7 +120,7 @@ public class TaskReobfuscate extends TaskStaged {
 		}
 		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
 		boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
-		Mappings mappings = Mappings.read(mappingsPath, "named", joined ? "official" : side.name);
+		Mappings mappings = MappingsIO.read(mappingsPath, "named", joined ? "official" : side.name);
 		modifyClassMappings(mappings, storage.getAllClasses(), enableObfuscation);
 		return mappings;
 	}
@@ -130,7 +131,7 @@ public class TaskReobfuscate extends TaskStaged {
 		for(String className : classNames) {
 			String reobfName = mappings.classes.get(className);
 			if (reobfName == null /*&& !hashes.containsKey(className)*/) {
-				int i1 = className.indexOf('/');
+				int i1 = className.lastIndexOf('/');
 				String packageName = i1 == -1 ? "" : className.substring(0, i1 + 1);
 				String obfPackage = packageMappings.get(packageName);
 				String clsName = i1 == -1 ? className : className.substring(i1 + 1);
@@ -161,8 +162,8 @@ public class TaskReobfuscate extends TaskStaged {
 	private static Map<String, String> getPackageMappings(Map<String, String> classMappings) {
 		Map<String, String> packageMappings = new HashMap<>();
 		for(Entry<String, String> entry : classMappings.entrySet()) {
-			int i1 = entry.getKey().indexOf('/');
-			int i2 = entry.getValue().indexOf('/');
+			int i1 = entry.getKey().lastIndexOf('/');
+			int i2 = entry.getValue().lastIndexOf('/');
 			String name1 = i1 == -1 ? "" : entry.getKey().substring(0, i1 + 1);
 			String name2 = i2 == -1 ? "" : entry.getKey().substring(0, i2 + 1);
 			packageMappings.put(name1, name2);

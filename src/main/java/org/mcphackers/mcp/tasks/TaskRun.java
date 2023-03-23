@@ -114,7 +114,7 @@ public class TaskRun extends Task {
 			String arg = argsList.get(i);
 			switch (arg) {
 
-			case "${auth_player_name}": arg = "Player"; break;
+			case "${auth_player_name}": arg = "Player094"; break; //Player094 is a free username with no skin
 			case "${auth_session}": arg = "-"; break;
 			case "${user_properties}": arg = "{}"; break;
 			case "${version_name}": arg = ver.id; break;

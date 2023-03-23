@@ -1,22 +1,9 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.MCPPaths.EXC;
-import static org.mcphackers.mcp.MCPPaths.GAMEDIR;
-import static org.mcphackers.mcp.MCPPaths.JARS_DIR;
-import static org.mcphackers.mcp.MCPPaths.JAR_ORIGINAL;
-import static org.mcphackers.mcp.MCPPaths.MAPPINGS;
-import static org.mcphackers.mcp.MCPPaths.MD5_DIR;
-import static org.mcphackers.mcp.MCPPaths.PATCHES;
-import static org.mcphackers.mcp.MCPPaths.PROJECT;
-import static org.mcphackers.mcp.MCPPaths.REMAPPED;
-import static org.mcphackers.mcp.MCPPaths.SOURCE;
-import static org.mcphackers.mcp.MCPPaths.SOURCE_JAR;
-import static org.mcphackers.mcp.MCPPaths.SOURCE_UNPATCHED;
+import static org.mcphackers.mcp.MCPPaths.*;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,15 +22,13 @@ import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.mcp.tools.versions.json.DependDownload;
 import org.mcphackers.mcp.tools.versions.json.Rule;
 import org.mcphackers.mcp.tools.versions.json.Version;
-import org.mcphackers.rdi.injector.RDInjector;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
 import org.mcphackers.rdi.injector.transform.Transform;
+import org.mcphackers.rdi.nio.MappingsIO;
+import org.mcphackers.rdi.nio.RDInjector;
 import org.mcphackers.rdi.util.IOUtil;
 import org.objectweb.asm.tree.ClassNode;
-
-import codechicken.diffpatch.PatchOperation;
-import codechicken.diffpatch.util.PatchMode;
 
 public class TaskDecompile extends TaskStaged {
 	/*
@@ -211,7 +196,7 @@ public class TaskDecompile extends TaskStaged {
 			return null;
 		}
 		boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
-		Mappings mappings = Mappings.read(mappingsPath, joined ? "official" : side.name, "named");
+		Mappings mappings = MappingsIO.read(mappingsPath, joined ? "official" : side.name, "named");
 		for(String name : storage.getAllClasses()) {
 			if(name.indexOf('/') == -1 && !mappings.classes.containsKey(name)) {
 				mappings.classes.put(name, "net/minecraft/src/" + name);
