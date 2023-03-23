@@ -22,7 +22,7 @@ import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
 import org.mcphackers.rdi.nio.MappingsIO;
 import org.mcphackers.rdi.nio.RDInjector;
-import org.mcphackers.rdi.util.ClassStorageWriter;
+import org.mcphackers.rdi.nio.ClassStorageWriter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 

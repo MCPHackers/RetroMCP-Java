@@ -28,6 +28,7 @@ dependencies {
     shadow "org.ow2.asm:asm-tree:${project.asm_version}"
     shadow "org.ow2.asm:asm-util:${project.asm_version}"
 
+	shadow name: "rdi-nio-1.0"
     shadow "com.github.Lassebq:Fernflower:${project.fernflower_version}"
     shadow "com.github.MCPHackers:RetroDebugInjector:${project.rdi_version}"
     shadow "org.fusesource.jansi:jansi:${project.jansi_version}"

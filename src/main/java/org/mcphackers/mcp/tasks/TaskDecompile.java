@@ -27,7 +27,7 @@ import org.mcphackers.rdi.injector.data.Mappings;
 import org.mcphackers.rdi.injector.transform.Transform;
 import org.mcphackers.rdi.nio.MappingsIO;
 import org.mcphackers.rdi.nio.RDInjector;
-import org.mcphackers.rdi.util.IOUtil;
+import org.mcphackers.rdi.nio.IOUtil;
 import org.objectweb.asm.tree.ClassNode;
 
 public class TaskDecompile extends TaskStaged {
