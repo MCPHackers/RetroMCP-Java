@@ -266,6 +266,7 @@ public class MenuBar extends JMenuBar {
 		}
 		for(Entry<TaskMode, JMenuItem> entry : taskItems.entrySet()) {
 			entry.getValue().setText(entry.getKey().getFullName());
+			entry.getValue().setToolTipText(entry.getKey().getDesc());
 		}
 	}
 }

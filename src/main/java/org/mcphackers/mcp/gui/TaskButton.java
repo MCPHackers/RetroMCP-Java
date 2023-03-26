@@ -41,5 +41,6 @@ public class TaskButton extends JButton {
 
 	public void updateName() {
 		setText(linkedTask.getFullName());
+		setToolTipText(linkedTask.getDesc());
 	}
 }

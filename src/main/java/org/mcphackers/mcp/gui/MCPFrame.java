@@ -106,8 +106,8 @@ public class MCPFrame extends JFrame implements WindowListener {
 
 		for(TaskMode task : MainGUI.TASKS) {
 			TaskButton button = mcp.getButton(task);
+			button.updateName();
 			buttons.add(button);
-			button.setToolTipText(task.getDesc());
 			topLeftContainer.add(button);
 		}
 
