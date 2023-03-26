@@ -62,6 +62,7 @@ public class MainCLI extends MCP {
 	}
 
 	public MainCLI(String[] args) {
+		isGUI = false;
 		options.resetDefaults();
 		changeLanguage(Language.ENGLISH); // Some CLI text is hardcoded in English
 		log("RetroMCP " + MCP.VERSION);
@@ -313,6 +314,7 @@ public class MainCLI extends MCP {
 		if(msg != null) {
 			log("[" + typeName + "]: " + msg);
 		}
+		e.printStackTrace();
 	}
 
 	@Override

@@ -87,6 +87,7 @@ public class MainGUI extends MCP {
 	}
 
 	public MainGUI(Path dir) {
+		isGUI = true;
 		PrintStream origOut = System.out;
 		PrintStream interceptor = new TextAreaOutputStream(textPane, origOut);
 		System.setOut(interceptor);

@@ -36,7 +36,7 @@ public class TaskDownloadUpdate extends Task {
 				for(Object obj : releaseJson.getJSONArray("assets")) {
 					if(obj instanceof JSONObject) {
 						JSONObject assetObj = (JSONObject)obj;
-						if(!assetObj.getString("name").endsWith(".jar")) {
+						if(!assetObj.getString("name").endsWith(mcp.isGUI() ? "-GUI.jar" : "-CLI.jar")) {
 							continue;
 						}
 						FileUtil.downloadFile(assetObj.getString("browser_download_url"), Paths.get(MCPPaths.UPDATE_JAR));

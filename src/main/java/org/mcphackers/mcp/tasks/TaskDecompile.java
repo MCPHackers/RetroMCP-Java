@@ -205,8 +205,8 @@ public class TaskDecompile extends TaskStaged {
 		return mappings;
 	}
 
-	public static String getLaunchArgs(MCP mcp) {
-		List<String> args = TaskRun.getLaunchArgs(mcp);
+	public static String getLaunchArgs(MCP mcp, Side side) {
+		List<String> args = TaskRun.getLaunchArgs(mcp, side);
 		for(int i = 0; i < args.size(); i++) {
 			String arg = args.get(i);
 			if(arg.contains(" ")) {
@@ -220,7 +220,7 @@ public class TaskDecompile extends TaskStaged {
 	public static void createProject(MCP mcp, Side side, int sourceVersion) throws IOException {
 		Path proj = MCPPaths.get(mcp, PROJECT, side);
 		Version version = mcp.getCurrentVersion();
-		String clientArgs = getLaunchArgs(mcp);
+		String clientArgs = getLaunchArgs(mcp, side);
 		Side[] launchSides = side == Side.MERGED ? new Side[]{Side.CLIENT, Side.SERVER} : new Side[]{side};
 		
 		String projectName = "Minecraft " +

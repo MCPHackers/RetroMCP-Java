@@ -16,7 +16,8 @@ public class TaskBuild extends TaskStaged {
 	 * Indexes of stages for plugin overrides
 	 */
 	public static final int STAGE_RECOMPILE = 0;
-	public static final int STAGE_BUILD = 1;
+	public static final int STAGE_REOBF = 1;
+	public static final int STAGE_BUILD = 2;
 
 	public TaskBuild(Side side, MCP instance) {
 		super(side, instance);
@@ -27,8 +28,14 @@ public class TaskBuild extends TaskStaged {
 		Path bin = 			MCPPaths.get(mcp, BIN, side);
 		return new Stage[] {
 			stage(getLocalizedStage("recompile"),
-			() -> new TaskReobfuscate(side, mcp, this).doTask()),
-			stage(getLocalizedStage("build"), 52,
+			() -> {
+				new TaskRecompile(side, mcp, this).doTask();
+			}),
+			stage(getLocalizedStage("reobf"), 50,
+			() -> {
+				new TaskReobfuscate(side, mcp, this).doTask();
+			}),
+			stage(getLocalizedStage("build"), 70,
 			() -> {
 				Side[] sides = side == Side.MERGED ? new Side[] {Side.CLIENT, Side.SERVER} : new Side[] {side};
 				for(Side localSide : sides) {
@@ -61,9 +68,14 @@ public class TaskBuild extends TaskStaged {
 	@Override
 	public void setProgress(int progress) {
 		switch (step) {
-		case 0: {
+		case STAGE_RECOMPILE: {
 			int percent = (int)(progress * 0.49D);
 			super.setProgress(1 + percent);
+			break;
+		}
+		case STAGE_REOBF: {
+			int percent = (int)(progress * 0.20D);
+			super.setProgress(50 + percent);
 			break;
 		}
 		default:

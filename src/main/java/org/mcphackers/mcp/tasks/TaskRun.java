@@ -60,7 +60,7 @@ public class TaskRun extends Task {
 		args.add(String.join(System.getProperty("path.separator"), classPath));
 		args.add(main);
 		if(side == Side.CLIENT) {
-			args.addAll(getLaunchArgs(mcp));
+			args.addAll(getLaunchArgs(mcp, mcpSide));
 			Collections.addAll(args, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
 		}
 
@@ -92,7 +92,7 @@ public class TaskRun extends Task {
 	 * @param mcp
 	 * @return arguments for launching client
 	 */
-	public static List<String> getLaunchArgs(MCP mcp) {
+	public static List<String> getLaunchArgs(MCP mcp, Side side) {
 		Version ver = mcp.getCurrentVersion();
 		Arguments args = ver.arguments;
 		String mcArgs = ver.minecraftArguments;
@@ -107,7 +107,7 @@ public class TaskRun extends Task {
 			argsList.addAll(Arrays.asList(mcArgs.split(" ")));
 		}
 
-		Path gameDir = getMCDir(mcp, mcp.getOptions().side).toAbsolutePath();
+		Path gameDir = getMCDir(mcp, side).toAbsolutePath();
 		Path assets = gameDir.resolve("assets");
 
 		for(int i = 0; i < argsList.size(); i++) {
