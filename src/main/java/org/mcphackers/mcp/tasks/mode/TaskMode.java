@@ -67,7 +67,8 @@ public class TaskMode {
 				TaskParameter.SOURCE_VERSION,
 				TaskParameter.TARGET_VERSION,
 				TaskParameter.JAVA_HOME,
-				TaskParameter.SIDE
+				TaskParameter.SIDE,
+				TaskParameter.EXCLUDED_CLASSES
 				})
 			.build();
 	public static TaskMode UPDATE_MD5 = new TaskModeBuilder()

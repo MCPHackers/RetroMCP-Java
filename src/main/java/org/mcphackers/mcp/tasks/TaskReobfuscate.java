@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.mcphackers.mcp.MCP;
@@ -87,6 +88,7 @@ public class TaskReobfuscate extends TaskStaged {
 				reversedNames.put(entry.getValue(), entry.getKey());
 			}
 			FileUtil.cleanDirectory(reobfDir);
+			Pattern regexPattern = Pattern.compile(mcp.getOptions().getStringParameter(TaskParameter.EXCLUDED_CLASSES));
 			FileUtil.extract(reobfJar, reobfDir, entry -> {
 				if(entry.isDirectory()) {
 					return false;
@@ -104,7 +106,7 @@ public class TaskReobfuscate extends TaskStaged {
 				}
 				String hash			= originalHashes.get(deobfName);
 				String hashModified = recompHashes.get(deobfName);
-				boolean extract = (hash == null) || !hash.equals(hashModified);
+				boolean extract = (hash == null) || !hash.equals(hashModified) && !regexPattern.matcher(deobfName).matches();
 				if(extract) {
 					System.out.println(reversedNames.get(obfClassName) + " : " + obfClassName);
 				}

@@ -105,6 +105,7 @@ task.param.patch = Apply patches
 task.param.ignore = Set ignored packages
 task.param.ind = Set indentation string
 task.param.obf = Obfuscate mod classes
+task.param.excludedclasses = Excluded classes
 task.param.fullbuild = Full build
 task.param.runbuild = Run build
 task.param.runargs = JVM arguments
