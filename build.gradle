@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
@@ -36,7 +38,7 @@ dependencies {
     shadow "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
     shadow "net.fabricmc:mapping-io:${project.mapping_io_version}"
 
-    shadow 'com.formdev:flatlaf:2.6'
+    shadow "com.formdev:flatlaf:${project.flatlaf_version}"
 }
 
 application {
@@ -64,7 +66,7 @@ shadowJar {
 	}
 }
 
-task jarCLI(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+task jarCLI(type: ShadowJar) {
 	manifest {
 		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainCLI'
 	}
