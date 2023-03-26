@@ -1,4 +1,4 @@
-package org.mcphackers.mcp.tools;
+package org.mcphackers.mcp.tools.project;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -32,6 +32,10 @@ public class XMLWriter extends BufferedWriter {
 	public void startAttribute(String attribute) throws IOException {
 		writeln("<" + attribute + ">");
 		indent++;
+	}
+
+	public void writeSelfEndingAttribute(String attribute) throws IOException {
+		writeln("<" + attribute + " />");
 	}
 
 	public void closeAttribute(String attribute) throws IOException {
