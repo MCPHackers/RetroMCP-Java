@@ -35,15 +35,21 @@ public interface MCPPlugin {
 	void setTaskOverrides(TaskStaged task);
 
 	enum TaskEvent {
-		PRE_TASK, /** Called before the task is executed */
-		POST_TASK, /** Called after the task was completed */
-		TASK_STEP /** Called each time TaskStaged moves to another stage */
+		/** Called before a task is executed */
+		PRE_TASK,
+		/** Called after the task has executed */
+		POST_TASK,
+		/** Called each time a task moves to the next execution stage */
+		TASK_STEP
 	}
 
 	enum MCPEvent {
-		STARTED_TASKS, /** Called when one or multiple tasks began execution */
-		FINISHED_TASKS, /** Called when all tasks finished execution */
-		ENV_STARTUP /** Called when MCP starts up */
+		/** Called when a task begins execution */
+		STARTED_TASKS,
+		/** Called when all tasks have finished execution */
+		FINISHED_TASKS,
+		/** Called when RMCP starts up */
+		ENV_STARTUP
 	}
 
 }
