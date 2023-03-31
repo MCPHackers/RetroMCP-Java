@@ -25,6 +25,7 @@ public enum TaskParameter {
 	SOURCE_VERSION("source", Integer.class, -1),
 	TARGET_VERSION("target", Integer.class, -1),
 	JAVA_HOME("javahome", String.class, ""),
+	EXCLUDED_CLASSES("excludedclasses", String.class, ""),
 	DECOMPILE_OVERRIDE("override", Boolean.class, false),
 	DECOMPILE_RESOURCES("resources", Boolean.class, false),
 	GUESS_GENERICS("generics", Boolean.class, false),

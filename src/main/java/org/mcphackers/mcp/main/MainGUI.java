@@ -71,7 +71,7 @@ public class MainGUI extends MCP {
 	public static final TaskParameter[][] TAB_PARAMETERS = {
 			{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS},
 			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
-			{TaskParameter.OBFUSCATION},
+			{TaskParameter.OBFUSCATION, TaskParameter.EXCLUDED_CLASSES},
 			{TaskParameter.FULL_BUILD},
 			{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
 	};
