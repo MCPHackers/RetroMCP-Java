@@ -4,6 +4,7 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.tasks.Task.Side;
 
+
 /**
  * Any optional parameters which can be accessed from tasks
  * @see Options#getParameter(TaskParameter)
@@ -37,7 +38,7 @@ public enum TaskParameter {
 	public final Object defaultValue;
 
 	TaskParameter(String name, Class<?> c, Object value) {
-		TaskMode.nameToParamMap.put(name, this);
+		TaskParameterMap.nameToParamMap.put(name, this);
 		this.name = name;
 		this.type = c;
 		this.defaultValue = value;

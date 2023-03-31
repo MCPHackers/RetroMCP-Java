@@ -21,7 +21,7 @@ public class MCPPaths {
 	public static final String BUILD_ZIP = 	 		 BUILD + "minecraft_%s.zip";
 	public static final String BUILD_JAR = 	 		 BUILD + "minecraft_%s.jar";
 
-	public static final String SOURCE_UNPATCHED = 	 PROJECT + "source";
+	public static final String SOURCE_UNPATCHED = 	 PROJECT + "src_original";
 	public static final String SOURCE = 	 		 PROJECT + "src";
 	public static final String BIN =				 PROJECT + "bin";
 	public static final String MD5_DIR = 	 		 PROJECT + "md5";

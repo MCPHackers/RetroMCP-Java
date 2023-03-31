@@ -75,6 +75,8 @@ task.backupsrc = Backup source
 task.backupsrc.desc = Pack source files into a zip
 task.applypatch = Apply patch
 task.applypatch.desc = Apply patch from patches directory
+task.updatemcp = Update RetroMCP
+task.updatemcp.desc = Check for updates
 task.noDesc = No description provided
 
 task.stage.idle = Idle

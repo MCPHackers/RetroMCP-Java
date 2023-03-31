@@ -25,6 +25,7 @@ import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tasks.mode.TaskParameterMap;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
@@ -54,8 +55,12 @@ public class MainCLI extends MCP {
 	private String[] progressStrings;
 	private String[] progressBarNames;
 
-	public static void main(String[] args) throws Exception {
-		if(System.console() != null) {
+	public static void main(String[] args) {
+		if(args.length != 0) {
+			new MainCLI(args);
+			return;
+		}
+		if(true || System.console() != null) {
 			AnsiConsole.systemInstall();
 			new MainCLI(args);
 		}
@@ -188,7 +193,7 @@ public class MainCLI extends MCP {
 				}
 			}
 			else {
-				TaskParameter param = TaskMode.nameToParamMap.get(name);
+				TaskParameter param = TaskParameterMap.get(name);
 				if(param != null) {
 					safeSetParameter(param, value.toString());
 				}

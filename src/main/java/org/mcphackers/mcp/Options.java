@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.mcphackers.mcp.tasks.Task.Side;
-import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tasks.mode.TaskParameterMap;
 import org.mcphackers.mcp.tools.Util;
 
 public class Options {
@@ -59,7 +59,7 @@ public class Options {
 						} catch (IllegalArgumentException ignored) {}
 					}
 					else {
-						safeSetParameter(TaskMode.nameToParamMap.get(key), value);
+						safeSetParameter(TaskParameterMap.get(key), value);
 					}
 				}
 			}
