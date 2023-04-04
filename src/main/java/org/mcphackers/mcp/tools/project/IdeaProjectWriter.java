@@ -82,7 +82,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("project version=\"4\"");
 			writer.startAttribute("component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_8\" default=\"true\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\"");
-			writer.writeSelfEndingAttribute("output url=\"file://$PROJECT_DIR$/bin\"");
+			writer.writeSelfEndingAttribute("output url=\"file://$PROJECT_DIR$/output\"");
 			writer.closeAttribute("component");
 			writer.closeAttribute("project");
 		}
