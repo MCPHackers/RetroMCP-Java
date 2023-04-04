@@ -53,6 +53,8 @@ public class TaskBuild extends TaskStaged {
 						FileUtil.packFilesToZip(buildJar, assets, bin);
 						FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.DSA");
 						FileUtil.deleteFileInAZip(buildJar, "/META-INF/MOJANG_C.SF");
+						FileUtil.deleteFileInAZip(buildJar, "/META-INF/CODESIGN.DSA");
+						FileUtil.deleteFileInAZip(buildJar, "/META-INF/CODESIGN.SF");
 					}
 					else {
 						Files.deleteIfExists(buildZip);

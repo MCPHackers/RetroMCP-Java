@@ -44,8 +44,9 @@ public class TaskRun extends Task {
 		}
 
 		boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
+		boolean fullBuild = mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD);
 		String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
-		List<Path> cpList = getClasspath(mcp, currentVersion, mcpSide, side, runBuild);
+		List<Path> cpList = getClasspath(mcp, currentVersion, mcpSide, side, runBuild, fullBuild);
 
 		List<String> classPath = new ArrayList<>();
 		cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));
@@ -171,12 +172,16 @@ public class TaskRun extends Task {
 		}
 	}
 
-	private static List<Path> getClasspath(MCP mcp, Version version, Side side, Side runSide, boolean runBuild) {
+	private static List<Path> getClasspath(MCP mcp, Version version, Side side, Side runSide, boolean runBuild, boolean fullBuild) {
 		List<Path> cpList = new ArrayList<>();
 		cpList.addAll(mcp.getLibraries());
 		if(runBuild) {
-			cpList.add(MCPPaths.get(mcp, BUILD_ZIP, side));
-			cpList.add(MCPPaths.get(mcp, JAR_ORIGINAL, runSide));
+			if(fullBuild) {
+				cpList.add(MCPPaths.get(mcp, BUILD_JAR, runSide));
+			} else {
+				cpList.add(MCPPaths.get(mcp, BUILD_ZIP, runSide));
+				cpList.add(MCPPaths.get(mcp, JAR_ORIGINAL, runSide));
+			}
 			return cpList;
 		}
 		else {
