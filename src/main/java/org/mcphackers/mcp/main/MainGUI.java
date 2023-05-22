@@ -116,6 +116,9 @@ public class MainGUI extends MCP {
 			}
 		}
 		frame = new MCPFrame(this);
+		if (Util.getJavaVersion() > 8) {
+			log("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
+		}
 	}
 
 	@Override

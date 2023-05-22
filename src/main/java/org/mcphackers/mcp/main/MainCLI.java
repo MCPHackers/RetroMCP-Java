@@ -164,6 +164,9 @@ public class MainCLI extends MCP {
 			helpCommand = null;
 			executeTimes++;
 		}
+		if (Util.getJavaVersion() > 8) {
+			log("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
+		}
 	}
 
 	private void setParams(Map<String, Object> parsedArgs, TaskMode mode) {

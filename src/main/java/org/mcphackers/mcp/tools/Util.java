@@ -194,4 +194,17 @@ public abstract class Util {
 	public static String getJava() {
 		return System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 	}
+
+	public static int getJavaVersion() {
+		String javaVersion = System.getProperty("java.version");
+		String[] versionParts = javaVersion.split("\\.");
+		int versionNumber = Integer.parseInt(versionParts[0]);
+
+		if (versionNumber < 9) {
+			versionNumber = Integer.parseInt(versionParts[1]);
+		} else {
+			versionNumber = Integer.parseInt(versionParts[0]);
+		}
+		return versionNumber;
+	}
 }
