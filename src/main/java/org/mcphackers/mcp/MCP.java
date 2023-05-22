@@ -14,6 +14,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.swing.*;
+
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.plugin.MCPPlugin;
 import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
@@ -28,30 +30,54 @@ import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
-import javax.swing.*;
-
 public abstract class MCP {
 
 	public static final String VERSION = "v1.0.1";
 	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
-	
-	private static final Map<String, MCPPlugin> PLUGINS = new HashMap<>();
-
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
+	private static final Map<String, MCPPlugin> PLUGINS = new HashMap<>();
 	public static Theme THEME = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
-	protected boolean isGUI = false;
-
-	public Options options = new Options(Paths.get("options.cfg"));
 
 	static {
 		loadPlugins();
 	}
+
+	public Options options = new Options(Paths.get("options.cfg"));
+	protected boolean isGUI = false;
 
 	protected MCP() {
 		Update.attemptToDeleteUpdateJar();
 		changeLanguage(Language.get(Locale.getDefault()));
 		triggerEvent(MCPEvent.ENV_STARTUP);
 		System.gc();
+	}
+
+	private static void loadPlugins() {
+		Path pluginsDir = Paths.get("plugins");
+		if (Files.exists(pluginsDir)) {
+			List<Path> jars = new ArrayList<>();
+			try {
+				FileUtil.collectJars(pluginsDir, jars);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				for (Path p : jars) {
+					List<Class<MCPPlugin>> classes = ClassUtils.getClasses(p, MCPPlugin.class);
+					for (Class<MCPPlugin> cls : classes) {
+						if (!ClassUtils.isClassAbstract(cls)) {
+							MCPPlugin plugin = cls.newInstance();
+							plugin.init();
+							PLUGINS.put(plugin.pluginId() + plugin.hashCode(), plugin);
+						} else {
+							System.err.println(TRANSLATOR.translateKey("mcp.incompatiblePlugin") + cls.getName());
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public boolean isGUI() {
@@ -63,9 +89,9 @@ public abstract class MCP {
 	 */
 	public abstract Path getWorkingDir();
 
-
 	/**
 	 * Creates instances of TaskMode and executes them
+	 *
 	 * @param mode task to execute
 	 * @param side side to execute
 	 * @return <code>true</code> if task was successfully executed
@@ -76,14 +102,15 @@ public abstract class MCP {
 
 	/**
 	 * Creates instances of TaskMode and executes them
-	 * @param mode task to execute
-	 * @param side side to execute
+	 *
+	 * @param mode          task to execute
+	 * @param side          side to execute
 	 * @param completionMsg display completion message when finished
 	 * @return <code>true</code> if task was successfully executed
 	 */
 	public final boolean performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
-		if(tasks.size() == 0) {
+		if (tasks.size() == 0) {
 			System.err.println("Performing 0 tasks");
 			return false;
 		}
@@ -94,16 +121,15 @@ public abstract class MCP {
 		for (Task task : tasks) {
 			if (task.side == side || task.side == Side.ANY) {
 				performedTasks.add(task);
-			}
-			else if (side == Side.ANY) {
+			} else if (side == Side.ANY) {
 				if (task.side == Side.SERVER || task.side == Side.CLIENT) {
-					if(mode.requirement == null || mode.requirement.get(this, task.side)) {
+					if (mode.requirement == null || mode.requirement.get(this, task.side)) {
 						performedTasks.add(task);
 					}
 				}
 			}
 		}
-		if(enableProgressBars) setProgressBars(performedTasks, mode);
+		if (enableProgressBars) setProgressBars(performedTasks, mode);
 		ExecutorService pool = Executors.newFixedThreadPool(2);
 		setActive(false);
 		triggerEvent(MCPEvent.STARTED_TASKS);
@@ -111,10 +137,10 @@ public abstract class MCP {
 		AtomicInteger result1 = new AtomicInteger(Task.INFO);
 		AtomicReference<Throwable> e = new AtomicReference<>();
 
-		for(int i = 0; i < performedTasks.size(); i++) {
+		for (int i = 0; i < performedTasks.size(); i++) {
 			Task task = performedTasks.get(i);
 			final int barIndex = i;
-			if(enableProgressBars) {
+			if (enableProgressBars) {
 				task.setProgressBarIndex(barIndex);
 			}
 			pool.execute(() -> {
@@ -124,43 +150,44 @@ public abstract class MCP {
 					result1.set(Task.ERROR);
 					e.set(e1);
 				}
-				if(enableProgressBars) {
+				if (enableProgressBars) {
 					setProgress(barIndex, TRANSLATOR.translateKey("task.stage.finished"), 100);
 				}
 			});
 		}
 
 		pool.shutdown();
-		while (!pool.isTerminated()) {}
+		while (!pool.isTerminated()) {
+		}
 		triggerEvent(MCPEvent.FINISHED_TASKS);
 
 		byte result = result1.byteValue();
 
 		List<String> msgs = new ArrayList<>();
-		for(Task task : performedTasks) {
+		for (Task task : performedTasks) {
 			msgs.addAll(task.getMessageList());
 			byte retresult = task.getResult();
-			if(retresult > result) {
+			if (retresult > result) {
 				result = retresult;
 			}
 		}
-		if(msgs.size() > 0) log("");
-		for(String msg : msgs) {
+		if (msgs.size() > 0) log("");
+		for (String msg : msgs) {
 			log(msg);
 		}
-		if(completionMsg) {
+		if (completionMsg) {
 			String[] msgs2 = {
 					TRANSLATOR.translateKey("tasks.success"),
 					TRANSLATOR.translateKey("tasks.warning"),
 					TRANSLATOR.translateKey("tasks.error")};
-			if(e.get() != null) {
+			if (e.get() != null) {
 				showMessage(mode.getFullName(), msgs2[result], e.get());
 			} else {
 				showMessage(mode.getFullName(), msgs2[result], result);
 			}
 		}
 		setActive(true);
-		if(enableProgressBars) clearProgressBars();
+		if (enableProgressBars) clearProgressBars();
 		System.gc();
 		return result != Task.ERROR;
 	}
@@ -171,6 +198,7 @@ public abstract class MCP {
 
 	/**
 	 * Sets progress bars based on list of running tasks and task mode
+	 *
 	 * @param tasks
 	 * @param mode
 	 */
@@ -183,6 +211,7 @@ public abstract class MCP {
 
 	/**
 	 * Logs a message to console
+	 *
 	 * @param msg
 	 */
 	public abstract void log(String msg);
@@ -206,6 +235,7 @@ public abstract class MCP {
 
 	/**
 	 * Sets display string for progress bar at specified barIndex
+	 *
 	 * @param barIndex
 	 * @param progressMessage
 	 */
@@ -213,6 +243,7 @@ public abstract class MCP {
 
 	/**
 	 * Sets progress value for progress bar at specified barIndex (Must be in range from 0-100)
+	 *
 	 * @param barIndex
 	 * @param progress
 	 */
@@ -220,6 +251,7 @@ public abstract class MCP {
 
 	/**
 	 * Marks MCP instance as busy on a task
+	 *
 	 * @param active
 	 */
 	public abstract void setActive(boolean active);
@@ -240,6 +272,7 @@ public abstract class MCP {
 
 	/**
 	 * Displayed by TaskUpdateMCP
+	 *
 	 * @param changelog
 	 * @param version
 	 * @return <code>true</code> if the user chose to install update
@@ -248,6 +281,7 @@ public abstract class MCP {
 
 	/**
 	 * Sets display string and progress value for progress bar at specified barIndex (Must be in range from 0-100)
+	 *
 	 * @param barIndex
 	 * @param progressMessage
 	 * @param progress
@@ -259,6 +293,7 @@ public abstract class MCP {
 
 	/**
 	 * Changes a parameter in current options and saves changes to disk
+	 *
 	 * @param param
 	 * @param value
 	 * @throws IllegalArgumentException
@@ -270,83 +305,58 @@ public abstract class MCP {
 
 	/**
 	 * Changes a parameter in current options and saves changes to disk, shows an error message if fails
+	 *
 	 * @param param
 	 * @param value
 	 * @throws IllegalArgumentException
 	 */
 	public void safeSetParameter(TaskParameter param, String value) {
-		if(param != null && value != null) {
-			if(getOptions().safeSetParameter(param, value)) return;
+		if (param != null && value != null) {
+			if (getOptions().safeSetParameter(param, value)) return;
 			showMessage(param.getDesc(), TRANSLATOR.translateKey("options.invalidValue"), Task.ERROR);
 		}
 	}
 
-	private static void loadPlugins() {
-		Path pluginsDir = Paths.get("plugins");
-		if(Files.exists(pluginsDir)) {
-			List<Path> jars = new ArrayList<>();
-			try {
-				FileUtil.collectJars(pluginsDir, jars);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				for(Path p : jars) {
-					List<Class<MCPPlugin>> classes = ClassUtils.getClasses(p, MCPPlugin.class);
-					for(Class<MCPPlugin> cls : classes) {
-						if(!ClassUtils.isClassAbstract(cls)) {
-							MCPPlugin plugin = cls.newInstance();
-							plugin.init();
-							PLUGINS.put(plugin.pluginId() + plugin.hashCode(), plugin);
-						}
-						else {
-							System.err.println(TRANSLATOR.translateKey("mcp.incompatiblePlugin") + cls.getName());
-						}
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	/**
-	 * @see MCPPlugin#setTaskOverrides(TaskStaged)
 	 * @param task
+	 * @see MCPPlugin#setTaskOverrides(TaskStaged)
 	 */
 	public final void setPluginOverrides(TaskStaged task) {
-		for(Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
+		for (Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
 			entry.getValue().setTaskOverrides(task);
 		}
 	}
 
 	/**
 	 * Triggers an MCPEvent for every plugin
+	 *
 	 * @param event
 	 */
 	public final void triggerEvent(MCPEvent event) {
-		for(Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
+		for (Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
 			entry.getValue().onMCPEvent(event, this);
 		}
 	}
 
 	/**
 	 * Triggers a TaskEvent for every plugin
+	 *
 	 * @param event
 	 */
 	public final void triggerTaskEvent(TaskEvent event, Task task) {
-		for(Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
+		for (Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
 			entry.getValue().onTaskEvent(event, task);
 		}
 	}
 
 	/**
 	 * Notifies language change
+	 *
 	 * @param lang
 	 */
 	public final void changeLanguage(Language lang) {
 		TRANSLATOR.changeLang(lang);
-		for(Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
+		for (Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
 			TRANSLATOR.readTranslation(entry.getValue().getClass());
 		}
 	}
@@ -360,7 +370,8 @@ public abstract class MCP {
 				SwingUtilities.updateComponentTreeUI(frame);
 			}
 			THEME = theme;
-		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
+				 IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}

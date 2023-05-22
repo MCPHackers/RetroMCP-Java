@@ -3,11 +3,11 @@ package org.mcphackers.mcp.gui;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 
 public class TextAreaOutputStream extends PrintStream {
-	private JTextPane textPane;
+	private final JTextPane textPane;
 
 	public TextAreaOutputStream(JTextPane textArea, OutputStream out) {
 		super(out, true);
@@ -38,11 +38,11 @@ public class TextAreaOutputStream extends PrintStream {
 		printString("\n");
 	}
 
-    private void printString(String msg) {
-        try {
-            textPane.getStyledDocument().insertString(textPane.getStyledDocument().getLength(), msg, null);
-        } catch (BadLocationException ex) {
-            ex.printStackTrace();
-        }
-    }
+	private void printString(String msg) {
+		try {
+			textPane.getStyledDocument().insertString(textPane.getStyledDocument().getLength(), msg, null);
+		} catch (BadLocationException ex) {
+			ex.printStackTrace();
+		}
+	}
 }

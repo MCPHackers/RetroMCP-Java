@@ -17,14 +17,14 @@ import org.mcphackers.mcp.tools.Util;
 public class GLConstants extends Source {
 
 	private static final boolean COMMENT = true;
+	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
+	private static final Pattern INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[);]))|new KeyBinding\\([ \\w\"]+, .+?\\))");
 	private static Exception cause;
 	private static final JSONObject json = getJson();
 	private static final List<String> PACKAGES = json == null ? Collections.emptyList() : toList(json.getJSONArray("PACKAGES"));
+	private static final Pattern CALL_REGEX = Pattern.compile("(" + String.join("|", PACKAGES) + ")\\.(\\w+)\\(.+?\\)");
 	private static final JSONArray CONSTANTS = json == null ? null : json.getJSONArray("CONSTANTS");
 	private static final JSONObject CONSTANTS_KEYBOARD = json == null ? null : json.getJSONObject("CONSTANTS_KEYBOARD");
-	private static final Pattern CALL_REGEX = Pattern.compile("(" + String.join("|", PACKAGES) + ")\\.(\\w+)\\(.+?\\)");
-	private static final Pattern CONSTANT_REGEX = Pattern.compile("(?<![-.\\w])\\d+(?![.\\w])");
-	private static final Pattern INPUT_REGEX = Pattern.compile("((Keyboard)\\.((getKeyName|isKeyDown)\\(.+?\\)|getEventKey\\(\\) == .+?(?=[);]))|new KeyBinding\\([ \\w\"]+, .+?\\))");
 
 	private static JSONObject getJson() {
 		try {
@@ -36,11 +36,11 @@ public class GLConstants extends Source {
 	}
 
 	private static List<String> toList(JSONArray packages) {
-		if(packages == null) {
+		if (packages == null) {
 			return Collections.emptyList();
 		}
 		List<String> list = new ArrayList<>();
-		for(int i = 0; i < packages.length(); i++) {
+		for (int i = 0; i < packages.length(); i++) {
 			list.add(packages.optString(i));
 		}
 		return list;
@@ -57,12 +57,12 @@ public class GLConstants extends Source {
 			String full_call = match1.group(0);
 			return replaceTextOfMatchGroup(full_call, CONSTANT_REGEX, match2 -> {
 				String replaceConst = CONSTANTS_KEYBOARD.optString(match2.group(0), null);
-				if(replaceConst == null) {
+				if (replaceConst == null) {
 					return match2.group();
 				}
 				imports.add("org.lwjgl.input.Keyboard");
 				String constant = "Keyboard." + replaceConst;
-				return COMMENT ? match2.group() + " /*" + constant + "*/"  : constant;
+				return COMMENT ? match2.group() + " /*" + constant + "*/" : constant;
 			});
 		});
 		replaceTextOfMatchGroup(source, CALL_REGEX, match1 -> {
@@ -72,25 +72,25 @@ public class GLConstants extends Source {
 			return replaceTextOfMatchGroup(full_call, CONSTANT_REGEX, match2 -> {
 				String full_match = match2.group(0);
 				for (Object groupg : CONSTANTS) {
-					if(!(groupg instanceof JSONArray)) {
+					if (!(groupg instanceof JSONArray)) {
 						continue;
 					}
-					JSONArray group = (JSONArray)groupg;
+					JSONArray group = (JSONArray) groupg;
 					JSONObject jsonObj1 = group.getJSONObject(0);
 					if (jsonObj1.has(pkg) && jsonObj1.getJSONArray(pkg).toList().contains(method)) {
 						JSONObject jsonObj = group.getJSONObject(1);
 						Iterator<String> keys = jsonObj.keys();
-						while(keys.hasNext()) {
+						while (keys.hasNext()) {
 							String key = keys.next();
 							JSONObject value = jsonObj.getJSONObject(key);
-							if(value.has(full_match)) {
+							if (value.has(full_match)) {
 								imports.add("org.lwjgl.opengl." + key);
 								String[] constants = value.getString(full_match).split("\\|");
-								for(int i = 0; i < constants.length; i++) {
+								for (int i = 0; i < constants.length; i++) {
 									constants[i] = key + '.' + constants[i].trim();
 								}
 								String constant = String.join(" | ", constants);
-								return COMMENT ? full_match + " /*" + constant + "*/"  : constant;
+								return COMMENT ? full_match + " /*" + constant + "*/" : constant;
 							}
 						}
 					}
@@ -98,6 +98,6 @@ public class GLConstants extends Source {
 				return full_match;
 			});
 		});
-		if(!COMMENT) updateImports(source, imports);
+		if (!COMMENT) updateImports(source, imports);
 	}
 }

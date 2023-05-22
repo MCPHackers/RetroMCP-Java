@@ -1,11 +1,11 @@
 package org.mcphackers.mcp.gui;
 
 import java.awt.*;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+
+import javax.swing.*;
 
 /**
- *  FlowLayout subclass that fully supports wrapping of components.
+ * FlowLayout subclass that fully supports wrapping of components.
  */
 public class WrapLayout extends FlowLayout {
 
@@ -23,40 +23,41 @@ public class WrapLayout extends FlowLayout {
 	}
 
 	/**
-	* Returns the preferred dimensions for this layout given the
-	* <i>visible</i> components in the specified target container.
-	* @param target the component which needs to be laid out
-	* @return the preferred dimensions to lay out the
-	* subcomponents of the specified container
-	*/
+	 * Returns the preferred dimensions for this layout given the
+	 * <i>visible</i> components in the specified target container.
+	 *
+	 * @param target the component which needs to be laid out
+	 * @return the preferred dimensions to lay out the
+	 * subcomponents of the specified container
+	 */
 	@Override
 	public Dimension preferredLayoutSize(Container target) {
 		return layoutSize(target, true);
 	}
 
 	/**
-	* Returns the minimum dimensions needed to layout the <i>visible</i>
-	* components contained in the specified target container.
-	* @param target the component which needs to be laid out
-	* @return the minimum dimensions to lay out the
-	* subcomponents of the specified container
-	*/
+	 * Returns the minimum dimensions needed to layout the <i>visible</i>
+	 * components contained in the specified target container.
+	 *
+	 * @param target the component which needs to be laid out
+	 * @return the minimum dimensions to lay out the
+	 * subcomponents of the specified container
+	 */
 	@Override
-	public Dimension minimumLayoutSize(Container target)
-	{
+	public Dimension minimumLayoutSize(Container target) {
 		Dimension minimum = layoutSize(target, false);
 		minimum.width -= (getHgap() + 1);
 		return minimum;
 	}
 
 	/**
-	* Returns the minimum or preferred dimension needed to layout the target
-	* container.
-	*
-	* @param target target to get layout size for
-	* @param preferred should preferred size be calculated
-	* @return the dimension to layout the target container
-	*/
+	 * Returns the minimum or preferred dimension needed to layout the target
+	 * container.
+	 *
+	 * @param target    target to get layout size for
+	 * @param preferred should preferred size be calculated
+	 * @return the dimension to layout the target container
+	 */
 	private Dimension layoutSize(Container target, boolean preferred) {
 		synchronized (target.getTreeLock()) {
 			//  Each row must fit with the width allocated to the containter.
@@ -141,8 +142,7 @@ public class WrapLayout extends FlowLayout {
 	 *  @param rowWidth the width of the row to add
 	 *  @param rowHeight the height of the row to add
 	 */
-	private void addRow(Dimension dim, int rowWidth, int rowHeight)
-	{
+	private void addRow(Dimension dim, int rowWidth, int rowHeight) {
 		dim.width = Math.max(dim.width, rowWidth);
 
 		if (dim.height > 0) {

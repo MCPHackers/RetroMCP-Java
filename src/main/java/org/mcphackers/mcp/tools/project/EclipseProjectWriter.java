@@ -25,11 +25,11 @@ public class EclipseProjectWriter implements ProjectWriter {
 		Path proj = MCPPaths.get(mcp, PROJECT, side);
 		Version version = mcp.getCurrentVersion();
 		String clientArgs = ProjectWriter.getLaunchArgs(mcp, side);
-		Task.Side[] launchSides = side == Task.Side.MERGED ? new Task.Side[] { Task.Side.CLIENT, Task.Side.SERVER } : new Task.Side[] { side };
+		Task.Side[] launchSides = side == Task.Side.MERGED ? new Task.Side[]{Task.Side.CLIENT, Task.Side.SERVER} : new Task.Side[]{side};
 
 		String projectName = "Minecraft " + (side == Task.Side.CLIENT ? "Client" : side == Task.Side.SERVER ? "Server" : side == Task.Side.MERGED ? "Merged" : "Project");
 
-		try(XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(".classpath")))) {
+		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(".classpath")))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("classpath");
 			writer.startAttribute("classpathentry kind=\"src\" path=\"src\"");
@@ -37,16 +37,16 @@ public class EclipseProjectWriter implements ProjectWriter {
 			writer.writeAttribute("attribute name=\"org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY\" value=\"" + projectName + "/libraries/natives\"");
 			writer.closeAttribute("attributes");
 			writer.closeAttribute("classpathentry");
-			for(DependDownload dependencyDownload : version.libraries) {
-				if(Rule.apply(dependencyDownload.rules)) {
+			for (DependDownload dependencyDownload : version.libraries) {
+				if (Rule.apply(dependencyDownload.rules)) {
 					String[] path = dependencyDownload.name.split(":");
 					String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
 					String src = null;
-					if(dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
+					if (dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
 						src = dependencyDownload.downloads.classifiers.sources.path;
 					}
-					if(Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
-						if(src != null) {
+					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
+						if (src != null) {
 							writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\" sourcepath=\"libraries/" + src + "\"");
 						} else {
 							writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\"");
@@ -60,7 +60,7 @@ public class EclipseProjectWriter implements ProjectWriter {
 			writer.closeAttribute("classpath");
 		}
 
-		try(XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(".project")))) {
+		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(".project")))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("projectDescription");
 			writer.stringAttribute("name", projectName);
@@ -87,7 +87,7 @@ public class EclipseProjectWriter implements ProjectWriter {
 			// Filter out src and jars
 			long id = new Random().nextLong();
 			writer.startAttribute("filteredResources");
-			String[] matches = { "src", "jars", "source" };
+			String[] matches = {"src", "jars", "source"};
 			for (String match : matches) {
 				writer.startAttribute("filter");
 				writer.stringAttribute("id", Long.toString(id++));
@@ -103,8 +103,8 @@ public class EclipseProjectWriter implements ProjectWriter {
 			writer.closeAttribute("projectDescription");
 		}
 
-		for(Task.Side launchSide : launchSides) {
-			try(XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(Util.firstUpperCase(launchSide.name) + ".launch")))) {
+		for (Task.Side launchSide : launchSides) {
+			try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(Util.firstUpperCase(launchSide.name) + ".launch")))) {
 				writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
 				writer.startAttribute("launchConfiguration type=\"org.eclipse.jdt.launching.localJavaApplication\"");
 				writer.startAttribute("listAttribute key=\"org.eclipse.debug.core.MAPPED_RESOURCE_PATHS\"");
@@ -122,7 +122,7 @@ public class EclipseProjectWriter implements ProjectWriter {
 				writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD\" value=\"true\"");
 				writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MAIN_TYPE\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), launchSide) + "\"");
 				writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MODULE_NAME\" value=\"" + projectName + "\"");
-				if(launchSide == Task.Side.CLIENT) {
+				if (launchSide == Task.Side.CLIENT) {
 					writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROGRAM_ARGUMENTS\" value=\"" + clientArgs + "\"");
 				}
 				writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROJECT_ATTR\" value=\"" + projectName + "\"");
@@ -135,7 +135,7 @@ public class EclipseProjectWriter implements ProjectWriter {
 
 		String sourceVer = sourceVersion >= 9 ? String.valueOf(sourceVersion) : "1." + sourceVersion;
 
-		try(BufferedWriter writer = Files.newBufferedWriter(settings.resolve("org.eclipse.jdt.core.prefs"))) {
+		try (BufferedWriter writer = Files.newBufferedWriter(settings.resolve("org.eclipse.jdt.core.prefs"))) {
 			writer.write("eclipse.preferences.version=1");
 			writer.newLine();
 			writer.write("org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled");

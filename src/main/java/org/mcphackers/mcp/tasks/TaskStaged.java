@@ -31,7 +31,7 @@ public abstract class TaskStaged extends Task {
 	public void doTask() throws Exception {
 		stages = setStages();
 		mcp.setPluginOverrides(this);
-		while(step < stages.length) {
+		while (step < stages.length) {
 			setProgress(stages[step].stageName, stages[step].completion);
 			stages[step].doTask();
 			step();
@@ -40,11 +40,12 @@ public abstract class TaskStaged extends Task {
 
 	/**
 	 * Replaces stage operation at <code>stageIndex</code> with <code>task</code>
+	 *
 	 * @param stageIndex
 	 * @param task
 	 */
 	public void overrideStage(int stageIndex, TaskRunnable task) {
-		if(stageIndex < stages.length) {
+		if (stageIndex < stages.length) {
 			stages[stageIndex].setOperation(task);
 		}
 	}
@@ -58,9 +59,9 @@ public abstract class TaskStaged extends Task {
 	}
 
 	public static class Stage {
-		private TaskRunnable runnable;
 		private final String stageName;
 		private final int completion;
+		private TaskRunnable runnable;
 
 		public Stage(String name, int i, TaskRunnable task) {
 			setOperation(task);

@@ -24,7 +24,7 @@ public class Version {
 	public Arguments arguments;
 
 	public static Version from(JSONObject obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		return new Version() {
@@ -37,9 +37,9 @@ public class Version {
 				releaseTime = obj.getString("releaseTime");
 				type = obj.getString("type");
 				libraries = new ArrayList<>();
-				for(Object o : obj.getJSONArray("libraries")) {
-					if(o instanceof JSONObject) {
-						libraries.add(DependDownload.from((JSONObject)o));
+				for (Object o : obj.getJSONArray("libraries")) {
+					if (o instanceof JSONObject) {
+						libraries.add(DependDownload.from((JSONObject) o));
 					}
 				}
 				mainClass = obj.getString("mainClass");
@@ -57,7 +57,7 @@ public class Version {
 		public Download server_mappings;
 
 		public static VersionDownloads from(JSONObject obj) {
-			if(obj == null) {
+			if (obj == null) {
 				return null;
 			}
 			return new VersionDownloads() {
@@ -77,20 +77,20 @@ public class Version {
 		public List<Object> jvm;
 
 		public static Arguments from(JSONObject obj) {
-			if(obj == null) {
+			if (obj == null) {
 				return null;
 			}
 			return new Arguments() {
 				{
-					for(Object o : obj.getJSONArray("game")) {
-						if(o instanceof JSONObject) {
-							game.add(Argument.from((JSONObject)o));
+					for (Object o : obj.getJSONArray("game")) {
+						if (o instanceof JSONObject) {
+							game.add(Argument.from((JSONObject) o));
 						}
 						game.add(o);
 					}
-					for(Object o : obj.getJSONArray("jvm")) {
-						if(o instanceof JSONObject) {
-							jvm.add(Argument.from((JSONObject)o));
+					for (Object o : obj.getJSONArray("jvm")) {
+						if (o instanceof JSONObject) {
+							jvm.add(Argument.from((JSONObject) o));
 						}
 						jvm.add(o);
 					}
@@ -104,13 +104,13 @@ public class Version {
 		public Object value;
 
 		public static Argument from(JSONObject obj) {
-			if(obj == null) {
+			if (obj == null) {
 				return null;
 			}
 			return new Argument() {
 				{
-					for(Object o : obj.getJSONArray("rules")) {
-						rules.add(Rule.from((JSONObject)o));
+					for (Object o : obj.getJSONArray("rules")) {
+						rules.add(Rule.from((JSONObject) o));
 					}
 					value = obj.get("value");
 				}

@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.MCPPaths.*;
+import static org.mcphackers.mcp.MCPPaths.SOURCE;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,16 +37,16 @@ public class TaskSourceBackup extends Task {
 	private void packSourceIntoZip() throws IOException {
 		String filename = "src-backup-" + side.name + "-" + DATE_FORMATTER.format(LocalDate.now());
 		Path backupPath = MCPPaths.get(mcp, filename + ".zip");
-		for(int i = 1; Files.exists(backupPath); i++) {
+		for (int i = 1; Files.exists(backupPath); i++) {
 			backupPath = MCPPaths.get(mcp, filename + "-" + i + ".zip");
 		}
 
 		Path srcPath = MCPPaths.get(mcp, SOURCE, side);
-		try(ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(backupPath))) {
+		try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(backupPath))) {
 			List<String> srcFiles = new ArrayList<>();
 			try (Stream<Path> paths = Files.walk(srcPath)) {
 				paths.forEach(file -> {
-					if(file.getFileName().toString().endsWith(".java")){
+					if (file.getFileName().toString().endsWith(".java")) {
 						srcFiles.add(file.toString());
 					}
 				});
@@ -55,7 +55,7 @@ public class TaskSourceBackup extends Task {
 
 			int i = 0;
 			for (String path : srcFiles) {
-				if(path.endsWith(".java")) {
+				if (path.endsWith(".java")) {
 					try {
 						zip.putNextEntry(new ZipEntry(path));
 						zip.write(Files.readAllBytes(Paths.get(path)));
@@ -64,7 +64,7 @@ public class TaskSourceBackup extends Task {
 						e.printStackTrace();
 					}
 				}
-				setProgress(MCP.TRANSLATOR.translateKey("task.stage.backupsrc") + " " + path, (int)((i / (float)nFiles) * 100));
+				setProgress(MCP.TRANSLATOR.translateKey("task.stage.backupsrc") + " " + path, (int) ((i / (float) nFiles) * 100));
 				i++;
 			}
 		}

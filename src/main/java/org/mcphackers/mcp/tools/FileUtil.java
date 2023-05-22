@@ -34,10 +34,9 @@ public abstract class FileUtil {
 		if (!Files.exists(path)) {
 			return;
 		}
-		if(Files.isDirectory(path)) {
+		if (Files.isDirectory(path)) {
 			deleteDirectory(path);
-		}
-		else {
+		} else {
 			Files.delete(path);
 		}
 	}
@@ -49,11 +48,11 @@ public abstract class FileUtil {
 	}
 
 	public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader)null)) {
-			for(Path file : files) {
-				Path fileInsideZipPath = fs.getPath("/" + relativeTo.relativize(file).toString());
+		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+			for (Path file : files) {
+				Path fileInsideZipPath = fs.getPath("/" + relativeTo.relativize(file));
 				Files.deleteIfExists(fileInsideZipPath);
-				if(fileInsideZipPath.getParent() != null && !Files.exists(fileInsideZipPath.getParent()))
+				if (fileInsideZipPath.getParent() != null && !Files.exists(fileInsideZipPath.getParent()))
 					Files.createDirectories(fileInsideZipPath.getParent());
 				Files.copy(file, fileInsideZipPath);
 			}
@@ -61,14 +60,14 @@ public abstract class FileUtil {
 	}
 
 	public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
+		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.deleteIfExists(fileInsideZipPath);
 		}
 	}
 
 	public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
-		try(FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
+		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.copy(fileInsideZipPath, out);
 		}
@@ -91,18 +90,17 @@ public abstract class FileUtil {
 			while ((entry = zipInputStream.getNextEntry()) != null) {
 				Path toPath = destDir.resolve(entry.getName());
 				Files.deleteIfExists(toPath);
-				if(!entry.isDirectory()) {
+				if (!entry.isDirectory()) {
 					createDirectories(toPath.getParent());
 					Files.copy(zipInputStream, toPath);
-				}
-				else {
+				} else {
 					createDirectories(toPath);
 				}
 			}
 		}
 	}
 
-	public static void extract(final Path zipFile, final Path destDir, Function<ZipEntry,Boolean> match) throws IOException {
+	public static void extract(final Path zipFile, final Path destDir, Function<ZipEntry, Boolean> match) throws IOException {
 		if (!Files.exists(destDir)) {
 			Files.createDirectories(destDir);
 		}
@@ -112,17 +110,17 @@ public abstract class FileUtil {
 				Path toPath = destDir.resolve(entry.getName());
 				Files.deleteIfExists(toPath);
 				if (match.apply(entry)) {
-					if(!entry.isDirectory()) {
+					if (!entry.isDirectory()) {
 						createDirectories(toPath.getParent());
 						Files.copy(zipInputStream, toPath);
-					}
-					else {
+					} else {
 						createDirectories(toPath);
 					}
 				}
 			}
 		}
 	}
+
 	public static void downloadFile(String url, Path output) throws IOException {
 		downloadFile(new URL(url), output);
 	}
@@ -163,7 +161,7 @@ public abstract class FileUtil {
 	}
 
 	public static List<Path> walkDirectory(Path path) throws IOException {
-		if(!Files.isDirectory(path)) {
+		if (!Files.isDirectory(path)) {
 			throw new IOException(path + "is not a directory");
 		}
 		try (Stream<Path> pathStream = Files.walk(path)) {
@@ -172,7 +170,7 @@ public abstract class FileUtil {
 	}
 
 	public static List<Path> walkDirectory(Path path, Predicate<Path> predicate) throws IOException {
-		if(!Files.isDirectory(path)) {
+		if (!Files.isDirectory(path)) {
 			throw new IOException(path + "is not a directory");
 		}
 		try (Stream<Path> pathStream = Files.walk(path)) {
@@ -181,14 +179,14 @@ public abstract class FileUtil {
 	}
 
 	public static void copyDirectory(Path sourceFolder, Path targetFolder) throws IOException {
-		if(!Files.exists(targetFolder)) {
+		if (!Files.exists(targetFolder)) {
 			Files.createDirectories(targetFolder);
 		}
 		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {
 			pathStream.forEach(source -> {
 				Path destination = targetFolder.resolve(sourceFolder.relativize(source));
 				try {
-					if(!Files.isDirectory(destination)) {
+					if (!Files.isDirectory(destination)) {
 						Files.copy(source, destination);
 					}
 				} catch (IOException e) {
@@ -220,10 +218,10 @@ public abstract class FileUtil {
 	}
 
 	public static void collectJars(Path libPath, List<Path> list, boolean walk) throws IOException {
-		try(Stream<Path> stream = walk ? Files.walk(libPath) : Files.list(libPath)
-			.filter(library -> library.getFileName().toString().endsWith(".jar"))
-			.filter(library -> !Files.isDirectory(library))) {
-				list.addAll(stream.collect(Collectors.toList()));
+		try (Stream<Path> stream = walk ? Files.walk(libPath) : Files.list(libPath)
+				.filter(library -> library.getFileName().toString().endsWith(".jar"))
+				.filter(library -> !Files.isDirectory(library))) {
+			list.addAll(stream.collect(Collectors.toList()));
 		}
 	}
 
@@ -244,7 +242,7 @@ public abstract class FileUtil {
 		try (Stream<Path> pathStream = Files.walk(sourceFolder)) {
 			pathStream.filter(p -> !(Files.isDirectory(p) && p.toFile().list().length != 0)).forEach(source -> {
 				for (String excludedFolder : excludedFolders) {
-					if(sourceFolder.relativize(source).startsWith(Paths.get(excludedFolder))) {
+					if (sourceFolder.relativize(source).startsWith(Paths.get(excludedFolder))) {
 						try {
 							Files.delete(source);
 						} catch (IOException e) {

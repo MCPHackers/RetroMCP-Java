@@ -11,7 +11,7 @@ public class VersionMetadata {
 
 
 	public static VersionMetadata from(JSONObject obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		return new VersionMetadata() {

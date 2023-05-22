@@ -12,7 +12,7 @@ public class XMLWriter extends BufferedWriter {
 	}
 
 	private void appendInd(StringBuilder s) {
-		for(int i = 0; i < indent; i++) {
+		for (int i = 0; i < indent; i++) {
 			s.append("\t");
 		}
 	}

@@ -19,19 +19,19 @@ public abstract class ClassUtils {
 		Enumeration<JarEntry> e = jarFile.entries();
 
 		List<Class<T>> classes = new ArrayList<>();
-		URL[] urls = { new URL("jar:file:" + pathToJar+"!/") };
+		URL[] urls = {new URL("jar:file:" + pathToJar + "!/")};
 		URLClassLoader cl = URLClassLoader.newInstance(urls);
 
 		while (e.hasMoreElements()) {
 			JarEntry je = e.nextElement();
-			if(je.isDirectory() || !je.getName().endsWith(".class")){
+			if (je.isDirectory() || !je.getName().endsWith(".class")) {
 				continue;
 			}
 			// -6 because of .class
-			String className = je.getName().substring(0,je.getName().length()-6);
+			String className = je.getName().substring(0, je.getName().length() - 6);
 			className = className.replace('/', '.');
 			Class<?> cls = cl.loadClass(className);
-			if(type.isAssignableFrom(cls)) {
+			if (type.isAssignableFrom(cls)) {
 				classes.add((Class<T>) cls);
 			}
 		}
@@ -44,8 +44,8 @@ public abstract class ClassUtils {
 	 * And there is a chance it was compiled from a different source where one of the methods didn't exist
 	 */
 	public static boolean isClassAbstract(Class<?> type) {
-		for(Method meth : type.getMethods()) {
-			if(Modifier.isAbstract(meth.getModifiers())) {
+		for (Method meth : type.getMethods()) {
+			if (Modifier.isAbstract(meth.getModifiers())) {
 				return true;
 			}
 		}
@@ -53,7 +53,7 @@ public abstract class ClassUtils {
 	}
 
 	public static int getSourceFromClassVersion(int classVersion) {
-		if(classVersion >= 45) {
+		if (classVersion >= 45) {
 			return classVersion - 44;
 		}
 		return -1;

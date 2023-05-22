@@ -8,7 +8,7 @@ public class TaskModeBuilder {
 	private String name;
 	private boolean usesProgressBars = true;
 	private Class<? extends Task> taskClass;
-	private TaskParameter[] params = new TaskParameter[] {};
+	private TaskParameter[] params = new TaskParameter[]{};
 	private Requirement requirement;
 
 	public TaskModeBuilder setName(String name) {

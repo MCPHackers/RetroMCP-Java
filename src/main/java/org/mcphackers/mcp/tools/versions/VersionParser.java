@@ -29,20 +29,18 @@ public class VersionParser {
 		JSONArray json;
 		try {
 			json = getJson();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			failureCause = e;
 			return; // Couldn't init json
 		}
-		for(Object j : json) {
-			if(!(j instanceof JSONObject)) {
+		for (Object j : json) {
+			if (!(j instanceof JSONObject)) {
 				continue;
 			}
 			try {
-				VersionData data = VersionData.from((JSONObject)j);
+				VersionData data = VersionData.from((JSONObject) j);
 				versions.add(data);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				// Catching exception will skip to the next version
 				e.printStackTrace();
 			}
@@ -50,19 +48,34 @@ public class VersionParser {
 		versions.sort(new VersionSorter());
 	}
 
+	private static JSONArray getJson() throws Exception {
+		InputStream in;
+		Path versions = Paths.get("versions.json");
+		if (Files.exists(versions)) {
+			in = Files.newInputStream(versions);
+		} else {
+			URLConnection connect = new URL(MAPPINGS_JSON).openConnection();
+			connect.setConnectTimeout(30000);
+			in = connect.getInputStream();
+		}
+		return Util.parseJSONArray(in);
+	}
+
 	/**
 	 * Returns version data from version id/name
+	 *
 	 * @param id
 	 * @return VersionData
 	 */
 	public VersionData getVersion(String id) {
-		for(VersionData data : versions) {
-			if(data.id.equals(id)) {
+		for (VersionData data : versions) {
+			if (data.id.equals(id)) {
 				return data;
 			}
 		}
 		return null;
 	}
+
 	/**
 	 * @return All cached VersionData
 	 */
@@ -74,7 +87,7 @@ public class VersionParser {
 		public String resources;
 
 		public static VersionData from(JSONObject obj) {
-			if(obj == null) {
+			if (obj == null) {
 				return null;
 			}
 			return new VersionData() {
@@ -93,32 +106,26 @@ public class VersionParser {
 		public String toString() {
 			String typ;
 			String ver;
-			if(id.startsWith("rd") && "old_alpha".equals(type)) {
+			if (id.startsWith("rd") && "old_alpha".equals(type)) {
 				typ = "Pre-Classic";
 				ver = id;
-			}
-			else if(id.startsWith("c") && "old_alpha".equals(type)) {
+			} else if (id.startsWith("c") && "old_alpha".equals(type)) {
 				typ = "Classic";
 				ver = id.substring(1);
-			}
-			else if(id.startsWith("inf-")) {
+			} else if (id.startsWith("inf-")) {
 				typ = "Infdev";
 				ver = id.substring(4);
-			}
-			else if(id.startsWith("in-")) {
+			} else if (id.startsWith("in-")) {
 				typ = "Indev";
 				ver = id.substring(3);
-			}
-			else if(id.startsWith("a") && "old_alpha".equals(type)) {
+			} else if (id.startsWith("a") && "old_alpha".equals(type)) {
 				typ = "Alpha";
 				ver = id.substring(1);
-			}
-			else if(id.startsWith("b")) {
+			} else if (id.startsWith("b")) {
 				typ = "Beta";
 				ver = id.substring(1);
-			}
-			else {
-				typ = type.substring(0,1).toUpperCase() + type.substring(1);
+			} else {
+				typ = type.substring(0, 1).toUpperCase() + type.substring(1);
 				ver = id;
 			}
 			return typ + " " + ver;
@@ -136,24 +143,10 @@ public class VersionParser {
 				Instant i1 = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(t1.releaseTime));
 				Instant i2 = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(t2.releaseTime));
 				return i2.compareTo(i1);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				return -1;
 			}
 		}
-	}
-
-	private static JSONArray getJson() throws Exception {
-		InputStream in;
-		Path versions = Paths.get("versions.json");
-		if(Files.exists(versions)) {
-			in = Files.newInputStream(versions);
-		} else {
-			URLConnection connect = new URL(MAPPINGS_JSON).openConnection();
-			connect.setConnectTimeout(30000);
-			in = connect.getInputStream();
-		}
-		return Util.parseJSONArray(in);
 	}
 
 }

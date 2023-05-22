@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.gui;
 
-import java.awt.GridBagConstraints;
+import java.awt.*;
 
 public final class GridBagConstraintsBuilder {
 

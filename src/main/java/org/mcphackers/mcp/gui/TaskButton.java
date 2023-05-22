@@ -4,7 +4,7 @@ import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
+import javax.swing.*;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.main.MainGUI;

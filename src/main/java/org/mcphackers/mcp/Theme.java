@@ -1,17 +1,17 @@
 package org.mcphackers.mcp;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
 public class Theme {
 	public static final Map<String, Theme> THEMES_MAP = new HashMap<>();

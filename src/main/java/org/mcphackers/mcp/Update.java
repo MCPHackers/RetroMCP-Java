@@ -9,17 +9,17 @@ import org.mcphackers.mcp.tools.Util;
 public class Update {
 
 	public static void main(String[] args) {
-		if(args.length >= 1) {
+		if (args.length >= 1) {
 			boolean keepTrying = true;
 			long startTime = System.currentTimeMillis();
-			while(keepTrying) {
+			while (keepTrying) {
 				try {
 					Files.deleteIfExists(Paths.get(args[0]));
 					Files.copy(Paths.get(MCPPaths.UPDATE_JAR), Paths.get(args[0]));
-					Util.runCommand(new String[] {
-						Util.getJava(),
-						"-jar",
-						args[0]
+					Util.runCommand(new String[]{
+							Util.getJava(),
+							"-jar",
+							args[0]
 					});
 					keepTrying = false;
 				} catch (IOException e) {
@@ -32,7 +32,7 @@ public class Update {
 	public static void attemptToDeleteUpdateJar() {
 		long startTime = System.currentTimeMillis();
 		boolean keepTrying = true;
-		while(keepTrying) {
+		while (keepTrying) {
 			try {
 				Files.deleteIfExists(Paths.get(MCPPaths.UPDATE_JAR));
 				keepTrying = false;

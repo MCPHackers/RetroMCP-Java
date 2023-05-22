@@ -10,13 +10,12 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.mcphackers.mcp.tasks.ProgressListener;
-
 import de.fernflower.main.decompiler.BaseDecompiler;
 import de.fernflower.main.decompiler.DirectoryResultSaver;
 import de.fernflower.main.extern.IBytecodeProvider;
 import de.fernflower.main.extern.IFernflowerPreferences;
 import de.fernflower.util.InterpreterUtil;
+import org.mcphackers.mcp.tasks.ProgressListener;
 
 public class Decompiler implements IBytecodeProvider {
 	public final DecompileLogger log;
@@ -39,8 +38,8 @@ public class Decompiler implements IBytecodeProvider {
 
 	public void decompile() throws IOException {
 		BaseDecompiler decompiler = new BaseDecompiler(this, new DirectoryResultSaver(destination.toFile()), mapOptions, log/*, javadocs.exists() ? new TinyJavadocProvider(javadocs) : null*/);
-		for(Path lib : libraries) {
-			if(Files.exists(lib))
+		for (Path lib : libraries) {
+			if (Files.exists(lib))
 				decompiler.addSpace(lib.toAbsolutePath().toFile(), false);
 		}
 		decompiler.addSpace(source.toAbsolutePath().toFile(), true);

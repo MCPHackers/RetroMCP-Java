@@ -30,25 +30,38 @@ public interface MCPPlugin {
 	 * Called whenever an instance of TaskStaged starts execution.
 	 * Use {@link TaskStaged#overrideStage(int, org.mcphackers.mcp.tasks.TaskRunnable)}
 	 * to replace one of the stages.
+	 *
 	 * @param task the task with stages to override
 	 */
 	void setTaskOverrides(TaskStaged task);
 
 	enum TaskEvent {
-		/** Called before a task is executed */
+		/**
+		 * Called before a task is executed
+		 */
 		PRE_TASK,
-		/** Called after the task has executed */
+		/**
+		 * Called after the task has executed
+		 */
 		POST_TASK,
-		/** Called each time a task moves to the next execution stage */
+		/**
+		 * Called each time a task moves to the next execution stage
+		 */
 		TASK_STEP
 	}
 
 	enum MCPEvent {
-		/** Called when a task begins execution */
+		/**
+		 * Called when a task begins execution
+		 */
 		STARTED_TASKS,
-		/** Called when all tasks have finished execution */
+		/**
+		 * Called when all tasks have finished execution
+		 */
 		FINISHED_TASKS,
-		/** Called when RMCP starts up */
+		/**
+		 * Called when RMCP starts up
+		 */
 		ENV_STARTUP
 	}
 

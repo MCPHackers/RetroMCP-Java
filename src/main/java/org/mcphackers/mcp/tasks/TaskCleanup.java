@@ -34,7 +34,7 @@ public class TaskCleanup extends Task {
 
 		mcp.setCurrentVersion(null);
 
-		if(deleted) {
+		if (deleted) {
 			log("Cleanup finished in " + DECIMAL.format(Duration.between(startTime, Instant.now()).get(ChronoUnit.NANOS) / 1e+9F) + "s");
 		} else {
 			log("Nothing to clear!");
@@ -45,7 +45,7 @@ public class TaskCleanup extends Task {
 
 		boolean deleted = false;
 		List<Path> filesToDelete = new ArrayList<>();
-		for(Side side : Side.ALL) {
+		for (Side side : Side.ALL) {
 			filesToDelete.add(MCPPaths.get(mcp, JAR_ORIGINAL, side));
 			filesToDelete.add(MCPPaths.get(mcp, PROJECT, side));
 			filesToDelete.add(MCPPaths.get(mcp, PATCHES, side));
@@ -55,17 +55,17 @@ public class TaskCleanup extends Task {
 		filesToDelete.add(MCPPaths.get(mcp, CONF));
 		filesToDelete.add(MCPPaths.get(mcp, NATIVES));
 
-		Path[] foldersToDelete = new Path[] {
+		Path[] foldersToDelete = new Path[]{
 				MCPPaths.get(mcp, JARS),
-			};
-		for(Path path : filesToDelete) {
-			if(Files.exists(path)) {
+		};
+		for (Path path : filesToDelete) {
+			if (Files.exists(path)) {
 				deleted = true;
 				FileUtil.delete(path);
 			}
 		}
-		for(Path path : foldersToDelete) {
-			if(Files.exists(path) && path.toFile().list().length == 0) {
+		for (Path path : foldersToDelete) {
+			if (Files.exists(path) && path.toFile().list().length == 0) {
 				deleted = true;
 				Files.delete(path);
 			}

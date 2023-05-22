@@ -13,8 +13,8 @@ public class MathConstants extends Source {
 	static {
 		for (int i = 1; i <= 100; i++) {
 			double d = i * 0.01D;
-			if(d != (float)d) { // if imprecise
-				floatCastedToDouble((float)d);
+			if (d != (float) d) { // if imprecise
+				floatCastedToDouble((float) d);
 			}
 		}
 		floatCastedToDouble(0.0075F);
@@ -22,10 +22,10 @@ public class MathConstants extends Source {
 		floatCastedToDouble(0.997F);
 		floatCastedToDouble(1.62F);
 		replaceValue(Math.PI, "Math.PI");
-		replaceValue((float)Math.PI, "(float)Math.PI");
-		replaceValue((float)Math.PI / 2F, "(float)Math.PI / 2F");
-		replaceValue((float)Math.PI / 4.5F, "(float)Math.PI / 4.5F");
-		replaceValue((double)(float)Math.PI, "(double)(float)Math.PI");
+		replaceValue((float) Math.PI, "(float)Math.PI");
+		replaceValue((float) Math.PI / 2F, "(float)Math.PI / 2F");
+		replaceValue((float) Math.PI / 4.5F, "(float)Math.PI / 4.5F");
+		replaceValue((double) (float) Math.PI, "(double)(float)Math.PI");
 		replaceValue(Math.PI * 2D, "Math.PI * 2D");
 		replaceValue(Math.PI / 2D, "Math.PI / 2D");
 		replaceValue(0xFFFFFF, "0xFFFFFF");
@@ -40,16 +40,8 @@ public class MathConstants extends Source {
 		replaceValue(9.0D / 256D, "9.0D / 256D");
 	}
 
-	@Override
-	public void apply(String className, StringBuilder source) {
-		replaceTextOfMatchGroup(source, CONSTANT_REGEX, match1 -> {
-			String constant = match1.group(0);
-			return CONSTANTS.getOrDefault(constant, constant);
-		});
-	}
-
 	private static String floatCastedToDouble(float value) {
-		return CONSTANTS.put((double)value + "D", "(double)" + value + "F");
+		return CONSTANTS.put((double) value + "D", "(double)" + value + "F");
 	}
 
 	private static String replaceValue(double value, String replace) {
@@ -67,5 +59,13 @@ public class MathConstants extends Source {
 	@SuppressWarnings("unused")
 	private static String replaceValue(long value, String replace) {
 		return CONSTANTS.put(value + "L", replace);
+	}
+
+	@Override
+	public void apply(String className, StringBuilder source) {
+		replaceTextOfMatchGroup(source, CONSTANT_REGEX, match1 -> {
+			String constant = match1.group(0);
+			return CONSTANTS.getOrDefault(constant, constant);
+		});
 	}
 }

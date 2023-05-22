@@ -35,7 +35,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 		String projectName = "Minecraft " + (side == Task.Side.CLIENT ? "Client" : side == Task.Side.SERVER ? "Server" : side == Task.Side.MERGED ? "Merged" : "Project");
 
 		String moduleName = projectName.toLowerCase().replace(" ", "_");
-		try(XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(moduleName + ".iml")))) {
+		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(moduleName + ".iml")))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("module type=\"JAVA_MODULE\" version=\"4\"");
 			writer.startAttribute("component name=\"NewModuleRootManager\" inherit-compiler-output=\"true\"");
@@ -48,13 +48,13 @@ public class IdeaProjectWriter implements ProjectWriter {
 
 			writer.writeSelfEndingAttribute("orderEntry type=\"inheritedJdk\"");
 			writer.writeSelfEndingAttribute("orderEntry type=\"sourceFolder\" forTests=\"false\"");
-			for(DependDownload dependencyDownload : version.libraries) {
-				if(Rule.apply(dependencyDownload.rules)) {
+			for (DependDownload dependencyDownload : version.libraries) {
+				if (Rule.apply(dependencyDownload.rules)) {
 					String[] path = dependencyDownload.name.split(":");
 					String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
 					Path libPath = Paths.get(lib);
 					String libraryName = libPath.getFileName().toString();
-					if(Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
+					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
 						writer.writeSelfEndingAttribute("orderEntry type=\"library\" name=\"" + libraryName + "\" level=\"project\"");
 					}
 				}
@@ -65,7 +65,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 			writer.closeAttribute("module");
 		}
 
-		try(XMLWriter writer = new XMLWriter(Files.newBufferedWriter(modulesXML))) {
+		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(modulesXML))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("project version=\"4\"");
 
@@ -92,7 +92,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 		this.writeLibraries(mcp, proj, version);
 	}
 
-	public void writeWorkspace (MCP mcp, Task.Side launchSide, String projectName, String args, Path workspaceXML) throws IOException {
+	public void writeWorkspace(MCP mcp, Task.Side launchSide, String projectName, String args, Path workspaceXML) throws IOException {
 		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(workspaceXML))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("project version=\"4\"");
@@ -115,18 +115,18 @@ public class IdeaProjectWriter implements ProjectWriter {
 		}
 	}
 
-	public void writeLibraries (MCP mcp, Path projectFolder, Version version) throws IOException {
+	public void writeLibraries(MCP mcp, Path projectFolder, Version version) throws IOException {
 		Path librariesFolder = projectFolder.resolve(".idea/libraries");
 		// Write library XML files
-		for(DependDownload dependencyDownload : version.libraries) {
-			if(Rule.apply(dependencyDownload.rules)) {
+		for (DependDownload dependencyDownload : version.libraries) {
+			if (Rule.apply(dependencyDownload.rules)) {
 				String[] path = dependencyDownload.name.split(":");
 				String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
 				String src = null;
-				if(dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
+				if (dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
 					src = dependencyDownload.downloads.classifiers.sources.path;
 				}
-				if(Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
+				if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
 					String libraryName = lib.substring(lib.lastIndexOf("/") + 1);
 					Path libraryXML = librariesFolder.resolve(libraryName + ".xml");
 					Files.createFile(libraryXML);

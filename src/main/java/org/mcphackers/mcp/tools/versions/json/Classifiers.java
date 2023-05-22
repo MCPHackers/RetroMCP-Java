@@ -12,7 +12,7 @@ public class Classifiers {
 	public Artifact sources;
 
 	public static Classifiers from(JSONObject obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		return new Classifiers() {
@@ -34,7 +34,7 @@ public class Classifiers {
 			case linux:
 				return natives_linux;
 			case osx:
-				if(natives_osx != null) {
+				if (natives_osx != null) {
 					return natives_osx;
 				}
 				return natives_macos;

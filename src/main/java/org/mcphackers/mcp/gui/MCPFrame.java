@@ -2,14 +2,7 @@ package org.mcphackers.mcp.gui;
 
 import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
@@ -20,17 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -46,23 +29,8 @@ import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 
 public class MCPFrame extends JFrame implements WindowListener {
 
-	private static final long serialVersionUID = -3455157541499586338L;
-
-	private JComboBox<?> verList;
-	private final List<TaskButton> buttons = new ArrayList<>();
-	private JLabel verLabel;
-	//private JButton verCleanup;
-	private JPanel topRightContainer;
-	private JPanel topLeftContainer;
-	private JPanel bottom;
-	private SideProgressBar[] progressBars = new SideProgressBar[0];
-	private JLabel[] progressLabels = new JLabel[0];
-	public MenuBar menuBar;
-	public MainGUI mcp;
-	public boolean loadingVersions = true;
-	private JPanel middlePanel;
-
 	public static final BufferedImage ICON;
+	private static final long serialVersionUID = -3455157541499586338L;
 
 	static {
 		BufferedImage image = null;
@@ -70,9 +38,24 @@ public class MCPFrame extends JFrame implements WindowListener {
 			//TODO read all images from .ico
 			URL resource = MCPFrame.class.getResource("/icon/rmcp.png");
 			image = ImageIO.read(resource);
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+		}
 		ICON = image;
 	}
+
+	private final List<TaskButton> buttons = new ArrayList<>();
+	public MenuBar menuBar;
+	public MainGUI mcp;
+	public boolean loadingVersions = true;
+	private JComboBox<?> verList;
+	private JLabel verLabel;
+	//private JButton verCleanup;
+	private JPanel topRightContainer;
+	private JPanel topLeftContainer;
+	private JPanel bottom;
+	private SideProgressBar[] progressBars = new SideProgressBar[0];
+	private JLabel[] progressLabels = new JLabel[0];
+	private JPanel middlePanel;
 
 	public MCPFrame(MainGUI mcp) {
 		super("RetroMCP " + MCP.VERSION);
@@ -104,7 +87,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 			}
 		});
 
-		for(TaskMode task : MainGUI.TASKS) {
+		for (TaskMode task : MainGUI.TASKS) {
 			TaskButton button = mcp.getButton(task);
 			button.updateName();
 			buttons.add(button);
@@ -145,7 +128,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 	public void reloadVersionList() {
 
 		verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
-		verList = new JComboBox<Object>(new String[] {MCP.TRANSLATOR.translateKey("mcp.versionList.loading")});
+		verList = new JComboBox<Object>(new String[]{MCP.TRANSLATOR.translateKey("mcp.versionList.loading")});
 		//verCleanup = mcp.getButton(TaskMode.CLEANUP);
 		//verCleanup.setEnabled(false);
 		verLabel.setEnabled(false);
@@ -154,55 +137,55 @@ public class MCPFrame extends JFrame implements WindowListener {
 		topRightContainer.add(this.verLabel);
 		topRightContainer.add(this.verList);
 		//topRightContainer.add(this.verCleanup);
-		operateOnThread(() ->  {
-		loadingVersions = true;
-		if(VersionParser.INSTANCE.failureCause != null) {
-			VersionParser.INSTANCE.failureCause.printStackTrace();
-			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
-			verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
-			verLabel.setForeground(Color.RED);
-			verList = null;
-		} else {
-			verList = new JComboBox<>(VersionParser.INSTANCE.getVersions().toArray());
-			verList.addPopupMenuListener(new PopupMenuListener() {
+		operateOnThread(() -> {
+			loadingVersions = true;
+			if (VersionParser.INSTANCE.failureCause != null) {
+				VersionParser.INSTANCE.failureCause.printStackTrace();
+				verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
+				verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
+				verLabel.setForeground(Color.RED);
+				verList = null;
+			} else {
+				verList = new JComboBox<>(VersionParser.INSTANCE.getVersions().toArray());
+				verList.addPopupMenuListener(new PopupMenuListener() {
 
-				@Override
-				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-				}
+					@Override
+					public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+					}
 
-				@Override
-				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-					operateOnThread(() -> mcp.setupVersion((VersionData)verList.getSelectedItem()));
-				}
+					@Override
+					public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+						operateOnThread(() -> mcp.setupVersion((VersionData) verList.getSelectedItem()));
+					}
 
-				@Override
-				public void popupMenuCanceled(PopupMenuEvent e) {
+					@Override
+					public void popupMenuCanceled(PopupMenuEvent e) {
+					}
+				});
+
+				setCurrentVersion(mcp.currentVersion == null ? null : VersionParser.INSTANCE.getVersion(mcp.currentVersion.id));
+				verList.setMaximumRowCount(20);
+				verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
+			}
+			SwingUtilities.invokeLater(() -> {
+				topRightContainer.removeAll();
+				topRightContainer.add(this.verLabel);
+				if (verList != null) {
+					topRightContainer.add(this.verList);
 				}
+				//topRightContainer.add(this.verCleanup);
+				loadingVersions = false;
+				synchronized (mcp) {
+					if (mcp.isActive) {
+						if (verList != null) verList.setEnabled(true);
+						verLabel.setEnabled(true);
+						//verCleanup.setEnabled(true);
+					}
+				}
+				topRightContainer.updateUI();
+				revalidate();
+				topLeftContainer.revalidate();
 			});
-
-			setCurrentVersion(mcp.currentVersion == null ? null : VersionParser.INSTANCE.getVersion(mcp.currentVersion.id));
-			verList.setMaximumRowCount(20);
-			verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
-		}
-		SwingUtilities.invokeLater(() -> {
-			topRightContainer.removeAll();
-			topRightContainer.add(this.verLabel);
-			if(verList != null) {
-				topRightContainer.add(this.verList);
-			}
-			//topRightContainer.add(this.verCleanup);
-			loadingVersions = false;
-			synchronized (mcp) {
-				if(mcp.isActive) {
-					if(verList != null) verList.setEnabled(true);
-					verLabel.setEnabled(true);
-					//verCleanup.setEnabled(true);
-				}
-			}
-			topRightContainer.updateUI();
-			revalidate();
-			topLeftContainer.revalidate();
-		});
 		});
 	}
 
@@ -211,8 +194,8 @@ public class MCPFrame extends JFrame implements WindowListener {
 	 */
 	public void updateButtonState() {
 		buttons.forEach(button -> button.setEnabled(button.getEnabled()));
-		if(verList != null && !loadingVersions) verList.setEnabled(true);
-		if(!loadingVersions) verLabel.setEnabled(true);
+		if (verList != null && !loadingVersions) verList.setEnabled(true);
+		if (!loadingVersions) verLabel.setEnabled(true);
 		//if(!loadingVersions) verCleanup.setEnabled(true);
 		menuBar.menuOptions.setEnabled(true);
 		menuBar.setComponentsEnabled(true);
@@ -223,7 +206,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 	 */
 	public void setAllButtonsInactive() {
 		buttons.forEach(button -> button.setEnabled(false));
-		if(verList != null) verList.setEnabled(false);
+		if (verList != null) verList.setEnabled(false);
 		verLabel.setEnabled(false);
 		//verCleanup.setEnabled(false);
 		menuBar.menuOptions.setEnabled(false);
@@ -232,10 +215,11 @@ public class MCPFrame extends JFrame implements WindowListener {
 
 	/**
 	 * Refreshes version list with specified versionData
+	 *
 	 * @param versionData
 	 */
 	public void setCurrentVersion(VersionData versionData) {
-		if(verList == null) {
+		if (verList == null) {
 			return;
 		}
 		verList.setSelectedItem(versionData);
@@ -253,9 +237,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 	}
 
 	/**
-	 * @see MCP#setProgress(int, int)
 	 * @param side
 	 * @param progress
+	 * @see MCP#setProgress(int, int)
 	 */
 	public void setProgress(int side, int progress) {
 		progressBars[side].progress = progress;
@@ -263,9 +247,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 	}
 
 	/**
-	 * @see MCP#setProgress(int, String)
 	 * @param side
 	 * @param progressMessage
+	 * @see MCP#setProgress(int, String)
 	 */
 	public void setProgress(int side, String progressMessage) {
 		progressBars[side].progressMsg = progressMessage;
@@ -273,9 +257,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 	}
 
 	/**
-	 * @see MCP#setProgressBars(List, TaskMode)
 	 * @param tasks
 	 * @param mode
+	 * @see MCP#setProgressBars(List, TaskMode)
 	 */
 	public void setProgressBars(List<Task> tasks, TaskMode mode) {
 		int size = tasks.size();
@@ -283,7 +267,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		progressLabels = new JLabel[size];
 		for (int i = 0; i < size; i++) {
 			String name = mode.getFullName();
-			if(tasks.get(i).side != Side.ANY) {
+			if (tasks.get(i).side != Side.ANY) {
 				name = tasks.get(i).side.getName();
 			}
 			progressBars[i] = new SideProgressBar();
@@ -304,21 +288,20 @@ public class MCPFrame extends JFrame implements WindowListener {
 	 */
 	public void reloadText() {
 		middlePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), MCP.TRANSLATOR.translateKey("mcp.console")));
-		if(verList == null && !loadingVersions) {
+		if (verList == null && !loadingVersions) {
 			verLabel.setText(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
-		}
-		else {
+		} else {
 			verLabel.setText(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		}
 		buttons.forEach(TaskButton::updateName);
 		Dimension preferredButtonSize = new Dimension(0, 26);
-		for(TaskButton button : buttons) {
+		for (TaskButton button : buttons) {
 			button.setPreferredSize(null);
 			Dimension preferredButtonSize2 = button.getPreferredSize();
 			preferredButtonSize.width = Math.max(preferredButtonSize2.width, preferredButtonSize.width);
 			preferredButtonSize.height = Math.max(preferredButtonSize2.height, preferredButtonSize.height);
 		}
-		for(TaskButton button : buttons) {
+		for (TaskButton button : buttons) {
 			button.setPreferredSize(preferredButtonSize);
 		}
 		menuBar.reloadText();

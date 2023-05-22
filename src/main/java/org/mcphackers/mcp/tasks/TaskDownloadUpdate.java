@@ -19,7 +19,7 @@ public class TaskDownloadUpdate extends Task {
 	private static final String API = "https://api.github.com/repos/MCPHackers/RetroMCP-Java/releases/latest";
 
 	public TaskDownloadUpdate(MCP instance) {
-		super(Side.ANY , instance);
+		super(Side.ANY, instance);
 	}
 
 	@Override
@@ -29,14 +29,14 @@ public class TaskDownloadUpdate extends Task {
 		JSONObject releaseJson = Util.parseJSON(in);
 		String latestVersion = releaseJson.getString("tag_name");
 		String notes = releaseJson.getString("body");
-		if(!latestVersion.equals(MCP.VERSION)) {
+		if (!latestVersion.equals(MCP.VERSION)) {
 			boolean confirmed = mcp.updateDialogue(notes, latestVersion);
-			if(confirmed) {
+			if (confirmed) {
 				log("Downloading update...");
-				for(Object obj : releaseJson.getJSONArray("assets")) {
-					if(obj instanceof JSONObject) {
-						JSONObject assetObj = (JSONObject)obj;
-						if(!assetObj.getString("name").endsWith(mcp.isGUI() ? "-GUI.jar" : "-CLI.jar")) {
+				for (Object obj : releaseJson.getJSONArray("assets")) {
+					if (obj instanceof JSONObject) {
+						JSONObject assetObj = (JSONObject) obj;
+						if (!assetObj.getString("name").endsWith(mcp.isGUI() ? "-GUI.jar" : "-CLI.jar")) {
 							continue;
 						}
 						FileUtil.downloadFile(assetObj.getString("browser_download_url"), Paths.get(MCPPaths.UPDATE_JAR));
@@ -44,30 +44,27 @@ public class TaskDownloadUpdate extends Task {
 					}
 				}
 				Path jarPath = Paths.get(MCP.class
-						  .getProtectionDomain()
-						  .getCodeSource()
-						  .getLocation()
-						  .toURI());
-				if(!Files.isDirectory(jarPath)) {
-					String[] cmd = new String[] {
-						Util.getJava(),
-						"-cp",
-						MCPPaths.UPDATE_JAR,
-						"org.mcphackers.mcp.Update",
-						jarPath.toString()
+						.getProtectionDomain()
+						.getCodeSource()
+						.getLocation()
+						.toURI());
+				if (!Files.isDirectory(jarPath)) {
+					String[] cmd = new String[]{
+							Util.getJava(),
+							"-cp",
+							MCPPaths.UPDATE_JAR,
+							"org.mcphackers.mcp.Update",
+							jarPath.toString()
 					};
 					Util.runCommand(cmd);
 					System.exit(0);
-				}
-				else {
+				} else {
 					throw new IOException("Running from a folder! Aborting");
 				}
-			}
-			else {
+			} else {
 				log("Cancelling update!");
 			}
-		}
-		else {
+		} else {
 			mcp.showMessage(TaskMode.UPDATE_MCP.getFullName(), MCP.TRANSLATOR.translateKey("mcp.upToDate"), Task.INFO);
 		}
 	}

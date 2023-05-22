@@ -30,8 +30,8 @@ public enum Language {
 	 * @return A language enum from a locale
 	 */
 	public static Language get(Locale locale) {
-		for(Language lang : VALUES) {
-			if(lang.name.equals(locale.toString())) {
+		for (Language lang : VALUES) {
+			if (lang.name.equals(locale.toString())) {
 				return lang;
 			}
 		}

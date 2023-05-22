@@ -34,13 +34,13 @@ public final class MappingUtil {
 	 * @return Obfuscated string based on number index and character range
 	 */
 	public static String getObfuscatedName(char from, char to, int number) {
-		if(number == 0) {
+		if (number == 0) {
 			return String.valueOf(from);
 		}
 		int num = number;
-		int allChars = to - from  + 1;
+		int allChars = to - from + 1;
 		StringBuilder retName = new StringBuilder();
-		while(num >= 0) {
+		while (num >= 0) {
 			char c = (char) (from + (num % allChars));
 			retName.insert(0, c);
 			num = num / allChars - 1;
@@ -54,13 +54,13 @@ public final class MappingUtil {
 	 * @return Obfuscated string based on number index and character array
 	 */
 	public static String getObfuscatedName(char[] chars, int number) {
-		if(number == 0) {
+		if (number == 0) {
 			return String.valueOf(chars[0]);
 		}
 		int num = number;
 		int allChars = chars.length;
 		StringBuilder retName = new StringBuilder();
-		while(num >= 0) {
+		while (num >= 0) {
 			char c = chars[num % allChars];
 			retName.insert(0, c);
 			num = num / allChars - 1;
@@ -71,24 +71,21 @@ public final class MappingUtil {
 	public static List<String> readNamespaces(Path mappings) throws IOException {
 		List<String> namespaces = new ArrayList<>();
 		boolean invalid = false;
-		try(BufferedReader reader = Files.newBufferedReader(mappings)) {
+		try (BufferedReader reader = Files.newBufferedReader(mappings)) {
 			String header = reader.readLine();
-			if(header != null) {
-				if(header.startsWith("tiny\t2\t0\t")) {
+			if (header != null) {
+				if (header.startsWith("tiny\t2\t0\t")) {
 					namespaces.addAll(Arrays.asList(header.substring(9).trim().split("\t")));
-				}
-				else if(header.startsWith("v1\t")) {
+				} else if (header.startsWith("v1\t")) {
 					namespaces.addAll(Arrays.asList(header.substring(3).trim().split("\t")));
+				} else {
+					invalid = true;
 				}
-				else {
-					invalid  = true;
-				}
-			}
-			else {
+			} else {
 				invalid = true;
 			}
 		}
-		if(invalid) {
+		if (invalid) {
 			throw new IllegalStateException("No valid tiny header in " + mappings);
 		}
 		return namespaces;
@@ -123,7 +120,7 @@ public final class MappingUtil {
 			serverTree.accept(nsSwitch);
 		}
 		namedServerTree.accept(namedClientTree);
-		try(Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
+		try (Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
 			namedClientTree.accept(writer);
 		}
 	}
@@ -143,7 +140,7 @@ public final class MappingUtil {
 			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
 			clientTree.accept(nsSwitch);
 		}
-		try(Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
+		try (Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
 			namedClientTree.accept(writer);
 		}
 	}

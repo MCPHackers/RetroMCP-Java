@@ -37,33 +37,22 @@ import org.mcphackers.mcp.tools.versions.json.Version;
 public class MainCLI extends MCP {
 	private static final Ansi LOGO =
 			new Ansi()
-			.fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____").a('\n')
-			.fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\").a('\n')
-			.fgCyan().a(" | |__) |___| |_ _ __ ___ ").fgYellow().a("| \\  / | |    | |__) |").a('\n')
-			.fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |    |  ___/").a('\n')
-			.fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |").a('\n')
-			.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|").a('\n')
-			.fgDefault();
+					.fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____").a('\n')
+					.fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\").a('\n')
+					.fgCyan().a(" | |__) |___| |_ _ __ ___ ").fgYellow().a("| \\  / | |    | |__) |").a('\n')
+					.fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |    |  ___/").a('\n')
+					.fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |").a('\n')
+					.fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|").a('\n')
+					.fgDefault();
+	private final Scanner consoleInput = new Scanner(System.in);
 	private TaskMode mode;
 	private Side side = Side.ANY;
 	private TaskMode helpCommand;
-	private final Scanner consoleInput = new Scanner(System.in);
 	private Version currentVersion;
 
 	private int[] progresses;
 	private String[] progressStrings;
 	private String[] progressBarNames;
-
-	public static void main(String[] args) {
-		if(args.length != 0) {
-			new MainCLI(args);
-			return;
-		}
-		if(true || System.console() != null) {
-			AnsiConsole.systemInstall();
-			new MainCLI(args);
-		}
-	}
 
 	public MainCLI(String[] args) {
 		isGUI = false;
@@ -76,11 +65,11 @@ public class MainCLI extends MCP {
 		String version = null;
 		Path versionPath = Paths.get(MCPPaths.VERSION);
 		List<VersionData> versions = VersionParser.INSTANCE.getVersions();
-		if(Files.exists(versionPath)) {
+		if (Files.exists(versionPath)) {
 			try {
 				currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(versionPath))));
 				VersionData data = VersionParser.INSTANCE.getVersion(currentVersion.id);
-				if(data != null) {
+				if (data != null) {
 					version = new Ansi().a("Current version: ").fgBrightCyan().a(data.toString()).fgDefault().toString();
 				}
 			} catch (Exception e) {
@@ -96,13 +85,13 @@ public class MainCLI extends MCP {
 				log(new Ansi().fgBrightRed().a("Error: Java Development Kit is required to recompile!").toString());
 				log("Using Java from " + Paths.get(Util.getJava()).toAbsolutePath());
 			}
-			if(version != null) log(version);
+			if (version != null) log(version);
 			log(new Ansi().fgDefault().a("Enter a command to execute:").toString());
 		}
 		int executeTimes = 0;
 		while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
 			while (args.length < 1) {
-				System.out.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255,255,255));
+				System.out.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255, 255, 255));
 				String str = null;
 				try {
 					if (consoleInput.hasNext()) {
@@ -128,7 +117,7 @@ public class MainCLI extends MCP {
 			}
 			setParams(parsedArgs, mode);
 			if (mode == TaskMode.SETUP && versions != null) {
-				if(VersionParser.INSTANCE.getVersion(getOptions().getStringParameter(TaskParameter.SETUP_VERSION)) == null) {
+				if (VersionParser.INSTANCE.getVersion(getOptions().getStringParameter(TaskParameter.SETUP_VERSION)) == null) {
 					log(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
 					log(getTable(versions));
 					log(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
@@ -136,19 +125,17 @@ public class MainCLI extends MCP {
 			}
 			if (taskMode) {
 				performTask(mode, side);
-			}
-			else if (mode == TaskMode.HELP) {
-				if(helpCommand == null) {
+			} else if (mode == TaskMode.HELP) {
+				if (helpCommand == null) {
 					for (TaskMode mode : TaskMode.registeredTasks) {
 						log(new Ansi()
 								.fgBrightMagenta().a(" - " + String.format("%-12s", mode.getName())).fgDefault()
 								.fgGreen().a(" ").a(mode.getDesc()).fgDefault().toString());
 					}
-				}
-				else {
+				} else {
 					log(new Ansi().fgBrightMagenta().a(" - " + String.format("%-12s", helpCommand.getName())).fgDefault().fgGreen().a(" ").a(helpCommand.getDesc()).fgDefault().toString());
-					if(helpCommand.params.length > 0) log("Optional parameters:");
-					for(TaskParameter param : helpCommand.params) {
+					if (helpCommand.params.length > 0) log("Optional parameters:");
+					for (TaskParameter param : helpCommand.params) {
 						log(new Ansi().a(" ").fgCyan().a(String.format("%-14s", param.name)).a(" - ").fgBrightYellow().a(param.getDesc()).fgDefault().toString());
 					}
 				}
@@ -168,52 +155,15 @@ public class MainCLI extends MCP {
 		}
 	}
 
-	private void setParams(Map<String, Object> parsedArgs, TaskMode mode) {
-		side = Side.ANY;
-		for (Map.Entry<String, Object> arg : parsedArgs.entrySet()) {
-			Object value = arg.getValue();
-			String name = arg.getKey();
-			if(value == null) {
-				switch (name) {
-					case "client":
-						side = Side.CLIENT;
-						break;
-					case "server":
-						side = Side.SERVER;
-						break;
-				}
-				if(mode == TaskMode.HELP) {
-					for(TaskMode taskMode : TaskMode.registeredTasks) {
-						if(taskMode.getName().equals(name)) {
-							helpCommand = taskMode;
-							break;
-						}
-					}
-				}
-				if(mode == TaskMode.SETUP) {
-					setParameter(TaskParameter.SETUP_VERSION, name);
-				}
-			}
-			else {
-				TaskParameter param = TaskParameterMap.get(name);
-				if(param != null) {
-					safeSetParameter(param, value.toString());
-				}
-				else {
-					log("Unrecognized option: " + name);
-				}
-			}
+	public static void main(String[] args) {
+		if (args.length != 0) {
+			new MainCLI(args);
+			return;
 		}
-	}
-
-	private boolean setMode(String name) {
-		for(TaskMode taskMode : TaskMode.registeredTasks) {
-			if(taskMode.getName().equals(name)) {
-				mode = taskMode;
-				return mode.taskClass != null;
-			}
+		if (true) {
+			AnsiConsole.systemInstall();
+			new MainCLI(args);
 		}
-		return false;
 	}
 
 	private static void parseArg(String arg, Map<String, Object> map) {
@@ -225,20 +175,17 @@ public class MainCLI extends MCP {
 			for (int i = 0; i < values.length; i++) {
 				values[i] = values[i].replace("\\n", "\n").replace("\\t", "\t");
 			}
-			if(values.length == 1) {
+			if (values.length == 1) {
 				try {
 					value = Integer.parseInt(values[0]);
-				}
-				catch (NumberFormatException e) {
-					if(values[0].equals("false") || values[0].equals("true")) {
+				} catch (NumberFormatException e) {
+					if (values[0].equals("false") || values[0].equals("true")) {
 						value = Boolean.parseBoolean(values[0]);
-					}
-					else {
+					} else {
 						value = values[0];
 					}
 				}
-			}
-			else {
+			} else {
 				value = values;
 			}
 			map.put(name, value);
@@ -252,10 +199,9 @@ public class MainCLI extends MCP {
 
 	@SuppressWarnings("unchecked")
 	private static String getTable(List<VersionData> versions) {
-		int rows = (int)Math.ceil(versions.size() / 3D);
+		int rows = (int) Math.ceil(versions.size() / 3D);
 		List<String>[] tableList = new List[rows];
-		for (int i = 0; i < tableList.length; i++)
-		{
+		for (int i = 0; i < tableList.length; i++) {
 			tableList[i] = new ArrayList<>();
 		}
 		StringBuilder table = new StringBuilder();
@@ -264,14 +210,77 @@ public class MainCLI extends MCP {
 			tableList[index % rows].add(new Ansi().fgBrightCyan().a(" - ").fgDefault().fgCyan().a(String.format("%-16s", ver.id)).fgDefault().toString());
 			index++;
 		}
-		for (int i = 0; i < tableList.length; i++)
-		{
+		for (int i = 0; i < tableList.length; i++) {
 			for (String ver : tableList[i]) {
 				table.append(ver);
 			}
-			if(i < tableList.length - 1) table.append("\n");
+			if (i < tableList.length - 1) table.append("\n");
 		}
 		return table.toString();
+	}
+
+	private static String progressString(int progress, String progressMsg, String prefix) {
+		Ansi string = new Ansi(100);
+		string
+				.eraseLine()
+				.a(" ")
+				.a(String.format("%-7s", prefix))
+				.a(String.join("", Collections.nCopies(progress == 0 ? 2 : 2 - (int) (Math.log10(progress)), " ")))
+				.a(String.format(" %d%% [", progress))
+				.fgGreen()
+				.a(String.join("", Collections.nCopies(progress / 10, "=")))
+				.fgDefault()
+				.a(String.join("", Collections.nCopies(10 - progress / 10, "-")))
+				.a("] ")
+				.a(progressMsg);
+
+		return string.toString();
+	}
+
+	private void setParams(Map<String, Object> parsedArgs, TaskMode mode) {
+		side = Side.ANY;
+		for (Map.Entry<String, Object> arg : parsedArgs.entrySet()) {
+			Object value = arg.getValue();
+			String name = arg.getKey();
+			if (value == null) {
+				switch (name) {
+					case "client":
+						side = Side.CLIENT;
+						break;
+					case "server":
+						side = Side.SERVER;
+						break;
+				}
+				if (mode == TaskMode.HELP) {
+					for (TaskMode taskMode : TaskMode.registeredTasks) {
+						if (taskMode.getName().equals(name)) {
+							helpCommand = taskMode;
+							break;
+						}
+					}
+				}
+				if (mode == TaskMode.SETUP) {
+					setParameter(TaskParameter.SETUP_VERSION, name);
+				}
+			} else {
+				TaskParameter param = TaskParameterMap.get(name);
+				if (param != null) {
+					safeSetParameter(param, value.toString());
+				} else {
+					log("Unrecognized option: " + name);
+				}
+			}
+		}
+	}
+
+	private boolean setMode(String name) {
+		for (TaskMode taskMode : TaskMode.registeredTasks) {
+			if (taskMode.getName().equals(name)) {
+				mode = taskMode;
+				return mode.taskClass != null;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -302,15 +311,15 @@ public class MainCLI extends MCP {
 	public void showMessage(String title, String msg, int type) {
 		Ansi typeName = new Ansi();
 		switch (type) {
-		case Task.INFO:
-			typeName = typeName.fgBlue().a("INFO").fgDefault();
-			break;
-		case Task.WARNING:
-			typeName = typeName.fgYellow().a("WARNING").fgDefault();
-			break;
-		case Task.ERROR:
-			typeName = typeName.fgRed().a("ERROR").fgDefault();
-			break;
+			case Task.INFO:
+				typeName = typeName.fgBlue().a("INFO").fgDefault();
+				break;
+			case Task.WARNING:
+				typeName = typeName.fgYellow().a("WARNING").fgDefault();
+				break;
+			case Task.ERROR:
+				typeName = typeName.fgRed().a("ERROR").fgDefault();
+				break;
 		}
 		log("[" + typeName + "]: " + msg);
 	}
@@ -318,7 +327,7 @@ public class MainCLI extends MCP {
 	@Override
 	public void showMessage(String title, String msg, Throwable e) {
 		Ansi typeName = new Ansi().fgRed().a("ERROR").fgDefault();
-		if(msg != null) {
+		if (msg != null) {
 			log("[" + typeName + "]: " + msg);
 		}
 		e.printStackTrace();
@@ -338,31 +347,13 @@ public class MainCLI extends MCP {
 		currentVersion = version;
 	}
 
-	private static String progressString(int progress, String progressMsg, String prefix) {
-		Ansi string = new Ansi(100);
-		string
-				.eraseLine()
-				.a(" ")
-				.a(String.format("%-7s", prefix))
-				.a(String.join("", Collections.nCopies(progress == 0 ? 2 : 2 - (int) (Math.log10(progress)), " ")))
-				.a(String.format(" %d%% [", progress))
-				.fgGreen()
-				.a(String.join("", Collections.nCopies(progress / 10, "=")))
-				.fgDefault()
-				.a(String.join("", Collections.nCopies(10 - progress / 10, "-")))
-				.a("] ")
-				.a(progressMsg);
-
-		return string.toString();
-	}
-
 	@Override
 	public void setProgress(int side, String progressMessage) {
 		//TODO logging messages while progress bar is active still breaks;
 		synchronized (this) {
 			progressStrings[side] = progressMessage;
 			System.out.print(new Ansi().cursorUpLine(progresses.length));
-			for(int i = 0; i < progresses.length; i++) {
+			for (int i = 0; i < progresses.length; i++) {
 				System.out.println(progressString(progresses[i], progressStrings[i], progressBarNames[i]));
 			}
 		}
@@ -374,7 +365,7 @@ public class MainCLI extends MCP {
 		synchronized (this) {
 			progresses[side] = progress;
 			System.out.print(new Ansi().cursorUpLine(progresses.length));
-			for(int i = 0; i < progresses.length; i++) {
+			for (int i = 0; i < progresses.length; i++) {
 				System.out.println(progressString(progresses[i], progressStrings[i], progressBarNames[i]));
 			}
 		}
@@ -387,7 +378,7 @@ public class MainCLI extends MCP {
 		progressBarNames = new String[tasks.size()];
 		for (int i = 0; i < tasks.size(); i++) {
 			String name = mode.getFullName();
-			if(tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
+			if (tasks.get(i).side == Side.CLIENT || tasks.get(i).side == Side.SERVER) {
 				name = tasks.get(i).side.getName();
 			}
 			progresses[i] = 0;

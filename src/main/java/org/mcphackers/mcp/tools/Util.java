@@ -1,7 +1,6 @@
 package org.mcphackers.mcp.tools;
 
-import java.awt.Desktop;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -16,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,23 +25,23 @@ public abstract class Util {
 
 	public static int runCommand(String[] cmd, Path dir, boolean killOnShutdown) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
-		if(dir != null) {
+		if (dir != null) {
 			procBuilder.directory(dir.toAbsolutePath().toFile());
 		}
 		Process proc = procBuilder.start();
 		Thread hook = new Thread(proc::destroy);
-		if(killOnShutdown) {
+		if (killOnShutdown) {
 			Runtime.getRuntime().addShutdownHook(hook);
 		}
 		BufferedReader err = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 		BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-		while(proc.isAlive()) {
-			while(in.ready()) System.out.println(in.readLine());
-			while(err.ready()) System.err.println(err.readLine());
+		while (proc.isAlive()) {
+			while (in.ready()) System.out.println(in.readLine());
+			while (err.ready()) System.err.println(err.readLine());
 		}
 		in.close();
 		err.close();
-		if(killOnShutdown) {
+		if (killOnShutdown) {
 			Runtime.getRuntime().removeShutdownHook(hook);
 		}
 		return proc.exitValue();
@@ -64,15 +64,13 @@ public abstract class Util {
 
 	public static void openUrl(String url) {
 		try {
-			switch (OS.getOs()) {
-				case linux:
-					new ProcessBuilder("/usr/bin/env", "xdg-open", url).start();
-					break;
-				default:
-					if (Desktop.isDesktopSupported()) {
-						Desktop desktop = Desktop.getDesktop();
-						desktop.browse(new URI(url));
-					}
+			if (Objects.requireNonNull(OS.getOs()) == OS.linux) {
+				new ProcessBuilder("/usr/bin/env", "xdg-open", url).start();
+			} else {
+				if (Desktop.isDesktopSupported()) {
+					Desktop desktop = Desktop.getDesktop();
+					desktop.browse(new URI(url));
+				}
 			}
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
@@ -171,12 +169,12 @@ public abstract class Util {
 			throw new IOException(e);
 		}
 	}
-	
+
 	public static String firstUpperCase(String s) {
-		if(s == null) {
+		if (s == null) {
 			return null;
 		}
-		if(s.length() <= 1) {
+		if (s.length() <= 1) {
 			return s.toUpperCase();
 		} else {
 			return Character.toUpperCase(s.charAt(0)) + s.substring(1);

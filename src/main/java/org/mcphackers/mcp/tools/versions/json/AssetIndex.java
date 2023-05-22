@@ -12,7 +12,7 @@ public class AssetIndex {
 	public boolean map_to_resources;
 
 	public static AssetIndex from(JSONObject obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		return new AssetIndex() {
@@ -20,8 +20,8 @@ public class AssetIndex {
 				virtual = obj.optBoolean("virtual");
 				map_to_resources = obj.optBoolean("map_to_resources");
 				JSONObject obj2 = obj.optJSONObject("objects");
-				if(obj2 != null) {
-					for(String s : obj2.keySet()) {
+				if (obj2 != null) {
+					for (String s : obj2.keySet()) {
 						objects.put(s, assetFrom(obj2.getJSONObject(s)));
 					}
 				}
@@ -30,7 +30,7 @@ public class AssetIndex {
 	}
 
 	public Asset assetFrom(JSONObject obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		return new Asset() {

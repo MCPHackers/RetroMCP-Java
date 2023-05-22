@@ -12,7 +12,7 @@ public class DependDownload {
 	public List<Rule> rules = new ArrayList<>();
 
 	public static DependDownload from(JSONObject obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		return new DependDownload() {
@@ -20,9 +20,9 @@ public class DependDownload {
 				name = obj.getString("name");
 				downloads = DownloadLibrary.from(obj.optJSONObject("downloads"));
 				JSONArray a = obj.optJSONArray("rules");
-				if(a != null) {
-					for(Object o : a) {
-						rules.add(Rule.from((JSONObject)o));
+				if (a != null) {
+					for (Object o : a) {
+						rules.add(Rule.from((JSONObject) o));
 					}
 				}
 			}

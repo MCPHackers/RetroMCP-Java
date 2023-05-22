@@ -7,7 +7,7 @@ public class DownloadLibrary {
 	public Classifiers classifiers;
 
 	public static DownloadLibrary from(JSONObject obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		return new DownloadLibrary() {

@@ -10,7 +10,7 @@ public class AssetIndexMeta {
 	public String url;
 
 	public static AssetIndexMeta from(JSONObject obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		return new AssetIndexMeta() {

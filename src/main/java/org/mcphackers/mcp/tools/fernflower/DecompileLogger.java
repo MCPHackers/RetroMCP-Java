@@ -1,9 +1,8 @@
 package org.mcphackers.mcp.tools.fernflower;
 
+import de.fernflower.main.extern.IFernflowerLogger;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tasks.ProgressListener;
-
-import de.fernflower.main.extern.IFernflowerLogger;
 
 public class DecompileLogger extends IFernflowerLogger {
 
@@ -16,7 +15,7 @@ public class DecompileLogger extends IFernflowerLogger {
 
 	@Override
 	public void writeMessage(String message, Severity severity) {
-		if(severity.ordinal() >= Severity.WARN.ordinal()) {
+		if (severity.ordinal() >= Severity.WARN.ordinal()) {
 //			System.out.println(message);
 		}
 	}
@@ -39,7 +38,7 @@ public class DecompileLogger extends IFernflowerLogger {
 
 	@Override
 	public void updateSave(int current) {
-		listener.setProgress((int)((double)current/(double)total * 100));
+		listener.setProgress((int) ((double) current / (double) total * 100));
 	}
 
 }

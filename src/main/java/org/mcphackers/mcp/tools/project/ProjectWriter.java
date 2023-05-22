@@ -10,9 +10,9 @@ import org.mcphackers.mcp.tasks.TaskRun;
 public interface ProjectWriter {
 	static String getLaunchArgs(MCP mcp, Side side) {
 		List<String> args = TaskRun.getLaunchArgs(mcp, side);
-		for(int i = 0; i < args.size(); i++) {
+		for (int i = 0; i < args.size(); i++) {
 			String arg = args.get(i);
-			if(arg.contains(" ")) {
+			if (arg.contains(" ")) {
 				arg = "\"" + arg + "\"";
 			}
 			args.set(i, arg);

@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.gui;
 
-import javax.swing.JProgressBar;
+import javax.swing.*;
 
 public class SideProgressBar extends JProgressBar {
 

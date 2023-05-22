@@ -7,19 +7,19 @@ import org.mcphackers.mcp.tasks.Task.Side;
 
 /**
  * Any optional parameters which can be accessed from tasks
- * @see Options#getParameter(TaskParameter)
  *
+ * @see Options#getParameter(TaskParameter)
  */
 public enum TaskParameter {
 
 	SIDE("side", Integer.class, Side.ANY.index),
 	PATCHES("patch", Boolean.class, true),
-	IGNORED_PACKAGES("ignore", String[].class, new String[] {"paulscode", "com/jcraft", "de/jarnbjo", "isom"}),
+	IGNORED_PACKAGES("ignore", String[].class, new String[]{"paulscode", "com/jcraft", "de/jarnbjo", "isom"}),
 	INDENTATION_STRING("ind", String.class, "\t"),
 	OBFUSCATION("obf", Boolean.class, false),
 	FULL_BUILD("fullbuild", Boolean.class, false),
 	RUN_BUILD("runbuild", Boolean.class, false),
-	RUN_ARGS("runargs", String[].class, new String[] {"-Xms1024M", "-Xmx1024M"}),
+	RUN_ARGS("runargs", String[].class, new String[]{"-Xms1024M", "-Xmx1024M"}),
 	GAME_ARGS("gameargs", String.class, ""),
 	SETUP_VERSION("setup", String.class, null),
 	SOURCE_VERSION("source", Integer.class, -1),
@@ -47,7 +47,7 @@ public enum TaskParameter {
 
 	public String getDesc() {
 		String s = "task.param." + name;
-		if(MCP.TRANSLATOR.hasKey(s)) {
+		if (MCP.TRANSLATOR.hasKey(s)) {
 			return MCP.TRANSLATOR.translateKey(s);
 		}
 		return MCP.TRANSLATOR.translateKey("task.noDesc");

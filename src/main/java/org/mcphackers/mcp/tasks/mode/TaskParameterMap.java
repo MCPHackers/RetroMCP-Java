@@ -8,7 +8,7 @@ public class TaskParameterMap {
 	 * Cached task parameter types
 	 */
 	static final Map<String, TaskParameter> nameToParamMap = new HashMap<>();
-	
+
 	public static TaskParameter get(String param) {
 		return nameToParamMap.get(param);
 	}

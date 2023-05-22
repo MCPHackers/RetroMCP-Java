@@ -6,10 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import codechicken.diffpatch.DiffOperation;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
-
-import codechicken.diffpatch.DiffOperation;
 
 public class TaskCreatePatch extends Task {
 	public TaskCreatePatch(Side side, MCP instance) {
@@ -22,7 +21,7 @@ public class TaskCreatePatch extends Task {
 		Path srcPathPatched = MCPPaths.get(mcp, SOURCE, side);
 		Path patchesOut = MCPPaths.get(mcp, PATCH, side);
 		setProgress(getLocalizedStage("createpatch"));
-		if(!Files.exists(srcPathPatched)) {
+		if (!Files.exists(srcPathPatched)) {
 			throw new IOException("Patched " + side.name + " sources cannot be found!");
 		}
 		if (!Files.exists(srcPathUnpatched)) {
@@ -33,14 +32,14 @@ public class TaskCreatePatch extends Task {
 
 	public boolean createDiffOperation(Path aPath, Path bPath, Path outputPath) throws Exception {
 		DiffOperation diffOperation = DiffOperation.builder()
-			.aPath(aPath)
-			.bPath(bPath)
-			.aPrefix(null)
-			.bPrefix(null)
-			.singleDiff(true)
-			.outputPath(outputPath)
-			.filter(p -> p.endsWith(".java"))
-			.build();
+				.aPath(aPath)
+				.bPath(bPath)
+				.aPrefix(null)
+				.bPrefix(null)
+				.singleDiff(true)
+				.outputPath(outputPath)
+				.filter(p -> p.endsWith(".java"))
+				.build();
 		return diffOperation.doDiff();
 	}
 }

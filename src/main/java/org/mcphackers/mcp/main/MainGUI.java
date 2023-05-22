@@ -2,9 +2,7 @@ package org.mcphackers.mcp.main;
 
 import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Frame;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
@@ -17,15 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -51,15 +41,8 @@ import org.mcphackers.mcp.tools.versions.json.Version;
  * GUI implementation of MCP
  */
 public class MainGUI extends MCP {
-	public Path workingDir;
-	public MCPFrame frame;
-	public boolean isActive = true;
-	public Version currentVersion;
-	public JTextPane textPane = new JTextPane();
-
 	public static final TaskMode[] TASKS = {
 			TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
-
 	public static final String[] TABS = {
 			"task.decompile",
 			"task.recompile",
@@ -74,16 +57,11 @@ public class MainGUI extends MCP {
 			{TaskParameter.FULL_BUILD},
 			{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
 	};
-
-	public static void main(String[] args) throws Exception {
-		Path workingDir = Paths.get("");
-		if(args.length >= 1) {
-			try {
-				workingDir = Paths.get(args[0]);
-			} catch (InvalidPathException ignored) {}
-		}
-		new MainGUI(workingDir);
-	}
+	public Path workingDir;
+	public MCPFrame frame;
+	public boolean isActive = true;
+	public Version currentVersion;
+	public JTextPane textPane = new JTextPane();
 
 	public MainGUI(Path dir) {
 		isGUI = true;
@@ -95,7 +73,7 @@ public class MainGUI extends MCP {
 		System.setErr(interceptor);
 
 		workingDir = dir;
-		if(options.lang != null) {
+		if (options.lang != null) {
 			changeLanguage(options.lang);
 		}
 		if (options.theme != null) {
@@ -106,7 +84,7 @@ public class MainGUI extends MCP {
 			JOptionPane.showMessageDialog(null, TRANSLATOR.translateKey("mcp.needJDK"), TRANSLATOR.translateKey("mcp.error"), JOptionPane.ERROR_MESSAGE);
 		}
 		Path versionPath = MCPPaths.get(this, MCPPaths.VERSION);
-		if(Files.exists(versionPath)) {
+		if (Files.exists(versionPath)) {
 			try {
 				currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(versionPath))));
 			} catch (JSONException | IOException e) {
@@ -117,6 +95,17 @@ public class MainGUI extends MCP {
 		if (Util.getJavaVersion() > 8) {
 			log("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
 		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		Path workingDir = Paths.get("");
+		if (args.length >= 1) {
+			try {
+				workingDir = Paths.get(args[0]);
+			} catch (InvalidPathException ignored) {
+			}
+		}
+		new MainGUI(workingDir);
 	}
 
 	@Override
@@ -132,10 +121,9 @@ public class MainGUI extends MCP {
 	@Override
 	public void setActive(boolean active) {
 		isActive = active;
-		if(active) {
+		if (active) {
 			frame.updateButtonState();
-		}
-		else {
+		} else {
 			frame.setAllButtonsInactive();
 		}
 	}
@@ -143,6 +131,12 @@ public class MainGUI extends MCP {
 	@Override
 	public Version getCurrentVersion() {
 		return currentVersion;
+	}
+
+	@Override
+	public void setCurrentVersion(Version version) {
+		currentVersion = version;
+		frame.setCurrentVersion(version == null ? null : VersionParser.INSTANCE.getVersion(version.id));
 	}
 
 	@Override
@@ -181,15 +175,15 @@ public class MainGUI extends MCP {
 	public void showMessage(String title, String msg, int type) {
 		frame.setState(Frame.NORMAL);
 		switch (type) {
-		case Task.INFO:
-			type = JOptionPane.INFORMATION_MESSAGE;
-			break;
-		case Task.WARNING:
-			type = JOptionPane.WARNING_MESSAGE;
-			break;
-		case Task.ERROR:
-			type = JOptionPane.ERROR_MESSAGE;
-			break;
+			case Task.INFO:
+				type = JOptionPane.INFORMATION_MESSAGE;
+				break;
+			case Task.WARNING:
+				type = JOptionPane.WARNING_MESSAGE;
+				break;
+			case Task.ERROR:
+				type = JOptionPane.ERROR_MESSAGE;
+				break;
 		}
 		JOptionPane.showMessageDialog(frame, msg, title, type);
 	}
@@ -209,17 +203,12 @@ public class MainGUI extends MCP {
 	}
 
 	public void exit() {
-		if(!isActive) {
-			if(!yesNoInput(MCP.TRANSLATOR.translateKey("mcp.confirmAction"), MCP.TRANSLATOR.translateKey("mcp.confirmExit"))) return;
+		if (!isActive) {
+			if (!yesNoInput(MCP.TRANSLATOR.translateKey("mcp.confirmAction"), MCP.TRANSLATOR.translateKey("mcp.confirmExit")))
+				return;
 		}
 		frame.dispose();
 		System.exit(0);
-	}
-
-	@Override
-	public void setCurrentVersion(Version version) {
-		currentVersion = version;
-		frame.setCurrentVersion(version == null ? null : VersionParser.INSTANCE.getVersion(version.id));
 	}
 
 	@Override
@@ -233,29 +222,24 @@ public class MainGUI extends MCP {
 		JPanel components = new JPanel();
 		components.setLayout(new BoxLayout(components, BoxLayout.Y_AXIS));
 		String[] lines = changelog.split("\n");
-		for(String line : lines) {
+		for (String line : lines) {
 			line = line.replace("`", "");
 			char bullet = '\u2022';
-			if(line.startsWith("# ")) {
+			if (line.startsWith("# ")) {
 				JLabel label = new JLabel(line.substring(2));
 				label.setBorder(new EmptyBorder(0, 0, 4, 0));
 				label.setFont(label.getFont().deriveFont(22F));
 				components.add(label);
-			}
-			else if(line.startsWith("-"))
-			{
+			} else if (line.startsWith("-")) {
 				JLabel label = new JLabel(bullet + " " + line.substring(1));
 				label.setFont(label.getFont().deriveFont(Font.PLAIN).deriveFont(14F));
 				components.add(label);
-			}
-			else if(line.startsWith("  -"))
-			{
+			} else if (line.startsWith("  -")) {
 				JLabel label = new JLabel(bullet + " " + line.substring(3));
 				label.setFont(label.getFont().deriveFont(Font.PLAIN).deriveFont(14F));
 				label.setBorder(new EmptyBorder(0, 12, 0, 0));
 				components.add(label);
-			}
-			else {
+			} else {
 				components.add(new JLabel(line));
 			}
 		}
@@ -269,12 +253,12 @@ public class MainGUI extends MCP {
 	}
 
 	public void changeWorkingDirectory() {
-        JFileChooser f = new JFileChooser(getWorkingDir().toAbsolutePath().toFile());
-        f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if(f.showDialog(frame, MCP.TRANSLATOR.translateKey("mcp.selectDir")) == JFileChooser.APPROVE_OPTION) {
-        	File file = f.getSelectedFile();
-        	Path p = file.toPath();
-			if(Files.isDirectory(p)) {
+		JFileChooser f = new JFileChooser(getWorkingDir().toAbsolutePath().toFile());
+		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		if (f.showDialog(frame, MCP.TRANSLATOR.translateKey("mcp.selectDir")) == JFileChooser.APPROVE_OPTION) {
+			File file = f.getSelectedFile();
+			Path p = file.toPath();
+			if (Files.isDirectory(p)) {
 				workingDir = p;
 				options = new Options(MCPPaths.get(this, "options.cfg"));
 				options.save();
@@ -288,10 +272,10 @@ public class MainGUI extends MCP {
 
 	public void inputOptionsValue(TaskParameter param) {
 		String s = MCP.TRANSLATOR.translateKey("options.enterValue");
-		if(param.type == String[].class) {
+		if (param.type == String[].class) {
 			s = MCP.TRANSLATOR.translateKey("options.enterValues") + "\n" + MCP.TRANSLATOR.translateKey("options.enterValues.info");
 		}
-		String value = (String)JOptionPane.showInputDialog(frame, s, param.getDesc(), JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(String.valueOf(options.getParameter(param))));
+		String value = (String) JOptionPane.showInputDialog(frame, s, param.getDesc(), JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(String.valueOf(options.getParameter(param))));
 		safeSetParameter(param, value);
 		options.save();
 	}
@@ -300,60 +284,53 @@ public class MainGUI extends MCP {
 		Version version = getCurrentVersion();
 		if (versionData != null && !versionData.equals(version == null ? null : VersionParser.INSTANCE.getVersion(version.id))) {
 			int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-			switch (response) {
-				case JOptionPane.YES_OPTION:
-					setParameter(TaskParameter.SETUP_VERSION, versionData.id);
-					performTask(TaskMode.SETUP, Side.ANY);
-					break;
-				default:
-					frame.setCurrentVersion(VersionParser.INSTANCE.getVersion(version == null ? null : version.id));
-					break;
+			if (response == JOptionPane.YES_OPTION) {
+				setParameter(TaskParameter.SETUP_VERSION, versionData.id);
+				performTask(TaskMode.SETUP, Side.ANY);
+			} else {
+				frame.setCurrentVersion(VersionParser.INSTANCE.getVersion(version == null ? null : version.id));
 			}
 		}
 	}
 
 	public TaskButton getButton(TaskMode task) {
 		TaskButton button;
-		if(task == TaskMode.DECOMPILE) {
+		if (task == TaskMode.DECOMPILE) {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
 				int response = JOptionPane.YES_OPTION;
-				if(TaskMode.RECOMPILE.isAvailable(this, getSide())) {
+				if (TaskMode.RECOMPILE.isAvailable(this, getSide())) {
 					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-					if(response == JOptionPane.YES_OPTION) {
+					if (response == JOptionPane.YES_OPTION) {
 						int response2 = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.askSourceBackup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_CANCEL_OPTION);
-						if(response2 == JOptionPane.YES_OPTION) {
+						if (response2 == JOptionPane.YES_OPTION) {
 							performTask(TaskMode.BACKUP_SRC, getSide(), false);
-						}
-						else if(response2 != JOptionPane.NO_OPTION) {
+						} else if (response2 != JOptionPane.NO_OPTION) {
 							response = response2;
 						}
 					}
 				}
-				if(response == JOptionPane.YES_OPTION) {
+				if (response == JOptionPane.YES_OPTION) {
 					performTask(TaskMode.DECOMPILE, getSide());
 				}
 			});
 			button = new TaskButton(this, task, defaultActionListener);
-		}
-		else if(task == TaskMode.CLEANUP) {
+		} else if (task == TaskMode.CLEANUP) {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
 				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmCleanup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-				if(response == JOptionPane.YES_OPTION) {
+				if (response == JOptionPane.YES_OPTION) {
 					performTask(task, Side.ANY);
 				}
 			});
 			button = new TaskButton(this, task, defaultActionListener);
-		}
-		else if(task == TaskMode.UPDATE_MD5) {
+		} else if (task == TaskMode.UPDATE_MD5) {
 			ActionListener defaultActionListener = event -> operateOnThread(() -> {
 				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmUpdateMD5"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-				if(response == JOptionPane.YES_OPTION) {
+				if (response == JOptionPane.YES_OPTION) {
 					performTask(task, getSide());
 				}
 			});
 			button = new TaskButton(this, task, defaultActionListener);
-		}
-		else {
+		} else {
 			button = new TaskButton(this, task);
 		}
 		button.setEnabled(false);

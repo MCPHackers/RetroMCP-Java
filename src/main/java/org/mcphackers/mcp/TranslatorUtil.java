@@ -32,10 +32,10 @@ public class TranslatorUtil {
 		String resourceName = "/lang/" + lang.name + ".lang";
 		//FIXME Hardcoded MCP.class because Class#getResourceAsStream return result is not the same as ClassLoader#getResourceAsStream
 		InputStream resource = (cls == MCP.class) ? cls.getResourceAsStream(resourceName) : cls.getClassLoader().getResourceAsStream(resourceName);
-		if(resource == null) {
+		if (resource == null) {
 			return;
 		}
-		try(BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8))) {
+		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8))) {
 			bufferedReader.lines().forEach(line -> {
 				if (line.startsWith("#") || line.trim().isEmpty()) return;
 				String key = line.split("=")[0].trim();
@@ -51,7 +51,7 @@ public class TranslatorUtil {
 		Map<String, String> entries = new HashMap<>();
 		readTranslation(entries, MCP.class, lang);
 		String languageName = entries.get("language");
-		if(languageName != null) {
+		if (languageName != null) {
 			return languageName;
 		}
 		return "Unknown language";
@@ -63,7 +63,7 @@ public class TranslatorUtil {
 
 	public String translateKey(String key) {
 		String translatedString = this.translations.get(key);
-		if(translatedString == null) {
+		if (translatedString == null) {
 			return key;
 		}
 		return translatedString;
@@ -71,7 +71,7 @@ public class TranslatorUtil {
 
 	public String translateKeyWithFormatting(String key, Object... formatting) {
 		String translatedString = this.translations.get(key);
-		if(translatedString == null) {
+		if (translatedString == null) {
 			return key;
 		}
 		return String.format(translatedString, formatting);

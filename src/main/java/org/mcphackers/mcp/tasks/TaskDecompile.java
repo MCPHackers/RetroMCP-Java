@@ -46,13 +46,13 @@ public class TaskDecompile extends TaskStaged {
 	}
 
 	public static Mappings getMappings(Path mappingsPath, ClassStorage storage, Side side) throws IOException {
-		if(!Files.exists(mappingsPath)) {
+		if (!Files.exists(mappingsPath)) {
 			return null;
 		}
 		boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
 		Mappings mappings = MappingsIO.read(mappingsPath, joined ? "official" : side.name, "named");
-		for(String name : storage.getAllClasses()) {
-			if(name.indexOf('/') == -1 && !mappings.classes.containsKey(name)) {
+		for (String name : storage.getAllClasses()) {
+			if (name.indexOf('/') == -1 && !mappings.classes.containsKey(name)) {
 				mappings.classes.put(name, "net/minecraft/src/" + name);
 			}
 		}
@@ -68,13 +68,13 @@ public class TaskDecompile extends TaskStaged {
 
 		final boolean guessGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS);
 
-		return new Stage[] { stage(getLocalizedStage("prepare"), 0, () -> {
+		return new Stage[]{stage(getLocalizedStage("prepare"), 0, () -> {
 			FileUtil.cleanDirectory(MCPPaths.get(mcp, PROJECT, side));
 			FileUtil.createDirectories(MCPPaths.get(mcp, JARS_DIR, side));
 			FileUtil.createDirectories(MCPPaths.get(mcp, MD5_DIR, side));
 		}), stage(getLocalizedStage("rdi"), 2, () -> {
 			ClassStorage storage = applyInjector();
-			for(ClassNode node : storage) {
+			for (ClassNode node : storage) {
 				classVersion = Math.max(classVersion, node.version);
 			}
 		}), stage(getLocalizedStage("decompile"), () -> {
@@ -82,23 +82,23 @@ public class TaskDecompile extends TaskStaged {
 			new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 			new IdeaProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 		}), stage(getLocalizedStage("patch"), 88, () -> {
-			if(mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
+			if (mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
 				TaskApplyPatch.patch(this, ffOut, ffOut, patchesPath);
 			}
 		}), stage(getLocalizedStage("copysrc"), 90, () -> {
-			if(!mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_RESOURCES)) {
-				for(Path p : FileUtil.walkDirectory(ffOut, p -> !Files.isDirectory(p) && !p.getFileName().toString().endsWith(".java"))) {
+			if (!mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_RESOURCES)) {
+				for (Path p : FileUtil.walkDirectory(ffOut, p -> !Files.isDirectory(p) && !p.getFileName().toString().endsWith(".java"))) {
 					Files.delete(p);
 				}
 			}
 			Files.createDirectories(srcPath);
 			FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
-			if(mcp.getOptions().getBooleanParameter(TaskParameter.OUTPUT_SRC)) {
+			if (mcp.getOptions().getBooleanParameter(TaskParameter.OUTPUT_SRC)) {
 				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
 			}
 			Files.createDirectories(MCPPaths.get(mcp, GAMEDIR, side));
-		}), stage(getLocalizedStage("recompile"), () -> new TaskUpdateMD5(side, mcp, this).doTask()), };
+		}), stage(getLocalizedStage("recompile"), () -> new TaskUpdateMD5(side, mcp, this).doTask()),};
 	}
 
 	public ClassStorage applyInjector() throws IOException {
@@ -112,16 +112,16 @@ public class TaskDecompile extends TaskStaged {
 		Path path;
 		Mappings mappings;
 
-		if(side == Side.MERGED) {
+		if (side == Side.MERGED) {
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, Side.SERVER);
 			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
-			if(stripGenerics) {
+			if (stripGenerics) {
 				injector.stripLVT();
 				injector.addTransform(Transform::stripSignatures);
 			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), Side.SERVER);
-			if(mappings != null) {
+			if (mappings != null) {
 				injector.applyMappings(mappings);
 			}
 			injector.transform();
@@ -130,12 +130,12 @@ public class TaskDecompile extends TaskStaged {
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, Side.CLIENT);
 			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
-			if(stripGenerics) {
+			if (stripGenerics) {
 				injector.stripLVT();
 				injector.addTransform(Transform::stripSignatures);
 			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), Side.CLIENT);
-			if(mappings != null) {
+			if (mappings != null) {
 				injector.applyMappings(mappings);
 			}
 			injector.mergeWith(serverStorage);
@@ -143,40 +143,40 @@ public class TaskDecompile extends TaskStaged {
 			path = MCPPaths.get(mcp, JAR_ORIGINAL, side);
 			injector.setStorage(new ClassStorage(IOUtil.readJar(path)));
 			injector.addResources(path);
-			if(stripGenerics) {
+			if (stripGenerics) {
 				injector.stripLVT();
 				injector.addTransform(Transform::stripSignatures);
 			}
 			mappings = getMappings(mappingsPath, injector.getStorage(), side);
-			if(mappings != null) {
+			if (mappings != null) {
 				injector.applyMappings(mappings);
 			}
 		}
 		injector.addTransform(Transform::decomposeVars);
 		injector.addTransform(Transform::replaceCommonConstants);
-		if(hasLWJGL)
+		if (hasLWJGL)
 			injector.addVisitor(new GLConstants(null));
 		injector.restoreSourceFile();
 		injector.fixInnerClasses();
 		injector.fixImplicitConstructors();
-		if(guessGenerics)
+		if (guessGenerics)
 			injector.guessGenerics();
 		final Path exc = MCPPaths.get(mcp, EXC);
-		if(Files.exists(exc)) {
+		if (Files.exists(exc)) {
 			injector.fixExceptions(exc);
 		}
-		if(side == Side.MERGED) {
+		if (side == Side.MERGED) {
 			Path acc = MCPPaths.get(mcp, MCPPaths.ACCESS, Side.CLIENT);
-			if(Files.exists(acc)) {
+			if (Files.exists(acc)) {
 				injector.fixAccess(acc);
 			}
 			acc = MCPPaths.get(mcp, MCPPaths.ACCESS, Side.SERVER);
-			if(Files.exists(acc)) {
+			if (Files.exists(acc)) {
 				injector.fixAccess(acc);
 			}
 		} else {
 			final Path acc = MCPPaths.get(mcp, MCPPaths.ACCESS, side);
-			if(Files.exists(acc)) {
+			if (Files.exists(acc)) {
 				injector.fixAccess(acc);
 			}
 		}
@@ -187,7 +187,7 @@ public class TaskDecompile extends TaskStaged {
 
 	@Override
 	public void setProgress(int progress) {
-		switch(step) {
+		switch (step) {
 			case STAGE_DECOMPILE: {
 				int percent = (int) (progress * 0.82D);
 				super.setProgress(3 + percent);

@@ -46,8 +46,8 @@ public class TaskSetup extends Task {
 		// Keep asking until chosenVersion equals one of the versionData
 		input:
 		while (true) {
-			for(VersionData data : versions) {
-				if(data.id.equals(chosenVersion)) {
+			for (VersionData data : versions) {
+				if (data.id.equals(chosenVersion)) {
 					chosenVersionData = data;
 					break input;
 				}
@@ -59,14 +59,14 @@ public class TaskSetup extends Task {
 		Version versionJson = Version.from(versionJsonObj);
 		FileUtil.createDirectories(MCPPaths.get(mcp, CONF));
 
-		if(chosenVersionData.resources != null) {
+		if (chosenVersionData.resources != null) {
 			setProgress(getLocalizedStage("download", chosenVersionData.resources), 2);
 			try {
 				URL url = new URL(chosenVersionData.resources);
 				FileUtil.extract(url.openStream(), MCPPaths.get(mcp, CONF));
 			} catch (MalformedURLException e) {
 				Path p = Paths.get(chosenVersionData.resources);
-				if(Files.exists(p)) {
+				if (Files.exists(p)) {
 					FileUtil.extract(p, MCPPaths.get(mcp, CONF));
 				}
 			}
@@ -75,14 +75,14 @@ public class TaskSetup extends Task {
 		DownloadData dlData = new DownloadData(mcp, versionJson);
 		dlData.performDownload((dl, totalSize) -> {
 			libsSize += dl.size();
-			int percent = (int)((double)libsSize / totalSize * 97D);
+			int percent = (int) ((double) libsSize / totalSize * 97D);
 			setProgress(getLocalizedStage("download", dl.name()), 3 + percent);
 		});
 		Path natives = MCPPaths.get(mcp, NATIVES);
-		for(Path nativeArchive : DownloadData.getNatives(MCPPaths.get(mcp, LIB), versionJson)) {
+		for (Path nativeArchive : DownloadData.getNatives(MCPPaths.get(mcp, LIB), versionJson)) {
 			FileUtil.extract(nativeArchive, natives);
 		}
-		try(BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, VERSION))) {
+		try (BufferedWriter writer = Files.newBufferedWriter(MCPPaths.get(mcp, VERSION))) {
 			versionJsonObj.write(writer, 1, 0);
 		}
 		mcp.setCurrentVersion(versionJson);
