@@ -1,5 +1,25 @@
 package org.mcphackers.mcp.main;
 
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
@@ -16,22 +36,6 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
 /**
  * GUI implementation of MCP
@@ -141,11 +145,6 @@ public class MainGUI extends MCP {
 	}
 
 	@Override
-	public Options getOptions() {
-		return options;
-	}
-
-	@Override
 	public void setProgress(int side, String progressMessage) {
 		frame.setProgress(side, progressMessage);
 	}
@@ -220,7 +219,7 @@ public class MainGUI extends MCP {
 		String[] lines = changelog.split("\n");
 		for (String line : lines) {
 			line = line.replace("`", "");
-			char bullet = '\u2022';
+			char bullet = '•';
 			if (line.startsWith("# ")) {
 				JLabel label = new JLabel(line.substring(2));
 				label.setBorder(new EmptyBorder(0, 0, 4, 0));

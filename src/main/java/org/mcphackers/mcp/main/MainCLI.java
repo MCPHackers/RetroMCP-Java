@@ -1,26 +1,11 @@
 package org.mcphackers.mcp.main;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.json.JSONObject;
 import org.mcphackers.mcp.Language;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
@@ -30,6 +15,14 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * CLI implementation of MCP
@@ -160,10 +153,8 @@ public class MainCLI extends MCP {
 			new MainCLI(args);
 			return;
 		}
-		if (true) {
-			AnsiConsole.systemInstall();
-			new MainCLI(args);
-		}
+		AnsiConsole.systemInstall();
+		new MainCLI(args);
 	}
 
 	private static void parseArg(String arg, Map<String, Object> map) {
@@ -286,11 +277,6 @@ public class MainCLI extends MCP {
 	@Override
 	public void log(String msg) {
 		System.out.println(msg);
-	}
-
-	@Override
-	public Options getOptions() {
-		return options;
 	}
 
 	@Override
