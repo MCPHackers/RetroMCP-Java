@@ -118,7 +118,7 @@ public class TaskReobfuscate extends TaskStaged {
 	private Mappings getMappings(ClassStorage storage, Side side) throws IOException {
 		Path mappingsPath = MCPPaths.get(mcp, MAPPINGS);
 		if(!Files.exists(mappingsPath)) {
-			return null;
+			return new Mappings();
 		}
 		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
 		boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
