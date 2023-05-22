@@ -1,8 +1,8 @@
 package org.mcphackers.mcp;
 
-import org.mcphackers.mcp.tasks.Task.Side;
-
 import java.nio.file.Path;
+
+import org.mcphackers.mcp.tasks.Task.Side;
 
 public class MCPPaths {
 

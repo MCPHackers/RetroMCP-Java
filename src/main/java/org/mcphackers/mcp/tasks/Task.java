@@ -20,6 +20,7 @@ public abstract class Task implements ProgressListener, TaskRunnable {
 	private byte result = INFO;
 	private ProgressListener progressListener;
 	private int progressBarIndex = -1;
+
 	public Task(Side side, MCP instance, ProgressListener listener) {
 		this(side, instance);
 		this.progressListener = listener;

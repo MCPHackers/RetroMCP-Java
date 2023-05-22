@@ -37,9 +37,9 @@ public class MenuBar extends JMenuBar {
 	private final JMenu helpMenu = new JMenu();
 	private final MCPFrame owner;
 	private final MainGUI mcp;
-	private JMenuItem[] sideItems;
 	private final JMenuItem[] themeItems;
 	private final JMenuItem[] langItems;
+	private JMenuItem[] sideItems;
 
 	protected MenuBar(MCPFrame frame) {
 		owner = frame;

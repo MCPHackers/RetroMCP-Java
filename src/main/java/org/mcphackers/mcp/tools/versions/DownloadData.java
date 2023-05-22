@@ -25,11 +25,12 @@ import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class DownloadData {
 
+	private final Path gameDir;
 	public int totalSize;
 	public List<DownloadEntry> natives = new ArrayList<>();
 	protected List<DownloadEntry> downloadQueue = new ArrayList<>();
 	protected AssetIndex assets;
-	private final Path gameDir;
+
 	public DownloadData(MCP mcp, Version version) {
 		this(MCPPaths.get(mcp, MCPPaths.LIB), MCPPaths.get(mcp, MCPPaths.JARS), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER), version);
 	}
