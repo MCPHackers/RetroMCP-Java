@@ -33,13 +33,15 @@ import javax.swing.*;
 public abstract class MCP {
 
 	public static final String VERSION = "v1.0.1";
-	public static final String githubURL = "https://github.com/MCPHackers/RetroMCP-Java";
+	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
 	
-	private static final Map<String, MCPPlugin> plugins = new HashMap<>();
+	private static final Map<String, MCPPlugin> PLUGINS = new HashMap<>();
 
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
 	public static Theme THEME = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
 	protected boolean isGUI = false;
+
+	public Options options = new Options(Paths.get("options.cfg"));
 
 	static {
 		loadPlugins();
@@ -188,7 +190,9 @@ public abstract class MCP {
 	/**
 	 * @return Instance of options
 	 */
-	public abstract Options getOptions();
+	public Options getOptions() {
+		return this.options;
+	}
 
 	/**
 	 * @return Current version
@@ -293,7 +297,7 @@ public abstract class MCP {
 						if(!ClassUtils.isClassAbstract(cls)) {
 							MCPPlugin plugin = cls.newInstance();
 							plugin.init();
-							plugins.put(plugin.pluginId() + plugin.hashCode(), plugin);
+							PLUGINS.put(plugin.pluginId() + plugin.hashCode(), plugin);
 						}
 						else {
 							System.err.println(TRANSLATOR.translateKey("mcp.incompatiblePlugin") + cls.getName());
@@ -311,7 +315,7 @@ public abstract class MCP {
 	 * @param task
 	 */
 	public final void setPluginOverrides(TaskStaged task) {
-		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+		for(Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
 			entry.getValue().setTaskOverrides(task);
 		}
 	}
@@ -321,7 +325,7 @@ public abstract class MCP {
 	 * @param event
 	 */
 	public final void triggerEvent(MCPEvent event) {
-		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+		for(Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
 			entry.getValue().onMCPEvent(event, this);
 		}
 	}
@@ -331,7 +335,7 @@ public abstract class MCP {
 	 * @param event
 	 */
 	public final void triggerTaskEvent(TaskEvent event, Task task) {
-		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+		for(Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
 			entry.getValue().onTaskEvent(event, task);
 		}
 	}
@@ -342,7 +346,7 @@ public abstract class MCP {
 	 */
 	public final void changeLanguage(Language lang) {
 		TRANSLATOR.changeLang(lang);
-		for(Map.Entry<String, MCPPlugin> entry : plugins.entrySet()) {
+		for(Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
 			TRANSLATOR.readTranslation(entry.getValue().getClass());
 		}
 	}

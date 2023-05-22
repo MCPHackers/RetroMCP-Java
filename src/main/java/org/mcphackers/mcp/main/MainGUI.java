@@ -54,7 +54,6 @@ public class MainGUI extends MCP {
 	public Path workingDir;
 	public MCPFrame frame;
 	public boolean isActive = true;
-	public Options options;
 	public Version currentVersion;
 	public JTextPane textPane = new JTextPane();
 
@@ -96,7 +95,6 @@ public class MainGUI extends MCP {
 		System.setErr(interceptor);
 
 		workingDir = dir;
-		options = new Options(MCPPaths.get(this, "options.cfg"));
 		if(options.lang != null) {
 			changeLanguage(options.lang);
 		}

@@ -48,7 +48,6 @@ public class MainCLI extends MCP {
 	private Side side = Side.ANY;
 	private TaskMode helpCommand;
 	private final Scanner consoleInput = new Scanner(System.in);
-	private final Options options = new Options();
 	private Version currentVersion;
 
 	private int[] progresses;
