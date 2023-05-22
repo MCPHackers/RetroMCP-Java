@@ -1,30 +1,11 @@
 package org.mcphackers.mcp.main;
 
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.Options;
+import org.mcphackers.mcp.Theme;
 import org.mcphackers.mcp.gui.MCPFrame;
 import org.mcphackers.mcp.gui.TaskButton;
 import org.mcphackers.mcp.gui.TextAreaOutputStream;
@@ -36,6 +17,22 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
 /**
  * GUI implementation of MCP
@@ -337,5 +334,20 @@ public class MainGUI extends MCP {
 		getOptions().save();
 		frame.updateButtonState();
 		frame.menuBar.reloadSide();
+	}
+
+	public final void changeTheme(Theme theme) {
+		try {
+			UIManager.setLookAndFeel(theme.themeClass);
+			// Try calling this on CLI now
+			JFrame frame = this.frame;
+			if (frame != null) {
+				SwingUtilities.updateComponentTreeUI(frame);
+			}
+			THEME = theme;
+		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
+				 IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 }

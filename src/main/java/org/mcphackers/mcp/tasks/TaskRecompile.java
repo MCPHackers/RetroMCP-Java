@@ -1,6 +1,11 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.MCPPaths.*;
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tools.FileUtil;
+
+import javax.tools.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,24 +18,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
-
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.tasks.mode.TaskParameter;
-import org.mcphackers.mcp.tools.FileUtil;
+import static org.mcphackers.mcp.MCPPaths.*;
 
 public class TaskRecompile extends TaskStaged {
-	/*
-	 * Indexes of stages for plugin overrides
-	 */
-	public static final int STAGE_RECOMPILE = 0;
-	public static final int STAGE_COPYRES = 1;
 
 	public TaskRecompile(Side side, MCP instance) {
 		super(side, instance);
@@ -40,7 +30,7 @@ public class TaskRecompile extends TaskStaged {
 		super(side, instance, listener);
 	}
 
-	public static List<Path> collectClassPath(MCP mcp, Side side) throws IOException {
+	public static List<Path> collectClassPath(MCP mcp, Side side) {
 		List<Path> classpath = new ArrayList<>();
 		classpath.add(MCPPaths.get(mcp, REMAPPED, side));
 		if (mcp.getCurrentVersion() != null) {
@@ -67,7 +57,7 @@ public class TaskRecompile extends TaskStaged {
 								throw new IOException(side.getName() + " sources not found!");
 							}
 							try (Stream<Path> paths = Files.list(srcPath)) {
-								if (paths.collect(Collectors.toList()).isEmpty()) {
+								if (!paths.findAny().isPresent()) {
 									return;
 								}
 							}

@@ -1,11 +1,5 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.MCPPaths.*;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
@@ -24,15 +18,14 @@ import org.mcphackers.rdi.nio.MappingsIO;
 import org.mcphackers.rdi.nio.RDInjector;
 import org.objectweb.asm.tree.ClassNode;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.mcphackers.mcp.MCPPaths.*;
+
 public class TaskDecompile extends TaskStaged {
-	/*
-	 * Indexes of stages for plugin overrides
-	 */
-	public static final int STAGE_INIT = 0;
-	public static final int STAGE_EXCEPTOR = 1;
 	public static final int STAGE_DECOMPILE = 2;
-	public static final int STAGE_PATCH = 3;
-	public static final int STAGE_COPYSRC = 4;
 	public static final int STAGE_MD5 = 5;
 
 	private int classVersion = -1;

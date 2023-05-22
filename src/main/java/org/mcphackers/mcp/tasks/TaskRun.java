@@ -5,7 +5,6 @@ import static org.mcphackers.mcp.MCPPaths.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +15,6 @@ import java.util.zip.ZipInputStream;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
-import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.json.Version;
 import org.mcphackers.mcp.tools.versions.json.Version.Arguments;
@@ -80,6 +78,8 @@ public class TaskRun extends Task {
 					arg = "Player094";
 					break; //Player094 is a free username with no skin
 				case "${auth_session}":
+				case "${auth_uuid}":
+				case "${auth_access_token}":
 					arg = "-";
 					break;
 				case "${user_properties}":
@@ -94,18 +94,10 @@ public class TaskRun extends Task {
 				case "${user_type}":
 					arg = "legacy";
 					break;
-				case "${auth_uuid}":
-					arg = "-";
-					break;
-				case "${auth_access_token}":
-					arg = "-";
-					break;
 				case "${assets_index_name}":
 					arg = ver.assets;
 					break;
 				case "${assets_root}":
-					arg = assets.toString();
-					break;
 				case "${game_assets}":
 					arg = assets.toString();
 					break;
@@ -119,46 +111,11 @@ public class TaskRun extends Task {
 	}
 
 	public static Path getMCDir(MCP mcp, Side side) {
-		Path mcDir = MCPPaths.get(mcp, GAMEDIR, side);
-		if (mcDir != null) {
-			return mcDir;
-		}
-		return getOriginalMCDir();
+		return MCPPaths.get(mcp, GAMEDIR, side);
 	}
 
-	public static Path getOriginalMCDir() {
-		String appDir = "minecraft";
-		String userhome = System.getProperty("user.home", ".");
-		Path path;
-		switch (OS.getOs()) {
-			case linux:
-				path = Paths.get(userhome, '.' + appDir + '/');
-				break;
-			case windows:
-				String appdata = System.getenv("APPDATA");
-				if (appdata != null) {
-					path = Paths.get(appdata, "." + appDir + '/');
-				} else {
-					path = Paths.get(userhome, '.' + appDir + '/');
-				}
-				break;
-			case osx:
-				path = Paths.get(userhome, "Library/Application Support/" + appDir);
-				break;
-			default:
-				path = Paths.get(userhome, appDir + '/');
-		}
-
-		if (!Files.exists(path) && !path.toFile().mkdirs()) {
-			throw new RuntimeException("The working directory could not be created: " + path);
-		} else {
-			return path;
-		}
-	}
-
-	private static List<Path> getClasspath(MCP mcp, Version version, Side side, Side runSide, boolean runBuild, boolean fullBuild) {
-		List<Path> cpList = new ArrayList<>();
-		cpList.addAll(mcp.getLibraries());
+	private static List<Path> getClasspath(MCP mcp, Side side, Side runSide, boolean runBuild, boolean fullBuild) {
+		List<Path> cpList = new ArrayList<>(mcp.getLibraries());
 		if (runBuild) {
 			if (fullBuild) {
 				cpList.add(MCPPaths.get(mcp, BUILD_JAR, runSide));
@@ -166,14 +123,13 @@ public class TaskRun extends Task {
 				cpList.add(MCPPaths.get(mcp, BUILD_ZIP, runSide));
 				cpList.add(MCPPaths.get(mcp, JAR_ORIGINAL, runSide));
 			}
-			return cpList;
 		} else {
 			cpList.add(MCPPaths.get(mcp, BIN, side));
 			if (Files.exists(MCPPaths.get(mcp, REMAPPED, side))) {
 				cpList.add(MCPPaths.get(mcp, REMAPPED, side));
 			}
-			return cpList;
 		}
+		return cpList;
 	}
 
 	@Override
@@ -193,7 +149,7 @@ public class TaskRun extends Task {
 		boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
 		boolean fullBuild = mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD);
 		String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
-		List<Path> cpList = getClasspath(mcp, currentVersion, mcpSide, side, runBuild, fullBuild);
+		List<Path> cpList = getClasspath(mcp, mcpSide, side, runBuild, fullBuild);
 
 		List<String> classPath = new ArrayList<>();
 		cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));

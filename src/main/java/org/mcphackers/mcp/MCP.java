@@ -1,22 +1,5 @@
 package org.mcphackers.mcp;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
-import javax.swing.*;
-
-import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.plugin.MCPPlugin;
 import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
@@ -29,6 +12,18 @@ import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
+
+import javax.swing.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class MCP {
 
@@ -361,26 +356,12 @@ public abstract class MCP {
 		}
 	}
 
-	public final void changeTheme(Theme theme) {
-		try {
-			UIManager.setLookAndFeel(theme.themeClass);
-			// If you dare call this on CLI, I will steal your kneecaps
-			JFrame frame = ((MainGUI) this).frame;
-			if (frame != null) {
-				SwingUtilities.updateComponentTreeUI(frame);
-			}
-			THEME = theme;
-		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
-				 IllegalAccessException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public List<Path> getLibraries() {
-		return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
-	}
-
-	public List<Path> getNatives() {
-		return DownloadData.getNatives(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
+		try {
+			return FileUtil.walkDirectory(MCPPaths.get(this, MCPPaths.LIB), (path) -> !path.endsWith(".jar"));
+		} catch (IOException e) {
+			// Default to version libraries
+			return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
+		}
 	}
 }

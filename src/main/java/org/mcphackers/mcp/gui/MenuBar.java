@@ -1,19 +1,5 @@
 package org.mcphackers.mcp.gui;
 
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
-
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.swing.*;
-
 import org.mcphackers.mcp.Language;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.Theme;
@@ -23,6 +9,17 @@ import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
+
+import javax.swing.*;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
 public class MenuBar extends JMenuBar {
 	private static final long serialVersionUID = 5993064672172544233L;
