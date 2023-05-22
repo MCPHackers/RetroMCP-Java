@@ -1,6 +1,19 @@
 package org.mcphackers.mcp.gui;
 
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.main.MainGUI;
+import org.mcphackers.mcp.tasks.Task;
+import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tools.versions.VersionParser;
+import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -12,20 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.main.MainGUI;
-import org.mcphackers.mcp.tasks.Task;
-import org.mcphackers.mcp.tasks.Task.Side;
-import org.mcphackers.mcp.tasks.mode.TaskMode;
-import org.mcphackers.mcp.tools.versions.VersionParser;
-import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
 
 public class MCPFrame extends JFrame implements WindowListener {
 
@@ -43,9 +43,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 		ICON = image;
 	}
 
+	public final MainGUI mcp;
 	private final List<TaskButton> buttons = new ArrayList<>();
 	public MenuBar menuBar;
-	public MainGUI mcp;
 	public boolean loadingVersions = true;
 	private JComboBox<?> verList;
 	private JLabel verLabel;
@@ -68,7 +68,6 @@ public class MCPFrame extends JFrame implements WindowListener {
 		setMinimumSize(getMinimumSize());
 		setSize(new Dimension(900, 520));
 		setLocationRelativeTo(null);
-		setVisible(true);
 	}
 
 	private void initFrameContents() {
@@ -173,18 +172,20 @@ public class MCPFrame extends JFrame implements WindowListener {
 				if (verList != null) {
 					topRightContainer.add(this.verList);
 				}
-				//topRightContainer.add(this.verCleanup);
 				loadingVersions = false;
 				synchronized (mcp) {
 					if (mcp.isActive) {
 						if (verList != null) verList.setEnabled(true);
 						verLabel.setEnabled(true);
-						//verCleanup.setEnabled(true);
 					}
 				}
 				topRightContainer.updateUI();
 				revalidate();
 				topLeftContainer.revalidate();
+				if (mcp.options.theme != null) {
+					mcp.changeTheme(mcp.options.theme);
+				}
+				setVisible(true);
 			});
 		});
 	}

@@ -38,22 +38,9 @@ import static org.mcphackers.mcp.tools.Util.operateOnThread;
  * GUI implementation of MCP
  */
 public class MainGUI extends MCP {
-	public static final TaskMode[] TASKS = {
-			TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
-	public static final String[] TABS = {
-			"task.decompile",
-			"task.recompile",
-			"task.reobfuscate",
-			"task.build",
-			"options.running"
-	};
-	public static final TaskParameter[][] TAB_PARAMETERS = {
-			{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_OVERRIDE, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS},
-			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
-			{TaskParameter.OBFUSCATION, TaskParameter.EXCLUDED_CLASSES},
-			{TaskParameter.FULL_BUILD},
-			{TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
-	};
+	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
+	public static final String[] TABS = {"task.decompile", "task.recompile", "task.reobfuscate", "task.build", "options.running"};
+	public static final TaskParameter[][] TAB_PARAMETERS = {{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_OVERRIDE, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS}, {TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME}, {TaskParameter.OBFUSCATION, TaskParameter.EXCLUDED_CLASSES}, {TaskParameter.FULL_BUILD}, {TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}};
 	public Path workingDir;
 	public MCPFrame frame;
 	public boolean isActive = true;
@@ -73,9 +60,7 @@ public class MainGUI extends MCP {
 		if (options.lang != null) {
 			changeLanguage(options.lang);
 		}
-		if (options.theme != null) {
-			changeTheme(options.theme);
-		}
+		THEME = options.theme;
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
 			JOptionPane.showMessageDialog(null, TRANSLATOR.translateKey("mcp.needJDK"), TRANSLATOR.translateKey("mcp.error"), JOptionPane.ERROR_MESSAGE);
