@@ -1,25 +1,5 @@
 package org.mcphackers.mcp.main;
 
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
@@ -37,6 +17,22 @@ import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
+
 /**
  * GUI implementation of MCP
  */
@@ -51,7 +47,7 @@ public class MainGUI extends MCP {
 			"options.running"
 	};
 	public static final TaskParameter[][] TAB_PARAMETERS = {
-			{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS},
+			{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_OVERRIDE, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS},
 			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME},
 			{TaskParameter.OBFUSCATION, TaskParameter.EXCLUDED_CLASSES},
 			{TaskParameter.FULL_BUILD},

@@ -66,6 +66,7 @@ public class TaskDecompile extends TaskStaged {
 		final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 		final Path patchesPath = MCPPaths.get(mcp, PATCHES, side);
 
+		final boolean decompileOverrideAnnotations = mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE);
 		final boolean guessGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS);
 
 		return new Stage[]{stage(getLocalizedStage("prepare"), 0, () -> {
@@ -78,7 +79,7 @@ public class TaskDecompile extends TaskStaged {
 				classVersion = Math.max(classVersion, node.version);
 			}
 		}), stage(getLocalizedStage("decompile"), () -> {
-			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING), guessGenerics).decompile();
+			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING), decompileOverrideAnnotations, guessGenerics).decompile();
 			new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 			new IdeaProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 		}), stage(getLocalizedStage("patch"), 88, () -> {
@@ -154,13 +155,11 @@ public class TaskDecompile extends TaskStaged {
 		}
 		injector.addTransform(Transform::decomposeVars);
 		injector.addTransform(Transform::replaceCommonConstants);
-		if (hasLWJGL)
-			injector.addVisitor(new GLConstants(null));
+		if (hasLWJGL) injector.addVisitor(new GLConstants(null));
 		injector.restoreSourceFile();
 		injector.fixInnerClasses();
 		injector.fixImplicitConstructors();
-		if (guessGenerics)
-			injector.guessGenerics();
+		if (guessGenerics) injector.guessGenerics();
 		final Path exc = MCPPaths.get(mcp, EXC);
 		if (Files.exists(exc)) {
 			injector.fixExceptions(exc);

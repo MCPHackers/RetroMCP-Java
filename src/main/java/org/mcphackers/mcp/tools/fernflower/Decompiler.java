@@ -1,5 +1,12 @@
 package org.mcphackers.mcp.tools.fernflower;
 
+import de.fernflower.main.decompiler.BaseDecompiler;
+import de.fernflower.main.decompiler.DirectoryResultSaver;
+import de.fernflower.main.extern.IBytecodeProvider;
+import de.fernflower.main.extern.IFernflowerPreferences;
+import de.fernflower.util.InterpreterUtil;
+import org.mcphackers.mcp.tasks.ProgressListener;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,13 +17,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import de.fernflower.main.decompiler.BaseDecompiler;
-import de.fernflower.main.decompiler.DirectoryResultSaver;
-import de.fernflower.main.extern.IBytecodeProvider;
-import de.fernflower.main.extern.IFernflowerPreferences;
-import de.fernflower.util.InterpreterUtil;
-import org.mcphackers.mcp.tasks.ProgressListener;
-
 public class Decompiler implements IBytecodeProvider {
 	public final DecompileLogger log;
 	private final Path source;
@@ -24,7 +24,7 @@ public class Decompiler implements IBytecodeProvider {
 	private final Path destination;
 	private final Map<String, Object> mapOptions = new HashMap<>();
 
-	public Decompiler(ProgressListener listener, Path source, Path out, List<Path> libs, String ind, boolean guessGenerics) {
+	public Decompiler(ProgressListener listener, Path source, Path out, List<Path> libs, String ind, boolean decompileOverrideAnnotations, boolean guessGenerics) {
 		this.source = source;
 		this.libraries = libs;
 		this.destination = out;
@@ -32,6 +32,7 @@ public class Decompiler implements IBytecodeProvider {
 		mapOptions.put(IFernflowerPreferences.NO_COMMENT_OUTPUT, "1");
 		mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, guessGenerics ? "1" : "0");
 		mapOptions.put(IFernflowerPreferences.ASCII_STRING_CHARACTERS, "1");
+		mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, decompileOverrideAnnotations ? "1" : "0");
 		mapOptions.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1");
 		mapOptions.put(IFernflowerPreferences.INDENT_STRING, ind);
 	}
