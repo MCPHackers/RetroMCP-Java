@@ -5,9 +5,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
@@ -41,6 +38,24 @@ dependencies {
     shadow "com.formdev:flatlaf:${project.flatlaf_version}"
 }
 
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+
+	// Use release flag on Java 9+ instead of source & target flags
+	// This makes the JDK read the boot classpath and use the proper
+	// libraries to be compliant with Java 8 without issues
+	if (JavaVersion.current().isJava9Compatible()) {
+		it.options.release.set(8)
+	}
+}
+
+java {
+	withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 application {
     // Redirect all execution into the testing folder
     mainClass = 'org.mcphackers.mcp.main.MainGUI'
@@ -66,14 +81,14 @@ shadowJar {
 	}
 }
 
-task jarCLI(type: ShadowJar) {
+tasks.register('jarCLI', ShadowJar) {
 	manifest {
 		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainCLI'
 	}
 	archiveClassifier = 'CLI'
 	from sourceSets.main.output
 	configurations = [project.configurations.shadow]
-    minimize {
+	minimize {
 		exclude(dependency('com.formdev:.*:.*'))
 	}
 }

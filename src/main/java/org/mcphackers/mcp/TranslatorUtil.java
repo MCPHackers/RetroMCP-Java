@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TranslatorUtil {
-	private static final Language defaultLang = Language.ENGLISH;
+	public static final Language DEFAULT_LANG = Language.ENGLISH;
 	private final Map<String, String> translations = new HashMap<>();
 	public Language currentLang;
 
@@ -20,7 +20,7 @@ public class TranslatorUtil {
 	}
 
 	public void readTranslation(Class<?> cls) {
-		readTranslation(cls, defaultLang);
+		readTranslation(cls, DEFAULT_LANG);
 		readTranslation(cls, currentLang);
 	}
 
