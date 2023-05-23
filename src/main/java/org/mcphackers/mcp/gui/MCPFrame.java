@@ -166,27 +166,32 @@ public class MCPFrame extends JFrame implements WindowListener {
 				verList.setMaximumRowCount(20);
 				verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 			}
-			SwingUtilities.invokeLater(() -> {
-				topRightContainer.removeAll();
-				topRightContainer.add(this.verLabel);
-				if (verList != null) {
-					topRightContainer.add(this.verList);
+			topRightContainer.removeAll();
+			topRightContainer.add(this.verLabel);
+			if (verList != null) {
+				topRightContainer.add(this.verList);
+			}
+			loadingVersions = false;
+			synchronized (mcp) {
+				if (mcp.isActive) {
+					if (verList != null) verList.setEnabled(true);
+					verLabel.setEnabled(true);
 				}
-				loadingVersions = false;
-				synchronized (mcp) {
-					if (mcp.isActive) {
-						if (verList != null) verList.setEnabled(true);
-						verLabel.setEnabled(true);
-					}
-				}
+			}
+
+			topRightContainer.updateUI();
+			revalidate();
+			topLeftContainer.revalidate();
+		});
+		SwingUtilities.invokeLater(() -> {
+			if (mcp.options.theme != null) {
+				mcp.changeTheme(mcp.options.theme);
+
 				topRightContainer.updateUI();
 				revalidate();
 				topLeftContainer.revalidate();
-				if (mcp.options.theme != null) {
-					mcp.changeTheme(mcp.options.theme);
-				}
-				setVisible(true);
-			});
+			}
+			setVisible(true);
 		});
 	}
 

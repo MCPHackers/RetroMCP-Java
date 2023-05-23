@@ -66,6 +66,7 @@ public class TaskDecompile extends TaskStaged {
 			FileUtil.cleanDirectory(MCPPaths.get(mcp, PROJECT, side));
 			FileUtil.createDirectories(MCPPaths.get(mcp, JARS_DIR, side));
 			FileUtil.createDirectories(MCPPaths.get(mcp, MD5_DIR, side));
+			Files.createDirectories(MCPPaths.get(mcp, GAMEDIR, side));
 		}), stage(getLocalizedStage("rdi"), 2, () -> {
 			ClassStorage storage = applyInjector();
 			for (ClassNode node : storage) {
@@ -91,7 +92,6 @@ public class TaskDecompile extends TaskStaged {
 				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
 			}
-			Files.createDirectories(MCPPaths.get(mcp, GAMEDIR, side));
 		}), stage(getLocalizedStage("recompile"), () -> new TaskUpdateMD5(side, mcp, this).doTask()),};
 	}
 
