@@ -60,7 +60,9 @@ public class MainGUI extends MCP {
 		if (options.lang != null) {
 			changeLanguage(options.lang);
 		}
-		THEME = options.theme;
+		if (!THEME.equals(options.theme)) {
+			THEME = options.theme;
+		}
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
 			JOptionPane.showMessageDialog(null, TRANSLATOR.translateKey("mcp.needJDK"), TRANSLATOR.translateKey("mcp.error"), JOptionPane.ERROR_MESSAGE);

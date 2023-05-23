@@ -1,16 +1,5 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.MCPPaths.*;
-
-import java.io.BufferedWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -22,6 +11,19 @@ import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import static org.mcphackers.mcp.MCPPaths.*;
 
 public class TaskSetup extends Task {
 
@@ -55,7 +57,13 @@ public class TaskSetup extends Task {
 			chosenVersion = mcp.inputString(TaskMode.SETUP.getFullName(), MCP.TRANSLATOR.translateKey("task.setup.selectVersion"));
 		}
 
-		JSONObject versionJsonObj = new JSONObject(new String(Util.readAllBytes(new URL(chosenVersionData.url).openStream()), StandardCharsets.UTF_8));
+		InputStream versionStream;
+		try {
+			versionStream = new URL(chosenVersionData.url).openStream();
+		} catch (MalformedURLException ex) {
+			versionStream = Files.newInputStream(MCPPaths.get(mcp, chosenVersionData.url));
+		}
+		JSONObject versionJsonObj = new JSONObject(new String(Util.readAllBytes(versionStream), StandardCharsets.UTF_8));
 		Version versionJson = Version.from(versionJsonObj);
 		FileUtil.createDirectories(MCPPaths.get(mcp, CONF));
 

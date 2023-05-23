@@ -358,7 +358,8 @@ public abstract class MCP {
 
 	public List<Path> getLibraries() {
 		try {
-			return FileUtil.walkDirectory(MCPPaths.get(this, MCPPaths.LIB), (path) -> !path.endsWith(".jar"));
+			// Omit source JARs and only add JARs with classes
+			return FileUtil.walkDirectory(MCPPaths.get(this, MCPPaths.LIB), (path) -> !path.getFileName().toString().endsWith("-sources.jar") && path.getFileName().toString().endsWith(".jar"));
 		} catch (IOException e) {
 			// Default to version libraries
 			return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
