@@ -7,11 +7,11 @@ RetroMCP-Java is a complete re-design of RetroMCP in Java.
 
 Using RetroMCP-Java is simple!
 1. Download and install JDK 8. MCPHackers recommend [Azul Zulu](https://www.azul.com/downloads/?version=java-8-lts&package=jdk)
-2. Run the latest release from the command line or via double click. If you run it via double click and RMCP errors, make sure your PATH
-and your JAR file associations are properly configured
+2. Run the latest [release](https://github.com/MCPHackers/RetroMCP-Java/releases) from the command line or via double click. If you run it via double click and RMCP errors, make sure your PATH
+and your JAR file associations are properly configured.
 	> Be careful! Using "Open with" context menu on Windows will not use a proper directory, be sure to change the default .jar file associations
-3. Run setup and choose the version you wish to decompile.
-4. Run decompile
+3. Run `setup` and choose the version you wish to decompile.
+4. Run the `decompile` task
 5. Mod away! Now it's Yourcraft!
 
 For more info you can check [RetroMCP Wiki](https://github.com/MCPHackers/RetroMCP-Java/wiki).
@@ -23,6 +23,15 @@ For more info you can check [RetroMCP Wiki](https://github.com/MCPHackers/RetroM
 * Reobfuscation for all available versions
 * Automatic project creation
 * Merged codebase generation
+
+# Building
+
+1. Use a Git client or download the sources as a zip.
+    > `git clone git@github.com:MCPHackers/RetroMCP-Java.git`
+2. Switch to the repository folder.
+    > `cd RetroMCP-Java`
+3. Invoke the build task using Gradle or the Gradle wrapper.
+    > `gradlew build`
 
 # Contributing
 
