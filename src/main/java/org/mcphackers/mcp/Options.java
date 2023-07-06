@@ -21,7 +21,7 @@ public class Options {
 	public Path saveFile;
 	public Side side = Side.ANY;
 	public Language lang;
-	public Theme theme;
+	public Theme theme = MCP.THEME;
 
 	public Options() {
 		for (TaskParameter param : TaskParameter.VALUES) {
@@ -74,7 +74,8 @@ public class Options {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
-				writer.append("theme").append('=').append(MCP.THEME.themeClass).append('\n');
+				if (MCP.THEME != null)
+					writer.append("theme").append('=').append(MCP.THEME.themeClass).append('\n');
 				for (Entry<TaskParameter, Object> entry : options.entrySet()) {
 					if (entry.getValue() != null && entry.getKey() != TaskParameter.SIDE) {
 						writer.append(entry.getKey().name).append('=').append(getParameter(entry.getKey()).toString()).append(String.valueOf('\n'));
