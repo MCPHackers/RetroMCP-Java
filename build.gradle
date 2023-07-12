@@ -1,3 +1,50 @@
 plugins {
+	id 'maven-publish'
+	id 'application'
     id 'java'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation "org.fusesource.jansi:jansi:${project.jansi_version}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+
+	// Use release flag on Java 9+ instead of source & target flags
+	// This makes the JDK read the boot classpath and use the proper
+	// libraries to be compliant with Java 8 without issues
+	if (JavaVersion.current().isJava9Compatible()) {
+		it.options.release.set(8)
+	}
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+application {
+	// Redirect all execution into the testing folder
+	mainClass = 'org.mcphackers.mcp.main.MainCLI'
+	executableDir = 'test'
+	mkdir(executableDir)
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = 'org.mcphackers.mcp'
+			artifactId = 'retromcp-cli'
+			version = '1.0'
+
+			from components.java
+		}
+	}
 }
