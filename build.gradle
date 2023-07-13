@@ -14,6 +14,13 @@ dependencies {
 	implementation "com.google.code.gson:gson:${project.gson_version}"
 }
 
+sourceSets {
+	main {
+		compileClasspath += test.compileClasspath + test.output
+		runtimeClasspath += test.runtimeClasspath + test.output
+	}
+}
+
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 
