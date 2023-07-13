@@ -15,6 +15,7 @@ public class MainCLI extends MCP {
 		AnsiConsole.systemInstall();
 		System.out.println(LOGO.toString());
 
+		MainCLI mcp = new MainCLI();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		String prompt = new Ansi().fgCyan().a("> ").toString();
 		while (true) {

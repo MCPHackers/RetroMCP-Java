@@ -41,7 +41,7 @@ application {
 
 shadowJar {
 	minimize()
-	archiveBaseName.set('RetroMCP-CLI')
+	archiveBaseName.set('RetroMCP-Java')
 	archiveClassifier.set('fat')
 	archiveVersion.set(project.version)
 }
