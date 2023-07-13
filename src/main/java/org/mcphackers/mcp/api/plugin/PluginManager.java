@@ -33,6 +33,7 @@ public class PluginManager {
 				ServiceLoader<MCPPlugin> serviceLoader = ServiceLoader.load(MCPPlugin.class, pluginClassLoader);
 				for (MCPPlugin plugin : serviceLoader) {
 					plugin.initializePlugin(mcp);
+					this.loadedPlugins.add(plugin);
 				}
 			}
 		} catch (IOException ex) {

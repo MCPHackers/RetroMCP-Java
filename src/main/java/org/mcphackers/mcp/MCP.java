@@ -2,6 +2,7 @@ package org.mcphackers.mcp;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.mcphackers.mcp.api.command.CommandManager;
 import org.mcphackers.mcp.api.language.LanguageManager;
 import org.mcphackers.mcp.api.logging.LoggingManager;
 import org.mcphackers.mcp.api.plugin.MCPPlugin;
@@ -16,6 +17,7 @@ public abstract class MCP {
 	private final LanguageManager languageManager = new LanguageManager();
 	private final LoggingManager loggingManager = new LoggingManager();
 	private final PluginManager pluginManager = new PluginManager();
+	private final CommandManager commandManager = new CommandManager();
 	private Path workingDirectory = Paths.get(".");
 
 	public void initializeMCP() {
@@ -32,6 +34,10 @@ public abstract class MCP {
 
 	public PluginManager getPluginManager() {
 		return this.pluginManager;
+	}
+
+	public CommandManager getCommandManager() {
+		return this.commandManager;
 	}
 
 	public List<MCPPlugin> getLoadedPlugins() {

@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.api.command.Command;
+import org.mcphackers.mcp.api.command.CommandManager;
 
 public class MainCLI extends MCP {
 	private static final Ansi LOGO = new Ansi().fgCyan().a("  _____      _             ").fgYellow().a("__  __  _____ _____").a('\n').fgCyan().a(" |  __ \\    | |           ").fgYellow().a("|  \\/  |/ ____|  __ \\").a('\n').fgCyan().a(" | |__) |___| |_ _ __ ___ ").fgYellow().a("| \\  / | |    | |__) |").a('\n').fgCyan().a(" |  _  // _ \\ __| '__/ _ \\").fgYellow().a("| |\\/| | |    |  ___/").a('\n').fgCyan().a(" | | \\ \\  __/ |_| | | (_) ").fgYellow().a("| |  | | |____| |").a('\n').fgCyan().a(" |_|  \\_\\___|\\__|_|  \\___/").fgYellow().a("|_|  |_|\\_____|_|").a('\n').fgDefault();
@@ -17,6 +19,7 @@ public class MainCLI extends MCP {
 
 		MainCLI mcp = new MainCLI();
 		mcp.initializeMCP();
+		CommandManager commandManager = mcp.getCommandManager();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		String prompt = new Ansi().fgCyan().a("> ").toString();
 		while (true) {
@@ -25,6 +28,12 @@ public class MainCLI extends MCP {
 				String line = reader.readLine();
 				if ("exit".equalsIgnoreCase(line)) {
 					System.exit(0);
+				}
+
+				for (Command command : commandManager.getCommands()) {
+					if (command.getName().equalsIgnoreCase(line)) {
+						command.getRunnable().run();
+					}
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
