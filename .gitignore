@@ -13,5 +13,6 @@ test/*
 .classpath
 .project
 .idea
+.vscode
 .settings
 bin

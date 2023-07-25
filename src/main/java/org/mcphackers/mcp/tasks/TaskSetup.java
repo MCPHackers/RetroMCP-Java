@@ -1,5 +1,21 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.CONF;
+import static org.mcphackers.mcp.MCPPaths.JARS;
+import static org.mcphackers.mcp.MCPPaths.LIB;
+import static org.mcphackers.mcp.MCPPaths.NATIVES;
+import static org.mcphackers.mcp.MCPPaths.VERSION;
+
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -11,19 +27,6 @@ import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static org.mcphackers.mcp.MCPPaths.*;
 
 public class TaskSetup extends Task {
 

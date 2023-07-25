@@ -68,7 +68,7 @@ run {
 }
 
 runShadow {
-
+    workingDir 'test'
 }
 
 shadowJar {

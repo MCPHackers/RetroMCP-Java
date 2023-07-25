@@ -1,5 +1,39 @@
 package org.mcphackers.mcp.main;
 
+import static org.mcphackers.mcp.tools.Util.operateOnThread;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
@@ -18,22 +52,6 @@ import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
-
 /**
  * GUI implementation of MCP
  */
@@ -45,10 +63,15 @@ public class MainGUI extends MCP {
 	public MCPFrame frame;
 	public boolean isActive = true;
 	public Version currentVersion;
-	public JTextPane textPane = new JTextPane();
+	public JTextPane textPane;
 
 	public MainGUI(Path dir) {
 		isGUI = true;
+		if (!THEME.equals(options.theme) && options.theme != null) {
+			THEME = options.theme;
+		}
+		changeTheme(THEME);
+		textPane = new JTextPane();
 		PrintStream origOut = System.out;
 		PrintStream interceptor = new TextAreaOutputStream(textPane, origOut);
 		System.setOut(interceptor);
@@ -59,9 +82,6 @@ public class MainGUI extends MCP {
 		workingDir = dir;
 		if (options.lang != null) {
 			changeLanguage(options.lang);
-		}
-		if (!THEME.equals(options.theme)) {
-			THEME = options.theme;
 		}
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
@@ -203,7 +223,7 @@ public class MainGUI extends MCP {
 		String[] lines = changelog.split("\n");
 		for (String line : lines) {
 			line = line.replace("`", "");
-			char bullet = '•';
+			char bullet = '\u2022';
 			if (line.startsWith("# ")) {
 				JLabel label = new JLabel(line.substring(2));
 				label.setBorder(new EmptyBorder(0, 0, 4, 0));
