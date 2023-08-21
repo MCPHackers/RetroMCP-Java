@@ -12,7 +12,8 @@ public enum Language {
 	GERMAN("de_DE"),
 	FRENCH("fr_FR"),
 	CHINESE("zh_CN"),
-	CZECH("cs_CZ");
+	CZECH("cs_CZ"),
+	NORSK_BOKMAL("nb_NO");
 
 	public static final Language[] VALUES = Language.values();
 
