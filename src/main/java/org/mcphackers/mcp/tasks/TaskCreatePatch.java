@@ -30,8 +30,8 @@ public class TaskCreatePatch extends TaskStaged {
 						throw new IOException("Unpatched " + side.name + " sources cannot be found!");
 					}
 					boolean result = createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);
-					if (!result) {
-						throw new RuntimeException("Failed to apply patches!");
+					if (result) {
+						throw new RuntimeException("Failed to create patches!");
 					}
 				})
 		};
