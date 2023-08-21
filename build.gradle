@@ -20,6 +20,8 @@ configurations {
 }
 
 dependencies {
+	runtimeOnly sourceSets.test.output
+
     // Required libraries
     shadow "org.ow2.asm:asm:${project.asm_version}"
     shadow "org.ow2.asm:asm-analysis:${project.asm_version}"

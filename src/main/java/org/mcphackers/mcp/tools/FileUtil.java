@@ -18,6 +18,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -48,7 +50,7 @@ public abstract class FileUtil {
 	}
 
 	public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
-		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			for (Path file : files) {
 				Path fileInsideZipPath = fs.getPath("/" + relativeTo.relativize(file));
 				Files.deleteIfExists(fileInsideZipPath);
@@ -60,14 +62,14 @@ public abstract class FileUtil {
 	}
 
 	public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
-		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.deleteIfExists(fileInsideZipPath);
 		}
 	}
 
 	public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
-		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, null)) {
+		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.copy(fileInsideZipPath, out);
 		}
@@ -254,5 +256,18 @@ public abstract class FileUtil {
 			});
 		}
 		deleteEmptyFolders(sourceFolder);
+	}
+
+	public static List<Path> getPathsOfType(Path startDirectory, String... types) {
+		if (!Files.isDirectory(startDirectory)) {
+			return Collections.emptyList();
+		}
+
+		try (Stream<Path> pathStream = Files.walk(startDirectory).parallel().filter(path -> Arrays.stream(types).anyMatch(type -> path.getFileName().toString().endsWith(type)))) {
+			return pathStream.collect(Collectors.toList());
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return Collections.emptyList();
+		}
 	}
 }

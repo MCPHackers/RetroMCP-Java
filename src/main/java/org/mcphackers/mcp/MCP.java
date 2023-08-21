@@ -3,6 +3,7 @@ package org.mcphackers.mcp;
 import org.mcphackers.mcp.plugin.MCPPlugin;
 import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
+import org.mcphackers.mcp.plugin.PluginManager;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.TaskStaged;
@@ -30,12 +31,8 @@ public abstract class MCP {
 	public static final String VERSION = "v1.0.1";
 	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
-	private static final Map<String, MCPPlugin> PLUGINS = new HashMap<>();
+	private static final PluginManager pluginManager = new PluginManager();
 	public static Theme THEME = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
-
-	static {
-		loadPlugins();
-	}
 
 	public Options options = new Options(Paths.get("options.cfg"));
 	protected boolean isGUI = false;
@@ -43,36 +40,9 @@ public abstract class MCP {
 	protected MCP() {
 		Update.attemptToDeleteUpdateJar();
 		changeLanguage(Language.get(Locale.getDefault()));
+		pluginManager.discoverPlugins(this);
 		triggerEvent(MCPEvent.ENV_STARTUP);
 		System.gc();
-	}
-
-	private static void loadPlugins() {
-		Path pluginsDir = Paths.get("plugins");
-		if (Files.exists(pluginsDir)) {
-			List<Path> jars = new ArrayList<>();
-			try {
-				FileUtil.collectJars(pluginsDir, jars);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				for (Path p : jars) {
-					List<Class<MCPPlugin>> classes = ClassUtils.getClasses(p, MCPPlugin.class);
-					for (Class<MCPPlugin> cls : classes) {
-						if (!ClassUtils.isClassAbstract(cls)) {
-							MCPPlugin plugin = cls.newInstance();
-							plugin.init();
-							PLUGINS.put(plugin.pluginId() + plugin.hashCode(), plugin);
-						} else {
-							System.err.println(TRANSLATOR.translateKey("mcp.incompatiblePlugin") + cls.getName());
-						}
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	public boolean isGUI() {
@@ -317,7 +287,7 @@ public abstract class MCP {
 	 * @see MCPPlugin#setTaskOverrides(TaskStaged)
 	 */
 	public final void setPluginOverrides(TaskStaged task) {
-		for (Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
+		for (Map.Entry<String, MCPPlugin> entry : pluginManager.getLoadedPlugins().entrySet()) {
 			entry.getValue().setTaskOverrides(task);
 		}
 	}
@@ -328,7 +298,7 @@ public abstract class MCP {
 	 * @param event
 	 */
 	public final void triggerEvent(MCPEvent event) {
-		for (Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
+		for (Map.Entry<String, MCPPlugin> entry : pluginManager.getLoadedPlugins().entrySet()) {
 			entry.getValue().onMCPEvent(event, this);
 		}
 	}
@@ -339,7 +309,7 @@ public abstract class MCP {
 	 * @param event
 	 */
 	public final void triggerTaskEvent(TaskEvent event, Task task) {
-		for (Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
+		for (Map.Entry<String, MCPPlugin> entry : pluginManager.getLoadedPlugins().entrySet()) {
 			entry.getValue().onTaskEvent(event, task);
 		}
 	}
@@ -351,7 +321,7 @@ public abstract class MCP {
 	 */
 	public final void changeLanguage(Language lang) {
 		TRANSLATOR.changeLang(lang);
-		for (Map.Entry<String, MCPPlugin> entry : PLUGINS.entrySet()) {
+		for (Map.Entry<String, MCPPlugin> entry : pluginManager.getLoadedPlugins().entrySet()) {
 			TRANSLATOR.readTranslation(entry.getValue().getClass());
 		}
 	}
