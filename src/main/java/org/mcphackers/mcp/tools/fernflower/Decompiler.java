@@ -48,6 +48,7 @@ public class Decompiler implements IBytecodeProvider {
 		}
 		decompiler.addSpace(source.toAbsolutePath().toFile(), true);
 		decompiler.decompileContext();
+		this.openZips.close();
 	}
 
 	@Override
