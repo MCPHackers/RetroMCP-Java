@@ -52,8 +52,6 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-	withSourcesJar()
-
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
@@ -93,6 +91,8 @@ tasks.register('jarCLI', ShadowJar) {
 	minimize {
 		exclude(dependency('com.formdev:.*:.*'))
 	}
+	exclude('META-INF/**.RSA')
+	exclude('META-INF/**.SF')
 }
 
 jar.dependsOn(jarCLI)
