@@ -14,6 +14,7 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tasks.mode.TaskParameterMap;
 import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.versions.VersionParser;
 
 public class Options {
 
@@ -59,6 +60,8 @@ public class Options {
 							theme = Theme.THEMES_MAP.get(value);
 						} catch (IllegalArgumentException ignored) {
 						}
+					} else if (key.equals("versionUrl")) {
+						VersionParser.mappingsJson = value;
 					} else {
 						safeSetParameter(TaskParameterMap.get(key), value);
 					}
@@ -74,8 +77,10 @@ public class Options {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
-				if (MCP.THEME != null)
+				if (MCP.THEME != null) {
 					writer.append("theme").append('=').append(MCP.THEME.themeClass).append('\n');
+				}
+				writer.append("versionUrl").append('=').append(VersionParser.mappingsJson).append('\n');
 				for (Entry<TaskParameter, Object> entry : options.entrySet()) {
 					if (entry.getValue() != null && entry.getKey() != TaskParameter.SIDE) {
 						writer.append(entry.getKey().name).append('=').append(getParameter(entry.getKey()).toString()).append(String.valueOf('\n'));

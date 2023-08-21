@@ -19,13 +19,13 @@ import org.mcphackers.mcp.tools.versions.json.VersionMetadata;
 
 public class VersionParser {
 
-	public static final String MAPPINGS_JSON = "https://mcphackers.github.io/versionsV2/versions.json";
-	public static final VersionParser INSTANCE = new VersionParser();
+	public static String mappingsJson = "https://mcphackers.github.io/versionsV2/versions.json";
+	private static VersionParser INSTANCE;
 
 	private final List<VersionData> versions = new ArrayList<>();
 	public Exception failureCause;
 
-	public VersionParser() {
+	protected VersionParser() {
 		JSONArray json;
 		try {
 			json = getJson();
@@ -46,6 +46,14 @@ public class VersionParser {
 			}
 		}
 		versions.sort(new VersionSorter());
+		INSTANCE = this;
+	}
+
+	public static VersionParser getInstance() {
+		if (INSTANCE == null) {
+			return new VersionParser();
+		}
+		return INSTANCE;
 	}
 
 	private static JSONArray getJson() throws Exception {
@@ -54,7 +62,7 @@ public class VersionParser {
 		if (Files.exists(versions)) {
 			in = Files.newInputStream(versions);
 		} else {
-			URLConnection connect = new URL(MAPPINGS_JSON).openConnection();
+			URLConnection connect = new URL(mappingsJson).openConnection();
 			connect.setConnectTimeout(30000);
 			in = connect.getInputStream();
 		}

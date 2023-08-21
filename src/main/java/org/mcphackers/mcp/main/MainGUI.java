@@ -140,7 +140,7 @@ public class MainGUI extends MCP {
 	@Override
 	public void setCurrentVersion(Version version) {
 		currentVersion = version;
-		frame.setCurrentVersion(version == null ? null : VersionParser.INSTANCE.getVersion(version.id));
+		frame.setCurrentVersion(version == null ? null : VersionParser.getInstance().getVersion(version.id));
 	}
 
 	@Override
@@ -280,14 +280,15 @@ public class MainGUI extends MCP {
 	}
 
 	public void setupVersion(VersionData versionData) {
+		VersionParser versionParser = VersionParser.getInstance();
 		Version version = getCurrentVersion();
-		if (versionData != null && !versionData.equals(version == null ? null : VersionParser.INSTANCE.getVersion(version.id))) {
+		if (versionData != null && !versionData.equals(version == null ? null : versionParser.getVersion(version.id))) {
 			int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 			if (response == JOptionPane.YES_OPTION) {
 				setParameter(TaskParameter.SETUP_VERSION, versionData.id);
 				performTask(TaskMode.SETUP, Side.ANY);
 			} else {
-				frame.setCurrentVersion(VersionParser.INSTANCE.getVersion(version == null ? null : version.id));
+				frame.setCurrentVersion(versionParser.getVersion(version == null ? null : version.id));
 			}
 		}
 	}

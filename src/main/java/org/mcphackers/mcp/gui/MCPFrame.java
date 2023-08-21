@@ -138,14 +138,15 @@ public class MCPFrame extends JFrame implements WindowListener {
 		//topRightContainer.add(this.verCleanup);
 		operateOnThread(() -> {
 			loadingVersions = true;
-			if (VersionParser.INSTANCE.failureCause != null) {
-				VersionParser.INSTANCE.failureCause.printStackTrace();
+			VersionParser versionParser = VersionParser.getInstance();
+			if (versionParser.failureCause != null) {
+				versionParser.failureCause.printStackTrace();
 				verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
 				verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
 				verLabel.setForeground(Color.RED);
 				verList = null;
 			} else {
-				verList = new JComboBox<>(VersionParser.INSTANCE.getVersions().toArray());
+				verList = new JComboBox<>(versionParser.getVersions().toArray());
 				verList.addPopupMenuListener(new PopupMenuListener() {
 
 					@Override
@@ -162,7 +163,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 					}
 				});
 
-				setCurrentVersion(mcp.currentVersion == null ? null : VersionParser.INSTANCE.getVersion(mcp.currentVersion.id));
+				setCurrentVersion(mcp.currentVersion == null ? null : versionParser.getVersion(mcp.currentVersion.id));
 				verList.setMaximumRowCount(20);
 				verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 			}

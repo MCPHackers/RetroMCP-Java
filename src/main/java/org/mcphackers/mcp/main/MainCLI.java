@@ -57,11 +57,12 @@ public class MainCLI extends MCP {
 		boolean exit = false;
 		String version = null;
 		Path versionPath = Paths.get(MCPPaths.VERSION);
-		List<VersionData> versions = VersionParser.INSTANCE.getVersions();
+		VersionParser versionParser = VersionParser.getInstance();
+		List<VersionData> versions = versionParser.getVersions();
 		if (Files.exists(versionPath)) {
 			try {
 				currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(versionPath))));
-				VersionData data = VersionParser.INSTANCE.getVersion(currentVersion.id);
+				VersionData data = versionParser.getVersion(currentVersion.id);
 				if (data != null) {
 					version = new Ansi().a("Current version: ").fgBrightCyan().a(data.toString()).fgDefault().toString();
 				}
@@ -110,7 +111,7 @@ public class MainCLI extends MCP {
 			}
 			setParams(parsedArgs, mode);
 			if (mode == TaskMode.SETUP && versions != null) {
-				if (VersionParser.INSTANCE.getVersion(getOptions().getStringParameter(TaskParameter.SETUP_VERSION)) == null) {
+				if (versionParser.getVersion(getOptions().getStringParameter(TaskParameter.SETUP_VERSION)) == null) {
 					log(new Ansi().fgMagenta().a("================ ").fgDefault().a("Current versions").fgMagenta().a(" ================").fgDefault().toString());
 					log(getTable(versions));
 					log(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());

@@ -46,7 +46,7 @@ public class TaskSetup extends TaskStaged {
 					FileUtil.createDirectories(MCPPaths.get(mcp, NATIVES));
 
 					setProgress(getLocalizedStage("setup"), 1);
-					List<VersionData> versions = VersionParser.INSTANCE.getVersions();
+					List<VersionData> versions = VersionParser.getInstance().getVersions();
 					String chosenVersion = mcp.getOptions().getStringParameter(TaskParameter.SETUP_VERSION);
 					VersionData chosenVersionData;
 
