@@ -18,7 +18,7 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tools.FileUtil;
 
-public class TaskCleanup extends Task {
+public class TaskCleanup extends TaskStaged {
 
 	private static final DecimalFormat DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
@@ -27,22 +27,25 @@ public class TaskCleanup extends Task {
 	}
 
 	@Override
-	public void doTask() throws Exception {
-		Instant startTime = Instant.now();
+	protected Stage[] setStages() {
+		return new Stage[] {
+				stage(getLocalizedStage("cleaning"), () -> {
+					Instant startTime = Instant.now();
 
-		boolean deleted = cleanup();
+					boolean deleted = cleanup();
 
-		mcp.setCurrentVersion(null);
+					mcp.setCurrentVersion(null);
 
-		if (deleted) {
-			log("Cleanup finished in " + DECIMAL.format(Duration.between(startTime, Instant.now()).get(ChronoUnit.NANOS) / 1e+9F) + "s");
-		} else {
-			log("Nothing to clear!");
-		}
+					if (deleted) {
+						log("Cleanup finished in " + DECIMAL.format(Duration.between(startTime, Instant.now()).get(ChronoUnit.NANOS) / 1e+9F) + "s");
+					} else {
+						log("Nothing to clear!");
+					}
+				})
+		};
 	}
 
 	public boolean cleanup() throws IOException {
-
 		boolean deleted = false;
 		List<Path> filesToDelete = new ArrayList<>();
 		for (Side side : Side.ALL) {

@@ -13,10 +13,21 @@ import codechicken.diffpatch.util.PatchMode;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 
-public class TaskApplyPatch extends Task {
+public class TaskApplyPatch extends TaskStaged {
 
 	public TaskApplyPatch(Side side, MCP instance) {
 		super(side, instance);
+	}
+
+	@Override
+	protected Stage[] setStages() {
+		return new Stage[] {
+				stage(getLocalizedStage("patching"), () -> {
+					final Path patchesPath = MCPPaths.get(mcp, PATCH, side);
+					final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
+					patch(this, srcPath, srcPath, patchesPath);
+				})
+		};
 	}
 
 	public static void patch(Task task, Path base, Path out, Path patches) throws IOException {
@@ -33,12 +44,5 @@ public class TaskApplyPatch extends Task {
 			task.addMessage(logger.toString(), Task.INFO);
 			task.addMessage("Patching failed!", Task.ERROR);
 		}
-	}
-
-	@Override
-	public void doTask() throws Exception {
-		final Path patchesPath = MCPPaths.get(mcp, PATCH, side);
-		final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
-		patch(this, srcPath, srcPath, patchesPath);
 	}
 }

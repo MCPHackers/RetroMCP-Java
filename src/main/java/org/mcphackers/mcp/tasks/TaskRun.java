@@ -19,12 +19,55 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.json.Version;
 import org.mcphackers.mcp.tools.versions.json.Version.Arguments;
 
-public class TaskRun extends Task {
+public class TaskRun extends TaskStaged {
 
 	public static final List<String> SERVER_MAIN = Arrays.asList("net.minecraft.server.Main", "net.minecraft.server.MinecraftServer", "com.mojang.minecraft.server.MinecraftServer");
 
 	public TaskRun(Side side, MCP instance) {
 		super(side, instance);
+	}
+
+	@Override
+	protected Stage[] setStages() {
+		return new Stage[] {
+				stage(getLocalizedStage("run"), () -> {
+					Version currentVersion = mcp.getCurrentVersion();
+					Side mcpSide = mcp.getOptions().side;
+					if (mcpSide == Side.ANY) {
+						mcpSide = side;
+					}
+
+					String main = getMain(mcp, currentVersion, side);
+					if (main == null) {
+						mcp.log("Start class not found");
+						return;
+					}
+
+					boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
+					boolean fullBuild = mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD);
+					String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
+					List<Path> cpList = getClasspath(mcp, mcpSide, side, runBuild, fullBuild);
+
+					List<String> classPath = new ArrayList<>();
+					cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));
+
+					Path natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath();
+
+					List<String> args = new ArrayList<>();
+					args.add(Util.getJava());
+					Collections.addAll(args, runArgs);
+					args.add("-Djava.library.path=" + natives);
+					args.add("-cp");
+					args.add(String.join(System.getProperty("path.separator"), classPath));
+					args.add(main);
+					if (side == Side.CLIENT) {
+						args.addAll(getLaunchArgs(mcp, mcpSide));
+						Collections.addAll(args, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
+					}
+
+					Util.runCommand(args.toArray(new String[0]), getMCDir(mcp, mcpSide), true);
+				})
+		};
 	}
 
 	public static String getMain(MCP mcp, Version version, Side side) throws IOException {
@@ -130,44 +173,5 @@ public class TaskRun extends Task {
 			}
 		}
 		return cpList;
-	}
-
-	@Override
-	public void doTask() throws Exception {
-		Version currentVersion = mcp.getCurrentVersion();
-		Side mcpSide = mcp.getOptions().side;
-		if (mcpSide == Side.ANY) {
-			mcpSide = side;
-		}
-
-		String main = getMain(mcp, currentVersion, side);
-		if (main == null) {
-			mcp.log("Start class not found");
-			return;
-		}
-
-		boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
-		boolean fullBuild = mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD);
-		String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
-		List<Path> cpList = getClasspath(mcp, mcpSide, side, runBuild, fullBuild);
-
-		List<String> classPath = new ArrayList<>();
-		cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));
-
-		Path natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath();
-
-		List<String> args = new ArrayList<>();
-		args.add(Util.getJava());
-		Collections.addAll(args, runArgs);
-		args.add("-Djava.library.path=" + natives);
-		args.add("-cp");
-		args.add(String.join(System.getProperty("path.separator"), classPath));
-		args.add(main);
-		if (side == Side.CLIENT) {
-			args.addAll(getLaunchArgs(mcp, mcpSide));
-			Collections.addAll(args, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
-		}
-
-		Util.runCommand(args.toArray(new String[0]), getMCDir(mcp, mcpSide), true);
 	}
 }

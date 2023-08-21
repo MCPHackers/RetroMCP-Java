@@ -14,7 +14,7 @@ import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 
-public class TaskDownloadUpdate extends Task {
+public class TaskDownloadUpdate extends TaskStaged {
 
 	private static final String API = "https://api.github.com/repos/MCPHackers/RetroMCP-Java/releases/latest";
 
@@ -23,49 +23,53 @@ public class TaskDownloadUpdate extends Task {
 	}
 
 	@Override
-	public void doTask() throws Exception {
-		URL updateURL = new URL(API);
-		InputStream in = updateURL.openStream();
-		JSONObject releaseJson = Util.parseJSON(in);
-		String latestVersion = releaseJson.getString("tag_name");
-		String notes = releaseJson.getString("body");
-		if (!latestVersion.equals(MCP.VERSION)) {
-			boolean confirmed = mcp.updateDialogue(notes, latestVersion);
-			if (confirmed) {
-				log("Downloading update...");
-				for (Object obj : releaseJson.getJSONArray("assets")) {
-					if (obj instanceof JSONObject) {
-						JSONObject assetObj = (JSONObject) obj;
-						if (!assetObj.getString("name").endsWith(mcp.isGUI() ? "-GUI.jar" : "-CLI.jar")) {
-							continue;
+	protected Stage[] setStages() {
+		return new Stage[] {
+				stage(getLocalizedStage("downloadupdate"), () -> {
+					URL updateURL = new URL(API);
+					InputStream in = updateURL.openStream();
+					JSONObject releaseJson = Util.parseJSON(in);
+					String latestVersion = releaseJson.getString("tag_name");
+					String notes = releaseJson.getString("body");
+					if (!latestVersion.equals(MCP.VERSION)) {
+						boolean confirmed = mcp.updateDialogue(notes, latestVersion);
+						if (confirmed) {
+							log("Downloading update...");
+							for (Object obj : releaseJson.getJSONArray("assets")) {
+								if (obj instanceof JSONObject) {
+									JSONObject assetObj = (JSONObject) obj;
+									if (!assetObj.getString("name").endsWith(mcp.isGUI() ? "-GUI.jar" : "-CLI.jar")) {
+										continue;
+									}
+									FileUtil.downloadFile(assetObj.getString("browser_download_url"), Paths.get(MCPPaths.UPDATE_JAR));
+									break;
+								}
+							}
+							Path jarPath = Paths.get(MCP.class
+									.getProtectionDomain()
+									.getCodeSource()
+									.getLocation()
+									.toURI());
+							if (!Files.isDirectory(jarPath)) {
+								String[] cmd = new String[]{
+										Util.getJava(),
+										"-cp",
+										MCPPaths.UPDATE_JAR,
+										"org.mcphackers.mcp.Update",
+										jarPath.toString()
+								};
+								Util.runCommand(cmd);
+								System.exit(0);
+							} else {
+								throw new IOException("Running from a folder! Aborting");
+							}
+						} else {
+							log("Cancelling update!");
 						}
-						FileUtil.downloadFile(assetObj.getString("browser_download_url"), Paths.get(MCPPaths.UPDATE_JAR));
-						break;
+					} else {
+						mcp.showMessage(TaskMode.UPDATE_MCP.getFullName(), MCP.TRANSLATOR.translateKey("mcp.upToDate"), Task.INFO);
 					}
-				}
-				Path jarPath = Paths.get(MCP.class
-						.getProtectionDomain()
-						.getCodeSource()
-						.getLocation()
-						.toURI());
-				if (!Files.isDirectory(jarPath)) {
-					String[] cmd = new String[]{
-							Util.getJava(),
-							"-cp",
-							MCPPaths.UPDATE_JAR,
-							"org.mcphackers.mcp.Update",
-							jarPath.toString()
-					};
-					Util.runCommand(cmd);
-					System.exit(0);
-				} else {
-					throw new IOException("Running from a folder! Aborting");
-				}
-			} else {
-				log("Cancelling update!");
-			}
-		} else {
-			mcp.showMessage(TaskMode.UPDATE_MCP.getFullName(), MCP.TRANSLATOR.translateKey("mcp.upToDate"), Task.INFO);
-		}
+				})
+		};
 	}
 }

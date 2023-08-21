@@ -17,7 +17,7 @@ import java.util.zip.ZipOutputStream;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 
-public class TaskSourceBackup extends Task {
+public class TaskSourceBackup extends TaskStaged {
 
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
 
@@ -25,13 +25,15 @@ public class TaskSourceBackup extends Task {
 		super(side, instance);
 	}
 
-	public TaskSourceBackup(Side side, MCP instance, ProgressListener listener) {
-		super(side, instance, listener);
+	@Override
+	protected Stage[] setStages() {
+		return new Stage[] {
+				stage(getLocalizedStage("backupsource"), this::packSourceIntoZip)
+		};
 	}
 
-	@Override
-	public void doTask() throws Exception {
-		packSourceIntoZip();
+	public TaskSourceBackup(Side side, MCP instance, ProgressListener listener) {
+		super(side, instance, listener);
 	}
 
 	private void packSourceIntoZip() throws IOException {
