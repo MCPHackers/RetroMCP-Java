@@ -5,7 +5,9 @@ import de.fernflower.main.decompiler.DirectoryResultSaver;
 import de.fernflower.main.extern.IBytecodeProvider;
 import de.fernflower.main.extern.IFernflowerPreferences;
 import de.fernflower.util.InterpreterUtil;
+import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tasks.ProgressListener;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,18 +25,19 @@ public class Decompiler implements IBytecodeProvider {
 	private final List<Path> libraries;
 	private final Path destination;
 	private final Map<String, Object> mapOptions = new HashMap<>();
+	private final ZipFileCache openZips = new ZipFileCache();
 
-	public Decompiler(ProgressListener listener, Path source, Path out, List<Path> libs, String ind, boolean decompileOverrideAnnotations, boolean guessGenerics) {
+	public Decompiler(ProgressListener listener, Path source, Path out, List<Path> libs, MCP mcp) {
 		this.source = source;
 		this.libraries = libs;
 		this.destination = out;
 		this.log = new DecompileLogger(listener);
 		mapOptions.put(IFernflowerPreferences.NO_COMMENT_OUTPUT, "1");
-		mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, guessGenerics ? "1" : "0");
+		mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS) ? "1" : "0");
 		mapOptions.put(IFernflowerPreferences.ASCII_STRING_CHARACTERS, "1");
-		mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, decompileOverrideAnnotations ? "1" : "0");
+		mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE) ? "1" : "0");
 		mapOptions.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1");
-		mapOptions.put(IFernflowerPreferences.INDENT_STRING, ind);
+		mapOptions.put(IFernflowerPreferences.INDENT_STRING, mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING));
 	}
 
 	public void decompile() throws IOException {
@@ -49,17 +52,16 @@ public class Decompiler implements IBytecodeProvider {
 
 	@Override
 	public byte[] getBytecode(String externalPath, String internalPath) throws IOException {
-		File file = new File(externalPath);
 		if (internalPath == null) {
+			File file = new File(externalPath);
 			return InterpreterUtil.getBytes(file);
 		} else {
-			try (ZipFile archive = new ZipFile(file)) {
-				ZipEntry entry = archive.getEntry(internalPath);
-				if (entry == null) {
-					throw new IOException("Entry not found: " + internalPath);
-				}
-				return InterpreterUtil.getBytes(archive, entry);
+			final ZipFile archive = this.openZips.get(externalPath);
+			final ZipEntry entry = archive.getEntry(internalPath);
+			if (entry == null) {
+				throw new IOException("Entry not found: " + internalPath);
 			}
+			return InterpreterUtil.getBytes(archive, entry);
 		}
 	}
 }

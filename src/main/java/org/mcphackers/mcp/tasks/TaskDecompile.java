@@ -59,9 +59,6 @@ public class TaskDecompile extends TaskStaged {
 		final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 		final Path patchesPath = MCPPaths.get(mcp, PATCHES, side);
 
-		final boolean decompileOverrideAnnotations = mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE);
-		final boolean guessGenerics = mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS);
-
 		return new Stage[]{stage(getLocalizedStage("prepare"), 0, () -> {
 			FileUtil.cleanDirectory(MCPPaths.get(mcp, PROJECT, side));
 			FileUtil.createDirectories(MCPPaths.get(mcp, JARS_DIR, side));
@@ -73,7 +70,7 @@ public class TaskDecompile extends TaskStaged {
 				classVersion = Math.max(classVersion, node.version);
 			}
 		}), stage(getLocalizedStage("decompile"), () -> {
-			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING), decompileOverrideAnnotations, guessGenerics).decompile();
+			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp).decompile();
 			new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 			new IdeaProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 		}), stage(getLocalizedStage("patch"), 88, () -> {
