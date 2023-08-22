@@ -37,6 +37,6 @@ public class TaskModeBuilder {
 	}
 
 	public TaskMode build() {
-		return new TaskMode(name, taskClass, params, usesProgressBars, requirement);
+		return new TaskMode(this.name, this.taskClass, this.params, this.usesProgressBars, this.requirement);
 	}
 }

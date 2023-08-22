@@ -104,21 +104,13 @@ public final class MappingUtil {
 		clientTree.setSrcNamespace("client");
 		serverTree.setSrcNamespace("server");
 		MemoryMappingTree namedClientTree = new MemoryMappingTree();
-		{
-			Map<String, String> namespaces = new HashMap<>();
-			namespaces.put("named", "client");
-			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedClientTree, namespaces);
-			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
-			clientTree.accept(nsSwitch);
-		}
+		Map<String, String> clientNamespaces = new HashMap<>();
+		clientNamespaces.put("named", "client");
+		flipMappingTree(namedClientTree, clientNamespaces);
 		MemoryMappingTree namedServerTree = new MemoryMappingTree();
-		{
-			Map<String, String> namespaces = new HashMap<>();
-			namespaces.put("named", "server");
-			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedServerTree, namespaces);
-			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
-			serverTree.accept(nsSwitch);
-		}
+		Map<String, String> serverNamespaces = new HashMap<>();
+		serverNamespaces.put("named", "server");
+		flipMappingTree(namedServerTree, serverNamespaces);
 		namedServerTree.accept(namedClientTree);
 		try (Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
 			namedClientTree.accept(writer);
@@ -133,16 +125,17 @@ public final class MappingUtil {
 		}
 		clientTree.setSrcNamespace("client");
 		MemoryMappingTree namedClientTree = new MemoryMappingTree();
-		{
-			Map<String, String> namespaces = new HashMap<>();
-			namespaces.put("named", "client");
-			MappingNsCompleter nsCompleter = new MappingNsCompleter(namedClientTree, namespaces);
-			MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
-			clientTree.accept(nsSwitch);
-		}
+		Map<String, String> namespaces = new HashMap<>();
+		namespaces.put("named", "client");
+		flipMappingTree(namedClientTree, namespaces);
 		try (Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
 			namedClientTree.accept(writer);
 		}
 	}
 
+	public static void flipMappingTree(MemoryMappingTree mappingTree, Map<String, String> namespaces) throws IOException {
+		MappingNsCompleter nsCompleter = new MappingNsCompleter(mappingTree, namespaces);
+		MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
+		mappingTree.accept(nsSwitch);
+	}
 }

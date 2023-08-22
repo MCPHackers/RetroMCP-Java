@@ -86,25 +86,22 @@ public class MenuBar extends JMenuBar {
 		mcpMenu.add(update);
 		mcpMenu.add(browseDir);
 		mcpMenu.add(changeDir);
-		final boolean taskMenu = true;
-		if (taskMenu) {
-			List<TaskMode> usedTasks = new ArrayList<>();
-			usedTasks.addAll(Arrays.asList(MainGUI.TASKS));
-			usedTasks.addAll(Arrays.asList(TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP));
-			JMenu moreTasks = new JMenu();
-			translatableComponents.put(moreTasks, "mcp.moreTasks");
-			togglableComponents.add(moreTasks);
-			for (TaskMode task : TaskMode.registeredTasks) {
-				if (usedTasks.contains(task)) {
-					continue;
-				}
-				JMenuItem taskItem = new JMenuItem();
-				taskItems.put(task, taskItem);
-				taskItem.addActionListener(TaskButton.performTask(mcp, task));
-				moreTasks.add(taskItem);
+		List<TaskMode> usedTasks = new ArrayList<>();
+		usedTasks.addAll(Arrays.asList(MainGUI.TASKS));
+		usedTasks.addAll(Arrays.asList(TaskMode.UPDATE_MCP, TaskMode.START, TaskMode.EXIT, TaskMode.HELP, TaskMode.SETUP));
+		JMenu moreTasks = new JMenu();
+		translatableComponents.put(moreTasks, "mcp.moreTasks");
+		togglableComponents.add(moreTasks);
+		for (TaskMode task : TaskMode.registeredTasks) {
+			if (usedTasks.contains(task)) {
+				continue;
 			}
-			mcpMenu.add(moreTasks);
+			JMenuItem taskItem = new JMenuItem();
+			taskItems.put(task, taskItem);
+			taskItem.addActionListener(TaskButton.performTask(mcp, task));
+			moreTasks.add(taskItem);
 		}
+		mcpMenu.add(moreTasks);
 		JMenuItem exit = new JMenuItem();
 		translatableComponents.put(exit, "task.exit");
 		exit.addActionListener(a -> mcp.exit());

@@ -39,6 +39,9 @@ public class PluginManager {
 			for (MCPPlugin plugin : serviceLoader) {
 				plugin.init();
 				this.loadedPlugins.put(plugin.pluginId(), plugin);
+
+				// Load translations from plugins
+				MCP.TRANSLATOR.readTranslation(plugin.getClass());
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
