@@ -145,7 +145,7 @@ public class MainGUI extends MCP {
 
 	@Override
 	public void log(String msg) {
-		System.out.println(msg);
+		LOGGER.info(msg);
 	}
 
 	@Override

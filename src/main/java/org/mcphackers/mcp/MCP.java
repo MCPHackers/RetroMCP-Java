@@ -23,6 +23,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public abstract class MCP {
 
@@ -33,9 +37,11 @@ public abstract class MCP {
 	public static Theme THEME = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
 
 	public Options options = new Options(Paths.get("options.cfg"));
+	public static final Logger LOGGER = Logger.getLogger("RMCP");
 	protected boolean isGUI = false;
 
 	protected MCP() {
+		addLogger(LOGGER);
 		Update.attemptToDeleteUpdateJar();
 		changeLanguage(Language.get(Locale.getDefault()));
 		pluginManager.discoverPlugins(this);
@@ -318,6 +324,7 @@ public abstract class MCP {
 	 * @param lang
 	 */
 	public final void changeLanguage(Language lang) {
+		LOGGER.info("Changing language to " + lang.name);
 		TRANSLATOR.changeLang(lang);
 		for (Map.Entry<String, MCPPlugin> entry : pluginManager.getLoadedPlugins().entrySet()) {
 			TRANSLATOR.readTranslation(entry.getValue().getClass());
@@ -331,6 +338,19 @@ public abstract class MCP {
 		} catch (IOException e) {
 			// Default to version libraries
 			return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
+		}
+	}
+
+	public static void addLogger(Logger logger) {
+		// Setup logger
+		try {
+			FileHandler fileHandler = new FileHandler("rmcp.log");
+			LOGGER.addHandler(fileHandler);
+			SimpleFormatter formatter = new SimpleFormatter();
+			fileHandler.setFormatter(formatter);
+			LOGGER.setLevel(Level.INFO);
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 }

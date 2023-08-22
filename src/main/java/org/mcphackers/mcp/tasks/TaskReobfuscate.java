@@ -104,7 +104,7 @@ public class TaskReobfuscate extends TaskStaged {
 				String hashModified = recompHashes.get(deobfName);
 				boolean extract = (hash == null) || !hash.equals(hashModified) && !regexPattern.matcher(deobfName).matches();
 				if (extract) {
-					System.out.println(reversedNames.get(obfClassName) + " : " + obfClassName);
+					MCP.LOGGER.info(reversedNames.get(obfClassName) + " : " + obfClassName);
 				}
 				return extract;
 			});

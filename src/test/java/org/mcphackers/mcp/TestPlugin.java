@@ -9,8 +9,11 @@ import org.mcphackers.mcp.tasks.mode.TaskModeBuilder;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TestPlugin implements MCPPlugin {
+	private final Logger logger = Logger.getLogger("testPlugin");
+
     @Override
     public String pluginId() {
         return "test";
@@ -18,7 +21,8 @@ public class TestPlugin implements MCPPlugin {
 
     @Override
     public void init() {
-		System.out.println("Test plugin has initialized!");
+		MCP.addLogger(logger);
+		logger.info("Test plugin has initialized!");
 		TaskMode mergeMappingsTask = new TaskModeBuilder()
 				.setName("mergemappings")
 				.setTaskClass(TaskMergeMappings.class)
