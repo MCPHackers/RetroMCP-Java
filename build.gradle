@@ -10,9 +10,6 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'https://maven.fabricmc.net/' }
     maven { url 'https://mcphackers.org/libraries' }
-    flatDir {
-        dirs "libs"
-    }
 }
 
 configurations {
@@ -30,7 +27,7 @@ dependencies {
     shadow "org.ow2.asm:asm-tree:${project.asm_version}"
     shadow "org.ow2.asm:asm-util:${project.asm_version}"
 
-	shadow "org.mcphackers.rdi:rdi-nio:1.0"
+	shadow "org.mcphackers.rdi:rdi-nio:1.0-SNAPSHOT"
 	shadow "org.mcphackers.rdi:rdi:1.0"
     shadow "com.github.Lassebq:Fernflower:${project.fernflower_version}"
     shadow "org.fusesource.jansi:jansi:${project.jansi_version}"
