@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -24,7 +23,6 @@ import org.mcphackers.rdi.injector.data.Mappings;
 import org.mcphackers.rdi.nio.ClassStorageWriter;
 import org.mcphackers.rdi.nio.MappingsIO;
 import org.mcphackers.rdi.nio.RDInjector;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 public class TaskReobfuscate extends TaskStaged {
@@ -68,23 +66,8 @@ public class TaskReobfuscate extends TaskStaged {
 		Map<String, String> recompHashes = gatherMD5Hashes(true);
 
 		for (Side localSide : sides) {
-
 			final Path reobfDir = MCPPaths.get(mcp, REOBF_SIDE, localSide);
 			final Path reobfJar = MCPPaths.get(mcp, REOBF_JAR, localSide);
-			List<String> classNames = new ArrayList<>();
-			try (Stream<Path> paths = Files.walk(reobfBin)) {
-				paths.forEach(path -> {
-					if (path.getFileName().toString().endsWith(".class")) {
-						ClassReader classReader;
-						try {
-							classReader = new ClassReader(Files.readAllBytes(path));
-							classNames.add(classReader.getClassName());
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
 			Files.deleteIfExists(reobfJar);
 			RDInjector injector = new RDInjector(reobfBin);
 			Mappings mappings = getMappings(injector.getStorage(), localSide);
@@ -95,8 +78,10 @@ public class TaskReobfuscate extends TaskStaged {
 			new ClassStorageWriter(injector.getStorage(), ClassWriter.COMPUTE_MAXS).write(Files.newOutputStream(reobfJar));
 
 			Map<String, String> reversedNames = new HashMap<>();
-			for (Entry<String, String> entry : mappings.classes.entrySet()) {
-				reversedNames.put(entry.getValue(), entry.getKey());
+			if (mappings != null) {
+				for (Entry<String, String> entry : mappings.classes.entrySet()) {
+					reversedNames.put(entry.getValue(), entry.getKey());
+				}
 			}
 			FileUtil.cleanDirectory(reobfDir);
 			Pattern regexPattern = Pattern.compile(mcp.getOptions().getStringParameter(TaskParameter.EXCLUDED_CLASSES));
