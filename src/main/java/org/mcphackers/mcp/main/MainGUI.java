@@ -101,7 +101,7 @@ public class MainGUI extends MCP {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		Path workingDir = Paths.get("");
 		if (args.length >= 1) {
 			try {

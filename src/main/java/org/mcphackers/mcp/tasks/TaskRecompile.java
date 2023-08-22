@@ -83,7 +83,7 @@ public class TaskRecompile extends TaskStaged {
 
 							List<String> bootcp = new ArrayList<>();
 							bootclasspath.forEach(p -> bootcp.add(p.toAbsolutePath().toString()));
-							if (bootclasspath.size() > 0) {
+							if (!bootclasspath.isEmpty()) {
 								options.addAll(Arrays.asList("-bootclasspath", String.join(System.getProperty("path.separator"), bootcp)));
 							}
 
@@ -119,7 +119,7 @@ public class TaskRecompile extends TaskStaged {
 	public List<Path> collectBootClassPath() throws IOException {
 		List<Path> bootclasspath = new ArrayList<>();
 		String javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
-		if (!javaHome.equals("")) {
+		if (!javaHome.isEmpty()) {
 			Path libs = Paths.get(javaHome).resolve("lib");
 			Path libsJre = Paths.get(javaHome).resolve("jre/lib");
 			if (Files.exists(libs)) {

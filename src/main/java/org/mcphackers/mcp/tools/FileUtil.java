@@ -49,6 +49,7 @@ public abstract class FileUtil {
 		}
 	}
 
+	@SuppressWarnings("RedundantCast")
 	public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
 		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			for (Path file : files) {
@@ -61,6 +62,7 @@ public abstract class FileUtil {
 		}
 	}
 
+	@SuppressWarnings("RedundantCast")
 	public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
 		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
@@ -68,6 +70,7 @@ public abstract class FileUtil {
 		}
 	}
 
+	@SuppressWarnings("RedundantCast")
 	public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
 		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
@@ -236,7 +239,12 @@ public abstract class FileUtil {
 			pathStream.sorted(Comparator.reverseOrder())
 					.map(Path::toFile)
 					.filter(File::isDirectory)
-					.forEach(File::delete);
+					.forEach((file) -> {
+						boolean result = file.delete();
+						if (!result) {
+							System.err.println("Could not delete file: " + file.getPath());
+						}
+					});
 		}
 	}
 

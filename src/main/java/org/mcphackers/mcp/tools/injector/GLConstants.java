@@ -265,7 +265,7 @@ public final class GLConstants extends ClassVisitor {
 		for (AbstractInsnNode insn : instructions) {
 			if (insn instanceof MethodInsnNode) {
 				MethodInsnNode invoke = (MethodInsnNode) insn;
-				if (PACKAGES.contains(invoke.owner)) {
+				if (PACKAGES != null && PACKAGES.contains(invoke.owner)) {
 					glCalls.add(invoke);
 				}
 				if (invoke.owner.equals("org/lwjgl/input/Keyboard")) {

@@ -125,21 +125,12 @@ public abstract class Util {
 	public static String getMD5(Path file) throws IOException {
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			InputStream fs = Files.newInputStream(file);
-			BufferedInputStream bs = new BufferedInputStream(fs);
-			byte[] buffer = new byte[1024];
-			int bytesRead;
-
-			while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
-				md.update(buffer, 0, bytesRead);
-			}
-			byte[] digest = md.digest();
+			byte[] digest = getDigest(md, file);
 
 			StringBuilder sb = new StringBuilder();
 			for (byte bite : digest) {
 				sb.append(String.format("%02x", bite & 0xff));
 			}
-			bs.close();
 			return sb.toString();
 		} catch (NoSuchAlgorithmException e) {
 			throw new IOException(e);
@@ -149,7 +140,20 @@ public abstract class Util {
 	public static String getSHA1(Path file) throws IOException {
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-1");
-			InputStream fs = Files.newInputStream(file);
+			byte[] digest = getDigest(md, file);
+
+			StringBuilder sb = new StringBuilder();
+			for (byte bite : digest) {
+				sb.append(Integer.toString((bite & 255) + 256, 16).substring(1).toLowerCase());
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			throw new IOException(e);
+		}
+	}
+
+	public static byte[] getDigest(MessageDigest md, Path file) {
+		try (InputStream fs = Files.newInputStream(file)) {
 			BufferedInputStream bs = new BufferedInputStream(fs);
 			byte[] buffer = new byte[1024];
 			int bytesRead;
@@ -157,17 +161,11 @@ public abstract class Util {
 			while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
 				md.update(buffer, 0, bytesRead);
 			}
-			byte[] digest = md.digest();
-
-			StringBuilder sb = new StringBuilder();
-			for (byte bite : digest) {
-				sb.append(Integer.toString((bite & 255) + 256, 16).substring(1).toLowerCase());
-			}
-			bs.close();
-			return sb.toString();
-		} catch (NoSuchAlgorithmException e) {
-			throw new IOException(e);
+            return md.digest();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
+		return new byte[] {};
 	}
 
 	public static String firstUpperCase(String s) {

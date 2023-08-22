@@ -37,7 +37,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 		try {
 			//TODO read all images from .ico
 			URL resource = MCPFrame.class.getResource("/icon/rmcp.png");
-			image = ImageIO.read(resource);
+			if (resource != null) {
+				image = ImageIO.read(resource);
+			}
 		} catch (Exception ignored) {
 		}
 		ICON = image;
@@ -125,17 +127,13 @@ public class MCPFrame extends JFrame implements WindowListener {
 	 * Reloads version list and reads current version from {@link MCPPaths#VERSION}
 	 */
 	public void reloadVersionList() {
-
 		verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
 		verList = new JComboBox<Object>(new String[]{MCP.TRANSLATOR.translateKey("mcp.versionList.loading")});
-		//verCleanup = mcp.getButton(TaskMode.CLEANUP);
-		//verCleanup.setEnabled(false);
 		verLabel.setEnabled(false);
 		verList.setEnabled(false);
 		topRightContainer.removeAll();
 		topRightContainer.add(this.verLabel);
 		topRightContainer.add(this.verList);
-		//topRightContainer.add(this.verCleanup);
 		operateOnThread(() -> {
 			loadingVersions = true;
 			VersionParser versionParser = VersionParser.getInstance();
@@ -203,7 +201,6 @@ public class MCPFrame extends JFrame implements WindowListener {
 		buttons.forEach(button -> button.setEnabled(button.getEnabled()));
 		if (verList != null && !loadingVersions) verList.setEnabled(true);
 		if (!loadingVersions) verLabel.setEnabled(true);
-		//if(!loadingVersions) verCleanup.setEnabled(true);
 		menuBar.menuOptions.setEnabled(true);
 		menuBar.setComponentsEnabled(true);
 	}
@@ -215,7 +212,6 @@ public class MCPFrame extends JFrame implements WindowListener {
 		buttons.forEach(button -> button.setEnabled(false));
 		if (verList != null) verList.setEnabled(false);
 		verLabel.setEnabled(false);
-		//verCleanup.setEnabled(false);
 		menuBar.menuOptions.setEnabled(false);
 		menuBar.setComponentsEnabled(false);
 	}

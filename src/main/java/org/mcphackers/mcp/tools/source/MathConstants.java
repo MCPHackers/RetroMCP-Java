@@ -40,20 +40,20 @@ public class MathConstants extends Source {
 		replaceValue(9.0D / 256D, "9.0D / 256D");
 	}
 
-	private static String floatCastedToDouble(float value) {
-		return CONSTANTS.put((double) value + "D", "(double)" + value + "F");
+	private static void floatCastedToDouble(float value) {
+		CONSTANTS.put((double) value + "D", "(double)" + value + "F");
 	}
 
-	private static String replaceValue(double value, String replace) {
-		return CONSTANTS.put(value + "D", replace);
+	private static void replaceValue(double value, String replace) {
+		CONSTANTS.put(value + "D", replace);
 	}
 
-	private static String replaceValue(float value, String replace) {
-		return CONSTANTS.put(value + "F", replace);
+	private static void replaceValue(float value, String replace) {
+		CONSTANTS.put(value + "F", replace);
 	}
 
-	private static String replaceValue(int value, String replace) {
-		return CONSTANTS.put(String.valueOf(value), replace);
+	private static void replaceValue(int value, String replace) {
+		CONSTANTS.put(String.valueOf(value), replace);
 	}
 
 	@SuppressWarnings("unused")

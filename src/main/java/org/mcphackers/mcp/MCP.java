@@ -9,7 +9,6 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.TaskStaged;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
-import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
@@ -17,7 +16,6 @@ import org.mcphackers.mcp.tools.versions.json.Version;
 import javax.swing.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -75,7 +73,7 @@ public abstract class MCP {
 	 */
 	public final boolean performTask(TaskMode mode, Side side, boolean completionMsg) {
 		List<Task> tasks = mode.getTasks(this);
-		if (tasks.size() == 0) {
+		if (tasks.isEmpty()) {
 			System.err.println("Performing 0 tasks");
 			return false;
 		}
@@ -136,7 +134,7 @@ public abstract class MCP {
 				result = retresult;
 			}
 		}
-		if (msgs.size() > 0) log("");
+		if (!msgs.isEmpty()) log("");
 		for (String msg : msgs) {
 			log(msg);
 		}

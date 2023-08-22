@@ -31,7 +31,6 @@ public class MenuBar extends JMenuBar {
 	public final Map<Side, JMenuItem> start = new HashMap<>();
 	public final Map<TaskMode, JMenuItem> taskItems = new HashMap<>();
 	public final Map<TaskParameter, JMenuItem> optionItems = new HashMap<>();
-	private final JMenu helpMenu = new JMenu();
 	private final MCPFrame owner;
 	private final MainGUI mcp;
 	private final JMenuItem[] themeItems;
@@ -41,7 +40,8 @@ public class MenuBar extends JMenuBar {
 	protected MenuBar(MCPFrame frame) {
 		owner = frame;
 		mcp = frame.mcp;
-		this.helpMenu.setMnemonic(KeyEvent.VK_H);
+		JMenu helpMenu = new JMenu();
+		helpMenu.setMnemonic(KeyEvent.VK_H);
 		this.mcpMenu.setMnemonic(KeyEvent.VK_M);
 		translatableComponents.put(menuOptions, "options");
 		translatableComponents.put(helpMenu, "task.help");
@@ -163,8 +163,8 @@ public class MenuBar extends JMenuBar {
 		translatableComponents.put(wiki, "mcp.wiki");
 		githubItem.addActionListener(e -> Util.openUrl(MCP.GITHUB_URL));
 		wiki.addActionListener(e -> Util.openUrl(MCP.GITHUB_URL + "/wiki"));
-		this.helpMenu.add(githubItem);
-		this.helpMenu.add(wiki);
+		helpMenu.add(githubItem);
+		helpMenu.add(wiki);
 		add(helpMenu);
 	}
 

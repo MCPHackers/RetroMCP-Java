@@ -28,13 +28,9 @@ public class TaskBuild extends TaskStaged {
 		Path bin = MCPPaths.get(mcp, BIN, side);
 		return new Stage[]{
 				stage(getLocalizedStage("recompile"),
-						() -> {
-							new TaskRecompile(side, mcp, this).doTask();
-						}),
+						() -> new TaskRecompile(side, mcp, this).doTask()),
 				stage(getLocalizedStage("reobf"), 50,
-						() -> {
-							new TaskReobfuscate(side, mcp, this).doTask();
-						}),
+						() -> new TaskReobfuscate(side, mcp, this).doTask()),
 				stage(getLocalizedStage("build"), 70,
 						() -> {
 							Side[] sides = side == Side.MERGED ? new Side[]{Side.CLIENT, Side.SERVER} : new Side[]{side};
