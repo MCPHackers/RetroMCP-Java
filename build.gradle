@@ -86,9 +86,8 @@ tasks.register('jarCLI', ShadowJar) {
 	archiveClassifier = 'CLI'
 	from sourceSets.main.output
 	configurations = [project.configurations.shadow]
-	minimize {
-		exclude(dependency('com.formdev:.*:.*'))
-	}
+	minimize()
+	exclude('com.formdev:.*:.*')
 	exclude('META-INF/**.RSA')
 	exclude('META-INF/**.SF')
 }
