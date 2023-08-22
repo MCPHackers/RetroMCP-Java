@@ -34,9 +34,8 @@ public abstract class MCP {
 	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
 	private static final PluginManager pluginManager = new PluginManager();
-	public static Theme THEME = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
 
-	public Options options = new Options(Paths.get("options.cfg"));
+	public Options options = new Options(this, Paths.get("options.cfg"));
 	public static final Logger LOGGER = Logger.getLogger("RMCP");
 	protected boolean isGUI = false;
 

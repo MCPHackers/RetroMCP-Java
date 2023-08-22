@@ -87,7 +87,8 @@ tasks.register('jarCLI', ShadowJar) {
 	from sourceSets.main.output
 	configurations = [project.configurations.shadow]
 	minimize()
-	exclude('com.formdev:.*:.*')
+	exclude('com/formdev/**/**')
+	exclude('META-INF/versions/**/**')
 	exclude('META-INF/**.RSA')
 	exclude('META-INF/**.SF')
 }

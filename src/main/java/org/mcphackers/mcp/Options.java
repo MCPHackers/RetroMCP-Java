@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tasks.mode.TaskParameterMap;
@@ -17,21 +18,22 @@ import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 
 public class Options {
-
+	private final MCP mcp;
 	private final Map<TaskParameter, Object> options = new HashMap<>();
 	public Path saveFile;
 	public Side side = Side.ANY;
 	public Language lang;
-	public Theme theme = MCP.THEME;
+	public Theme theme;
 
-	public Options() {
+	public Options(MCP mcp) {
+		this.mcp = mcp;
 		for (TaskParameter param : TaskParameter.VALUES) {
 			setDefault(param);
 		}
 	}
 
-	public Options(Path file) {
-		this();
+	public Options(MCP mcp, Path file) {
+		this(mcp);
 		saveFile = file;
 		if (Files.exists(saveFile)) {
 			load(saveFile);
@@ -57,7 +59,9 @@ public class Options {
 						}
 					} else if (key.equals("theme")) {
 						try {
-							theme = Theme.THEMES_MAP.get(value);
+							if (this.mcp instanceof MainGUI) {
+								theme = Theme.THEMES_MAP.get(value);
+							}
 						} catch (IllegalArgumentException ignored) {
 						}
 					} else if (key.equals("versionUrl")) {
@@ -77,8 +81,8 @@ public class Options {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
-				if (MCP.THEME != null) {
-					writer.append("theme").append('=').append(MCP.THEME.themeClass).append('\n');
+				if (this.mcp instanceof MainGUI && MainGUI.THEME != null) {
+					writer.append("theme").append('=').append(MainGUI.THEME.themeClass).append('\n');
 				}
 				writer.append("versionUrl").append('=').append(VersionParser.mappingsJson).append('\n');
 				for (Entry<TaskParameter, Object> entry : options.entrySet()) {

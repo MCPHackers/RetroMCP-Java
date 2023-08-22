@@ -56,6 +56,7 @@ import org.mcphackers.mcp.tools.versions.json.Version;
  * GUI implementation of MCP
  */
 public class MainGUI extends MCP {
+	public static Theme THEME = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
 	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 	public static final String[] TABS = {"task.decompile", "task.recompile", "task.reobfuscate", "task.build", "options.running"};
 	public static final TaskParameter[][] TAB_PARAMETERS = {{TaskParameter.PATCHES, TaskParameter.INDENTATION_STRING, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_OVERRIDE, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS}, {TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME}, {TaskParameter.OBFUSCATION, TaskParameter.EXCLUDED_CLASSES}, {TaskParameter.FULL_BUILD}, {TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}};
@@ -259,7 +260,7 @@ public class MainGUI extends MCP {
 			Path p = file.toPath();
 			if (Files.isDirectory(p)) {
 				workingDir = p;
-				options = new Options(MCPPaths.get(this, "options.cfg"));
+				options = new Options(this, MCPPaths.get(this, "options.cfg"));
 				options.save();
 				frame.reloadVersionList();
 				frame.updateButtonState();
