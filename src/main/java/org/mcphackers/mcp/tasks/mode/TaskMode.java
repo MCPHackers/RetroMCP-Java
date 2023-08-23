@@ -51,7 +51,7 @@ public class TaskMode {
 					TaskParameter.TARGET_VERSION,
 					TaskParameter.JAVA_HOME,
 					TaskParameter.IGNORED_PACKAGES,
-					TaskParameter.INDENTATION_STRING,
+					TaskParameter.FERNFLOWER_OPTIONS,
 					TaskParameter.PATCHES,
 					TaskParameter.SIDE
 			})

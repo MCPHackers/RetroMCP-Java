@@ -24,7 +24,7 @@ public class Decompiler implements IBytecodeProvider {
 	private final Path source;
 	private final List<Path> libraries;
 	private final Path destination;
-	private final Map<String, Object> mapOptions = new HashMap<>();
+	private final Map<String, Object> mapOptions;
 	private final ZipFileCache openZips = new ZipFileCache();
 
 	public Decompiler(ProgressListener listener, Path source, Path out, List<Path> libs, MCP mcp) {
@@ -32,12 +32,20 @@ public class Decompiler implements IBytecodeProvider {
 		this.libraries = libs;
 		this.destination = out;
 		this.log = new DecompileLogger(listener);
-		mapOptions.put(IFernflowerPreferences.NO_COMMENT_OUTPUT, "1");
-		mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS) ? "1" : "0");
-		mapOptions.put(IFernflowerPreferences.ASCII_STRING_CHARACTERS, "1");
-		mapOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_OVERRIDE) ? "1" : "0");
-		mapOptions.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1");
-		mapOptions.put(IFernflowerPreferences.INDENT_STRING, mcp.getOptions().getStringParameter(TaskParameter.INDENTATION_STRING));
+        String ffOptions = mcp.getOptions().getStringParameter(TaskParameter.FERNFLOWER_OPTIONS);
+		String[] splitTokens = ffOptions.split(",");
+		this.mapOptions = new HashMap<>();
+		for (String split : splitTokens) {
+			String[] keyPair = split.split("=");
+			if (keyPair.length > 1) {
+				String key = keyPair[0].trim().replace("{", "");
+				String value = keyPair[1].trim().replace("}", "");
+				this.mapOptions.put(key, value);
+			} else {
+				System.out.println("WHAT!");
+			}
+		}
+		this.mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS) ? "1" : "0");
 	}
 
 	public void decompile() throws IOException {
