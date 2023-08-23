@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -74,6 +74,8 @@ shadowJar {
 		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainGUI'
 	}
 	archiveClassifier = 'GUI'
+
+	configurations = [project.configurations.shadow]
     minimize {
 		exclude(dependency('com.formdev:.*:.*'))
 	}

@@ -113,8 +113,8 @@ public class MenuBar extends JMenuBar {
 		JMenu langMenu = new JMenu();
 		translatableComponents.put(langMenu, "options.language");
 		int i = 0;
-		langItems = new JMenuItem[Language.VALUES.length];
-		for (Language lang : Language.VALUES) {
+		langItems = new JMenuItem[Language.values().length];
+		for (Language lang : Language.values()) {
 			JMenuItem langItem = new JRadioButtonMenuItem(MCP.TRANSLATOR.getLangName(lang));
 			langItem.addActionListener(a -> {
 				mcp.changeLanguage(lang);

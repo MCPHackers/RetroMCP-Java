@@ -15,8 +15,6 @@ public enum Language {
 	CZECH("cs_CZ"),
 	NORSK_BOKMAL("nb_NO");
 
-	public static final Language[] VALUES = Language.values();
-
 	/**
 	 * Internal name
 	 */
@@ -31,7 +29,7 @@ public enum Language {
 	 * @return A language enum from a locale
 	 */
 	public static Language get(Locale locale) {
-		for (Language lang : VALUES) {
+		for (Language lang : Language.values()) {
 			if (lang.name.equals(locale.toString())) {
 				return lang;
 			}
