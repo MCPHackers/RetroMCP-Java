@@ -39,7 +39,7 @@ public class Decompiler implements IBytecodeProvider {
 			String[] keyPair = split.split("=");
 			if (keyPair.length > 1) {
 				String key = keyPair[0].trim().replace("{", "");
-				String value = keyPair[1].trim().replace("}", "");
+				String value = keyPair[1].replace("}", "");
 				this.mapOptions.put(key, value);
 			} else {
 				System.out.println("WHAT!");
