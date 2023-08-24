@@ -22,7 +22,7 @@ public abstract class Source {
 	public static final Pattern PACKAGE = Pattern.compile("package ([.*\\w]+);(\\r|)\\n");
 	public static final Pattern IMPORT = Pattern.compile("import ([.*\\w]+);((\\r|)\\n)+");
 
-	public static void modify(Path src, List<Source> modify) throws IOException {
+	public static void modify(Path src, List<? extends Source> modify) throws IOException {
 		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {

@@ -10,6 +10,7 @@ import org.mcphackers.mcp.tools.injector.GLConstants;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.mcp.tools.project.EclipseProjectWriter;
 import org.mcphackers.mcp.tools.project.IdeaProjectWriter;
+import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
 import org.mcphackers.rdi.injector.transform.Transform;
@@ -77,6 +78,8 @@ public class TaskDecompile extends TaskStaged {
 			if (mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
 				TaskApplyPatch.patch(this, ffOut, ffOut, patchesPath);
 			}
+
+			Source.modify(ffOut, MCP.SOURCE_ADAPTERS);
 		}), stage(getLocalizedStage("copysrc"), 90, () -> {
 			if (!mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_RESOURCES)) {
 				for (Path p : FileUtil.walkDirectory(ffOut, p -> !Files.isDirectory(p) && !p.getFileName().toString().endsWith(".java"))) {

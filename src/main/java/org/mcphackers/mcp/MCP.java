@@ -10,6 +10,7 @@ import org.mcphackers.mcp.tasks.TaskStaged;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
@@ -38,6 +39,8 @@ public abstract class MCP {
 	public Options options = new Options(this, Paths.get("options.cfg"));
 	public static final Logger LOGGER = Logger.getLogger("RMCP");
 	protected boolean isGUI = false;
+
+	public static final List<? extends Source> SOURCE_ADAPTERS = new ArrayList<>();
 
 	protected MCP() {
 		addLogger(LOGGER);
