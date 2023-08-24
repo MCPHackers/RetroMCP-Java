@@ -35,6 +35,15 @@ public class IdeaProjectWriter implements ProjectWriter {
 		String projectName = "Minecraft " + (side == Task.Side.CLIENT ? "Client" : side == Task.Side.SERVER ? "Server" : side == Task.Side.MERGED ? "Merged" : "Project");
 
 		String moduleName = projectName.toLowerCase().replace(" ", "_");
+		this.writeProjectIML(mcp, version, moduleName, proj);
+		this.writeModuleXML(mcp, moduleName, modulesXML);
+		this.writeMiscXML(miscXML);
+		// TODO: Support for server args?
+		this.writeWorkspace(mcp, side, projectName, clientArgs, workspaceXML);
+		this.writeLibraries(mcp, proj, version);
+	}
+
+	public void writeProjectIML(MCP mcp, Version version, String moduleName, Path proj) throws IOException {
 		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(moduleName + ".iml")))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("module type=\"JAVA_MODULE\" version=\"4\"");
@@ -64,7 +73,9 @@ public class IdeaProjectWriter implements ProjectWriter {
 			writer.closeAttribute("component");
 			writer.closeAttribute("module");
 		}
+	}
 
+	public void writeModuleXML(MCP mcp, String moduleName, Path modulesXML) throws IOException {
 		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(modulesXML))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("project version=\"4\"");
@@ -77,7 +88,9 @@ public class IdeaProjectWriter implements ProjectWriter {
 
 			writer.closeAttribute("project");
 		}
+	}
 
+	public void writeMiscXML(Path miscXML) throws IOException {
 		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(miscXML))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("project version=\"4\"");
@@ -86,10 +99,6 @@ public class IdeaProjectWriter implements ProjectWriter {
 			writer.closeAttribute("component");
 			writer.closeAttribute("project");
 		}
-
-		// TODO: Support for server args?
-		this.writeWorkspace(mcp, side, projectName, clientArgs, workspaceXML);
-		this.writeLibraries(mcp, proj, version);
 	}
 
 	public void writeWorkspace(MCP mcp, Task.Side launchSide, String projectName, String args, Path workspaceXML) throws IOException {
