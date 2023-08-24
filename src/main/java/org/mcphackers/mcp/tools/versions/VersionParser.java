@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.mcphackers.mcp.tools.JSONUtil;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.json.VersionMetadata;
 
@@ -66,7 +67,7 @@ public class VersionParser {
 			connect.setConnectTimeout(30000);
 			in = connect.getInputStream();
 		}
-		return Util.parseJSONArray(in);
+		return JSONUtil.parseJSONArray(in);
 	}
 
 	/**

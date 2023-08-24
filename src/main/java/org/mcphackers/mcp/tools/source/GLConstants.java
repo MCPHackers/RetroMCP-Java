@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mcphackers.mcp.tools.JSONUtil;
 import org.mcphackers.mcp.tools.Util;
 
 public class GLConstants extends Source {
@@ -28,7 +29,7 @@ public class GLConstants extends Source {
 
 	private static JSONObject getJson() {
 		try {
-			return Util.parseJSON(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
+			return JSONUtil.parseJSON(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
 		} catch (JSONException | IOException e) {
 			cause = e;
 			return null;

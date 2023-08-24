@@ -80,23 +80,6 @@ public abstract class Util {
 		}
 	}
 
-	public static JSONObject parseJSONFile(Path path) throws JSONException, IOException {
-		String content = new String(Files.readAllBytes(path));
-		return new JSONObject(content);
-	}
-
-	public static JSONObject parseJSON(InputStream stream) throws JSONException, IOException {
-		byte[] bytes = readAllBytes(stream);
-		String content = new String(bytes);
-		return new JSONObject(content);
-	}
-
-	public static JSONArray parseJSONArray(InputStream stream) throws JSONException, IOException {
-		byte[] bytes = readAllBytes(stream);
-		String content = new String(bytes);
-		return new JSONArray(content);
-	}
-
 	public static byte[] readAllBytes(InputStream inputStream) throws IOException {
 		final int bufLen = 4 * 0x400; // 4KB
 		byte[] buf = new byte[bufLen];

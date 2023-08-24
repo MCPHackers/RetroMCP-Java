@@ -12,6 +12,7 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.JSONUtil;
 import org.mcphackers.mcp.tools.Util;
 
 public class TaskDownloadUpdate extends TaskStaged {
@@ -28,7 +29,7 @@ public class TaskDownloadUpdate extends TaskStaged {
 				stage(getLocalizedStage("downloadupdate"), () -> {
 					URL updateURL = new URL(API);
 					InputStream in = updateURL.openStream();
-					JSONObject releaseJson = Util.parseJSON(in);
+					JSONObject releaseJson = JSONUtil.parseJSON(in);
 					String latestVersion = releaseJson.getString("tag_name");
 					String notes = releaseJson.getString("body");
 					if (!latestVersion.equals(MCP.VERSION)) {

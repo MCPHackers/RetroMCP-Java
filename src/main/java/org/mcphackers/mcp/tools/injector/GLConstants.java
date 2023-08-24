@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mcphackers.mcp.tools.JSONUtil;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.rdi.injector.visitors.ClassVisitor;
 import org.mcphackers.rdi.util.IdentifyCall;
@@ -35,10 +36,10 @@ public final class GLConstants extends ClassVisitor {
 	private static final char[] OPERATORS = {'|', '&', '^'};
 
 	static {
-		JSONObject json = getJson();
+		JSONObject json = JSONUtil.getJSON(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
 		if (json != null) {
 			CONSTANTS = getConstants(json.optJSONArray("CONSTANTS"));
-			CONSTANTS_KEYBOARD = toMap(json.optJSONObject("CONSTANTS_KEYBOARD"));
+			CONSTANTS_KEYBOARD = JSONUtil.toMap(json.optJSONObject("CONSTANTS_KEYBOARD"));
 			PACKAGES = getPackages(CONSTANTS);
 			INIT = true;
 		} else {
@@ -165,16 +166,7 @@ public final class GLConstants extends ClassVisitor {
 		return -1;
 	}
 
-	private static JSONObject getJson() {
-		try {
-			return Util.parseJSON(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
-		} catch (JSONException | IOException e) {
-			return null;
-		}
-	}
-
 	// Private methods for initialization
-
 	private static List<Pair<Map<String, List<String>>, Map<String, Map<Integer, String>>>> getConstants(JSONArray jsonArray) {
 		if (jsonArray == null || jsonArray.isEmpty()) {
 			return Collections.emptyList();
@@ -193,7 +185,7 @@ public final class GLConstants extends ClassVisitor {
 				String key = keys.next();
 				JSONArray value = methodKeys.optJSONArray(key);
 				if (value == null) continue;
-				map.put(key, toList(value));
+				map.put(key, JSONUtil.toList(value));
 			}
 
 			Map<String, Map<Integer, String>> map2 = new HashMap<>();
@@ -202,42 +194,10 @@ public final class GLConstants extends ClassVisitor {
 				String key = keys2.next();
 				JSONObject value = methodValues.optJSONObject(key);
 				if (value == null) continue;
-				map2.put(key, toMap(value));
+				map2.put(key, JSONUtil.toMap(value));
 			}
 
 			list.add(Pair.of(map, map2));
-		}
-		return list;
-	}
-
-	private static Map<Integer, String> toMap(JSONObject jsonObject) {
-		if (jsonObject == null) {
-			return Collections.emptyMap();
-		}
-		Map<Integer, String> map = new HashMap<>();
-		Iterator<String> keys = jsonObject.keys();
-		while (keys.hasNext()) {
-			String key = keys.next();
-			String value = jsonObject.optString(key, null);
-			if (value == null) continue;
-			try {
-				int i = Integer.parseInt(key);
-				map.put(i, value);
-			} catch (NumberFormatException ignored) {
-			}
-		}
-		return map;
-	}
-
-	private static List<String> toList(JSONArray packages) {
-		if (packages == null) {
-			return Collections.emptyList();
-		}
-		List<String> list = new ArrayList<>();
-		for (int i = 0; i < packages.length(); i++) {
-			String s = packages.optString(i, null);
-			if (s == null) continue;
-			list.add(s);
 		}
 		return list;
 	}
