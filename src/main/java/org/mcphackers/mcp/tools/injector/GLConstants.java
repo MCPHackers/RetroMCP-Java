@@ -1,6 +1,5 @@
 package org.mcphackers.mcp.tools.injector;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,10 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.mcphackers.mcp.tools.JSONUtil;
-import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.rdi.injector.visitors.ClassVisitor;
 import org.mcphackers.rdi.util.IdentifyCall;
 import org.mcphackers.rdi.util.Pair;
