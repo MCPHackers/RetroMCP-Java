@@ -60,60 +60,39 @@ public class TaskDecompile extends TaskStaged {
 		final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 		final Path patchesPath = MCPPaths.get(mcp, PATCHES, side);
 
-		return new Stage[]{
-				stage(getLocalizedStage("prepare"), 0, this::prepare),
-				stage(getLocalizedStage("rdi"), 2, this::setupRDI),
-				stage(getLocalizedStage("decompile"), this::prepare),
-				stage(getLocalizedStage("patch"), 88, () -> this.patch(patchesPath, rdiOut)),
-				stage(getLocalizedStage("copysrc"), 90, () -> this.copySrc(ffOut, srcPath)),
-				stage(getLocalizedStage("recompile"), this::recompile)
-		};
-	}
-
-	public void prepare() throws IOException {
-		FileUtil.cleanDirectory(MCPPaths.get(mcp, PROJECT, side));
-		FileUtil.createDirectories(MCPPaths.get(mcp, JARS_DIR, side));
-		FileUtil.createDirectories(MCPPaths.get(mcp, MD5_DIR, side));
-		Files.createDirectories(MCPPaths.get(mcp, GAMEDIR, side));
-	}
-
-	public void setupRDI() throws IOException {
-		ClassStorage storage = applyInjector();
-		for (ClassNode node : storage) {
-			classVersion = Math.max(classVersion, node.version);
-		}
-	}
-
-	public void decompile(Path rdiOut, Path ffOut) throws IOException {
-		new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp).decompile();
-		new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
-		new IdeaProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
-	}
-
-	public void patch(Path ffOut, Path patchesPath) throws IOException {
-		if (mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
-			TaskApplyPatch.patch(this, ffOut, ffOut, patchesPath);
-		}
-
-		Source.modify(ffOut, MCP.SOURCE_ADAPTERS);
-	}
-
-	public void copySrc(Path ffOut, Path srcPath) throws IOException {
-		if (!mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_RESOURCES)) {
-			for (Path p : FileUtil.walkDirectory(ffOut, p -> !Files.isDirectory(p) && !p.getFileName().toString().endsWith(".java"))) {
-				Files.delete(p);
+		return new Stage[]{stage(getLocalizedStage("prepare"), 0, () -> {
+			FileUtil.cleanDirectory(MCPPaths.get(mcp, PROJECT, side));
+			FileUtil.createDirectories(MCPPaths.get(mcp, JARS_DIR, side));
+			FileUtil.createDirectories(MCPPaths.get(mcp, MD5_DIR, side));
+			Files.createDirectories(MCPPaths.get(mcp, GAMEDIR, side));
+		}), stage(getLocalizedStage("rdi"), 2, () -> {
+			ClassStorage storage = applyInjector();
+			for (ClassNode node : storage) {
+				classVersion = Math.max(classVersion, node.version);
 			}
-		}
-		Files.createDirectories(srcPath);
-		FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
-		if (mcp.getOptions().getBooleanParameter(TaskParameter.OUTPUT_SRC)) {
-			FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
-			FileUtil.copyDirectory(ffOut, srcPath);
-		}
-	}
+		}), stage(getLocalizedStage("decompile"), () -> {
+			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp).decompile();
+			new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
+			new IdeaProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
+		}), stage(getLocalizedStage("patch"), 88, () -> {
+			if (mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
+				TaskApplyPatch.patch(this, ffOut, ffOut, patchesPath);
+			}
 
-	public void recompile() throws Exception {
-		new TaskUpdateMD5(side, mcp, this).doTask();
+			Source.modify(ffOut, MCP.SOURCE_ADAPTERS);
+		}), stage(getLocalizedStage("copysrc"), 90, () -> {
+			if (!mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_RESOURCES)) {
+				for (Path p : FileUtil.walkDirectory(ffOut, p -> !Files.isDirectory(p) && !p.getFileName().toString().endsWith(".java"))) {
+					Files.delete(p);
+				}
+			}
+			Files.createDirectories(srcPath);
+			FileUtil.compress(ffOut, MCPPaths.get(mcp, SOURCE_JAR, side));
+			if (mcp.getOptions().getBooleanParameter(TaskParameter.OUTPUT_SRC)) {
+				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
+				FileUtil.copyDirectory(ffOut, srcPath);
+			}
+		}), stage(getLocalizedStage("recompile"), () -> new TaskUpdateMD5(side, mcp, this).doTask()),};
 	}
 
 	public ClassStorage applyInjector() throws IOException {
