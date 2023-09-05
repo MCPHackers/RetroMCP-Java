@@ -42,6 +42,7 @@ import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.Theme;
 import org.mcphackers.mcp.gui.MCPFrame;
 import org.mcphackers.mcp.gui.TaskButton;
+import org.mcphackers.mcp.gui.TextAreaContextMenu;
 import org.mcphackers.mcp.gui.TextAreaOutputStream;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
@@ -83,6 +84,7 @@ public class MainGUI extends MCP {
 		origOut = System.err;
 		interceptor = new TextAreaOutputStream(textPane, origOut);
 		System.setErr(interceptor);
+		this.textPane.setComponentPopupMenu(new TextAreaContextMenu(this));
 
 		workingDir = dir;
 		if (options.lang != null) {
