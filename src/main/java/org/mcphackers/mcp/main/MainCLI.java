@@ -296,17 +296,19 @@ public class MainCLI extends MCP {
 
 	@Override
 	public void showMessage(String title, String msg, int type) {
+		Ansi typeName = new Ansi();
 		switch (type) {
 			case Task.INFO:
-				LOGGER.info(msg);
+				typeName = typeName.fgBlue().a("INFO").fgDefault();
 				break;
 			case Task.WARNING:
-				LOGGER.warning(msg);
+				typeName = typeName.fgYellow().a("WARNING").fgDefault();
 				break;
 			case Task.ERROR:
-				LOGGER.severe(msg);
+				typeName = typeName.fgRed().a("ERROR").fgDefault();
 				break;
 		}
+		log("[" + typeName + "]: " + msg);
 	}
 
 	@Override

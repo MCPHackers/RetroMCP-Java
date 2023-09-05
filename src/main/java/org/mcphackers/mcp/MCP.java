@@ -1,5 +1,17 @@
 package org.mcphackers.mcp;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.mcphackers.mcp.plugin.MCPPlugin;
 import org.mcphackers.mcp.plugin.MCPPlugin.MCPEvent;
 import org.mcphackers.mcp.plugin.MCPPlugin.TaskEvent;
@@ -14,21 +26,6 @@ import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
-import javax.swing.*;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 public abstract class MCP {
 
 	public static final String VERSION = "v1.0.1";
@@ -37,13 +34,11 @@ public abstract class MCP {
 	private static final PluginManager pluginManager = new PluginManager();
 
 	public Options options = new Options(this, Paths.get("options.cfg"));
-	public static final Logger LOGGER = Logger.getLogger("RMCP");
 	protected boolean isGUI = false;
 
 	public static final List<? extends Source> SOURCE_ADAPTERS = new ArrayList<>();
 
 	protected MCP() {
-		addLogger(LOGGER);
 		Update.attemptToDeleteUpdateJar();
 		changeLanguage(Language.get(Locale.getDefault()));
 		pluginManager.discoverPlugins(this);
@@ -326,7 +321,7 @@ public abstract class MCP {
 	 * @param lang
 	 */
 	public final void changeLanguage(Language lang) {
-		LOGGER.info("Changing language to " + lang.name);
+		System.out.println("Changing language to " + lang.name);
 		TRANSLATOR.changeLang(lang);
 		for (Map.Entry<String, MCPPlugin> entry : pluginManager.getLoadedPlugins().entrySet()) {
 			TRANSLATOR.readTranslation(entry.getValue().getClass());
@@ -340,19 +335,6 @@ public abstract class MCP {
 		} catch (IOException e) {
 			// Default to version libraries
 			return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
-		}
-	}
-
-	public static void addLogger(Logger logger) {
-		// Setup logger
-		try {
-			FileHandler fileHandler = new FileHandler("rmcp.log");
-			LOGGER.addHandler(fileHandler);
-			SimpleFormatter formatter = new SimpleFormatter();
-			fileHandler.setFormatter(formatter);
-			LOGGER.setLevel(Level.INFO);
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		}
 	}
 }

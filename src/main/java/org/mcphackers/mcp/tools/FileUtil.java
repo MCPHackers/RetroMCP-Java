@@ -1,7 +1,5 @@
 package org.mcphackers.mcp.tools;
 
-import org.mcphackers.mcp.MCP;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -241,12 +239,7 @@ public abstract class FileUtil {
 			pathStream.sorted(Comparator.reverseOrder())
 					.map(Path::toFile)
 					.filter(File::isDirectory)
-					.forEach((file) -> {
-						boolean result = file.delete();
-						if (!result) {
-							MCP.LOGGER.warning("Could not delete file: " + file.getPath());
-						}
-					});
+					.forEach(File::delete);
 		}
 	}
 

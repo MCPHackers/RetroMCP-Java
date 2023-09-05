@@ -30,7 +30,7 @@ public class PluginManager {
 			if (Files.exists(pluginsDir) && Files.isDirectory(pluginsDir)) {
 				List<Path> pluginCandidates = FileUtil.getPathsOfType(pluginsDir, ".jar", ".zip");
 				for (Path pluginCandidate : pluginCandidates) {
-					MCP.LOGGER.info("Adding " + pluginCandidate.getFileName() + " to classpath!");
+					System.out.println("Adding " + pluginCandidate.getFileName() + " to classpath!");
 					pluginClassLoader.addURL(pluginCandidate.toUri().toURL());
 				}
 			}

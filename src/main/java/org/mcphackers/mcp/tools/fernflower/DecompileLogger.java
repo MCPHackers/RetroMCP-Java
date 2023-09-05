@@ -15,12 +15,8 @@ public class DecompileLogger extends IFernflowerLogger {
 
 	@Override
 	public void writeMessage(String message, Severity severity) {
-		if (severity.equals(Severity.INFO)) {
-			MCP.LOGGER.info(message);
-		} else if (severity.equals(Severity.WARN)) {
-			MCP.LOGGER.warning(message);
-		} else if (severity.equals(Severity.ERROR)) {
-			MCP.LOGGER.severe(message);
+		if(severity.ordinal() >= Severity.WARN.ordinal()) {
+//			System.out.println(message);
 		}
     }
 

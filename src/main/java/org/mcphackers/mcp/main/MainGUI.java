@@ -152,7 +152,7 @@ public class MainGUI extends MCP {
 
 	@Override
 	public void log(String msg) {
-		LOGGER.info(msg);
+		System.out.println(msg);
 	}
 
 	@Override

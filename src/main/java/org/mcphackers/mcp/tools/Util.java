@@ -37,7 +37,7 @@ public abstract class Util {
 		BufferedReader err = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 		BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 		while (proc.isAlive()) {
-			while (in.ready()) MCP.LOGGER.info(in.readLine());
+			while (in.ready()) System.out.println(in.readLine());
 			while (err.ready()) System.err.println(err.readLine());
 		}
 		in.close();
