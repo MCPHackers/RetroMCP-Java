@@ -37,19 +37,22 @@ public class EclipseProjectWriter implements ProjectWriter {
 			writer.writeAttribute("attribute name=\"org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY\" value=\"" + projectName + "/libraries/natives\"");
 			writer.closeAttribute("attributes");
 			writer.closeAttribute("classpathentry");
-			for (DependDownload dependencyDownload : version.libraries) {
-				if (Rule.apply(dependencyDownload.rules)) {
-					String[] path = dependencyDownload.name.split(":");
-					String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
-					String src = null;
-					if (dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
-						src = dependencyDownload.downloads.classifiers.sources.path;
-					}
-					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
-						if (src != null) {
-							writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\" sourcepath=\"libraries/" + src + "\"");
-						} else {
-							writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\"");
+			// TODO: Implement proper client/server side libraries
+			if (!side.equals(Side.SERVER)) {
+				for (DependDownload dependencyDownload : version.libraries) {
+					if (Rule.apply(dependencyDownload.rules)) {
+						String[] path = dependencyDownload.name.split(":");
+						String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
+						String src = null;
+						if (dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
+							src = dependencyDownload.downloads.classifiers.sources.path;
+						}
+						if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
+							if (src != null) {
+								writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\" sourcepath=\"libraries/" + src + "\"");
+							} else {
+								writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\"");
+							}
 						}
 					}
 				}
