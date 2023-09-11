@@ -9,6 +9,7 @@ import javax.tools.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -142,7 +143,7 @@ public class TaskRecompile extends TaskStaged {
 	}
 
 	public void recompile(JavaCompiler compiler, DiagnosticCollector<JavaFileObject> ds, Iterable<File> src, Iterable<String> recompileOptions) throws IOException, RuntimeException {
-		StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null);
+		StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, StandardCharsets.UTF_8);
 		Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(src);
 		JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, recompileOptions, null, sources);
 		mgr.close();
