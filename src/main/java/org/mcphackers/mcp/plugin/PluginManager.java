@@ -37,7 +37,7 @@ public class PluginManager {
 
 			ServiceLoader<MCPPlugin> serviceLoader = ServiceLoader.load(MCPPlugin.class, pluginClassLoader);
 			for (MCPPlugin plugin : serviceLoader) {
-				plugin.init();
+				plugin.init(mcp);
 				this.loadedPlugins.put(plugin.pluginId(), plugin);
 
 				// Load translations from plugins

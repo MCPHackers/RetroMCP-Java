@@ -14,7 +14,7 @@ public interface MCPPlugin {
 	/**
 	 * Called when the plugin is loaded
 	 */
-	void init();
+	void init(MCP mcp);
 
 	/**
 	 * Called whenever a certain task event happens inside of task instance

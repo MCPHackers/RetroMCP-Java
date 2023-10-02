@@ -18,7 +18,7 @@ public class TestPlugin implements MCPPlugin {
     }
 
     @Override
-    public void init() {
+    public void init(MCP mcp) {
 		logger.info("Test plugin has initialized!");
 		TaskMode mergeMappingsTask = new TaskModeBuilder()
 				.setName("mergemappings")
