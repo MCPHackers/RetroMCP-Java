@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
+import static org.mcphackers.mcp.tools.Util.enqueueRunnable;
 
 public class MenuBar extends JMenuBar {
 	private static final long serialVersionUID = 5993064672172544233L;
@@ -48,13 +48,13 @@ public class MenuBar extends JMenuBar {
 		initOptions();
 		JMenuItem update = new JMenuItem();
 		translatableComponents.put(update, "mcp.checkUpdate");
-		update.addActionListener(a -> operateOnThread(() -> mcp.performTask(TaskMode.UPDATE_MCP, Side.ANY, false)));
+		update.addActionListener(a -> enqueueRunnable(() -> mcp.performTask(TaskMode.UPDATE_MCP, Side.ANY, false)));
 		Side[] sides = {Side.CLIENT, Side.SERVER};
 		for (Side side : sides) {
 			JMenuItem start = new JMenuItem();
 			translatableComponents.put(start, side == Side.CLIENT ? "mcp.startClient" : "mcp.startServer");
 			togglableComponents.add(start);
-			start.addActionListener(a -> operateOnThread(() -> {
+			start.addActionListener(a -> enqueueRunnable(() -> {
 				mcp.performTask(TaskMode.START, side, false);
 				reloadSide();
 			}));
@@ -77,7 +77,7 @@ public class MenuBar extends JMenuBar {
 		});
 		JMenuItem changeDir = new JMenuItem();
 		translatableComponents.put(changeDir, "mcp.changeDir");
-		changeDir.addActionListener(a -> operateOnThread(() -> {
+		changeDir.addActionListener(a -> enqueueRunnable(() -> {
 					mcp.changeWorkingDirectory();
 					reloadOptions();
 					reloadSide();

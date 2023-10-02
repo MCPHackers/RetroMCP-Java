@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.main;
 
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
+import static org.mcphackers.mcp.tools.Util.enqueueRunnable;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -303,7 +303,7 @@ public class MainGUI extends MCP {
 	public TaskButton getButton(TaskMode task) {
 		TaskButton button;
 		if (task == TaskMode.DECOMPILE) {
-			ActionListener defaultActionListener = event -> operateOnThread(() -> {
+			ActionListener defaultActionListener = event -> enqueueRunnable(() -> {
 				int response = JOptionPane.YES_OPTION;
 				if (TaskMode.RECOMPILE.isAvailable(this, getSide())) {
 					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
@@ -322,7 +322,7 @@ public class MainGUI extends MCP {
 			});
 			button = new TaskButton(this, task, defaultActionListener);
 		} else if (task == TaskMode.CLEANUP) {
-			ActionListener defaultActionListener = event -> operateOnThread(() -> {
+			ActionListener defaultActionListener = event -> enqueueRunnable(() -> {
 				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmCleanup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 				if (response == JOptionPane.YES_OPTION) {
 					performTask(task, Side.ANY);
@@ -330,7 +330,7 @@ public class MainGUI extends MCP {
 			});
 			button = new TaskButton(this, task, defaultActionListener);
 		} else if (task == TaskMode.UPDATE_MD5) {
-			ActionListener defaultActionListener = event -> operateOnThread(() -> {
+			ActionListener defaultActionListener = event -> enqueueRunnable(() -> {
 				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmUpdateMD5"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 				if (response == JOptionPane.YES_OPTION) {
 					performTask(task, getSide());

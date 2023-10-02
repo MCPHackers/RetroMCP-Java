@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
+import static org.mcphackers.mcp.tools.Util.enqueueRunnable;
 
 public class MCPFrame extends JFrame implements WindowListener {
 
@@ -134,7 +134,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		topRightContainer.removeAll();
 		topRightContainer.add(this.verLabel);
 		topRightContainer.add(this.verList);
-		operateOnThread(() -> {
+		enqueueRunnable(() -> {
 			loadingVersions = true;
 			VersionParser versionParser = VersionParser.getInstance();
 			if (versionParser.failureCause != null) {
@@ -153,7 +153,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 
 					@Override
 					public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-						operateOnThread(() -> mcp.setupVersion((VersionData) verList.getSelectedItem()));
+						enqueueRunnable(() -> mcp.setupVersion((VersionData) verList.getSelectedItem()));
 					}
 
 					@Override

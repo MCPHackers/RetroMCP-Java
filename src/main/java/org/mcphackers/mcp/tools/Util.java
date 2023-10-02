@@ -16,6 +16,9 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +26,7 @@ import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
 
 public abstract class Util {
+	public static final ExecutorService SINGLE_THREAD_EXECUTOR = Executors.newSingleThreadExecutor();
 
 	public static int runCommand(String[] cmd, Path dir, boolean killOnShutdown) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
@@ -61,6 +65,10 @@ public abstract class Util {
 		Thread thread = new Thread(function);
 		thread.start();
 		return thread;
+	}
+
+	public static Future<?> enqueueRunnable(Runnable function) {
+		return SINGLE_THREAD_EXECUTOR.submit(function);
 	}
 
 	public static void openUrl(String url) {

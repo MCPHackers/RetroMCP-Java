@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.gui;
 
-import static org.mcphackers.mcp.tools.Util.operateOnThread;
+import static org.mcphackers.mcp.tools.Util.enqueueRunnable;
 
 import java.awt.event.ActionListener;
 
@@ -32,7 +32,7 @@ public class TaskButton extends JButton {
 	}
 
 	public static ActionListener performTask(MCP mcp, TaskMode mode) {
-		return event -> operateOnThread(() -> mcp.performTask(mode, mcp.getOptions().side));
+		return event -> enqueueRunnable(() -> mcp.performTask(mode, mcp.getOptions().side));
 	}
 
 	public boolean getEnabled() {
