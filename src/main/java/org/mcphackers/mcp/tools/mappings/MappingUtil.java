@@ -10,10 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.fabricmc.mappingio.MappingReader;
+import net.fabricmc.mappingio.MappingWriter;
 import net.fabricmc.mappingio.adapter.MappingNsCompleter;
+import net.fabricmc.mappingio.adapter.MappingNsRenamer;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.Tiny2Reader;
-import net.fabricmc.mappingio.format.Tiny2Writer;
+import net.fabricmc.mappingio.format.MappingFormat;
+import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public final class MappingUtil {
@@ -95,12 +98,8 @@ public final class MappingUtil {
 	public static void mergeMappings(Path client, Path server, Path out) throws IOException {
 		MemoryMappingTree clientTree = new MemoryMappingTree();
 		MemoryMappingTree serverTree = new MemoryMappingTree();
-		try (BufferedReader reader = Files.newBufferedReader(client)) {
-			Tiny2Reader.read(reader, clientTree);
-		}
-		try (BufferedReader reader = Files.newBufferedReader(server)) {
-			Tiny2Reader.read(reader, serverTree);
-		}
+		MappingReader.read(client, MappingFormat.TINY_2_FILE, clientTree);
+		MappingReader.read(server, MappingFormat.TINY_2_FILE, serverTree);
 		clientTree.setSrcNamespace("client");
 		serverTree.setSrcNamespace("server");
 		MemoryMappingTree namedClientTree = new MemoryMappingTree();
@@ -112,25 +111,24 @@ public final class MappingUtil {
 		serverNamespaces.put("named", "server");
 		flipMappingTree(namedServerTree, serverNamespaces);
 		namedServerTree.accept(namedClientTree);
-		try (Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
+		try (Tiny2FileWriter writer = new Tiny2FileWriter(Files.newBufferedWriter(out), false)) {
 			namedClientTree.accept(writer);
 		}
 	}
 
 	//official named -> named client
 	public static void mergeMappings(Path client, Path out) throws IOException {
-		MemoryMappingTree clientTree = new MemoryMappingTree();
-		try (BufferedReader reader = Files.newBufferedReader(client)) {
-			Tiny2Reader.read(reader, clientTree);
-		}
-		clientTree.setSrcNamespace("client");
-		MemoryMappingTree namedClientTree = new MemoryMappingTree();
-		Map<String, String> namespaces = new HashMap<>();
-		namespaces.put("named", "client");
-		flipMappingTree(namedClientTree, namespaces);
-		try (Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out), false)) {
-			namedClientTree.accept(writer);
-		}
+		String currentSrc = "official";
+		String currentDst = "named";
+		String newDst = "client";
+		Map<String, String> nsRenames = new HashMap<>();
+		nsRenames.put(currentSrc, newDst);
+
+		// Switch the namespaces from official -> named to named -> official
+		// Rename the namespaces from named -> official to named -> client
+		MappingNsRenamer nsRenamer = new MappingNsRenamer(MappingWriter.create(out, MappingFormat.TINY_2_FILE), nsRenames);
+		MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsRenamer, currentDst);
+		MappingReader.read(client, MappingFormat.TINY_2_FILE, nsSwitch);
 	}
 
 	public static void flipMappingTree(MemoryMappingTree mappingTree, Map<String, String> namespaces) throws IOException {
