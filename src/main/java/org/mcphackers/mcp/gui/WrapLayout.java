@@ -121,7 +121,7 @@ public class WrapLayout extends FlowLayout {
 
 			//	When using a scroll pane or the DecoratedLookAndFeel we need to
 			//  make sure the preferred size is less than the size of the
-			//  target containter so shrinking the container size works
+			//  target container so shrinking the container size works
 			//  correctly. Removing the horizontal gap is an easy way to do this.
 
 			Container scrollPane = SwingUtilities.getAncestorOfClass(JScrollPane.class, target);
