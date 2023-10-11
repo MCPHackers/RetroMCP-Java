@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,24 +97,23 @@ public final class MappingUtil {
 
 	//official named -> named client server
 	public static void mergeMappings(Path client, Path server, Path out) throws IOException {
-		MemoryMappingTree clientTree = new MemoryMappingTree();
-		MemoryMappingTree serverTree = new MemoryMappingTree();
-		MappingReader.read(client, MappingFormat.TINY_2_FILE, clientTree);
-		MappingReader.read(server, MappingFormat.TINY_2_FILE, serverTree);
-		clientTree.setSrcNamespace("client");
-		serverTree.setSrcNamespace("server");
-		MemoryMappingTree namedClientTree = new MemoryMappingTree();
-		Map<String, String> clientNamespaces = new HashMap<>();
-		clientNamespaces.put("named", "client");
-		flipMappingTree(namedClientTree, clientNamespaces);
-		MemoryMappingTree namedServerTree = new MemoryMappingTree();
-		Map<String, String> serverNamespaces = new HashMap<>();
-		serverNamespaces.put("named", "server");
-		flipMappingTree(namedServerTree, serverNamespaces);
-		namedServerTree.accept(namedClientTree);
-		try (Tiny2FileWriter writer = new Tiny2FileWriter(Files.newBufferedWriter(out), false)) {
-			namedClientTree.accept(writer);
-		}
+		MemoryMappingTree mergedMappingTree = new MemoryMappingTree();
+
+		// Create visitors to flip the mapping tree
+		Map<String, String> clientNsRenames = Collections.singletonMap("official", "client");
+		Map<String, String> serverNsRenames = Collections.singletonMap("official", "server");
+
+		MappingNsRenamer clientNsRenamer = new MappingNsRenamer(mergedMappingTree, clientNsRenames);
+		MappingSourceNsSwitch clientNsSwitch = new MappingSourceNsSwitch(clientNsRenamer, "named");
+		MappingNsRenamer serverNsRenamer = new MappingNsRenamer(mergedMappingTree, serverNsRenames);
+		MappingSourceNsSwitch serverNsSwitch = new MappingSourceNsSwitch(serverNsRenamer, "named");
+
+		// Read client/server mappings with the above visitors
+		MappingReader.read(client, MappingFormat.TINY_2_FILE, clientNsSwitch);
+		MappingReader.read(server, MappingFormat.TINY_2_FILE, serverNsSwitch);
+
+		// Export the merged mapping trees
+		mergedMappingTree.accept(MappingWriter.create(out, MappingFormat.TINY_2_FILE));
 	}
 
 	//official named -> named client
@@ -129,11 +129,5 @@ public final class MappingUtil {
 		MappingNsRenamer nsRenamer = new MappingNsRenamer(MappingWriter.create(out, MappingFormat.TINY_2_FILE), nsRenames);
 		MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsRenamer, currentDst);
 		MappingReader.read(client, MappingFormat.TINY_2_FILE, nsSwitch);
-	}
-
-	public static void flipMappingTree(MemoryMappingTree mappingTree, Map<String, String> namespaces) throws IOException {
-		MappingNsCompleter nsCompleter = new MappingNsCompleter(mappingTree, namespaces);
-		MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsCompleter, "named");
-		mappingTree.accept(nsSwitch);
 	}
 }
