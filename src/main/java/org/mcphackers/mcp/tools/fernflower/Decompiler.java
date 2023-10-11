@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -32,19 +31,7 @@ public class Decompiler implements IBytecodeProvider {
 		this.libraries = libs;
 		this.destination = out;
 		this.log = new DecompileLogger(listener);
-        String ffOptions = mcp.getOptions().getStringParameter(TaskParameter.FERNFLOWER_OPTIONS);
-		String[] splitTokens = ffOptions.split(",");
-		this.mapOptions = new HashMap<>();
-		for (String split : splitTokens) {
-			String[] keyPair = split.split("=");
-			if (keyPair.length > 1) {
-				String key = keyPair[0].trim().replace("{", "");
-				String value = keyPair[1].replace("}", "");
-				this.mapOptions.put(key, value);
-			} else {
-				System.out.println("WHAT!");
-			}
-		}
+        this.mapOptions = mcp.getOptions().getFernflowerOptions();
 		this.mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS) ? "1" : "0");
 	}
 

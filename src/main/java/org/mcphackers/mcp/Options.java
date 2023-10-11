@@ -207,4 +207,19 @@ public class Options {
 		}
 		return false;
 	}
+
+	public Map<String, Object> getFernflowerOptions() {
+		Map<String, Object> ffOptions = new HashMap<>();
+		String options = mcp.getOptions().getStringParameter(TaskParameter.FERNFLOWER_OPTIONS);
+		String[] splitTokens = options.split(",");
+		for (String split : splitTokens) {
+			String[] keyPair = split.split("=");
+			if (keyPair.length == 2) {
+				String key = keyPair[0].trim().replace("{", "");
+				String value = keyPair[1].replace("}", "");
+				ffOptions.put(key, value);
+			}
+		}
+		return new HashMap<>(ffOptions);
+	}
 }
