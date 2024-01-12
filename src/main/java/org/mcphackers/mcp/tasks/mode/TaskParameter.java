@@ -64,7 +64,7 @@ public enum TaskParameter {
 		ffOptions.put(IFernflowerPreferences.OVERRIDE_ANNOTATION, "0");
 		ffOptions.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1");
 		ffOptions.put(IFernflowerPreferences.INDENT_STRING, "\t");
-		ffOptions.remove("ban");
+		ffOptions.remove(IFernflowerPreferences.BANNER);
 		return ffOptions.toString();
 	}
 }
