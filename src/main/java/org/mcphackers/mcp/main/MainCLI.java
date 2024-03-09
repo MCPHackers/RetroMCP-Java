@@ -85,7 +85,7 @@ public class MainCLI extends MCP {
 		int executeTimes = 0;
 		while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
 			while (args.length < 1) {
-				System.out.print(new Ansi().fgBrightCyan().a("> ").fgRgb(255, 255, 255));
+				System.out.print(new Ansi().fgBrightCyan().a("> ").fgDefault());
 				String str = null;
 				try {
 					if (consoleInput.hasNext()) {
