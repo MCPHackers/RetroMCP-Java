@@ -2,6 +2,7 @@ package org.mcphackers.mcp.tasks;
 
 import static org.mcphackers.mcp.MCPPaths.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,7 +59,7 @@ public class TaskRun extends TaskStaged {
 					Collections.addAll(args, runArgs);
 					args.add("-Djava.library.path=" + natives);
 					args.add("-cp");
-					args.add(String.join(System.getProperty("path.separator"), classPath));
+					args.add(String.join(File.pathSeparator, classPath));
 					args.add(main);
 					if (side == Side.CLIENT) {
 						args.addAll(getLaunchArgs(mcp, mcpSide));

@@ -1,6 +1,8 @@
 package org.mcphackers.mcp.plugin;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,8 +32,17 @@ public class PluginManager {
 			if (Files.exists(pluginsDir) && Files.isDirectory(pluginsDir)) {
 				List<Path> pluginCandidates = FileUtil.getPathsOfType(pluginsDir, ".jar", ".zip");
 				for (Path pluginCandidate : pluginCandidates) {
-					System.out.println("Adding " + pluginCandidate.getFileName() + " to classpath!");
-					pluginClassLoader.addURL(pluginCandidate.toUri().toURL());
+					try (FileSystem fs = FileSystems.newFileSystem(pluginCandidate, pluginClassLoader)) {
+						Path serviceConfigPath = fs.getPath("META-INF", "services", MCPPlugin.class.getName());
+						if (!Files.exists(serviceConfigPath)) {
+							System.out.println("Plugin candidate (" + pluginCandidate.getFileName() + ") does not contain a valid service configuration. Skipping!");
+						} else {
+							System.out.println("Adding plugin candidate (" + pluginCandidate.getFileName() + ") to classpath!");
+							pluginClassLoader.addURL(pluginCandidate.toUri().toURL());
+						}
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
 				}
 			}
 
