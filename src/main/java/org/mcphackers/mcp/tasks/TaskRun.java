@@ -118,8 +118,8 @@ public class TaskRun extends TaskStaged {
 			String arg = argsList.get(i);
 			switch (arg) {
 				case "${auth_player_name}":
-					arg = "Player095";
-					break; //Player095 is a free username with no skin
+					arg = "Player107";
+					break; //Player107 is a free username with no skin
 				case "${auth_session}":
 				case "${auth_uuid}":
 				case "${auth_access_token}":
