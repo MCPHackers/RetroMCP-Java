@@ -8,6 +8,7 @@ import java.util.Locale;
 public enum Language {
 
 	ENGLISH("en_US"),
+	SPANISH("es_ES"),
 	RUSSIAN("ru_RU"),
 	GERMAN("de_DE"),
 	FRENCH("fr_FR"),
