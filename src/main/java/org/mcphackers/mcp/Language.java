@@ -7,22 +7,22 @@ import java.util.Locale;
  */
 public enum Language {
 
-	ENGLISH("en_US"),
-	SPANISH("es_ES"),
-	RUSSIAN("ru_RU"),
-	GERMAN("de_DE"),
-	FRENCH("fr_FR"),
-	CHINESE("zh_CN"),
-	CZECH("cs_CZ"),
-	NORSK_BOKMAL("nb_NO");
+	ENGLISH(Locale.US),
+	SPANISH(new Locale("es", "ES")),
+	RUSSIAN(new Locale("ru", "RU")),
+	GERMAN(new Locale("de", "DE")),
+	FRENCH(new Locale("fr", "FR")),
+	CHINESE(new Locale("zh", "CN")),
+	CZECH(new Locale("cs", "CZ")),
+	NORSK_BOKMAL(new Locale("nb", "NO"));
 
 	/**
-	 * Internal name
+	 * Internal locale
 	 */
-	public final String name;
+	public final Locale locale;
 
-	Language(String langName) {
-		name = langName;
+	Language(Locale locale) {
+		this.locale = locale;
 	}
 
 	/**
@@ -31,10 +31,18 @@ public enum Language {
 	 */
 	public static Language get(Locale locale) {
 		for (Language lang : Language.values()) {
-			if (lang.name.equals(locale.toString())) {
+			// Perfect match
+			if (lang.locale.equals(locale)) {
+				return lang;
+			}
+
+			// Language match
+			if (lang.locale.getLanguage().equals(locale.getLanguage())) {
 				return lang;
 			}
 		}
+
+		// No matches found for locale
 		return ENGLISH;
 	}
 }

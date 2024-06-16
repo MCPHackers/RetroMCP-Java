@@ -321,7 +321,7 @@ public abstract class MCP {
 	 * @param lang
 	 */
 	public final void changeLanguage(Language lang) {
-		System.out.println("Changing language to " + lang.name);
+		System.out.println("Changing language to " + lang.locale.toString());
 		TRANSLATOR.changeLang(lang);
 		for (Map.Entry<String, MCPPlugin> entry : pluginManager.getLoadedPlugins().entrySet()) {
 			TRANSLATOR.readTranslation(entry.getValue().getClass());
