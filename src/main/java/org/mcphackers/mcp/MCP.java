@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -123,8 +124,13 @@ public abstract class MCP {
 		}
 
 		pool.shutdown();
-		while (!pool.isTerminated()) {
-		}
+		while (true) {
+			try {
+				if (pool.awaitTermination(500, TimeUnit.MILLISECONDS)) break;
+			} catch (InterruptedException err) {
+				throw new RuntimeException("Main thread was interrupted while performTask was waiting for tasks to finish", err );
+			}
+		};
 		triggerEvent(MCPEvent.FINISHED_TASKS);
 
 		byte result = result1.byteValue();

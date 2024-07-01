@@ -35,12 +35,44 @@ public abstract class Util {
 		}
 		BufferedReader err = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 		BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-		while (proc.isAlive()) {
-			while (in.ready()) System.out.println(in.readLine());
-			while (err.ready()) System.err.println(err.readLine());
+		Thread stderr = new Thread(()-> {
+			String line;
+			while (true) {
+				try {
+					line = err.readLine();
+					if(line != null) {
+						System.out.println("Minecraft STDERR: " + line);
+					}
+				} catch (IOException ignored) {
+					// we don't really care what happens here
+				}
+			}
+
+		});
+		Thread stdout = new Thread(()-> {
+			String line;
+			while (true) {
+				try {
+					line = in.readLine();
+					if(line != null) {
+						System.out.println( line);
+					}
+				} catch (IOException ignored) {
+					// we don't really care what happens here
+				}
+			}
+
+		});
+		try {
+			proc.waitFor();
+		} catch (InterruptedException e) {
+			throw new RuntimeException("thread interrupted while runCommand was waiting for a process to finish", e );
 		}
 		in.close();
 		err.close();
+		stderr.interrupt();
+		stdout.interrupt();
+
 		if (killOnShutdown) {
 			Runtime.getRuntime().removeShutdownHook(hook);
 		}
