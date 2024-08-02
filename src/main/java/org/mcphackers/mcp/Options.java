@@ -1,6 +1,5 @@
 package org.mcphackers.mcp;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task.Side;
@@ -41,8 +41,8 @@ public class Options {
 	}
 
 	private void load(Path file) {
-		try (BufferedReader reader = Files.newBufferedReader(file)) {
-			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+		try (Stream<String> lines = Files.lines(file)) {
+			lines.forEach((line) -> {
 				int sep = line.indexOf("=");
 				if (sep >= 0) {
 					String key = line.substring(0, sep);
@@ -70,7 +70,7 @@ public class Options {
 						safeSetParameter(TaskParameterMap.get(key), value);
 					}
 				}
-			}
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

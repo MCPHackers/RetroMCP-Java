@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -171,11 +172,11 @@ public class TaskReobfuscate extends TaskStaged {
 		final Path md5 = MCPPaths.get(mcp, reobf ? MCPPaths.MD5_RO : MCPPaths.MD5, side);
 		Map<String, String> hashes = new HashMap<>();
 
-		try (BufferedReader reader = Files.newBufferedReader(md5)) {
-			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+		try (Stream<String> lines = Files.lines(md5)) {
+			lines.forEach((line) -> {
 				String[] tokens = line.split(" ");
 				hashes.put(tokens[0], tokens[1]);
-			}
+			});
 		}
 		return hashes;
 	}
