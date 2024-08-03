@@ -26,7 +26,7 @@ import org.mcphackers.mcp.tools.versions.json.Version;
 public class DownloadData {
 
 	private final Path gameDir;
-	public int totalSize;
+	public long totalSize;
 	public List<DownloadEntry> natives = new ArrayList<>();
 	protected List<DownloadEntry> downloadQueue = new ArrayList<>();
 	protected AssetIndex assets;
@@ -155,7 +155,7 @@ public class DownloadData {
 				if (!Files.exists(file)) {
 					Path parent = file.getParent();
 					if (parent != null) Files.createDirectories(parent);
-					FileUtil.downloadFile("http://resources.download.minecraft.net/" + hash, file);
+					FileUtil.downloadFile("https://resources.download.minecraft.net/" + hash, file);
 				}
 			}
 		}
