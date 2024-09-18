@@ -7,9 +7,10 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven { url 'https://jitpack.io/' }
     maven { url 'https://maven.fabricmc.net/' }
-    maven { url 'https://mcphackers.org/libraries' }
+    maven { url 'https://mcphackers.org/libraries/' }
+	maven { url 'https://maven.glass-launcher.net/releases/'}
 }
 
 configurations {
@@ -29,7 +30,7 @@ dependencies {
 
 	shadow "com.github.MCPHackers.RetroDebugInjector:RetroDebugInjector-NIO:${project.rdi_version}"
 	shadow "com.github.MCPHackers.RetroDebugInjector:RetroDebugInjector:${project.rdi_version}"
-    shadow "com.github.Lassebq:Fernflower:${project.fernflower_version}"
+    shadow "io.github.lassebq:fernflower:${project.fernflower_version}"
     shadow "org.fusesource.jansi:jansi:${project.jansi_version}"
     shadow "org.json:json:${project.json_version}"
     shadow "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
