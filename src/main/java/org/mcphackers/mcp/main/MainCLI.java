@@ -88,7 +88,7 @@ public class MainCLI extends MCP {
 				System.out.print(new Ansi().fgBrightCyan().a("> ").fgDefault());
 				String str = null;
 				try {
-					if (consoleInput.hasNext()) {
+					if (consoleInput.hasNextLine()) {
 						str = consoleInput.nextLine();
 					} else {
 						// Only seems to occur during EOF, might occur in other cases?
@@ -100,6 +100,9 @@ public class MainCLI extends MCP {
 					mode = TaskMode.EXIT;
 				} else {
 					str = str.trim();
+					if (str.length() == 0) {
+						continue;
+					}
 					System.out.print(new Ansi().fgDefault());
 					args = str.split(" ");
 				}
