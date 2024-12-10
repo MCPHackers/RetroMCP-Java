@@ -28,7 +28,6 @@ import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public abstract class MCP {
-
 	public static final String VERSION = "v1.0.1";
 	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();

@@ -1,99 +1,58 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
-    id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id "java"
 }
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io/' }
-    maven { url 'https://maven.fabricmc.net/' }
-    maven { url 'https://mcphackers.org/libraries/' }
-	maven { url 'https://maven.glass-launcher.net/releases/'}
-}
+allprojects {
+	apply plugin: "java"
 
-configurations {
-    shadow
-    implementation.extendsFrom shadow
-}
+	repositories {
+		mavenCentral()
+		maven { url "https://jitpack.io/" }
+		maven { url "https://maven.fabricmc.net/" }
+		maven { url "https://mcphackers.org/libraries/" }
+		maven { url "https://maven.glass-launcher.net/releases" }
+	}
 
-dependencies {
-	runtimeOnly sourceSets.test.output
+	dependencies {
+		runtimeOnly sourceSets.test.output
 
-    // Required libraries
-    shadow "org.ow2.asm:asm:${project.asm_version}"
-    shadow "org.ow2.asm:asm-analysis:${project.asm_version}"
-    shadow "org.ow2.asm:asm-commons:${project.asm_version}"
-    shadow "org.ow2.asm:asm-tree:${project.asm_version}"
-    shadow "org.ow2.asm:asm-util:${project.asm_version}"
+		// Required libraries
+		implementation "org.ow2.asm:asm:${project.asm_version}"
+		implementation "org.ow2.asm:asm-analysis:${project.asm_version}"
+		implementation "org.ow2.asm:asm-commons:${project.asm_version}"
+		implementation "org.ow2.asm:asm-tree:${project.asm_version}"
+		implementation "org.ow2.asm:asm-util:${project.asm_version}"
 
-	shadow "com.github.MCPHackers.RetroDebugInjector:RetroDebugInjector-NIO:${project.rdi_version}"
-	shadow "com.github.MCPHackers.RetroDebugInjector:RetroDebugInjector:${project.rdi_version}"
-    shadow "io.github.lassebq:fernflower:${project.fernflower_version}"
-    shadow "org.fusesource.jansi:jansi:${project.jansi_version}"
-    shadow "org.json:json:${project.json_version}"
-    shadow "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
-    shadow "net.fabricmc:mapping-io:${project.mapping_io_version}"
+		implementation "com.github.MCPHackers.RetroDebugInjector:RetroDebugInjector-NIO:${project.rdi_version}"
+		implementation "com.github.MCPHackers.RetroDebugInjector:RetroDebugInjector:${project.rdi_version}"
 
-    shadow "com.formdev:flatlaf:${project.flatlaf_version}"
-}
+		implementation "io.github.lassebq:fernflower:${project.fernflower_version}"
 
-tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
+		implementation "org.json:json:${project.json_version}"
+		implementation "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
+		implementation "net.fabricmc:mapping-io:${project.mapping_io_version}"
 
-	// Use release flag on Java 9+ instead of source & target flags
-	// This makes the JDK read the boot classpath and use the proper
-	// libraries to be compliant with Java 8 without issues
-	if (JavaVersion.current().isJava9Compatible()) {
-		it.options.release.set(8)
+		// TODO: Move this dependency to GUI only
+		implementation "com.formdev:flatlaf:${project.flatlaf_version}"
+	}
+
+	tasks.withType(JavaCompile).configureEach {
+		it.options.encoding = "UTF-8"
+
+		// Use release flag on Java 9+ instead of source & target flags
+		// This makes the JDK read the boot classpath and use the proper
+		// libraries to be compliant with Java 8 without issues
+		if (JavaVersion.current().isJava9Compatible()) {
+			it.options.release.set(8)
+		}
+	}
+
+	java {
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
 	}
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+subprojects {
+	apply plugin: "application"
 }
-
-application {
-    // Redirect all execution into the testing folder
-    mainClass = 'org.mcphackers.mcp.main.MainGUI'
-    executableDir = 'test'
-    mkdir(executableDir)
-}
-
-run {
-    workingDir 'test'
-}
-
-runShadow {
-    workingDir 'test'
-}
-
-shadowJar {
-	manifest {
-		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainGUI'
-	}
-	archiveClassifier = 'GUI'
-
-	configurations = [project.configurations.shadow]
-    minimize {
-		exclude(dependency('com.formdev:.*:.*'))
-	}
-}
-
-tasks.register('jarCLI', ShadowJar) {
-	manifest {
-		attributes 'Main-Class': 'org.mcphackers.mcp.main.MainCLI'
-	}
-	archiveClassifier = 'CLI'
-	from sourceSets.main.output
-	configurations = [project.configurations.shadow]
-	minimize()
-	exclude('com/formdev/**/**')
-	exclude('META-INF/versions/**/**')
-	exclude('META-INF/**.RSA')
-	exclude('META-INF/**.SF')
-}
-
-jar.dependsOn(jarCLI)
