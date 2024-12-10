@@ -31,9 +31,6 @@ allprojects {
 		implementation "org.json:json:${project.json_version}"
 		implementation "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
 		implementation "net.fabricmc:mapping-io:${project.mapping_io_version}"
-
-		// TODO: Move this dependency to GUI only
-		implementation "com.formdev:flatlaf:${project.flatlaf_version}"
 	}
 
 	tasks.withType(JavaCompile).configureEach {

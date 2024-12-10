@@ -44,7 +44,7 @@ public class TaskRecompile extends TaskStaged {
 	protected Stage[] setStages() {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
-			throw new RuntimeException("Could not find compiling API");
+			throw new RuntimeException("Could not find compiling API. Please install or use a Java Development Kit to run this program.");
 		}
 		Path binPath = MCPPaths.get(mcp, BIN, side);
 		Path srcPath = MCPPaths.get(mcp, SOURCE, side);
