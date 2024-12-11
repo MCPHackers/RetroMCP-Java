@@ -24,6 +24,7 @@ runShadow {
 }
 
 tasks.named("shadowJar", ShadowJar) {
+	configurations = [project.configurations.compileClasspath]
 	archiveBaseName.set("RetroMCP-CLI")
 	archiveClassifier.set("all")
 	setDestinationDirectory(rootProject.getLayout().getBuildDirectory().dir("libs"))
