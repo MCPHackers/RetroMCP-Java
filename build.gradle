@@ -30,6 +30,7 @@ allprojects {
 
 		implementation "org.json:json:${project.json_version}"
 		implementation "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
+		implementation "org.apache.commons:commons-lang3:${project.apache_version}"
 		implementation "net.fabricmc:mapping-io:${project.mapping_io_version}"
 	}
 
