@@ -78,9 +78,7 @@ public class Options {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
-				if (this.mcp.isGUI) {
-					writer.append("theme").append('=').append(this.theme).append('\n');
-				}
+				writer.append("theme").append('=').append(this.theme).append('\n');
 				writer.append("versionUrl").append('=').append(VersionParser.mappingsJson).append('\n');
 				for (Entry<TaskParameter, Object> entry : options.entrySet()) {
 					if (entry.getValue() != null && entry.getKey() != TaskParameter.SIDE) {

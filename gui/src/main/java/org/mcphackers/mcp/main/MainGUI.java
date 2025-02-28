@@ -351,13 +351,15 @@ public class MainGUI extends MCP {
 
 	public final void changeTheme(Theme theme) {
 		try {
-			UIManager.setLookAndFeel(theme.themeClass);
-			JFrame frame = this.frame;
-			if (frame != null) {
-				SwingUtilities.updateComponentTreeUI(frame);
+			if (theme != null) {
+				UIManager.setLookAndFeel(theme.themeClass);
+				JFrame frame = this.frame;
+				if (frame != null) {
+					SwingUtilities.updateComponentTreeUI(frame);
+				}
+				this.theme = theme;
+				this.options.theme = theme.themeClass;
 			}
-			this.theme = theme;
-			this.options.theme = theme.themeClass;
 		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
 				 IllegalAccessException e) {
 			e.printStackTrace();
