@@ -80,7 +80,7 @@ public class MainCLI extends MCP {
 				log("Using Java from " + Paths.get(Util.getJava()).toAbsolutePath());
 			}
 			if (Util.getJavaVersion() > 8) {
-				log("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
+				warning("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
 			}
 			if (version != null) log(version);
 			log(new Ansi().fgDefault().a("Enter a command to execute:").toString());
@@ -277,6 +277,16 @@ public class MainCLI extends MCP {
 	@Override
 	public void log(String msg) {
 		System.out.println(msg);
+	}
+
+	@Override
+	public void warning(String msg) {
+		System.out.println(Ansi.ansi().fgYellow().a(msg).fgDefault());
+	}
+
+	@Override
+	public void error(String msg) {
+		System.out.println(Ansi.ansi().fgRed().a(msg).fgDefault());
 	}
 
 	@Override

@@ -188,6 +188,20 @@ public abstract class MCP {
 	public abstract void log(String msg);
 
 	/**
+	 * Logs a warning message to console
+	 *
+	 * @param msg
+	 */
+	public abstract void warning(String msg);
+
+	/**
+	 * Logs an error message to console
+	 *
+	 * @param msg
+	 */
+	public abstract void error(String msg);
+
+	/**
 	 * @return Instance of options
 	 */
 	public Options getOptions() {
