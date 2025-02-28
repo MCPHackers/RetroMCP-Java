@@ -16,7 +16,6 @@ import org.mcphackers.mcp.tasks.TaskCleanup;
 import org.mcphackers.mcp.tasks.TaskCreatePatch;
 import org.mcphackers.mcp.tasks.TaskDecompile;
 import org.mcphackers.mcp.tasks.TaskDownloadUpdate;
-import org.mcphackers.mcp.tasks.TaskGenerateRunConfigs;
 import org.mcphackers.mcp.tasks.TaskRecompile;
 import org.mcphackers.mcp.tasks.TaskReobfuscate;
 import org.mcphackers.mcp.tasks.TaskRun;
@@ -148,12 +147,6 @@ public class TaskMode {
 	public static TaskMode BACKUP_SRC = new TaskModeBuilder()
 			.setName("backupsrc")
 			.setTaskClass(TaskSourceBackup.class)
-			.setProgressBars(true)
-			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
-			.build();
-	public static TaskMode GENERATE_RUN_CONFIGS = new TaskModeBuilder()
-			.setName("generateRunConfigs")
-			.setTaskClass(TaskGenerateRunConfigs.class)
 			.setProgressBars(true)
 			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
 			.build();

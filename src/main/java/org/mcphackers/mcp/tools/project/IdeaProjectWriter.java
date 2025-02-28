@@ -138,9 +138,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 				if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
 					String libraryName = lib.substring(lib.lastIndexOf("/") + 1);
 					Path libraryXML = librariesFolder.resolve(libraryName + ".xml");
-					if (!Files.exists(libraryXML)) {
-						Files.createFile(libraryXML);
-					}
+					Files.createFile(libraryXML);
 					try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(libraryXML))) {
 						// No XML header???
 						writer.startAttribute("component name=\"libraryTable\"");
