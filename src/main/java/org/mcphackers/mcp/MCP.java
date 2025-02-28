@@ -342,4 +342,10 @@ public abstract class MCP {
 			return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
 		}
 	}
+
+	public static void reloadPluginTranslations() {
+		pluginManager.getLoadedPlugins().forEach((key, plugin) -> {
+			MCP.TRANSLATOR.readTranslation(plugin.getClass());
+		});
+	}
 }

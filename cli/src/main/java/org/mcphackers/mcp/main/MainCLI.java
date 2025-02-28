@@ -150,10 +150,6 @@ public class MainCLI extends MCP {
 	}
 
 	public static void main(String[] args) {
-		if (args.length != 0) {
-			new MainCLI(args);
-			return;
-		}
 		AnsiConsole.systemInstall();
 		new MainCLI(args);
 	}
