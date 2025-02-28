@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,6 +24,7 @@ public class Options {
 	public Side side = Side.ANY;
 	public Language lang;
 	public String theme;
+	public Path workingDir = Paths.get(".");
 
 	public Options(MCP mcp) {
 		this.mcp = mcp;
@@ -63,6 +65,8 @@ public class Options {
 						}
 					} else if (key.equals("versionUrl")) {
 						VersionParser.mappingsJson = value;
+					} else if (key.equals("workingDir")) {
+						workingDir = Paths.get(value);
 					} else {
 						safeSetParameter(TaskParameterMap.get(key), value);
 					}
@@ -80,6 +84,7 @@ public class Options {
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
 				writer.append("theme").append('=').append(this.theme).append('\n');
 				writer.append("versionUrl").append('=').append(VersionParser.mappingsJson).append('\n');
+				writer.append("workingDir").append('=').append(this.mcp.getWorkingDir().toAbsolutePath().toString()).append('\n');
 				for (Entry<TaskParameter, Object> entry : options.entrySet()) {
 					if (entry.getValue() != null && entry.getKey() != TaskParameter.SIDE) {
 						writer.append(entry.getKey().name).append('=').append(getParameter(entry.getKey()).toString()).append(String.valueOf('\n'));

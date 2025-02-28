@@ -63,13 +63,21 @@ public class MainGUI extends MCP {
 			{TaskParameter.FULL_BUILD}, {TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
 	};
 	public Theme theme = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
-	public Path workingDir;
 	public MCPFrame frame;
 	public boolean isActive = true;
 	public Version currentVersion;
 	public JTextPane textPane;
 
+	public MainGUI() {
+		this.initialize();
+	}
+
 	public MainGUI(Path dir) {
+		this.options.workingDir = dir;
+		this.initialize();
+	}
+
+	private void initialize() {
 		isGUI = true;
 		if (!theme.themeClass.equals(options.theme) && options.theme != null) {
 			theme = Theme.THEMES_MAP.get(options.theme);
@@ -84,7 +92,6 @@ public class MainGUI extends MCP {
 		System.setErr(interceptor);
 		this.textPane.setComponentPopupMenu(new TextAreaContextMenu(this));
 
-		workingDir = dir;
 		if (options.lang != null) {
 			changeLanguage(options.lang);
 		}
@@ -107,14 +114,15 @@ public class MainGUI extends MCP {
 	}
 
 	public static void main(String[] args) {
-		Path workingDir = Paths.get("");
 		if (args.length >= 1) {
 			try {
-				workingDir = Paths.get(args[0]);
+				Path workingDir = Paths.get(args[0]);
+				new MainGUI(workingDir);
 			} catch (InvalidPathException ignored) {
 			}
+		} else {
+			new MainGUI();
 		}
-		new MainGUI(workingDir);
 	}
 
 	@Override
@@ -226,11 +234,6 @@ public class MainGUI extends MCP {
 	}
 
 	@Override
-	public Path getWorkingDir() {
-		return workingDir;
-	}
-
-	@Override
 	public boolean updateDialogue(String changelog, String version) {
 		JPanel outer = new JPanel(new BorderLayout());
 		JPanel components = new JPanel();
@@ -269,17 +272,20 @@ public class MainGUI extends MCP {
 	public void changeWorkingDirectory() {
 		JFileChooser f = new JFileChooser(getWorkingDir().toAbsolutePath().toFile());
 		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		if (f.showDialog(frame, MCP.TRANSLATOR.translateKey("mcp.selectDir")) == JFileChooser.APPROVE_OPTION) {
+		if (f.showDialog(this.frame, MCP.TRANSLATOR.translateKey("mcp.selectDir")) == JFileChooser.APPROVE_OPTION) {
 			File file = f.getSelectedFile();
 			Path p = file.toPath();
 			if (Files.isDirectory(p)) {
-				workingDir = p;
-				options = new Options(this, MCPPaths.get(this, "options.cfg"));
-				options.save();
-				frame.reloadVersionList();
-				frame.updateButtonState();
-				frame.menuBar.reloadOptions();
-				frame.menuBar.reloadSide();
+				this.options = new Options(this, Paths.get("options.cfg"));
+				this.options.workingDir = p;
+				this.options.save();
+				VersionParser versionParser = VersionParser.getInstance();
+				this.frame.setCurrentVersion(this.currentVersion == null ? null : versionParser.getVersion(this.currentVersion.id));
+				this.frame.reloadText();
+				this.frame.reloadVersionList();
+				this.frame.updateButtonState();
+				this.frame.menuBar.reloadOptions();
+				this.frame.menuBar.reloadSide();
 			}
 		}
 	}

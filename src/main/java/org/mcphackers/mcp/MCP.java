@@ -1,6 +1,7 @@
 package org.mcphackers.mcp;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -53,7 +54,12 @@ public abstract class MCP {
 	/**
 	 * @return The working directory
 	 */
-	public abstract Path getWorkingDir();
+	public Path getWorkingDir() {
+		if (this.options.workingDir != null && Files.exists(this.options.workingDir)) {
+			return options.workingDir;
+		}
+		return Paths.get("");
+	}
 
 	/**
 	 * Creates instances of TaskMode and executes them

@@ -392,11 +392,6 @@ public class MainCLI extends MCP {
 	}
 
 	@Override
-	public Path getWorkingDir() {
-		return Paths.get("");
-	}
-
-	@Override
 	public boolean updateDialogue(String changelog, String version) {
 		return yesNoInput("New version found: " + version, changelog + "\n\nAre you sure you want to update?");
 	}
