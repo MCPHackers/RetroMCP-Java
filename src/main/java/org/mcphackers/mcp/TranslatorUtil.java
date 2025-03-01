@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +19,14 @@ public class TranslatorUtil {
 		translations.clear();
 		currentLang = lang;
 		readTranslation(MCP.class);
+		MCP.reloadPluginTranslations();
 	}
 
 	public void readTranslation(Class<?> cls) {
 		readTranslation(cls, DEFAULT_LANG);
-		readTranslation(cls, currentLang);
+		if (currentLang != DEFAULT_LANG) {
+			readTranslation(cls, currentLang);
+		}
 	}
 
 	private void readTranslation(Class<?> cls, Language lang) {
@@ -29,10 +34,13 @@ public class TranslatorUtil {
 	}
 
 	private void readTranslation(Map<String, String> map, Class<?> cls, Language lang) {
-		String resourceName = "/lang/" + lang.locale.toString() + ".lang";
-		//FIXME Hardcoded MCP.class because Class#getResourceAsStream return result is not the same as ClassLoader#getResourceAsStream
-		try (InputStream resource = (cls == MCP.class) ? cls.getResourceAsStream(resourceName) : cls.getClassLoader().getResourceAsStream(resourceName)) {
-			this.readTranslation(map, resource);
+		String resourceName = "lang/" + lang.locale.toString() + ".lang";
+		try {
+			Enumeration<URL> translations = cls.getClassLoader().getResources(resourceName);
+			while (translations.hasMoreElements()) {
+				URL url = translations.nextElement();
+				this.readTranslation(map, url.openStream());
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

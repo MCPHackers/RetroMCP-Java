@@ -4,13 +4,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tasks.mode.TaskParameterMap;
@@ -23,7 +23,8 @@ public class Options {
 	public Path saveFile;
 	public Side side = Side.ANY;
 	public Language lang;
-	public Theme theme;
+	public String theme;
+	public Path workingDir = Paths.get(".");
 
 	public Options(MCP mcp) {
 		this.mcp = mcp;
@@ -59,13 +60,13 @@ public class Options {
 						}
 					} else if (key.equals("theme")) {
 						try {
-							if (this.mcp instanceof MainGUI) {
-								theme = Theme.THEMES_MAP.get(value);
-							}
+							theme = value;
 						} catch (IllegalArgumentException ignored) {
 						}
 					} else if (key.equals("versionUrl")) {
 						VersionParser.mappingsJson = value;
+					} else if (key.equals("workingDir")) {
+						workingDir = Paths.get(value);
 					} else {
 						safeSetParameter(TaskParameterMap.get(key), value);
 					}
@@ -81,10 +82,9 @@ public class Options {
 			try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
 				writer.append(TaskParameter.SIDE.name).append('=').append(side.name()).append('\n');
 				writer.append("lang").append('=').append(MCP.TRANSLATOR.currentLang.name()).append('\n');
-				if (this.mcp instanceof MainGUI && MainGUI.THEME != null) {
-					writer.append("theme").append('=').append(MainGUI.THEME.themeClass).append('\n');
-				}
+				writer.append("theme").append('=').append(this.theme).append('\n');
 				writer.append("versionUrl").append('=').append(VersionParser.mappingsJson).append('\n');
+				writer.append("workingDir").append('=').append(this.mcp.getWorkingDir().toAbsolutePath().toString()).append('\n');
 				for (Entry<TaskParameter, Object> entry : options.entrySet()) {
 					if (entry.getValue() != null && entry.getKey() != TaskParameter.SIDE) {
 						writer.append(entry.getKey().name).append('=').append(getParameter(entry.getKey()).toString()).append(String.valueOf('\n'));

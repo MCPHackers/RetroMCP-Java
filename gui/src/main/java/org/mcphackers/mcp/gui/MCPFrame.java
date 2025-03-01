@@ -2,6 +2,7 @@ package org.mcphackers.mcp.gui;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.Theme;
 import org.mcphackers.mcp.main.MainGUI;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.Task.Side;
@@ -184,7 +185,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		});
 		SwingUtilities.invokeLater(() -> {
 			if (mcp.options.theme != null) {
-				mcp.changeTheme(mcp.options.theme);
+				mcp.changeTheme(Theme.THEMES_MAP.get(mcp.options.theme));
 
 				topRightContainer.updateUI();
 				revalidate();

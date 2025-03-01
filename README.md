@@ -6,7 +6,7 @@ RetroMCP-Java is a complete re-design of RetroMCP in Java.
 # Using
 
 Using RetroMCP-Java is simple!
-1. Download and install JDK 8. MCPHackers recommend [Azul Zulu](https://www.azul.com/downloads/?version=java-8-lts&package=jdk)
+1. Download and install JDK 8. MCPHackers recommend [Azul Zulu](https://www.azul.com/downloads/?version=java-8-lts&package=jdk).
 2. Run the latest [release](https://github.com/MCPHackers/RetroMCP-Java/releases) from the command line or via double click. If you run it via double click and RMCP errors, make sure your PATH
 and your JAR file associations are properly configured.
 	> Be careful! Using "Open with" context menu on Windows will not use a proper directory, be sure to change the default .jar file associations

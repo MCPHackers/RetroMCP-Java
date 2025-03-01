@@ -149,7 +149,7 @@ public class MenuBar extends JMenuBar {
 				themeItem.setSelected(true);
 				mcp.options.save();
 			});
-			if (theme.equals(MainGUI.THEME)) {
+			if (theme.equals(this.mcp.theme)) {
 				themeItem.setSelected(true);
 			}
 			themeItems[i] = themeItem;

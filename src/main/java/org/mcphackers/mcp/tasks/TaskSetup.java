@@ -39,7 +39,7 @@ public class TaskSetup extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-				stage(getLocalizedStage("setup"), () -> {
+				stage(getLocalizedStage("setup"), 0, () -> {
 					new TaskCleanup(mcp).cleanup();
 					FileUtil.createDirectories(MCPPaths.get(mcp, JARS));
 					FileUtil.createDirectories(MCPPaths.get(mcp, LIB));

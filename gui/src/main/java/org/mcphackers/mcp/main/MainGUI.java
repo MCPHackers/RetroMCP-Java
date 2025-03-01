@@ -1,7 +1,5 @@
 package org.mcphackers.mcp.main;
 
-import static org.mcphackers.mcp.tools.Util.enqueueRunnable;
-
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Frame;
@@ -57,7 +55,6 @@ import org.mcphackers.mcp.tools.versions.json.Version;
  * GUI implementation of MCP
  */
 public class MainGUI extends MCP {
-	public static Theme THEME = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
 	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 	public static final String[] TABS = {"task.decompile", "task.recompile", "task.reobfuscate", "task.build", "options.running"};
 	public static final TaskParameter[][] TAB_PARAMETERS = {
@@ -65,18 +62,27 @@ public class MainGUI extends MCP {
 			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME}, {TaskParameter.OBFUSCATION, TaskParameter.EXCLUDED_CLASSES},
 			{TaskParameter.FULL_BUILD}, {TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
 	};
-	public Path workingDir;
+	public Theme theme = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
 	public MCPFrame frame;
 	public boolean isActive = true;
 	public Version currentVersion;
 	public JTextPane textPane;
 
+	public MainGUI() {
+		this.initialize();
+	}
+
 	public MainGUI(Path dir) {
+		this.options.workingDir = dir;
+		this.initialize();
+	}
+
+	private void initialize() {
 		isGUI = true;
-		if (!THEME.equals(options.theme) && options.theme != null) {
-			THEME = options.theme;
+		if (!theme.themeClass.equals(options.theme) && options.theme != null) {
+			theme = Theme.THEMES_MAP.get(options.theme);
 		}
-		changeTheme(THEME);
+		changeTheme(theme);
 		textPane = new JTextPane();
 		PrintStream origOut = System.out;
 		PrintStream interceptor = new TextAreaOutputStream(textPane, origOut);
@@ -86,13 +92,12 @@ public class MainGUI extends MCP {
 		System.setErr(interceptor);
 		this.textPane.setComponentPopupMenu(new TextAreaContextMenu(this));
 
-		workingDir = dir;
 		if (options.lang != null) {
 			changeLanguage(options.lang);
 		}
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		if (c == null) {
-			JOptionPane.showMessageDialog(null, TRANSLATOR.translateKey("mcp.needJDK"), TRANSLATOR.translateKey("mcp.error"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, MCP.TRANSLATOR.translateKey("mcp.needJDK"), MCP.TRANSLATOR.translateKey("mcp.error"), JOptionPane.ERROR_MESSAGE);
 		}
 		Path versionPath = MCPPaths.get(this, MCPPaths.VERSION);
 		if (Files.exists(versionPath)) {
@@ -104,19 +109,20 @@ public class MainGUI extends MCP {
 		}
 		frame = new MCPFrame(this);
 		if (Util.getJavaVersion() > 8) {
-			log("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
+			warning("JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
 		}
 	}
 
 	public static void main(String[] args) {
-		Path workingDir = Paths.get("");
 		if (args.length >= 1) {
 			try {
-				workingDir = Paths.get(args[0]);
+				Path workingDir = Paths.get(args[0]);
+				new MainGUI(workingDir);
 			} catch (InvalidPathException ignored) {
 			}
+		} else {
+			new MainGUI();
 		}
-		new MainGUI(workingDir);
 	}
 
 	@Override
@@ -153,6 +159,16 @@ public class MainGUI extends MCP {
 	@Override
 	public void log(String msg) {
 		System.out.println(msg);
+	}
+
+	@Override
+	public void warning(String msg) {
+		System.out.println("WARNING: " + msg);
+	}
+
+	@Override
+	public void error(String msg) {
+		System.out.println("ERROR: " + msg);
 	}
 
 	@Override
@@ -218,11 +234,6 @@ public class MainGUI extends MCP {
 	}
 
 	@Override
-	public Path getWorkingDir() {
-		return workingDir;
-	}
-
-	@Override
 	public boolean updateDialogue(String changelog, String version) {
 		JPanel outer = new JPanel(new BorderLayout());
 		JPanel components = new JPanel();
@@ -250,28 +261,39 @@ public class MainGUI extends MCP {
 			}
 		}
 		outer.add(components);
-		JLabel label = new JLabel(TRANSLATOR.translateKey("mcp.confirmUpdate"));
+		JLabel label = new JLabel(MCP.TRANSLATOR.translateKey("mcp.confirmUpdate"));
 		label.setFont(label.getFont().deriveFont(14F));
 		label.setBorder(new EmptyBorder(10, 0, 0, 0));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		outer.add(label, BorderLayout.SOUTH);
-		return JOptionPane.showConfirmDialog(frame, outer, TRANSLATOR.translateKey("mcp.newVersion") + " " + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
+		return JOptionPane.showConfirmDialog(frame, outer, MCP.TRANSLATOR.translateKey("mcp.newVersion") + " " + version, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == 0;
 	}
 
 	public void changeWorkingDirectory() {
 		JFileChooser f = new JFileChooser(getWorkingDir().toAbsolutePath().toFile());
 		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		if (f.showDialog(frame, MCP.TRANSLATOR.translateKey("mcp.selectDir")) == JFileChooser.APPROVE_OPTION) {
+		if (f.showDialog(this.frame, MCP.TRANSLATOR.translateKey("mcp.selectDir")) == JFileChooser.APPROVE_OPTION) {
 			File file = f.getSelectedFile();
 			Path p = file.toPath();
 			if (Files.isDirectory(p)) {
-				workingDir = p;
-				options = new Options(this, MCPPaths.get(this, "options.cfg"));
-				options.save();
-				frame.reloadVersionList();
-				frame.updateButtonState();
-				frame.menuBar.reloadOptions();
-				frame.menuBar.reloadSide();
+				this.options = new Options(this, Paths.get("options.cfg"));
+				this.options.workingDir = p;
+				this.options.save();
+				VersionParser versionParser = VersionParser.getInstance();
+				Path versionPath = MCPPaths.get(this, MCPPaths.VERSION);
+				if (Files.exists(versionPath)) {
+					try {
+						currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(versionPath))));
+					} catch (JSONException | IOException e) {
+						e.printStackTrace();
+					}
+				}
+				this.frame.setCurrentVersion(this.currentVersion == null ? null : versionParser.getVersion(this.currentVersion.id));
+				this.frame.reloadText();
+				this.frame.reloadVersionList();
+				this.frame.updateButtonState();
+				this.frame.menuBar.reloadOptions();
+				this.frame.menuBar.reloadSide();
 			}
 		}
 	}
@@ -303,12 +325,12 @@ public class MainGUI extends MCP {
 	public TaskButton getButton(TaskMode task) {
 		TaskButton button;
 		if (task == TaskMode.DECOMPILE) {
-			ActionListener defaultActionListener = event -> enqueueRunnable(() -> {
+			ActionListener defaultActionListener = event -> Util.enqueueRunnable(() -> {
 				int response = JOptionPane.YES_OPTION;
 				if (TaskMode.RECOMPILE.isAvailable(this, getSide())) {
-					response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmDecompile"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+					response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmDecompile"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 					if (response == JOptionPane.YES_OPTION) {
-						int response2 = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.askSourceBackup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_CANCEL_OPTION);
+						int response2 = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.askSourceBackup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_CANCEL_OPTION);
 						if (response2 == JOptionPane.YES_OPTION) {
 							performTask(TaskMode.BACKUP_SRC, getSide(), false);
 						} else if (response2 != JOptionPane.NO_OPTION) {
@@ -322,16 +344,16 @@ public class MainGUI extends MCP {
 			});
 			button = new TaskButton(this, task, defaultActionListener);
 		} else if (task == TaskMode.CLEANUP) {
-			ActionListener defaultActionListener = event -> enqueueRunnable(() -> {
-				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmCleanup"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+			ActionListener defaultActionListener = event -> Util.enqueueRunnable(() -> {
+				int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmCleanup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 				if (response == JOptionPane.YES_OPTION) {
 					performTask(task, Side.ANY);
 				}
 			});
 			button = new TaskButton(this, task, defaultActionListener);
 		} else if (task == TaskMode.UPDATE_MD5) {
-			ActionListener defaultActionListener = event -> enqueueRunnable(() -> {
-				int response = JOptionPane.showConfirmDialog(frame, TRANSLATOR.translateKey("mcp.confirmUpdateMD5"), TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+			ActionListener defaultActionListener = event -> Util.enqueueRunnable(() -> {
+				int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmUpdateMD5"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
 				if (response == JOptionPane.YES_OPTION) {
 					performTask(task, getSide());
 				}
@@ -353,13 +375,15 @@ public class MainGUI extends MCP {
 
 	public final void changeTheme(Theme theme) {
 		try {
-			UIManager.setLookAndFeel(theme.themeClass);
-			// Try calling this on CLI now
-			JFrame frame = this.frame;
-			if (frame != null) {
-				SwingUtilities.updateComponentTreeUI(frame);
+			if (theme != null) {
+				UIManager.setLookAndFeel(theme.themeClass);
+				JFrame frame = this.frame;
+				if (frame != null) {
+					SwingUtilities.updateComponentTreeUI(frame);
+				}
+				this.theme = theme;
+				this.options.theme = theme.themeClass;
 			}
-			THEME = theme;
 		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
 				 IllegalAccessException e) {
 			e.printStackTrace();

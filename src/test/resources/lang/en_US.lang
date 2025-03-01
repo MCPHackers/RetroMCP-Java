@@ -1,1 +1,2 @@
 task.mergemappings = Merge mappings
+task.mergemappings.desc = Merges mappings into V2 format

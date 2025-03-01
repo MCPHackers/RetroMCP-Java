@@ -79,6 +79,9 @@ public class MainCLI extends MCP {
 				log(new Ansi().fgBrightRed().a("Error: Java Development Kit is required to recompile!").toString());
 				log("Using Java from " + Paths.get(Util.getJava()).toAbsolutePath());
 			}
+			if (Util.getJavaVersion() > 8) {
+				warning("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
+			}
 			if (version != null) log(version);
 			log(new Ansi().fgDefault().a("Enter a command to execute:").toString());
 		}
@@ -147,16 +150,9 @@ public class MainCLI extends MCP {
 			helpCommand = null;
 			executeTimes++;
 		}
-		if (Util.getJavaVersion() > 8) {
-			log("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
-		}
 	}
 
 	public static void main(String[] args) {
-		if (args.length != 0) {
-			new MainCLI(args);
-			return;
-		}
 		AnsiConsole.systemInstall();
 		new MainCLI(args);
 	}
@@ -245,6 +241,9 @@ public class MainCLI extends MCP {
 					case "server":
 						side = Side.SERVER;
 						break;
+					case "merged":
+						side = Side.MERGED;
+						break;
 				}
 				if (mode == TaskMode.HELP) {
 					for (TaskMode taskMode : TaskMode.registeredTasks) {
@@ -281,6 +280,16 @@ public class MainCLI extends MCP {
 	@Override
 	public void log(String msg) {
 		System.out.println(msg);
+	}
+
+	@Override
+	public void warning(String msg) {
+		System.out.println(Ansi.ansi().fgYellow().a(msg).fgDefault());
+	}
+
+	@Override
+	public void error(String msg) {
+		System.out.println(Ansi.ansi().fgRed().a(msg).fgDefault());
 	}
 
 	@Override
@@ -383,11 +392,6 @@ public class MainCLI extends MCP {
 		progresses = new int[0];
 		progressStrings = new String[0];
 		progressBarNames = new String[0];
-	}
-
-	@Override
-	public Path getWorkingDir() {
-		return Paths.get("");
 	}
 
 	@Override

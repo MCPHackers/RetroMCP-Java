@@ -1,6 +1,7 @@
 package org.mcphackers.mcp;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public abstract class MCP {
-
 	public static final String VERSION = "v1.0.1";
 	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
@@ -54,7 +54,12 @@ public abstract class MCP {
 	/**
 	 * @return The working directory
 	 */
-	public abstract Path getWorkingDir();
+	public Path getWorkingDir() {
+		if (this.options.workingDir != null && Files.exists(this.options.workingDir)) {
+			return options.workingDir;
+		}
+		return Paths.get("");
+	}
 
 	/**
 	 * Creates instances of TaskMode and executes them
@@ -187,6 +192,20 @@ public abstract class MCP {
 	 * @param msg
 	 */
 	public abstract void log(String msg);
+
+	/**
+	 * Logs a warning message to console
+	 *
+	 * @param msg
+	 */
+	public abstract void warning(String msg);
+
+	/**
+	 * Logs an error message to console
+	 *
+	 * @param msg
+	 */
+	public abstract void error(String msg);
 
 	/**
 	 * @return Instance of options
@@ -342,5 +361,11 @@ public abstract class MCP {
 			// Default to version libraries
 			return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
 		}
+	}
+
+	public static void reloadPluginTranslations() {
+		pluginManager.getLoadedPlugins().forEach((key, plugin) -> {
+			MCP.TRANSLATOR.readTranslation(plugin.getClass());
+		});
 	}
 }

@@ -1,0 +1,32 @@
+plugins {
+	id "com.gradleup.shadow" version "8.3.1"
+}
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+dependencies {
+	implementation rootProject
+	implementation "org.fusesource.jansi:jansi:${project.jansi_version}"
+}
+
+application {
+	mainClass = "org.mcphackers.mcp.main.MainCLI"
+	executableDir = "test"
+	mkdir(executableDir)
+}
+
+run {
+	workingDir 'test'
+}
+
+runShadow {
+	workingDir 'test'
+}
+
+tasks.named("shadowJar", ShadowJar) {
+	configurations = [project.configurations.compileClasspath]
+	archiveBaseName.set("RetroMCP-CLI")
+	archiveClassifier.set("all")
+	setDestinationDirectory(rootProject.getLayout().getBuildDirectory().dir("libs"))
+	minimize()
+}
