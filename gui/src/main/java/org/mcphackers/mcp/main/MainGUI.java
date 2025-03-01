@@ -280,6 +280,14 @@ public class MainGUI extends MCP {
 				this.options.workingDir = p;
 				this.options.save();
 				VersionParser versionParser = VersionParser.getInstance();
+				Path versionPath = MCPPaths.get(this, MCPPaths.VERSION);
+				if (Files.exists(versionPath)) {
+					try {
+						currentVersion = Version.from(new JSONObject(new String(Files.readAllBytes(versionPath))));
+					} catch (JSONException | IOException e) {
+						e.printStackTrace();
+					}
+				}
 				this.frame.setCurrentVersion(this.currentVersion == null ? null : versionParser.getVersion(this.currentVersion.id));
 				this.frame.reloadText();
 				this.frame.reloadVersionList();
