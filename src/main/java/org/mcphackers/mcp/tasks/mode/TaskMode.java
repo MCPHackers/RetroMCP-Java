@@ -17,7 +17,6 @@ import org.mcphackers.mcp.tasks.TaskCreatePatch;
 import org.mcphackers.mcp.tasks.TaskDecompile;
 import org.mcphackers.mcp.tasks.TaskDownloadUpdate;
 import org.mcphackers.mcp.tasks.TaskRecompile;
-import org.mcphackers.mcp.tasks.TaskReobfuscate;
 import org.mcphackers.mcp.tasks.TaskRun;
 import org.mcphackers.mcp.tasks.TaskSetup;
 import org.mcphackers.mcp.tasks.TaskSourceBackup;
@@ -65,18 +64,6 @@ public class TaskMode {
 					TaskParameter.TARGET_VERSION,
 					TaskParameter.JAVA_HOME,
 					TaskParameter.SIDE
-			})
-			.build();
-	public static TaskMode REOBFUSCATE = new TaskModeBuilder()
-			.setName("reobfuscate")
-			.setTaskClass(TaskReobfuscate.class)
-			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
-			.setParameters(new TaskParameter[]{
-					TaskParameter.SOURCE_VERSION,
-					TaskParameter.TARGET_VERSION,
-					TaskParameter.JAVA_HOME,
-					TaskParameter.SIDE,
-					TaskParameter.EXCLUDED_CLASSES
 			})
 			.build();
 	public static TaskMode UPDATE_MD5 = new TaskModeBuilder()
