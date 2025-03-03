@@ -29,10 +29,7 @@ public class TaskCreatePatch extends TaskStaged {
 					if (!Files.exists(srcPathUnpatched)) {
 						throw new IOException("Unpatched " + side.name + " sources cannot be found!");
 					}
-					boolean result = createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);
-					if (result) {
-						throw new RuntimeException("Failed to create patches!");
-					}
+					createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);
 				})
 		};
 	}
