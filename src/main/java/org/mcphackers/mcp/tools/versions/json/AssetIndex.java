@@ -37,28 +37,30 @@ public class AssetIndex {
 			{
 				hash = obj.getString("hash");
 				size = obj.getLong("size");
+				url = obj.optString("url", null);
 				// reconstruct = obj.optBoolean("reconstruct");
-				compressedHash = obj.optString("compressedHash", null);
-				compressedSize = obj.optLong("compressedSize");
+				// compressedHash = obj.optString("compressedHash", null);
+				// compressedSize = obj.optLong("compressedSize");
 			}
 		};
 	}
 
 	public static class Asset implements IDownload {
 		public String hash;
+		public String url;
 		public long size;
 		// public boolean reconstruct;
-		public String compressedHash;
-		public long compressedSize;
+		// public String compressedHash;
+		// public long compressedSize;
 
 		@Override
 		public String downloadURL() {
-			return "https://resources.download.minecraft.net/" + downloadPath();
+			return url != null ? url : "https://resources.download.minecraft.net/" + downloadPath();
 		}
 
 		@Override
 		public long downloadSize() {
-			return compressedSize;
+			return size;
 		}
 
 		@Override
