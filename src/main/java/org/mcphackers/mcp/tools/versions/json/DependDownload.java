@@ -21,7 +21,7 @@ public class DependDownload {
 		return new DependDownload() {
 			{
 				name = obj.getString("name");
-				url = obj.optString("url");
+				url = obj.optString("url", null);
 				downloads = Downloads.from(obj.optJSONObject("downloads"));
 				JSONArray a = obj.optJSONArray("rules");
 				if (a != null) {
@@ -111,21 +111,21 @@ public class DependDownload {
 	public String getNatives() {
 		switch (OS.getOs()) {
 			case windows:
-				if (getArtifact("natives_windows") != null) {
-					return "natives_windows";
+				if (getArtifact("natives-windows") != null) {
+					return "natives-windows";
 				}
 				break;
 			case linux:
-				if (getArtifact("natives_linux") != null) {
-					return "natives_linux";
+				if (getArtifact("natives-linux") != null) {
+					return "natives-linux";
 				}
 				break;
 			case osx:
-				if (getArtifact("natives_osx") != null) {
-					return "natives_osx";
+				if (getArtifact("natives-osx") != null) {
+					return "natives-osx";
 				}
-				if (getArtifact("natives_macos") != null) {
-					return "natives_macos";
+				if (getArtifact("natives-macos") != null) {
+					return "natives-macos";
 				}
 				break;
 			default:

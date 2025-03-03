@@ -39,18 +39,19 @@ public class EclipseProject {
 		// Filter out src and jars
 		long id = new Random().nextLong();
 		writer.startAttribute("filteredResources");
-		String[] matches = {"src", "jars", "source"};
-		for (String match : matches) {
-			writer.startAttribute("filter");
-			writer.stringAttribute("id", Long.toString(id++));
-			writer.stringAttribute("name", "");
-			writer.stringAttribute("type", "9");
-			writer.startAttribute("matcher");
-			writer.stringAttribute("id", "org.eclipse.ui.ide.multiFilter");
-			writer.stringAttribute("arguments", "1.0-name-matches-false-false-" + match);
-			writer.closeAttribute("matcher");
-			writer.closeAttribute("filter");
-		}
+		// Broken for VSCode even though it's supposedly eclipse-project compatible
+		// String[] matches = {"src", "jars", "source"};
+		// for (String match : matches) {
+		// 	writer.startAttribute("filter");
+		// 	writer.stringAttribute("id", Long.toString(id++));
+		// 	writer.stringAttribute("name", "");
+		// 	writer.stringAttribute("type", "9");
+		// 	writer.startAttribute("matcher");
+		// 	writer.stringAttribute("id", "org.eclipse.ui.ide.multiFilter");
+		// 	writer.stringAttribute("arguments", "1.0-name-matches-false-false-" + match);
+		// 	writer.closeAttribute("matcher");
+		// 	writer.closeAttribute("filter");
+		// }
 		writer.closeAttribute("filteredResources");
 		writer.closeAttribute("projectDescription");
 	}

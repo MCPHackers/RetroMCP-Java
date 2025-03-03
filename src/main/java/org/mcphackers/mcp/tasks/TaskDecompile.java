@@ -1,5 +1,11 @@
 package org.mcphackers.mcp.tasks;
 
+import static org.mcphackers.mcp.MCPPaths.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
@@ -10,6 +16,7 @@ import org.mcphackers.mcp.tools.injector.GLConstants;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.mcp.tools.project.EclipseProjectWriter;
 import org.mcphackers.mcp.tools.project.IdeaProjectWriter;
+import org.mcphackers.mcp.tools.project.VSCProjectWriter;
 import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
@@ -18,12 +25,6 @@ import org.mcphackers.rdi.nio.IOUtil;
 import org.mcphackers.rdi.nio.MappingsIO;
 import org.mcphackers.rdi.nio.RDInjector;
 import org.objectweb.asm.tree.ClassNode;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static org.mcphackers.mcp.MCPPaths.*;
 
 public class TaskDecompile extends TaskStaged {
 	public static final int STAGE_DECOMPILE = 2;
@@ -70,10 +71,14 @@ public class TaskDecompile extends TaskStaged {
 			for (ClassNode node : storage) {
 				classVersion = Math.max(classVersion, node.version);
 			}
+			// Force Java 8 or later in order to support VSC
+			// Java extension does not allow compiling under Java 8
+			classVersion = Math.max(8, classVersion);
 		}), stage(getLocalizedStage("decompile"), () -> {
 			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp).decompile();
 			new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 			new IdeaProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
+			new VSCProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 		}), stage(getLocalizedStage("patch"), 88, () -> {
 			if (mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
 				TaskApplyPatch.patch(this, ffOut, ffOut, patchesPath);

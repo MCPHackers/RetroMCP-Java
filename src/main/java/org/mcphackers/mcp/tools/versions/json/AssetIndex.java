@@ -1,12 +1,9 @@
 package org.mcphackers.mcp.tools.versions.json;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
-import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.versions.IDownload;
 
 public class AssetIndex {

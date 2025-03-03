@@ -59,6 +59,9 @@ public class IdeaProjectWriter implements ProjectWriter {
 			for (DependDownload dependencyDownload : version.libraries) {
 				if (Rule.apply(dependencyDownload.rules)) {
 					String lib = dependencyDownload.getArtifactPath(null);
+					if(lib == null) {
+						continue;
+					}
 					String libraryName = lib.substring(lib.lastIndexOf("/") + 1, lib.length() - 4);
 					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
 						writer.writeSelfEndingAttribute("orderEntry type=\"library\" name=\"" + libraryName + "\" level=\"project\"");
@@ -127,6 +130,9 @@ public class IdeaProjectWriter implements ProjectWriter {
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
 				String lib = dependencyDownload.getArtifactPath(null);
+				if(lib == null) {
+					continue;
+				}
 				String src = dependencyDownload.getArtifactPath("sources");
 				if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib))) {
 					String libraryName = lib.substring(lib.lastIndexOf("/") + 1, lib.length() - 4);

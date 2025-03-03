@@ -40,6 +40,9 @@ public class EclipseClasspath {
 			for (DependDownload dependencyDownload : this.dependencies) {
 				if (Rule.apply(dependencyDownload.rules)) {
 					String lib = dependencyDownload.getArtifactPath(null);
+					if(lib == null) {
+						continue;
+					}
 					String src = dependencyDownload.getArtifactPath("sources");
 					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib))) {
 						if (src != null) {
