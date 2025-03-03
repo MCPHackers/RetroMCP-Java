@@ -87,9 +87,9 @@ public class TaskSetup extends TaskStaged {
 
 					DownloadData dlData = new DownloadData(mcp, versionJson);
 					dlData.performDownload((dl, totalSize) -> {
-						libsSize += dl.size();
+						libsSize += dl.downloadSize();
 						int percent = (int) ((double) libsSize / totalSize * 97D);
-						setProgress(getLocalizedStage("download", dl.name()), 3 + percent);
+						setProgress(getLocalizedStage("download", dl.downloadURL()), 3 + percent);
 					});
 					Path natives = MCPPaths.get(mcp, NATIVES);
 					for (Path nativeArchive : DownloadData.getNatives(MCPPaths.get(mcp, LIB), versionJson)) {

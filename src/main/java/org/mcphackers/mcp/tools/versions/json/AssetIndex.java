@@ -1,9 +1,12 @@
 package org.mcphackers.mcp.tools.versions.json;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.versions.IDownload;
 
 public class AssetIndex {
@@ -37,7 +40,7 @@ public class AssetIndex {
 			{
 				hash = obj.getString("hash");
 				size = obj.getLong("size");
-				reconstruct = obj.optBoolean("reconstruct");
+				// reconstruct = obj.optBoolean("reconstruct");
 				compressedHash = obj.optString("compressedHash", null);
 				compressedSize = obj.optLong("compressedSize");
 			}
@@ -47,18 +50,33 @@ public class AssetIndex {
 	public static class Asset implements IDownload {
 		public String hash;
 		public long size;
-		public boolean reconstruct;
+		// public boolean reconstruct;
 		public String compressedHash;
 		public long compressedSize;
 
 		@Override
-		public String name() {
-			return "";
+		public String downloadURL() {
+			return "https://resources.download.minecraft.net/" + downloadPath();
 		}
 
 		@Override
-		public long size() {
+		public long downloadSize() {
 			return compressedSize;
+		}
+
+		@Override
+		public String downloadPath() {
+			return hash.substring(0, 2) + "/" + hash;
+		}
+
+		@Override
+		public String downloadHash() {
+			return hash;
+		}
+
+		@Override
+		public boolean verify() {
+			return true;
 		}
 	}
 }

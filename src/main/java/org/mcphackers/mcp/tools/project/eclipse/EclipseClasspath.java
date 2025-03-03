@@ -3,6 +3,7 @@ package org.mcphackers.mcp.tools.project.eclipse;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.Task;
+import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.project.XMLWriter;
 import org.mcphackers.mcp.tools.versions.json.DependDownload;
 import org.mcphackers.mcp.tools.versions.json.Rule;
@@ -35,20 +36,16 @@ public class EclipseClasspath {
 		writer.closeAttribute("attributes");
 		writer.closeAttribute("classpathentry");
 		// TODO: Implement proper client/server side libraries
-		if (!side.equals(Task.Side.SERVER)) {
+		if (!side.equals(Side.SERVER)) {
 			for (DependDownload dependencyDownload : this.dependencies) {
 				if (Rule.apply(dependencyDownload.rules)) {
-					String[] path = dependencyDownload.name.split(":");
-					String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
-					String src = null;
-					if (dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
-						src = dependencyDownload.downloads.classifiers.sources.path;
-					}
-					if (Files.exists(MCPPaths.get(this.mcp, "libraries/" + lib + ".jar"))) {
+					String lib = dependencyDownload.getArtifactPath(null);
+					String src = dependencyDownload.getArtifactPath("sources");
+					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib))) {
 						if (src != null) {
-							writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\" sourcepath=\"libraries/" + src + "\"");
+							writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + "\" sourcepath=\"libraries/" + src + "\"");
 						} else {
-							writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + ".jar\"");
+							writer.writeAttribute("classpathentry kind=\"lib\" path=\"libraries/" + lib + "\"");
 						}
 					}
 				}

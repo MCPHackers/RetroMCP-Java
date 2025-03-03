@@ -2,17 +2,17 @@ package org.mcphackers.mcp.tools.versions.json;
 
 import org.json.JSONObject;
 
-public class DownloadLibrary {
+public class Downloads {
 	public Artifact artifact;
 	public Classifiers classifiers;
 
-	public static DownloadLibrary from(JSONObject obj) {
+	public static Downloads from(JSONObject obj) {
 		if (obj == null) {
 			return null;
 		}
-		return new DownloadLibrary() {
+		return new Downloads() {
 			{
-				artifact = Artifact.from(obj.optJSONObject("artifact"));
+				artifact = Artifact.from(obj.optJSONObject("artifact"), null);
 				classifiers = Classifiers.from(obj.optJSONObject("classifiers"));
 			}
 		};

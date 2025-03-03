@@ -2,7 +2,13 @@ package org.mcphackers.mcp.tools.versions;
 
 public interface IDownload {
 
-	String name();
+	String downloadPath();
 
-	long size();
+	String downloadURL();
+
+	long downloadSize();
+
+	String downloadHash();
+
+	boolean verify();
 }

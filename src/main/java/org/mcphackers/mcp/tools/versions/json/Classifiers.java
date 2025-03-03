@@ -1,15 +1,12 @@
 package org.mcphackers.mcp.tools.versions.json;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONObject;
-import org.mcphackers.mcp.tools.OS;
 
 public class Classifiers {
-	public Artifact javadoc;
-	public Artifact natives_linux;
-	public Artifact natives_macos;
-	public Artifact natives_osx;
-	public Artifact natives_windows;
-	public Artifact sources;
+	public Map<String, Artifact> artifacts = new HashMap<>();
 
 	public static Classifiers from(JSONObject obj) {
 		if (obj == null) {
@@ -17,29 +14,14 @@ public class Classifiers {
 		}
 		return new Classifiers() {
 			{
-				javadoc = Artifact.from(obj.optJSONObject("javadoc"));
-				natives_linux = Artifact.from(obj.optJSONObject("natives-linux"));
-				natives_macos = Artifact.from(obj.optJSONObject("natives-macos"));
-				natives_osx = Artifact.from(obj.optJSONObject("natives-osx"));
-				natives_windows = Artifact.from(obj.optJSONObject("natives-windows"));
-				sources = Artifact.from(obj.optJSONObject("sources"));
+				for(String key : obj.keySet()) {
+					artifacts.put(key, getArtifact(obj, key));
+				}
 			}
 		};
 	}
 
-	public Artifact getNatives() {
-		switch (OS.getOs()) {
-			case windows:
-				return natives_windows;
-			case linux:
-				return natives_linux;
-			case osx:
-				if (natives_osx != null) {
-					return natives_osx;
-				}
-				return natives_macos;
-			default:
-				return null;
-		}
+	private static Artifact getArtifact(JSONObject root, String name) {
+		return Artifact.from(root.optJSONObject(name), name);
 	}
 }

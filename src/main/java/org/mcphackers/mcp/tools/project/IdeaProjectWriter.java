@@ -1,11 +1,10 @@
 package org.mcphackers.mcp.tools.project;
 
-import static org.mcphackers.mcp.MCPPaths.PROJECT;
+import static org.mcphackers.mcp.MCPPaths.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -59,10 +58,8 @@ public class IdeaProjectWriter implements ProjectWriter {
 			writer.writeSelfEndingAttribute("orderEntry type=\"sourceFolder\" forTests=\"false\"");
 			for (DependDownload dependencyDownload : version.libraries) {
 				if (Rule.apply(dependencyDownload.rules)) {
-					String[] path = dependencyDownload.name.split(":");
-					String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
-					Path libPath = Paths.get(lib);
-					String libraryName = libPath.getFileName().toString();
+					String lib = dependencyDownload.getArtifactPath(null);
+					String libraryName = lib.substring(lib.lastIndexOf("/") + 1, lib.length() - 4);
 					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
 						writer.writeSelfEndingAttribute("orderEntry type=\"library\" name=\"" + libraryName + "\" level=\"project\"");
 					}
@@ -129,14 +126,10 @@ public class IdeaProjectWriter implements ProjectWriter {
 		// Write library XML files
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
-				String[] path = dependencyDownload.name.split(":");
-				String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
-				String src = null;
-				if (dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null && dependencyDownload.downloads.classifiers.sources != null) {
-					src = dependencyDownload.downloads.classifiers.sources.path;
-				}
-				if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
-					String libraryName = lib.substring(lib.lastIndexOf("/") + 1);
+				String lib = dependencyDownload.getArtifactPath(null);
+				String src = dependencyDownload.getArtifactPath("sources");
+				if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib))) {
+					String libraryName = lib.substring(lib.lastIndexOf("/") + 1, lib.length() - 4);
 					Path libraryXML = librariesFolder.resolve(libraryName + ".xml");
 					Files.createFile(libraryXML);
 					try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(libraryXML))) {
@@ -145,7 +138,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 						writer.startAttribute("library name=\"" + libraryName + "\"");
 
 						writer.startAttribute("CLASSES");
-						writer.writeSelfEndingAttribute("root url=\"jar://$PROJECT_DIR$/../libraries/" + lib + ".jar!/\"");
+						writer.writeSelfEndingAttribute("root url=\"jar://$PROJECT_DIR$/../libraries/" + lib + "!/\"");
 						writer.closeAttribute("CLASSES");
 						writer.writeSelfEndingAttribute("JAVADOC");
 						if (src != null) {

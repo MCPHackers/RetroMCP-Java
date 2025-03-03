@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
 	apply plugin: "java"
-
+    
 	repositories {
 		mavenCentral()
 		maven { url "https://jitpack.io/" }
@@ -23,8 +23,8 @@ allprojects {
 		implementation "org.ow2.asm:asm-tree:${project.asm_version}"
 		implementation "org.ow2.asm:asm-util:${project.asm_version}"
 
-		implementation "com.github.MCPHackers.RetroDebugInjector:rdi-nio:${project.rdi_version}"
-		implementation "com.github.MCPHackers.RetroDebugInjector:rdi:${project.rdi_version}"
+		implementation "org.mcphackers.rdi:rdi-nio:${project.rdi_version}"
+		implementation "org.mcphackers.rdi:rdi:${project.rdi_version}"
 
 		implementation "io.github.lassebq:fernflower:${project.fernflower_version}"
 

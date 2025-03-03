@@ -15,20 +15,17 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
-import org.mcphackers.mcp.tools.versions.json.Artifact;
 import org.mcphackers.mcp.tools.versions.json.AssetIndex;
 import org.mcphackers.mcp.tools.versions.json.AssetIndex.Asset;
 import org.mcphackers.mcp.tools.versions.json.DependDownload;
-import org.mcphackers.mcp.tools.versions.json.Download;
 import org.mcphackers.mcp.tools.versions.json.Rule;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public class DownloadData {
 
 	private final Path gameDir;
-	public long totalSize;
-	public List<DownloadEntry> natives = new ArrayList<>();
-	protected List<DownloadEntry> downloadQueue = new ArrayList<>();
+	public int totalSize;
+	protected List<Download> downloadQueue = new ArrayList<>();
 	protected AssetIndex assets;
 
 	public DownloadData(MCP mcp, Version version) {
@@ -37,28 +34,13 @@ public class DownloadData {
 
 	public DownloadData(Path libraries, Path gameDir, Path client, Path server, Version version) {
 		this.gameDir = gameDir;
-		if (version.downloads.client != null && client != null) {
-			queueDownload(version.downloads.client, client, true); // TODO may want to make verify flag togglable
-		}
-		if (version.downloads.server != null && server != null) {
-			queueDownload(version.downloads.server, server, true);
-		}
+		queueDownload(version.downloads.artifacts.get("client"), client);
+		queueDownload(version.downloads.artifacts.get("server"), server);
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
-				if (dependencyDownload.downloads != null && dependencyDownload.downloads.artifact != null) {
-					queueDownload(dependencyDownload.downloads.artifact, libraries.resolve(dependencyDownload.downloads.artifact.path), true);
-				}
-
-				if (dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null) {
-					Artifact artifact = dependencyDownload.downloads.classifiers.getNatives();
-					if (artifact != null) {
-						natives.add(queueDownload(artifact, libraries.resolve(artifact.path), true));
-					}
-					artifact = dependencyDownload.downloads.classifiers.sources;
-					if (artifact != null) {
-						queueDownload(artifact, libraries.resolve(artifact.path), true);
-					}
-				}
+				queueDownload(dependencyDownload.getDownload(null), libraries);
+				queueDownload(dependencyDownload.getDownload(dependencyDownload.getNatives()), libraries);
+				queueDownload(dependencyDownload.getDownload("sources"), libraries);
 			}
 		}
 		try {
@@ -79,8 +61,7 @@ public class DownloadData {
 		List<String> retList = new ArrayList<>();
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
-				String[] path = dependencyDownload.name.split(":");
-				String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2];
+				String lib = dependencyDownload.getArtifactPath(null);
 				retList.add(lib);
 			}
 		}
@@ -91,8 +72,10 @@ public class DownloadData {
 		List<Path> retList = new ArrayList<>();
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
-				String[] path = dependencyDownload.name.split(":");
-				String lib = path[0].replace('.', '/') + "/" + path[1] + "/" + path[2] + "/" + path[1] + "-" + path[2] + ".jar";
+				String lib = dependencyDownload.getArtifactPath(null);
+				if(lib == null) {
+					continue;
+				}
 				retList.add((libDir.resolve(lib)));
 			}
 		}
@@ -103,11 +86,13 @@ public class DownloadData {
 		List<Path> retList = new ArrayList<>();
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
-				if (dependencyDownload.downloads != null && dependencyDownload.downloads.classifiers != null) {
-					Artifact artifact = dependencyDownload.downloads.classifiers.getNatives();
-					if (artifact != null) {
-						retList.add(libDir.resolve(artifact.path));
+				String natives = dependencyDownload.getNatives();
+				if (natives != null) {
+					String lib = dependencyDownload.getArtifactPath(natives);
+					if(lib == null) {
+						continue;
 					}
+					retList.add(libDir.resolve(lib));
 				}
 			}
 		}
@@ -119,57 +104,43 @@ public class DownloadData {
 			return;
 		}
 		this.assets = assets;
+		Path dir = gameDir.resolve(assets.map_to_resources ? "resources/" : "assets/objects/");
 		for (Entry<String, Asset> entry : assets.objects.entrySet()) {
-			totalSize += entry.getValue().size();
+			queueDownload(entry.getValue(), dir);
 		}
 	}
 
-	public DownloadEntry queueDownload(Download dl, Path path, boolean verify) {
+	public void queueDownload(IDownload dl, Path baseDir) {
 		if (dl == null) {
-			return null;
+			return;
 		}
-		DownloadEntry entry = new DownloadEntry(dl, path, verify);
-		totalSize += dl.size();
-		downloadQueue.add(entry);
-		return entry;
+		totalSize += dl.downloadSize();
+		downloadQueue.add(new Download(dl, baseDir));
 	}
 
 	public void performDownload(DownloadListener listener) throws IOException {
-		for (DownloadEntry dl : downloadQueue) {
-			Path file = dl.path;
-			Download dlObj = dl.dlObject;
-			listener.notify(dlObj, totalSize);
-			if (!Files.exists(file) || (dl.verifySHA1 && !dlObj.sha1.equals(Util.getSHA1(file)))) {
+		for (Download dl : downloadQueue) {
+			IDownload download = dl.download;
+			Path baseDir = dl.dir;
+			String path = download.downloadPath();
+			// if downloadPath is null then baseDir is the location of downloaded file.
+			Path file = path == null ? baseDir : baseDir.resolve(path);
+			listener.notify(dl.download, totalSize);
+			if (!Files.exists(file) || (download.verify() && !download.downloadHash().equals(Util.getSHA1(file)))) {
 				Path parent = file.getParent();
 				if (parent != null) Files.createDirectories(parent);
-				FileUtil.downloadFile(dlObj.url, file);
-			}
-		}
-		if (assets != null) {
-			for (Entry<String, Asset> entry : assets.objects.entrySet()) {
-				Asset asset = entry.getValue();
-				String hash = asset.hash.substring(0, 2) + "/" + asset.hash;
-				String filename = assets.map_to_resources ? "resources/" + entry.getKey() : "assets/objects/" + hash;
-				Path file = gameDir.resolve(filename);
-				listener.notify(asset, totalSize);
-				if (!Files.exists(file)) {
-					Path parent = file.getParent();
-					if (parent != null) Files.createDirectories(parent);
-					FileUtil.downloadFile("https://resources.download.minecraft.net/" + hash, file);
-				}
+				FileUtil.downloadFile(download.downloadURL(), file);
 			}
 		}
 	}
 
-	public static class DownloadEntry {
-		public final Download dlObject;
-		public final Path path;
-		public final boolean verifySHA1;
+	private static class Download {
+		IDownload download;
+		Path dir;
 
-		public DownloadEntry(Download dl, Path filePath, boolean verify) {
-			path = filePath;
-			dlObject = dl;
-			verifySHA1 = verify;
+		public Download(IDownload dl, Path path) {
+			download = dl;
+			dir = path;
 		}
 	}
 }
