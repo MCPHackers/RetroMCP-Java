@@ -16,11 +16,27 @@ import java.util.List;
 public class EclipseClasspath {
 	private final MCP mcp;
 	private final String projectName;
+	private final int javaVersion;
 	private final List<DependDownload> dependencies = new ArrayList<>();
 
-	public EclipseClasspath(MCP mcp, String projectName) {
+	private final static String[] VM_TYPES = {
+		"J2SE-1.5",
+		"JavaSE-1.6",
+		"JavaSE-1.7",
+		"JavaSE-1.8"
+	};
+
+	private String getStandardVMType() {
+		if(javaVersion >= 5 && javaVersion <= 8) {
+			return VM_TYPES[javaVersion - 5];
+		}
+		return "JavaSE-" + javaVersion;
+	}
+
+	public EclipseClasspath(MCP mcp, String projectName, int javaVersion) {
 		this.mcp = mcp;
 		this.projectName = projectName;
+		this.javaVersion = javaVersion;
 	}
 
 	public void addDependency(DependDownload dependency) {
@@ -55,7 +71,7 @@ public class EclipseClasspath {
 			}
 		}
 		writer.writeAttribute("classpathentry kind=\"lib\" path=\"jars/deobfuscated.jar\" sourcepath=\"jars/deobfuscated-source.jar\"");
-		writer.writeAttribute("classpathentry kind=\"con\" path=\"org.eclipse.jdt.launching.JRE_CONTAINER\"");
+		writer.writeAttribute("classpathentry kind=\"con\" path=\"org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + getStandardVMType() + "\"");
 		writer.writeAttribute("classpathentry kind=\"output\" path=\"output\"");
 		writer.closeAttribute("classpath");
 	}

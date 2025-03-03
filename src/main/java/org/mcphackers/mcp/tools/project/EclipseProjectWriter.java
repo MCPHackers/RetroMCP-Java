@@ -30,7 +30,7 @@ public class EclipseProjectWriter implements ProjectWriter {
 		String projectName = "Minecraft " + (side == Task.Side.CLIENT ? "Client" : side == Task.Side.SERVER ? "Server" : side == Task.Side.MERGED ? "Merged" : "Project");
 
 		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(".classpath")))) {
-			EclipseClasspath classpath = new EclipseClasspath(mcp, projectName);
+			EclipseClasspath classpath = new EclipseClasspath(mcp, projectName, sourceVersion);
 			for (DependDownload dependency : version.libraries) {
 				classpath.addDependency(dependency);
 			}

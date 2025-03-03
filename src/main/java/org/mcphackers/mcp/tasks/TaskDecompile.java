@@ -73,7 +73,7 @@ public class TaskDecompile extends TaskStaged {
 			}
 			// Force Java 8 or later in order to support VSC
 			// Java extension does not allow compiling under Java 8
-			classVersion = Math.max(8, classVersion);
+			classVersion = Math.max(52, classVersion);
 		}), stage(getLocalizedStage("decompile"), () -> {
 			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp).decompile();
 			new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));

@@ -26,6 +26,15 @@ public class VSCProjectWriter implements ProjectWriter {
 		String projectName = "Minecraft " + (side == Task.Side.CLIENT ? "Client" : side == Task.Side.SERVER ? "Server" : side == Task.Side.MERGED ? "Merged" : "Project");
 
 		Files.createDirectories(proj.resolve(".vscode"));
+		try (BufferedWriter writer = Files.newBufferedWriter(proj.resolve(".vscode/settings.json"))) {
+			JSONObject settingsJson = new JSONObject();
+			JSONObject searchExclude = new JSONObject();
+			searchExclude.put("src_original/**", true);
+			searchExclude.put("bin/**", true);
+			searchExclude.put("output/**", true);
+			settingsJson.put("search.exclude", searchExclude);
+			settingsJson.write(writer);
+		}
 		try (BufferedWriter writer = Files.newBufferedWriter(proj.resolve(".vscode/launch.json"))) {
 			JSONObject launchJson = new JSONObject();
 			launchJson.put("version", "0.2.0");
