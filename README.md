@@ -1,7 +1,11 @@
 # RetroMCP-Java
 
 RetroMCP is a modification of the Minecraft Coder Pack to create a "Long Term Service" patch for Minecraft.
-RetroMCP-Java is a complete re-design of RetroMCP in Java.
+RetroMCP-Java is a complete re-design of RetroMCP in Java. It is a tool to decompile legacy Minecraft versions, from rd-132211 to 1.5.2!
+
+# Disclaimer
+
+You cannot publish a modified version of Minecraft that uses the source code/assets of the game without Mojang's consent. However, you can examine the source code via MCPTool and code in new additions! Or just keep your modified MC Installation for personal use :)
 
 # Using
 
@@ -10,9 +14,12 @@ Using RetroMCP-Java is simple!
 2. Run the latest [release](https://github.com/MCPHackers/RetroMCP-Java/releases) from the command line or via double click. If you run it via double click and RMCP errors, make sure your PATH
 and your JAR file associations are properly configured.
 	> Be careful! Using "Open with" context menu on Windows will not use a proper directory, be sure to change the default .jar file associations
-3. Run `setup` and choose the version you wish to decompile.
-4. Run the `decompile` task
-5. Mod away! Now it's Yourcraft!
+
+ 	If you still encounter errors, go into the directory with RetroMCP-Java-CLI.jar and run this command:
+	<br>java -jar RetroMCP-Java-CLI.jar</br>
+4. Run `setup` and choose the version you wish to decompile. You can also run 'setup' each time you want to change the version to decompile.
+5. Run the `decompile` task.
+6. Mod away! Now it's Yourcraft!
 
 For more info you can check [RetroMCP Wiki](https://github.com/MCPHackers/RetroMCP-Java/wiki).
 
