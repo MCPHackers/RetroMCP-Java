@@ -3,6 +3,7 @@ package org.mcphackers.mcp.tasks;
 import static org.mcphackers.mcp.MCPPaths.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +17,7 @@ import java.util.zip.ZipInputStream;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.json.Version;
@@ -60,7 +62,7 @@ public class TaskRun extends Task {
 		args.add(String.join(System.getProperty("path.separator"), classPath));
 		args.add(main);
 		if(side == Side.CLIENT) {
-			args.addAll(getLaunchArgs(mcp));
+			args.addAll(getLaunchArgs(mcp, side));
 			Collections.addAll(args, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
 		}
 
@@ -92,7 +94,7 @@ public class TaskRun extends Task {
 	 * @param mcp
 	 * @return arguments for launching client
 	 */
-	public static List<String> getLaunchArgs(MCP mcp) {
+	public static List<String> getLaunchArgs(MCP mcp, Side side) {
 		Version ver = mcp.getCurrentVersion();
 		Arguments args = ver.arguments;
 		String mcArgs = ver.minecraftArguments;
@@ -107,14 +109,22 @@ public class TaskRun extends Task {
 			argsList.addAll(Arrays.asList(mcArgs.split(" ")));
 		}
 
-		Path gameDir = getMCDir(mcp, mcp.getOptions().side).toAbsolutePath();
+		Path gameDir = getMCDir(mcp, side).toAbsolutePath();
 		Path assets = gameDir.resolve("assets");
+		try {
+			if(!Files.exists(assets.resolve("indexes/" + ver.assets + ".json"))) {
+				FileUtil.createDirectories(assets.resolve("indexes"));
+				Files.copy(FileUtil.openURLStream(new URL(ver.assetIndex.url)), assets.resolve("indexes/" + ver.assets + ".json"));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		for(int i = 0; i < argsList.size(); i++) {
 			String arg = argsList.get(i);
 			switch (arg) {
 
-			case "${auth_player_name}": arg = "Player094"; break; //Player094 is a free username with no skin
+			case "${auth_player_name}": arg = "Player"; break; // LaunchWrapper disables skin for this username
 			case "${auth_session}": arg = "-"; break;
 			case "${user_properties}": arg = "{}"; break;
 			case "${version_name}": arg = ver.id; break;

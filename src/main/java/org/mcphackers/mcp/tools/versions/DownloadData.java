@@ -1,14 +1,11 @@
 package org.mcphackers.mcp.tools.versions;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
-import org.json.JSONObject;
 import org.mcphackers.mcp.DownloadListener;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -17,7 +14,6 @@ import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.versions.json.Artifact;
 import org.mcphackers.mcp.tools.versions.json.AssetIndex;
-import org.mcphackers.mcp.tools.versions.json.AssetIndex.Asset;
 import org.mcphackers.mcp.tools.versions.json.DependDownload;
 import org.mcphackers.mcp.tools.versions.json.Download;
 import org.mcphackers.mcp.tools.versions.json.Rule;
@@ -39,7 +35,6 @@ public class DownloadData {
 
 	protected List<DownloadEntry> downloadQueue = new ArrayList<>();
 	protected AssetIndex assets;
-	private Path gameDir;
 	public int totalSize;
 	public List<DownloadEntry> natives = new ArrayList<>();
 	
@@ -48,7 +43,6 @@ public class DownloadData {
 	}
 
 	public DownloadData(Path libraries, Path gameDir, Path client, Path server, Version version) {
-		this.gameDir = gameDir;
 		if(version.downloads.client != null && client != null) {
 			queueDownload(version.downloads.client, client, true); // TODO may want to make verify flag togglable
 		}
@@ -73,29 +67,6 @@ public class DownloadData {
 				}
 			}
 		}
-		try {
-			Path assetIndex = gameDir.resolve("assets/indexes/" + version.assets + ".json");
-			String assetIndexString;
-			if (!Files.exists(assetIndex) || !version.assetIndex.sha1.equals(Util.getSHA1(assetIndex))) {
-				assetIndexString = new String(Util.readAllBytes(new URL(version.assetIndex.url).openStream()));
-				Files.write(assetIndex, assetIndexString.getBytes());
-			}
-			else {
-				assetIndexString = new String(Files.readAllBytes(assetIndex));
-			}
-			setAssets(AssetIndex.from(new JSONObject(assetIndexString)));
-		}
-		catch (IOException ignored) {}
-	}
-
-	public void setAssets(AssetIndex assets) {
-		if(this.assets != null) {
-			return;
-		}
-		this.assets = assets;
-		for(Entry<String, Asset> entry : assets.objects.entrySet()) {
-			totalSize += entry.getValue().size();
-		}
 	}
 
 	public DownloadEntry queueDownload(Download dl, Path path, boolean verify) {
@@ -117,20 +88,6 @@ public class DownloadData {
 				Path parent = file.getParent();
 				if(parent != null) Files.createDirectories(parent);
 				FileUtil.downloadFile(dlObj.url, file);
-			}
-		}
-		if(assets != null) {
-			for(Entry<String, Asset> entry : assets.objects.entrySet()) {
-				Asset asset = entry.getValue();
-				String hash = asset.hash.substring(0, 2) + "/" + asset.hash;
-				String filename = assets.map_to_resources ? "resources/" + entry.getKey() : "assets/objects/" + hash;
-				Path file = gameDir.resolve(filename);
-				listener.notify(asset, totalSize);
-				if(!Files.exists(file)) {
-					Path parent = file.getParent();
-					if(parent != null) Files.createDirectories(parent);
-					FileUtil.downloadFile("http://resources.download.minecraft.net/" + hash, file);
-				}
 			}
 		}
 	}
