@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -29,6 +30,8 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import org.mcphackers.mcp.MCP;
 
 public abstract class FileUtil {
 
@@ -131,11 +134,17 @@ public abstract class FileUtil {
 	}
 
 	public static void downloadFile(URL url, Path output) throws IOException {
-		ReadableByteChannel channel = Channels.newChannel(url.openStream());
+		ReadableByteChannel channel = Channels.newChannel(openURLStream(url));
 		try (FileOutputStream stream = new FileOutputStream(output.toAbsolutePath().toString())) {
 			FileChannel fileChannel = stream.getChannel();
 			fileChannel.transferFrom(channel, 0, Long.MAX_VALUE);
 		}
+	}
+
+	public static InputStream openURLStream(URL url) throws IOException {
+		URLConnection connection = url.openConnection();
+		connection.setRequestProperty("User-Agent", "RetroMCP/" + MCP.VERSION);
+		return connection.getInputStream();
 	}
 
 	public static void deleteDirectoryIfExists(Path path) throws IOException {

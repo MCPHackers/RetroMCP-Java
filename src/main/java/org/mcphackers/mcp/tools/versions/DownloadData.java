@@ -47,7 +47,7 @@ public class DownloadData {
 			Path assetIndex = gameDir.resolve("assets/indexes/" + version.assets + ".json");
 			String assetIndexString;
 			if (!Files.exists(assetIndex) || !version.assetIndex.sha1.equals(Util.getSHA1(assetIndex))) {
-				assetIndexString = new String(Util.readAllBytes(new URL(version.assetIndex.url).openStream()));
+				assetIndexString = new String(Util.readAllBytes(FileUtil.openURLStream(new URL(version.assetIndex.url))));
 				Files.write(assetIndex, assetIndexString.getBytes());
 			} else {
 				assetIndexString = new String(Files.readAllBytes(assetIndex));
