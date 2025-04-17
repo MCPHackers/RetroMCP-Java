@@ -21,6 +21,7 @@ public enum TaskParameter {
 	IGNORED_PACKAGES("ignore", String[].class, new String[]{"paulscode", "com/jcraft", "de/jarnbjo", "isom"}),
 	FERNFLOWER_OPTIONS("ff_options", String.class, getDefaultFFOptions()),
 	OBFUSCATION("obf", Boolean.class, false),
+	SRG_OBFUSCATION("srgobf", Boolean.class, false),
 	FULL_BUILD("fullbuild", Boolean.class, false),
 	RUN_BUILD("runbuild", Boolean.class, false),
 	RUN_ARGS("runargs", String[].class, new String[]{"-Xms1024M", "-Xmx1024M"}),
@@ -41,7 +42,7 @@ public enum TaskParameter {
 	public final Class<?> type;
 	public final Object defaultValue;
 
-	TaskParameter(String name, Class<?> c, Object value) {
+	<T> TaskParameter(String name, Class<T> c, T value) {
 		TaskParameterMap.nameToParamMap.put(name, this);
 		this.name = name;
 		this.type = c;

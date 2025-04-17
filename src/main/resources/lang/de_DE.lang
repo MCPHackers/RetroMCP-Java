@@ -108,6 +108,7 @@ task.param.patch = Patches anwenden
 task.param.ignore = Ignorierte Pakete einstellen
 task.param.ff_options = Fernflower-Einstellungen setzen
 task.param.obf = Modklassen obfuskieren
+task.param.srgobf = Mit Searge-Namen obfuskieren
 task.param.excludedclasses = Ausgeschlossene Klassen
 task.param.fullbuild = Vollständig bauen
 task.param.runbuild = Build ausführen

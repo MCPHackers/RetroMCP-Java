@@ -2,7 +2,6 @@ package org.mcphackers.mcp.tasks;
 
 import static org.mcphackers.mcp.MCPPaths.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -118,8 +117,11 @@ public class TaskReobfuscate extends TaskStaged {
 			return new Mappings();
 		}
 		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
-		boolean joined = MappingUtil.readNamespaces(mappingsPath).contains("official");
-		Mappings mappings = MappingsIO.read(mappingsPath, "named", joined ? "official" : side.name);
+		final boolean srgObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.SRG_OBFUSCATION);
+		List<String> nss = MappingUtil.readNamespaces(mappingsPath);
+		boolean joined = srgObfuscation ? nss.contains("searge") : nss.contains("official");
+		Mappings mappings = MappingsIO.read(mappingsPath, "named",
+				joined ? (srgObfuscation ? "searge" : "official") : side.name);
 		modifyClassMappings(mappings, storage.getAllClasses(), enableObfuscation);
 		return mappings;
 	}
