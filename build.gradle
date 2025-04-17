@@ -1,37 +1,37 @@
 plugins {
-    id "java"
+	id "java"
 }
 
 allprojects {
 	apply plugin: "java"
-    
+
 	repositories {
 		mavenCentral()
-		maven { url "https://jitpack.io/" }
-		maven { url "https://maven.fabricmc.net/" }
-		maven { url "https://mcphackers.org/libraries/" }
-		maven { url "https://maven.glass-launcher.net/releases" }
+		maven { url = "https://jitpack.io/" }
+		maven { url = "https://maven.fabricmc.net/" }
+		maven { url = "https://mcphackers.org/libraries/" }
+		maven { url = "https://maven.glass-launcher.net/releases" }
 	}
 
 	dependencies {
 		runtimeOnly sourceSets.test.output
 
 		// Required libraries
-		implementation "org.ow2.asm:asm:${project.asm_version}"
-		implementation "org.ow2.asm:asm-analysis:${project.asm_version}"
-		implementation "org.ow2.asm:asm-commons:${project.asm_version}"
-		implementation "org.ow2.asm:asm-tree:${project.asm_version}"
-		implementation "org.ow2.asm:asm-util:${project.asm_version}"
+		implementation libs.asm
+		implementation libs.asm.analysis
+		implementation libs.asm.commons
+		implementation libs.asm.tree
+		implementation libs.asm.util
 
-		implementation "org.mcphackers.rdi:rdi-nio:${project.rdi_version}"
-		implementation "org.mcphackers.rdi:rdi:${project.rdi_version}"
+		implementation libs.rdi.nio
+		implementation libs.rdi
 
-		implementation "io.github.lassebq:fernflower:${project.fernflower_version}"
+		implementation libs.fernflower
 
-		implementation "org.json:json:${project.json_version}"
-		implementation "com.github.MCPHackers:DiffPatch:${project.diffpatch_version}"
-		implementation "org.apache.commons:commons-lang3:${project.apache_version}"
-		implementation "net.fabricmc:mapping-io:${project.mapping_io_version}"
+		implementation libs.json
+		implementation libs.diffpatch
+		implementation libs.commons.lang3
+		implementation libs.mapping.io
 	}
 
 	tasks.withType(JavaCompile).configureEach {
