@@ -8,7 +8,7 @@ jansi = '2.4.1'
 json = '20250107'
 mapping-io = '0.7.1'
 rdi = '1.1'
-shadow-plugin = '8.3.6'
+shadow-plugin = '8.3.1'
 
 [libraries]
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
