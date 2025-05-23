@@ -1,12 +1,13 @@
 plugins {
-	id "com.gradleup.shadow" version "8.3.1"
+	alias libs.plugins.shadow
 }
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 dependencies {
 	implementation rootProject
-	implementation "org.fusesource.jansi:jansi:${project.jansi_version}"
+
+	implementation libs.jansi
 }
 
 application {

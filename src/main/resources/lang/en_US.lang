@@ -108,6 +108,7 @@ task.param.patch = Apply patches
 task.param.ignore = Set ignored packages
 task.param.ff_options = Set Fernflower options
 task.param.obf = Obfuscate mod classes
+task.param.srgobf = Obfuscate using Searge names
 task.param.excludedclasses = Excluded classes
 task.param.fullbuild = Full build
 task.param.runbuild = Run build

@@ -1,0 +1,30 @@
+[versions]
+asm = '9.8'
+commons-lang3 = '3.17.0'
+diffpatch = 'cde1224'
+fernflower = '1.0.0'
+flatlaf = '3.6'
+jansi = '2.4.1'
+json = '20250107'
+mapping-io = '0.7.1'
+rdi = '1.1'
+shadow-plugin = '8.3.1'
+
+[libraries]
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm-analysis = { module = "org.ow2.asm:asm-analysis", version.ref = "asm" }
+asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
+asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
+diffpatch = { module = "com.github.MCPHackers:DiffPatch", version.ref = "diffpatch" }
+fernflower = { module = "io.github.lassebq:fernflower", version.ref = "fernflower" }
+flatlaf = { module = "com.formdev:flatlaf", version.ref = "flatlaf" }
+jansi = { module = "org.fusesource.jansi:jansi", version.ref = "jansi" }
+json = { module = "org.json:json", version.ref = "json" }
+mapping-io = { module = "net.fabricmc:mapping-io", version.ref = "mapping-io" }
+rdi = { module = "org.mcphackers.rdi:rdi", version.ref = "rdi" }
+rdi-nio = { module = "org.mcphackers.rdi:rdi-nio", version.ref = "rdi" }
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow-plugin" }
