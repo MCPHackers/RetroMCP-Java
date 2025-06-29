@@ -67,7 +67,13 @@ public class TaskReobfuscate extends TaskStaged {
 
 		for (Side localSide : sides) {
 			final Path reobfDir = MCPPaths.get(mcp, REOBF_SIDE, localSide);
+			if (!Files.exists(reobfDir)) {
+				Files.createDirectories(reobfDir);
+			}
 			final Path reobfJar = MCPPaths.get(mcp, REOBF_JAR, localSide);
+			if (!Files.exists(reobfJar.getParent())) {
+				Files.createDirectories(reobfJar.getParent());
+			}
 			Files.deleteIfExists(reobfJar);
 			RDInjector injector = new RDInjector(reobfBin);
 			Mappings mappings = getMappings(injector.getStorage(), localSide);
