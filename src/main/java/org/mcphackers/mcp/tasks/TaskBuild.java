@@ -35,10 +35,10 @@ public class TaskBuild extends TaskStaged {
 						() -> {
 							Side[] sides = side == Side.MERGED ? new Side[]{Side.CLIENT, Side.SERVER} : new Side[]{side};
 							for (Side localSide : sides) {
-								Path originalJar = MCPPaths.get(mcp, JAR_ORIGINAL, side == Side.MERGED ? Side.MERGED : localSide);
-								Path reobfDir = MCPPaths.get(mcp, REOBF_SIDE, side == Side.MERGED ? Side.MERGED : localSide);
-								Path buildJar = MCPPaths.get(mcp, BUILD_JAR, side == Side.MERGED ? Side.MERGED : localSide);
-								Path buildZip = MCPPaths.get(mcp, BUILD_ZIP, side == Side.MERGED ? Side.MERGED : localSide);
+								Path originalJar = MCPPaths.get(mcp, JAR_ORIGINAL, localSide);
+								Path reobfDir = MCPPaths.get(mcp, REOBF_SIDE, localSide);
+								Path buildJar = MCPPaths.get(mcp, BUILD_JAR, localSide);
+								Path buildZip = MCPPaths.get(mcp, BUILD_ZIP, localSide);
 								FileUtil.createDirectories(MCPPaths.get(mcp, BUILD));
 								if (mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD)) {
 									Files.deleteIfExists(buildJar);

@@ -66,8 +66,8 @@ public class TaskReobfuscate extends TaskStaged {
 		Map<String, String> recompHashes = gatherMD5Hashes(true);
 
 		for (Side localSide : sides) {
-			final Path reobfDir = MCPPaths.get(mcp, REOBF_SIDE, side == Side.MERGED ? Side.MERGED : localSide);
-			final Path reobfJar = MCPPaths.get(mcp, REOBF_JAR, side == Side.MERGED ? Side.MERGED : localSide);
+			final Path reobfDir = MCPPaths.get(mcp, REOBF_SIDE, localSide);
+			final Path reobfJar = MCPPaths.get(mcp, REOBF_JAR, localSide);
 			Files.deleteIfExists(reobfJar);
 			RDInjector injector = new RDInjector(reobfBin);
 			Mappings mappings = getMappings(injector.getStorage(), localSide);
