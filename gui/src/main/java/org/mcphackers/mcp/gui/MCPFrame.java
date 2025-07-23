@@ -50,7 +50,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 	private final List<TaskButton> buttons = new ArrayList<>();
 	public MenuBar menuBar;
 	public boolean loadingVersions = true;
-	private JComboBox<?> verList;
+	private JComponent verList;
 	private JLabel verLabel;
 	//private JButton verCleanup;
 	private JPanel topRightContainer;
@@ -143,9 +143,13 @@ public class MCPFrame extends JFrame implements WindowListener {
 				verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
 				verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
 				verLabel.setForeground(Color.RED);
-				verList = null;
+				JButton verList = new JButton(MCP.TRANSLATOR.translateKey("mcp.versionList.reloadVersionList"));
+				verList.addActionListener(e -> {
+					reloadVersionList();
+				});
+				this.verList = verList;
 			} else {
-				verList = new JComboBox<>(versionParser.getVersions().toArray());
+				JComboBox<?> verList = new JComboBox<>(versionParser.getVersions().toArray());
 				verList.addPopupMenuListener(new PopupMenuListener() {
 
 					@Override
@@ -165,6 +169,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 				setCurrentVersion(mcp.currentVersion == null ? null : versionParser.getVersion(mcp.currentVersion.id));
 				verList.setMaximumRowCount(20);
 				verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.currentVersion"));
+				this.verList = verList;
 			}
 			topRightContainer.removeAll();
 			topRightContainer.add(this.verLabel);
@@ -226,8 +231,11 @@ public class MCPFrame extends JFrame implements WindowListener {
 		if (verList == null) {
 			return;
 		}
-		verList.setSelectedItem(versionData);
-		verList.repaint();
+		if (this.verList instanceof JComboBox) {
+			JComboBox<?> verList = (JComboBox<?>) this.verList;
+			verList.setSelectedItem(versionData);
+			verList.repaint();
+		}
 	}
 
 	/**
