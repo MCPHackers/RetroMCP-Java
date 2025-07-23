@@ -14,6 +14,7 @@ mcp.incompatiblePlugin = Incompatible plugin found:
 mcp.versionList.currentVersion = Current version:
 mcp.versionList.failure = Unable to get version list!
 mcp.versionList.loading = Loading...
+mcp.versionList.reload = Reload version list
 mcp.checkUpdate = Check for updates
 mcp.upToDate = Up to date!
 mcp.viewDir = View working directory

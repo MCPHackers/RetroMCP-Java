@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.mcphackers.mcp.tools.Util.enqueueRunnable;
 
@@ -135,6 +136,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		topRightContainer.removeAll();
 		topRightContainer.add(this.verLabel);
 		topRightContainer.add(this.verList);
+		AtomicReference<JButton> reloadVersionListButton = new AtomicReference<>();
 		enqueueRunnable(() -> {
 			loadingVersions = true;
 			VersionParser versionParser = VersionParser.getInstance();
@@ -144,6 +146,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 				verLabel.setBorder(new EmptyBorder(4, 0, 0, 2));
 				verLabel.setForeground(Color.RED);
 				verList = null;
+				JButton reloadButton = new JButton(MCP.TRANSLATOR.translateKey("mcp.versionList.reload"));
+				reloadButton.addActionListener(e -> this.reloadVersionList());
+				reloadVersionListButton.set(reloadButton);
 			} else {
 				verList = new JComboBox<>(versionParser.getVersions().toArray());
 				verList.addPopupMenuListener(new PopupMenuListener() {
@@ -170,6 +175,9 @@ public class MCPFrame extends JFrame implements WindowListener {
 			topRightContainer.add(this.verLabel);
 			if (verList != null) {
 				topRightContainer.add(this.verList);
+			} else if (reloadVersionListButton.get() != null) {
+				JButton reloadButton = reloadVersionListButton.get();
+				topRightContainer.add(reloadButton);
 			}
 			loadingVersions = false;
 			synchronized (mcp) {
