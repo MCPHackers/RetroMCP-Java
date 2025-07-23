@@ -43,6 +43,7 @@ public class TaskRun extends TaskStaged {
 						mcp.log("Start class not found");
 						return;
 					}
+					mcp.log("Using main class: " + main);
 
 					boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
 					boolean fullBuild = mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD);
@@ -55,6 +56,7 @@ public class TaskRun extends TaskStaged {
 					Path natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath();
 
 					List<String> args = new ArrayList<>();
+					List<String> gameArgs = new ArrayList<>();
 					args.add(Util.getJava());
 					Collections.addAll(args, runArgs);
 					args.add("-Djava.library.path=" + natives);
@@ -62,9 +64,12 @@ public class TaskRun extends TaskStaged {
 					args.add(String.join(File.pathSeparator, classPath));
 					args.add(main);
 					if (side == Side.CLIENT) {
-						args.addAll(getLaunchArgs(mcp, mcpSide));
-						Collections.addAll(args, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
+						gameArgs.addAll(getLaunchArgs(mcp, mcpSide));
+						Collections.addAll(gameArgs, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
+						args.addAll(gameArgs);
 					}
+					mcp.log("Game arguments: " + String.join(", ", gameArgs));
+					mcp.log("Classpath:\n" + String.join("\n", classPath));
 
 					Util.runCommand(args.toArray(new String[0]), getMCDir(mcp, mcpSide), true);
 				})
