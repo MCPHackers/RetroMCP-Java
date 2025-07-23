@@ -1,6 +1,7 @@
 package org.mcphackers.mcp.tools;
 
-import java.awt.*;
+import java.awt.Desktop;
+import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -37,32 +38,27 @@ public abstract class Util {
 		BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 		Thread stderr = new Thread(()-> {
 			String line;
-			while (true) {
-				try {
-					line = err.readLine();
-					if(line != null) {
-						System.out.println("Minecraft STDERR: " + line);
-					}
-				} catch (IOException ignored) {
-					// we don't really care what happens here
+			try {
+				while((line = err.readLine()) != null) {
+					System.out.println("Minecraft STDERR: " + line);
 				}
+			} catch (IOException ignored) {
+				// we don't really care what happens here
 			}
 
 		});
 		Thread stdout = new Thread(()-> {
 			String line;
-			while (true) {
-				try {
-					line = in.readLine();
-					if(line != null) {
-						System.out.println( line);
-					}
-				} catch (IOException ignored) {
-					// we don't really care what happens here
+			try {
+				while((line = in.readLine()) != null) {
+					System.out.println(line);
 				}
+			} catch (IOException ignored) {
+				// we don't really care what happens here
 			}
-
 		});
+		stdout.start();
+		stderr.start();
 		try {
 			proc.waitFor();
 		} catch (InterruptedException e) {
@@ -70,8 +66,6 @@ public abstract class Util {
 		}
 		in.close();
 		err.close();
-		stderr.interrupt();
-		stdout.interrupt();
 
 		if (killOnShutdown) {
 			Runtime.getRuntime().removeShutdownHook(hook);
