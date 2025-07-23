@@ -103,7 +103,7 @@ public class MainCLI extends MCP {
 					mode = TaskMode.EXIT;
 				} else {
 					str = str.trim();
-					if (str.isEmpty()) {
+					if (str.length() == 0) {
 						continue;
 					}
 					System.out.print(new Ansi().fgDefault());
@@ -323,7 +323,6 @@ public class MainCLI extends MCP {
 		log("[" + typeName + "]: " + msg);
 	}
 
-	@SuppressWarnings("CallToPrintStackTrace")
 	@Override
 	public void showMessage(String title, String msg, Throwable e) {
 		Ansi typeName = new Ansi().fgRed().a("ERROR").fgDefault();
