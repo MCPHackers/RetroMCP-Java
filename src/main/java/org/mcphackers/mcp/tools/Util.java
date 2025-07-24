@@ -1,5 +1,8 @@
 package org.mcphackers.mcp.tools;
 
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
+
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -202,6 +205,14 @@ public abstract class Util {
 
 	public static String getJava() {
 		return System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+	}
+
+	public static String getJava(MCP mcp) {
+		String javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
+		if (javaHome == null || javaHome.isEmpty()) {
+			return System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		}
+		return javaHome;
 	}
 
 	public static int getJavaVersion() {

@@ -55,7 +55,7 @@ public class TaskRun extends TaskStaged {
 					Path natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath();
 
 					List<String> args = new ArrayList<>();
-					args.add(Util.getJava());
+					args.add(Util.getJava(this.mcp));
 					Collections.addAll(args, runArgs);
 					args.add("-Djava.library.path=" + natives);
 					args.add("-cp");
