@@ -85,10 +85,10 @@ public class TaskRecompile extends TaskStaged {
 							List<String> bootcp = new ArrayList<>();
 							bootclasspath.forEach(p -> bootcp.add(p.toAbsolutePath().toString()));
 							if (!bootclasspath.isEmpty()) {
-								options.addAll(Arrays.asList("-bootclasspath", String.join(System.getProperty("path.separator"), bootcp)));
+								options.addAll(Arrays.asList("-bootclasspath", String.join(File.pathSeparator, bootcp)));
 							}
 
-							options.addAll(Arrays.asList("-cp", String.join(System.getProperty("path.separator"), cp)));
+							options.addAll(Arrays.asList("-cp", String.join(File.pathSeparator, cp)));
 
 							setProgress(3);
 

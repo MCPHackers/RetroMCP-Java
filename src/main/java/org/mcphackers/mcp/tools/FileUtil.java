@@ -96,7 +96,7 @@ public abstract class FileUtil {
 		try (ZipInputStream zipInputStream = new ZipInputStream(zipFile)) {
 			ZipEntry entry;
 			while ((entry = zipInputStream.getNextEntry()) != null) {
-				Path toPath = destDir.resolve(entry.getName());
+				Path toPath = destDir.resolve(entry.getName()).normalize();
 				Files.deleteIfExists(toPath);
 				if (!entry.isDirectory()) {
 					createDirectories(toPath.getParent());
@@ -115,7 +115,7 @@ public abstract class FileUtil {
 		try (ZipInputStream zipInputStream = new ZipInputStream(Files.newInputStream(zipFile))) {
 			ZipEntry entry;
 			while ((entry = zipInputStream.getNextEntry()) != null) {
-				Path toPath = destDir.resolve(entry.getName());
+				Path toPath = destDir.resolve(entry.getName()).normalize();
 				Files.deleteIfExists(toPath);
 				if (match.apply(entry)) {
 					if (!entry.isDirectory()) {
