@@ -1,6 +1,8 @@
 package org.mcphackers.mcp.main;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +15,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -288,20 +302,6 @@ public class MainGUI extends MCP {
 		String s = MCP.TRANSLATOR.translateKey("options.enterValue");
 		if (param.type == String[].class) {
 			s = MCP.TRANSLATOR.translateKey("options.enterValues") + "\n" + MCP.TRANSLATOR.translateKey("options.enterValues.info");
-		}
-		if (param.equals(TaskParameter.JAVA_HOME)) {
-			JFileChooser chooser = new JFileChooser();
-			chooser.setDialogTitle("Select JAVA_HOME Directory");
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			chooser.setAcceptAllFileFilterUsed(false);
-
-			int result = chooser.showOpenDialog(null);
-
-			if (result == JFileChooser.APPROVE_OPTION) {
-				s = chooser.getSelectedFile().getAbsolutePath() + "/bin/java";
-			} else {
-				System.out.println("No folder selected.");
-			}
 		}
 		String value = (String) JOptionPane.showInputDialog(frame, s, param.getDesc(), JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(String.valueOf(options.getParameter(param))));
 		safeSetParameter(param, value);
