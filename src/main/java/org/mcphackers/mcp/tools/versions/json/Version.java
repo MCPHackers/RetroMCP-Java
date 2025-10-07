@@ -43,14 +43,15 @@ public class Version {
 					}
 				}
 				mainClass = obj.getString("mainClass");
+				arguments = Arguments.from(obj.optJSONObject("arguments"));
 				minecraftArguments = obj.optString("minecraftArguments", null);
 			}
 		};
 	}
 
 	public static class Arguments {
-		public List<Object> game;
-		public List<Object> jvm;
+		public List<Object> game = new ArrayList<>();
+		public List<Object> jvm = new ArrayList<>();
 
 		public static Arguments from(JSONObject obj) {
 			if (obj == null) {
@@ -61,14 +62,16 @@ public class Version {
 					for (Object o : obj.getJSONArray("game")) {
 						if (o instanceof JSONObject) {
 							game.add(Argument.from((JSONObject) o));
+						} else {
+							game.add(o);
 						}
-						game.add(o);
 					}
 					for (Object o : obj.getJSONArray("jvm")) {
 						if (o instanceof JSONObject) {
 							jvm.add(Argument.from((JSONObject) o));
+						} else {
+							jvm.add(o);
 						}
-						jvm.add(o);
 					}
 				}
 			};
@@ -76,7 +79,7 @@ public class Version {
 	}
 
 	public static class Argument {
-		public List<Rule> rules;
+		public List<Rule> rules = new ArrayList<>();
 		public Object value;
 
 		public static Argument from(JSONObject obj) {

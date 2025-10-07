@@ -1,6 +1,5 @@
 package org.mcphackers.mcp;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,13 +22,12 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.TaskStaged;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
-import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public abstract class MCP {
-	public static final String VERSION = "v1.0.1";
+	public static final String VERSION = "v1.1";
 	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
 	private static final PluginManager pluginManager = new PluginManager();

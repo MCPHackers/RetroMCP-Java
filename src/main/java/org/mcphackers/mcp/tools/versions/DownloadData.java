@@ -15,6 +15,7 @@ import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.versions.json.Artifact;
 import org.mcphackers.mcp.tools.versions.json.AssetIndex;
 import org.mcphackers.mcp.tools.versions.json.AssetIndex.Asset;
 import org.mcphackers.mcp.tools.versions.json.DependDownload;
@@ -35,7 +36,24 @@ public class DownloadData {
 	public DownloadData(Path libraries, Path gameDir, Path client, Path server, Version version) {
 		this.gameDir = gameDir;
 		queueDownload(version.downloads.artifacts.get("client"), client);
-		queueDownload(version.downloads.artifacts.get("server"), server);
+		Artifact serverArtifact = version.downloads.artifacts.get("server");
+		if(serverArtifact != null) {
+			Path serverOut = server;
+			if(serverArtifact.url.endsWith(".zip")) {
+				serverOut = server.getParent().resolve("minecraft_server.zip");
+			}
+			queueDownload(serverArtifact, serverOut);
+			if(serverArtifact.url.endsWith(".zip")) {
+				try {
+					FileUtil.extractByExtension(serverOut, serverOut.getParent(), ".jar");
+					if(Files.exists(serverOut.getParent().resolve("minecraft-server.jar"))) {
+						Files.move(serverOut.getParent().resolve("minecraft-server.jar"), server);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
 				queueDownload(dependencyDownload.getDownload(null), libraries);

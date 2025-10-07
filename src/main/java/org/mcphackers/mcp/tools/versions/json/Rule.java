@@ -70,6 +70,7 @@ public class Rule {
 
 	public static class OSInfo {
 		public OS name;
+		public String arch;
 		public String version;
 
 		public static OSInfo from(JSONObject obj) {
@@ -79,6 +80,7 @@ public class Rule {
 			return new OSInfo() {
 				{
 					name = OS.valueOf(obj.getString("name"));
+					arch = obj.optString("arch");
 					version = obj.optString("version");
 				}
 			};
@@ -88,6 +90,9 @@ public class Rule {
 			if (this.name != null && this.name != os) {
 				return false;
 			} else {
+				if(this.arch != null && !arch.equals(System.getProperty("os.arch"))) {
+					return false;
+				}
 				if (this.version != null) {
 					try {
 						Pattern pattern = Pattern.compile(this.version);
