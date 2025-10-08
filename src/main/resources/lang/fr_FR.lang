@@ -103,7 +103,6 @@ task.param.side = Définir le côté
 task.param.src = Nettoyer les sources
 task.param.patch = Appliquer les correctifs
 task.param.ignore = Définir les packages ignorés
-task.param.ind = Définir le string d'indentation
 task.param.obf = Obfusquer les classes des mods
 task.param.fullbuild = Build complet
 task.param.runbuild = Démarrer le build

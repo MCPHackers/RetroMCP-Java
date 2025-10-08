@@ -103,7 +103,7 @@ public class MainCLI extends MCP {
 					mode = TaskMode.EXIT;
 				} else {
 					str = str.trim();
-					if (str.length() == 0) {
+					if (str.isEmpty()) {
 						continue;
 					}
 					System.out.print(new Ansi().fgDefault());

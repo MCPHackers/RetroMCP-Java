@@ -103,7 +103,6 @@ task.param.side = Nastavit stranu
 task.param.src = Vyčistit zdroje
 task.param.patch = Aplikovat patche
 task.param.ignore = Nastavit ignorované balíčky
-task.param.ind = Nastavit odsazovací string
 task.param.obf = Obfuskovat třídy modu
 task.param.fullbuild = Plné sestavení
 task.param.runbuild = Spustit sestavení

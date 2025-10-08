@@ -105,7 +105,6 @@ task.param.side = Velg side
 task.param.src = Kilderens
 task.param.patch = Legg til patcher
 task.param.ignore = Angi ignorerte pakker
-task.param.ind = Angi innrykksstreng
 task.param.obf = Obfusker modifikasjonsklasser
 task.param.excludedclasses = Ekskluderte klasser
 task.param.fullbuild = Bygg alt
