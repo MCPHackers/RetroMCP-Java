@@ -12,6 +12,9 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import org.mcphackers.mcp.tools.OS;
 
 public class Theme {
 	public static final Map<String, Theme> THEMES_MAP = new HashMap<>();
@@ -25,6 +28,11 @@ public class Theme {
 		addTheme(FlatDarkLaf.NAME, FlatDarkLaf.class.getName());
 		addTheme(FlatIntelliJLaf.NAME, FlatIntelliJLaf.class.getName());
 		addTheme(FlatDarculaLaf.NAME, FlatDarculaLaf.class.getName());
+
+		if (OS.getOs() == OS.osx) {
+			addTheme(FlatMacLightLaf.NAME, FlatMacLightLaf.class.getName());
+			addTheme(FlatMacDarkLaf.NAME, FlatMacDarkLaf.class.getName());
+		}
 	}
 
 	public final String themeName;

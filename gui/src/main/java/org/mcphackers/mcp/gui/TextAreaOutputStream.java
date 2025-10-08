@@ -34,8 +34,10 @@ public class TextAreaOutputStream extends PrintStream {
 
 	@Override
 	public void println(String s) {
-		super.println(s);
-		printString("\n");
+		if (s != null && !s.isEmpty()) {
+			super.println(s);
+			printString("\n");
+		}
 	}
 
 	private void printString(String msg) {
