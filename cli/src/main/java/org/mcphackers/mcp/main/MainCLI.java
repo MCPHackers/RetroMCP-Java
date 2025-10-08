@@ -58,6 +58,10 @@ public class MainCLI extends MCP {
 		String version = null;
 		Path versionPath = Paths.get(MCPPaths.VERSION);
 		VersionParser versionParser = VersionParser.getInstance();
+		if (!VersionParser.mappingsJson.equals(VersionParser.DEFAULT_JSON)) {
+			warning("Using old or third party manifest URL: " + VersionParser.mappingsJson);
+			warning("If this is not intentional, please update versionUrl in options.cfg to " + VersionParser.DEFAULT_JSON);
+		}
 		List<VersionData> versions = versionParser.getVersions();
 		if (Files.exists(versionPath)) {
 			try {

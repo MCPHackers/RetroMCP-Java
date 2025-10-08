@@ -107,6 +107,10 @@ public class MainGUI extends MCP {
 				e.printStackTrace();
 			}
 		}
+		if (!VersionParser.mappingsJson.equals(VersionParser.DEFAULT_JSON)) {
+			warning("Using old or third party manifest URL: " + VersionParser.mappingsJson);
+			warning("If this is not intentional, please update versionUrl in options.cfg to " + VersionParser.DEFAULT_JSON);
+		}
 		frame = new MCPFrame(this);
 		if (Util.getJavaVersion() > 8) {
 			warning("JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
