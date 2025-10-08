@@ -4,6 +4,7 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.Util;
 
 import javax.tools.*;
 
@@ -73,13 +74,22 @@ public class TaskRecompile extends TaskStaged {
 							List<String> options = new ArrayList<>(Arrays.asList("-d", binPath.toString()));
 
 							int sourceVersion = mcp.getOptions().getIntParameter(TaskParameter.SOURCE_VERSION);
-							if (sourceVersion >= 0) {
-								options.addAll(Arrays.asList("-source", Integer.toString(sourceVersion)));
-							}
-
 							int targetVersion = mcp.getOptions().getIntParameter(TaskParameter.TARGET_VERSION);
-							if (targetVersion >= 0) {
-								options.addAll(Arrays.asList("-target", Integer.toString(targetVersion)));
+
+							// Set --release flag for newer Java versions
+							if (Util.getJavaVersion() > 9) {
+								if (sourceVersion <= 0) {
+									sourceVersion = Util.getJavaVersion();
+								}
+								options.addAll(Arrays.asList("--release", Integer.toString(sourceVersion)));
+							} else {
+								if (sourceVersion >= 0) {
+									options.addAll(Arrays.asList("-source", Integer.toString(sourceVersion)));
+								}
+
+								if (targetVersion >= 0) {
+									options.addAll(Arrays.asList("-target", Integer.toString(targetVersion)));
+								}
 							}
 
 							List<String> bootcp = new ArrayList<>();
