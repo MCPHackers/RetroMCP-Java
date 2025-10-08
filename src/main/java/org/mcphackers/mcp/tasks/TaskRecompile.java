@@ -90,12 +90,12 @@ public class TaskRecompile extends TaskStaged {
 								if (targetVersion >= 0) {
 									options.addAll(Arrays.asList("-target", Integer.toString(targetVersion)));
 								}
-							}
 
-							List<String> bootcp = new ArrayList<>();
-							bootclasspath.forEach(p -> bootcp.add(p.toAbsolutePath().toString()));
-							if (!bootclasspath.isEmpty()) {
-								options.addAll(Arrays.asList("-bootclasspath", String.join(File.pathSeparator, bootcp)));
+								List<String> bootcp = new ArrayList<>();
+								bootclasspath.forEach(p -> bootcp.add(p.toAbsolutePath().toString()));
+								if (!bootclasspath.isEmpty()) {
+									options.addAll(Arrays.asList("-bootclasspath", String.join(File.pathSeparator, bootcp)));
+								}
 							}
 
 							options.addAll(Arrays.asList("-cp", String.join(File.pathSeparator, cp)));
