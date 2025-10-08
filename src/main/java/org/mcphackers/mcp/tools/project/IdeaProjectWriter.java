@@ -43,7 +43,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 	}
 
 	public void writeProjectIML(MCP mcp, Version version, String moduleName, Path proj) throws IOException {
-		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(moduleName + ".iml")))) {
+		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(proj.resolve(moduleName.replace("_client", "") + ".iml")))) {
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("module type=\"JAVA_MODULE\" version=\"4\"");
 			writer.startAttribute("component name=\"NewModuleRootManager\" inherit-compiler-output=\"true\"");
@@ -52,6 +52,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 
 			writer.startAttribute("content url=\"file://$MODULE_DIR$\"");
 			writer.writeSelfEndingAttribute("sourceFolder url=\"file://$MODULE_DIR$/src\" isTestSource=\"false\"");
+			writer.writeSelfEndingAttribute("excludeFolder url=\"file://$MODULE_DIR$/src_original\"");
 			writer.closeAttribute("content");
 
 			writer.writeSelfEndingAttribute("orderEntry type=\"inheritedJdk\"");
@@ -63,7 +64,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 						continue;
 					}
 					String libraryName = lib.substring(lib.lastIndexOf("/") + 1, lib.length() - 4);
-					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib + ".jar"))) {
+					if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib))) {
 						writer.writeSelfEndingAttribute("orderEntry type=\"library\" name=\"" + libraryName + "\" level=\"project\"");
 					}
 				}
@@ -77,12 +78,13 @@ public class IdeaProjectWriter implements ProjectWriter {
 
 	public void writeModuleXML(MCP mcp, String moduleName, Path modulesXML) throws IOException {
 		try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(modulesXML))) {
+			String folderName = moduleName.replace("_client", "");
 			writer.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.startAttribute("project version=\"4\"");
 
 			writer.startAttribute("component name=\"ProjectModuleManager\"");
 			writer.startAttribute("modules");
-			writer.writeSelfEndingAttribute("module fileurl=\"file://$PROJECT_DIR$/" + moduleName + ".iml\" filepath=\"$PROJECT_DIR/" + moduleName + ".iml\"");
+			writer.writeSelfEndingAttribute("module fileurl=\"file://$PROJECT_DIR$/" + folderName + ".iml\" filepath=\"$PROJECT_DIR$/" + folderName + ".iml\"");
 			writer.closeAttribute("modules");
 			writer.closeAttribute("component");
 
@@ -136,7 +138,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 				String src = dependencyDownload.getArtifactPath("sources");
 				if (Files.exists(MCPPaths.get(mcp, "libraries/" + lib))) {
 					String libraryName = lib.substring(lib.lastIndexOf("/") + 1, lib.length() - 4);
-					Path libraryXML = librariesFolder.resolve(libraryName + ".xml");
+					Path libraryXML = librariesFolder.resolve(libraryName.replaceAll("-", "_").replaceAll("\\.", "_") + ".xml");
 					Files.createFile(libraryXML);
 					try (XMLWriter writer = new XMLWriter(Files.newBufferedWriter(libraryXML))) {
 						// No XML header???
@@ -151,8 +153,9 @@ public class IdeaProjectWriter implements ProjectWriter {
 							writer.startAttribute("SOURCES");
 							writer.writeSelfEndingAttribute("root url=\"jar://$PROJECT_DIR$/../libraries/" + src + "!/\"");
 							writer.closeAttribute("SOURCES");
+						} else {
+							writer.writeSelfEndingAttribute("SOURCES");
 						}
-
 
 						writer.closeAttribute("library");
 						writer.closeAttribute("component");
