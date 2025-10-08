@@ -111,15 +111,47 @@ public class IdeaProjectWriter implements ProjectWriter {
 			// Run configurations
 			writer.startAttribute("component name=\"RunManager\"");
 
-			writer.startAttribute("configuration name=\"" + projectName + "\" type=\"Application\" factoryName=\"Application\"");
-			writer.writeSelfEndingAttribute("option name=\"MAIN_CLASS_NAME\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), launchSide) + "\"");
-			writer.writeSelfEndingAttribute("module name=\"" + projectName.toLowerCase().replace(" ", "_") + "\"");
-			writer.writeSelfEndingAttribute("option name=\"PROGRAM_PARAMETERS\" value=\"" + args + "\"");
-			writer.writeSelfEndingAttribute("option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/game\"");
-			writer.startAttribute("method v=\"2\"");
-			writer.writeSelfEndingAttribute("option name=\"Make\" enabled=\"true\"");
-			writer.closeAttribute("method");
-			writer.closeAttribute("configuration");
+			if (Side.MERGED.equals(launchSide)) {
+				String client = "Minecraft Client";
+				String server = "Minecraft Server";
+
+				// Client run config
+				writer.startAttribute("configuration name=\"" + client + "\" type=\"Application\" factoryName=\"Application\"");
+				writer.writeSelfEndingAttribute("option name=\"MAIN_CLASS_NAME\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), Side.CLIENT) + "\"");
+				writer.writeSelfEndingAttribute("module name=\"" + projectName.toLowerCase().replace(" ", "_") + "\"");
+				writer.writeSelfEndingAttribute("option name=\"PROGRAM_PARAMETERS\" value=\"" + args + "\"");
+				writer.writeSelfEndingAttribute("option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/game\"");
+				writer.startAttribute("method v=\"2\"");
+				writer.writeSelfEndingAttribute("option name=\"Make\" enabled=\"true\"");
+				writer.closeAttribute("method");
+				writer.closeAttribute("configuration");
+
+				// Server run config
+				writer.startAttribute("configuration name=\"" + server + "\" type=\"Application\" factoryName=\"Application\"");
+				writer.writeSelfEndingAttribute("option name=\"MAIN_CLASS_NAME\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), Side.SERVER) + "\"");
+				writer.writeSelfEndingAttribute("module name=\"" + projectName.toLowerCase().replace(" ", "_") + "\"");
+				writer.writeSelfEndingAttribute("option name=\"PROGRAM_PARAMETERS\" value=\"" + "\"");
+				writer.writeSelfEndingAttribute("option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/game\"");
+				writer.startAttribute("method v=\"2\"");
+				writer.writeSelfEndingAttribute("option name=\"Make\" enabled=\"true\"");
+				writer.closeAttribute("method");
+				writer.closeAttribute("configuration");
+
+				writer.startAttribute("list");
+				writer.writeSelfEndingAttribute("item itemvalue=\"Application." + client + "\"");
+				writer.writeSelfEndingAttribute("item itemvalue=\"Application." + server + "\"");
+				writer.closeAttribute("list");
+			} else {
+				writer.startAttribute("configuration name=\"" + projectName + "\" type=\"Application\" factoryName=\"Application\"");
+				writer.writeSelfEndingAttribute("option name=\"MAIN_CLASS_NAME\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), launchSide) + "\"");
+				writer.writeSelfEndingAttribute("module name=\"" + projectName.toLowerCase().replace(" ", "_") + "\"");
+				writer.writeSelfEndingAttribute("option name=\"PROGRAM_PARAMETERS\" value=\"" + args + "\"");
+				writer.writeSelfEndingAttribute("option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/game\"");
+				writer.startAttribute("method v=\"2\"");
+				writer.writeSelfEndingAttribute("option name=\"Make\" enabled=\"true\"");
+				writer.closeAttribute("method");
+				writer.closeAttribute("configuration");
+			}
 
 			writer.closeAttribute("component");
 			writer.closeAttribute("project");
