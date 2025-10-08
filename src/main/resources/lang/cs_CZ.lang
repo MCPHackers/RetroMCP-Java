@@ -112,7 +112,6 @@ task.param.setup = Nastavit verzi
 task.param.source = Nastavit specifickou verzi zdroje
 task.param.target = Nastavit specifickou verzi cíle
 task.param.javahome = Nastavit JAVA_HOME který je použit při dekompilaci
-task.param.override = Přidat @Override
 task.param.resources = Nechat si zdroje (resources)
 task.param.generics = Odhadnout generika
 task.param.stripgenerics = Vyhodit generika

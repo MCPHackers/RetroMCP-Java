@@ -112,7 +112,6 @@ task.param.setup = Version d'installation
 task.param.source = Définir une version de source spécifique
 task.param.target = Définir une version cible spécifique
 task.param.javahome = Définir JAVA_HOME utilisé pour la compilation
-task.param.override = Décompiler @Override
 task.param.resources = Conserver les ressources
 task.param.generics = Deviner les génériques
 task.param.stripgenerics = Retirer les génériques

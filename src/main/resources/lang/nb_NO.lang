@@ -115,7 +115,6 @@ task.param.setup = Sett opp versjon
 task.param.source = Angi en spesifikk kildeversjon
 task.param.target = Angi en spesifikk målversjon
 task.param.javahome = Angi JAVA_HOME brukt for kompilering
-task.param.override = Legg til @Override
 task.param.resources = Behold ressurser
 task.param.generics = Gjett genetikk
 task.param.stripgenerics = Fjern genetikk
