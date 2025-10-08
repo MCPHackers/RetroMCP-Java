@@ -1,10 +1,10 @@
 [versions]
-asm = '9.8'
+asm = '9.9'
 commons-lang3 = '3.18.0'
 diffpatch = 'cde1224'
 fernflower = '1.0.0'
 flatlaf = '3.6.1'
-jansi = '2.4.1'
+jansi = '2.4.2'
 json = '20250517'
 mapping-io = '0.7.1'
 rdi = '1.1'
