@@ -18,7 +18,7 @@ public enum TaskParameter {
 
 	SIDE("side", Integer.class, Side.ANY.index),
 	PATCHES("patch", Boolean.class, true),
-	IGNORED_PACKAGES("ignore", String[].class, new String[]{"paulscode", "com/jcraft", "de/jarnbjo", "isom"}),
+	IGNORED_PACKAGES("ignore", String[].class, new String[]{"paulscode", "com/jcraft", "de/jarnbjo", "isom", "ibxm", "de/matthiasmann/twl", "javax/xml", "javax/ws", "argo", "org/bouncycastle", "org/apache/commons", "com/google/gson", "com/google/common"}),
 	FERNFLOWER_OPTIONS("ff_options", String.class, getDefaultFFOptions()),
 	OBFUSCATION("obf", Boolean.class, false),
 	SRG_OBFUSCATION("srgobf", Boolean.class, false),
