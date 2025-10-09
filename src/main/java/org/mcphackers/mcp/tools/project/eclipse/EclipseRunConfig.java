@@ -54,15 +54,17 @@ public class EclipseRunConfig {
 		writer.writeAttribute("listEntry value=\"org.eclipse.debug.ui.launchGroup.run\"");
 		writer.writeAttribute("listEntry value=\"org.eclipse.debug.ui.launchGroup.debug\"");
 		writer.closeAttribute("listAttribute");
-		writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE\" value=\"false\"");
-		writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES\" value=\"true\"");
-		writer.writeAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD\" value=\"true\"");
-		writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MAIN_TYPE\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), this.getLaunchSide()) + "\"");
-		writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MODULE_NAME\" value=\"" + this.getProjectName() + "\"");
+
+		writer.writeSelfEndingAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE\" value=\"false\"");
+		writer.writeSelfEndingAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES\" value=\"true\"");
+		writer.writeSelfEndingAttribute("booleanAttribute key=\"org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD\" value=\"true\"");
+		writer.writeSelfEndingAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MAIN_TYPE\" value=\"" + TaskRun.getMain(mcp, mcp.getCurrentVersion(), this.getLaunchSide()) + "\"");
+		writer.writeSelfEndingAttribute("stringAttribute key=\"org.eclipse.jdt.launching.MODULE_NAME\" value=\"" + this.getProjectName() + "\"");
 		if (launchSide == Task.Side.CLIENT) {
-			writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROGRAM_ARGUMENTS\" value=\"" + this.getClientArgs() + "\"");
+			writer.writeSelfEndingAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROGRAM_ARGUMENTS\" value=\"" + this.getClientArgs() + "\"");
 		}
-		writer.writeAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROJECT_ATTR\" value=\"" + this.getProjectName() + "\"");
+		writer.writeSelfEndingAttribute("stringAttribute key=\"org.eclipse.jdt.launching.PROJECT_ATTR\" value=\"" + this.getProjectName() + "\"");
+		writer.writeSelfEndingAttribute("stringAttribute key=\"org.eclipse.jdt.launching.WORKING_DIRECTORY\" value=\"${project_path}/game\"");
 		writer.closeAttribute("launchConfiguration");
 	}
 }

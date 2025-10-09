@@ -156,7 +156,7 @@ public class TaskRun extends TaskStaged {
 			argsList.addAll(Arrays.asList(mcArgs.split(" ")));
 		}
 
-		Path gameDir = getMCDir(mcp, side).toAbsolutePath();
+		Path gameDir = getMCDir(mcp, side);
 		Path assets = gameDir.resolve("assets");
 
 		for (int i = 0; i < argsList.size(); i++) {
@@ -199,7 +199,7 @@ public class TaskRun extends TaskStaged {
 	}
 
 	public static Path getMCDir(MCP mcp, Side side) {
-		return MCPPaths.get(mcp, GAMEDIR, side);
+		return MCPPaths.get(mcp, MCPPaths.PROJECT, side).relativize(MCPPaths.get(mcp, GAMEDIR, side));
 	}
 
 	private static List<Path> getClasspath(MCP mcp, Side side, Side runSide, boolean runBuild, boolean fullBuild) {
