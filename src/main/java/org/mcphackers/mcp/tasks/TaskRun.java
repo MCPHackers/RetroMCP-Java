@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -199,6 +200,9 @@ public class TaskRun extends TaskStaged {
 	}
 
 	public static Path getMCDir(MCP mcp, Side side) {
+		if (Side.CLIENT.equals(side)) {
+			return Paths.get(".");
+		}
 		return MCPPaths.get(mcp, MCPPaths.PROJECT, side).relativize(MCPPaths.get(mcp, GAMEDIR, side));
 	}
 
