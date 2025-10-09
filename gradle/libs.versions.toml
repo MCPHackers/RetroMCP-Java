@@ -16,7 +16,6 @@ asm-analysis = { module = "org.ow2.asm:asm-analysis", version.ref = "asm" }
 asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
 asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
 diffpatch = { module = "com.github.MCPHackers:DiffPatch", version.ref = "diffpatch" }
 fernflower = { module = "io.github.lassebq:fernflower", version.ref = "fernflower" }
 flatlaf = { module = "com.formdev:flatlaf", version.ref = "flatlaf" }
