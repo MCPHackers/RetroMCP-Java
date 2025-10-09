@@ -1,6 +1,5 @@
 [versions]
 asm = '9.9'
-commons-lang3 = '3.18.0'
 diffpatch = 'cde1224'
 fernflower = '1.0.0'
 flatlaf = '3.6.1'
