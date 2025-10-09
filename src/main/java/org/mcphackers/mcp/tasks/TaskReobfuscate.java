@@ -17,6 +17,7 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.injector.SourceFileTransformer;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.rdi.injector.data.ClassStorage;
 import org.mcphackers.rdi.injector.data.Mappings;
@@ -59,6 +60,7 @@ public class TaskReobfuscate extends TaskStaged {
 
 	private void reobfuscate() throws IOException {
 		final Path reobfBin = MCPPaths.get(mcp, BIN, side);
+		final boolean stripSourceFile = mcp.getOptions().getBooleanParameter(TaskParameter.STRIP_SOURCE_FILE);
 
 		Side[] sides = side == Side.MERGED ? new Side[]{Side.CLIENT, Side.SERVER} : new Side[]{side};
 
@@ -79,6 +81,9 @@ public class TaskReobfuscate extends TaskStaged {
 			Mappings mappings = getMappings(injector.getStorage(), localSide);
 			if (mappings != null) {
 				injector.applyMappings(mappings);
+			}
+			if (stripSourceFile) {
+				injector.addTransform(SourceFileTransformer::removeSourceFileAttributes);
 			}
 			injector.transform();
 			new ClassStorageWriter(injector.getStorage(), ClassWriter.COMPUTE_MAXS).write(Files.newOutputStream(reobfJar));

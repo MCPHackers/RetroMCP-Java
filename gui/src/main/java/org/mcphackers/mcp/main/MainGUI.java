@@ -58,7 +58,7 @@ public class MainGUI extends MCP {
 	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
 	public static final String[] TABS = {"task.decompile", "task.recompile", "task.reobfuscate", "task.build", "options.running"};
 	public static final TaskParameter[][] TAB_PARAMETERS = {
-			{TaskParameter.PATCHES, TaskParameter.FERNFLOWER_OPTIONS, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS},
+			{TaskParameter.PATCHES, TaskParameter.FERNFLOWER_OPTIONS, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS, TaskParameter.STRIP_SOURCE_FILE},
 			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME}, {TaskParameter.OBFUSCATION, TaskParameter.SRG_OBFUSCATION, TaskParameter.EXCLUDED_CLASSES},
 			{TaskParameter.FULL_BUILD}, {TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
 	};

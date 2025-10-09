@@ -34,7 +34,8 @@ public enum TaskParameter {
 	DECOMPILE_RESOURCES("resources", Boolean.class, false),
 	GUESS_GENERICS("generics", Boolean.class, false),
 	STRIP_GENERICS("stripgenerics", Boolean.class, false),
-	OUTPUT_SRC("outputsrc", Boolean.class, true);
+	OUTPUT_SRC("outputsrc", Boolean.class, true),
+	STRIP_SOURCE_FILE("stripsourcefile", Boolean.class, true);
 
 	public static final TaskParameter[] VALUES = TaskParameter.values();
 
