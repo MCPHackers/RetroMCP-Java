@@ -14,14 +14,14 @@ and your JAR file associations are properly configured.
 4. Run the `decompile` task
 5. Mod away! Now it's Yourcraft!
 
-For more info, check out the [RetroMCP Wiki](https://github.com/MCPHackers/RetroMCP-Java/wiki).
+For more info you can check [RetroMCP Wiki](https://github.com/MCPHackers/RetroMCP-Java/wiki).
 
 # Features
 
 * Automatically download Minecraft .jar and libraries from version JSONs
 * An improved launch method using [LaunchWrapper](https://github.com/MCPHackers/LaunchWrapper)
 * Reobfuscation for all available versions
-* Automatic IDE project creation for Eclipse, Intellij, and Visual Studio Code
+* Automatic project creation
 * Merged codebase generation
 
 # Building
