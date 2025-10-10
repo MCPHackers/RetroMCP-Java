@@ -115,5 +115,13 @@ public abstract class Task implements ProgressListener, TaskRunnable {
 		public String getName() {
 			return MCP.TRANSLATOR.translateKey("side." + name);
 		}
+
+		public boolean includesClient() {
+			return this.equals(ANY) || this.equals(MERGED) || this.equals(CLIENT);
+		}
+
+		public boolean includesServer() {
+			return this.equals(ANY) || this.equals(MERGED) || this.equals(SERVER);
+		}
 	}
 }

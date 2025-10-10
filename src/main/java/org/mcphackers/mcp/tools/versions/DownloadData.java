@@ -30,14 +30,16 @@ public class DownloadData {
 	protected AssetIndex assets;
 
 	public DownloadData(MCP mcp, Version version) {
-		this(MCPPaths.get(mcp, MCPPaths.LIB), MCPPaths.get(mcp, MCPPaths.JARS), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER), version);
+		this(mcp, MCPPaths.get(mcp, MCPPaths.LIB), MCPPaths.get(mcp, MCPPaths.JARS), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER), version);
 	}
 
-	public DownloadData(Path libraries, Path gameDir, Path client, Path server, Version version) {
+	public DownloadData(MCP mcp, Path libraries, Path gameDir, Path client, Path server, Version version) {
 		this.gameDir = gameDir;
-		queueDownload(version.downloads.artifacts.get("client"), client);
+		if (mcp.getOptions().getSide().includesClient()) {
+			queueDownload(version.downloads.artifacts.get("client"), client);
+		}
 		Artifact serverArtifact = version.downloads.artifacts.get("server");
-		if(serverArtifact != null) {
+		if(mcp.getOptions().getSide().includesServer() && serverArtifact != null) {
 			Path serverOut = server;
 			if(serverArtifact.url.endsWith(".zip")) {
 				serverOut = server.getParent().resolve("minecraft_server.zip");

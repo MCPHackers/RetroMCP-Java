@@ -222,4 +222,8 @@ public class Options {
 		}
 		return new HashMap<>(ffOptions);
 	}
+
+	public Side getSide() {
+		return this.side;
+	}
 }
