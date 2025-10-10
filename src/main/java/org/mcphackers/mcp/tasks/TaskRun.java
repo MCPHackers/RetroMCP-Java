@@ -60,7 +60,6 @@ public class TaskRun extends TaskStaged {
 					Path natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath();
 
 					List<String> args = new ArrayList<>();
-					List<String> gameArgs = new ArrayList<>();
 					args.add(Util.getJava());
 					String cpString = String.join(File.pathSeparator, classPath);
 					for(String s : getJvmArgs(mcp, mcpSide)) {
@@ -72,14 +71,14 @@ public class TaskRun extends TaskStaged {
 					Collections.addAll(args, runArgs);
 					args.add(main);
 					if (side == Side.CLIENT) {
-						gameArgs.addAll(getLaunchArgs(mcp, mcpSide));
+						List<String> gameArgs = new ArrayList<>(getLaunchArgs(mcp, mcpSide));
 						Collections.addAll(gameArgs, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
 						args.addAll(gameArgs);
 					}
 					mcp.log("Launch arguments: " + String.join(", ", args));
 					// mcp.log("Classpath:\n" + String.join("\n", classPath));
 
-					Util.runCommand(args.toArray(new String[0]), getMCDir(mcp, mcpSide), true);
+					Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, GAMEDIR, side), true);
 				})
 		};
 	}
