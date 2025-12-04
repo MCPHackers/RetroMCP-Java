@@ -22,7 +22,7 @@ public class TaskApplyPatch extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-				stage(getLocalizedStage("patching"), () -> {
+				stage(getLocalizedStage("patching"), 0, () -> {
 					final Path patchesPath = MCPPaths.get(mcp, PATCH, side);
 					final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 					patch(this, srcPath, srcPath, patchesPath);

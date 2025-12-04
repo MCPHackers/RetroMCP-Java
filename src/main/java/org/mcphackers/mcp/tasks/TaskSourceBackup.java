@@ -28,7 +28,7 @@ public class TaskSourceBackup extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-				stage(getLocalizedStage("backupsource"), this::packSourceIntoZip)
+				stage(getLocalizedStage("backupsource"), 0, this::packSourceIntoZip)
 		};
 	}
 

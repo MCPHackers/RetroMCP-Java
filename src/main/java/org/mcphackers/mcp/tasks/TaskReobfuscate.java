@@ -51,9 +51,9 @@ public class TaskReobfuscate extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[]{
-				stage(getLocalizedStage("gathermd5"),
+				stage(getLocalizedStage("gathermd5"), 0,
 						() -> new TaskUpdateMD5(side, mcp, this).updateMD5(true)),
-				stage(getLocalizedStage("reobf"), 43,
+				stage(getLocalizedStage("reobf"), 50,
 						this::reobfuscate)
 		};
 	}

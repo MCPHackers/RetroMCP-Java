@@ -29,7 +29,7 @@ public class TaskCleanup extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-				stage(getLocalizedStage("cleaning"), () -> {
+				stage(getLocalizedStage("cleaning"), 0, () -> {
 					Instant startTime = Instant.now();
 
 					boolean deleted = cleanup();

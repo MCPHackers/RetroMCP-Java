@@ -74,7 +74,7 @@ public class TaskDecompile extends TaskStaged {
 			// Force Java 8 or later in order to support VSC
 			// Java extension does not allow compiling under Java 8
 			classVersion = Math.max(52, classVersion);
-		}), stage(getLocalizedStage("decompile"), () -> {
+		}), stage(getLocalizedStage("decompile"), 0, () -> {
 			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp).decompile();
 			new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
 			new IdeaProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
@@ -97,7 +97,7 @@ public class TaskDecompile extends TaskStaged {
 				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
 			}
-		}), stage(getLocalizedStage("recompile"), () -> new TaskUpdateMD5(side, mcp, this).doTask()),};
+		}), stage(getLocalizedStage("recompile"), 95, () -> new TaskUpdateMD5(side, mcp, this).doTask()),};
 	}
 
 	public ClassStorage applyInjector() throws IOException {

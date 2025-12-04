@@ -15,7 +15,7 @@ public class TaskMergeMappings extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-				stage(getLocalizedStage("mergemappings"), () -> {
+				stage(getLocalizedStage("mergemappings"), 0, () -> {
 					Path clientMappings = Paths.get("client.tiny");
 					Path serverMappings = Paths.get("server.tiny");
 					Path mergedMappings = Paths.get("merged.tiny");

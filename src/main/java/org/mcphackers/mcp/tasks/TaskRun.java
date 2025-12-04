@@ -35,7 +35,7 @@ public class TaskRun extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-				stage(getLocalizedStage("run"), () -> {
+				stage(getLocalizedStage("run"), 0, () -> {
 					Version currentVersion = mcp.getCurrentVersion();
 					Side mcpSide = mcp.getOptions().side;
 					if (mcpSide == Side.ANY) {

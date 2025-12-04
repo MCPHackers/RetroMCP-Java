@@ -26,7 +26,7 @@ public class TaskDownloadUpdate extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		return new Stage[] {
-				stage(getLocalizedStage("downloadupdate"), () -> {
+				stage(getLocalizedStage("downloadupdate"), 0, () -> {
 					URL updateURL = new URL(API);
 					InputStream in = updateURL.openStream();
 					JSONObject releaseJson = JSONUtil.parseJSON(in);

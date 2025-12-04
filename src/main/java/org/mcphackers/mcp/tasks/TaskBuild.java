@@ -27,7 +27,7 @@ public class TaskBuild extends TaskStaged {
 	protected Stage[] setStages() {
 		Path bin = MCPPaths.get(mcp, BIN, side);
 		return new Stage[]{
-				stage(getLocalizedStage("recompile"),
+				stage(getLocalizedStage("recompile"), 0,
 						() -> new TaskRecompile(side, mcp, this).doTask()),
 				stage(getLocalizedStage("reobf"), 50,
 						() -> new TaskReobfuscate(side, mcp, this).doTask()),
