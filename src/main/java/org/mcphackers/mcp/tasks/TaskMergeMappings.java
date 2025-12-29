@@ -27,6 +27,8 @@ public class TaskMergeMappings extends TaskStaged {
 							// Only client mappings exist
 							MappingUtil.mergeMappings(clientMappings, mergedMappings);
 						}
+					} else {
+						throw new RuntimeException("client.tiny/server.tiny could not be found in the current directory!");
 					}
 				})
 		};

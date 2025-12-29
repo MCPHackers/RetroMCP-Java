@@ -79,6 +79,8 @@ task.applypatch = Apply patch
 task.applypatch.desc = Apply patch from patches directory
 task.updatemcp = Update RetroMCP
 task.updatemcp.desc = Check for updates
+task.mergemappings = Merge mappings
+task.mergemappings.desc = Merges mappings into V2 format
 task.noDesc = No description provided
 
 task.stage.idle = Idle
