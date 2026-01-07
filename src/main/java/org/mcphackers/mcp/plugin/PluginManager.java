@@ -15,12 +15,29 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tools.FileUtil;
 
 public class PluginManager {
+	/* The list of loaded plugins */
 	private final Map<String, MCPPlugin> loadedPlugins = new HashMap<>();
 
+	/**
+	 * @return A list containing loaded plugins
+	 */
 	public Map<String, MCPPlugin> getLoadedPlugins() {
 		return this.loadedPlugins;
 	}
 
+	/**
+	 * Discovers plugins in .jar/.zip/.class file format.
+	 * <p>
+	 * Plugins in .class file format must be on the classpath.
+	 * .jar/.zip plugins may be placed into the "plugins" folder
+	 * of the MCP instance.
+	 * <p>
+	 * Plugins are loaded via {@link PluginClassLoader} with a {@link ServiceLoader}.
+	 *
+	 * @see PluginClassLoader
+	 * @see MCPPlugin
+	 * @param mcp MCP instance
+	 */
 	public void discoverPlugins(MCP mcp) {
 		ClassLoader classLoader = mcp.getClass().getClassLoader();
 		try (PluginClassLoader pluginClassLoader = new PluginClassLoader(classLoader)) {
