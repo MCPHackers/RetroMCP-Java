@@ -22,6 +22,7 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.TaskStaged;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tools.project.LegacyProjectAdapter;
 import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.mcp.tools.versions.DownloadData;
 import org.mcphackers.mcp.tools.versions.json.Version;
@@ -43,6 +44,8 @@ public abstract class MCP {
 		pluginManager.discoverPlugins(this);
 		triggerEvent(MCPEvent.ENV_STARTUP);
 		System.gc();
+
+		LegacyProjectAdapter.updateWorkspaceIfNeeded(this);
 	}
 
 	public boolean isGUI() {
