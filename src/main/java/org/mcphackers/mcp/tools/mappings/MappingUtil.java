@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.MappingWriter;
@@ -124,7 +125,7 @@ public final class MappingUtil {
 
 		// Switch the namespaces from official -> named to named -> official
 		// Rename the namespaces from named -> official to named -> client
-		MappingNsRenamer nsRenamer = new MappingNsRenamer(MappingWriter.create(out, MappingFormat.TINY_2_FILE), nsRenames);
+		MappingNsRenamer nsRenamer = new MappingNsRenamer(Objects.requireNonNull(MappingWriter.create(out, MappingFormat.TINY_2_FILE)), nsRenames);
 		MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsRenamer, currentDst);
 		MappingReader.read(client, MappingFormat.TINY_2_FILE, nsSwitch);
 	}

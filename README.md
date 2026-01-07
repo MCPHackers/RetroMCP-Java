@@ -16,6 +16,8 @@ and your JAR file associations are properly configured.
 
 For more information, check out the [RetroMCP Wiki](https://github.com/MCPHackers/RetroMCP-Java/wiki).
 
+[![](https://dcbadge.limes.pink/api/server/https://discord.gg/8Qky5XY)](https://discord.gg/8Qky5XY)
+
 # Features
 
 * Automatically download Minecraft .jar and libraries from version JSONs
