@@ -11,10 +11,7 @@ assignees: ''
 A clear and concise description of what the enhancement is.
 
 **Current behavior**
-A clear and concise description of what you wanted to happen.
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+A clear and concise description on how RetroMCP-Java currently deals with it.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
