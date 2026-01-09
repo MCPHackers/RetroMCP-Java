@@ -8,7 +8,6 @@ import javax.swing.*;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.main.MainGUI;
-import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 
 public class TaskButton extends JButton {
@@ -43,6 +42,8 @@ public class TaskButton extends JButton {
 				if (response == JOptionPane.YES_OPTION) {
 					mcp.performTask(mode, mcp.getOptions().side);
 				}
+			} else {
+				mcp.performTask(mode, mcp.getOptions().side);
 			}
 		});
 	}
