@@ -21,7 +21,7 @@ public class TaskCreatePatch extends TaskStaged {
 				stage(getLocalizedStage("createpatch"), 0, () -> {
 					Path srcPathUnpatched = MCPPaths.get(mcp, SOURCE_UNPATCHED, side);
 					Path srcPathPatched = MCPPaths.get(mcp, SOURCE, side);
-					Path patchesOut = MCPPaths.get(mcp, PATCH, side);
+					Path patchesOut = MCPPaths.get(mcp, PATCHES, side);
 					setProgress(getLocalizedStage("createpatch"));
 					if (!Files.exists(srcPathPatched)) {
 						throw new IOException("Patched " + side.name + " sources cannot be found!");

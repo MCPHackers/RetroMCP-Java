@@ -139,7 +139,7 @@ public class TaskMode {
 			.setName("applypatch")
 			.setTaskClass(TaskApplyPatch.class)
 			.setProgressBars(false)
-			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.PATCH, side))
+			.addRequirement((mcp, side) -> Files.isReadable(MCPPaths.get(mcp, MCPPaths.PATCHES, side))
 					&& Files.isReadable(MCPPaths.get(mcp, MCPPaths.SOURCE, side)))
 			.setParameters(new TaskParameter[]{
 					TaskParameter.SIDE

@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.MCPPaths.PATCH;
+import static org.mcphackers.mcp.MCPPaths.PATCHES;
 import static org.mcphackers.mcp.MCPPaths.SOURCE;
 
 import java.io.ByteArrayOutputStream;
@@ -23,7 +23,7 @@ public class TaskApplyPatch extends TaskStaged {
 	protected Stage[] setStages() {
 		return new Stage[] {
 				stage(getLocalizedStage("patching"), 0, () -> {
-					final Path patchesPath = MCPPaths.get(mcp, PATCH, side);
+					final Path patchesPath = MCPPaths.get(mcp, PATCHES, side);
 					final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
 					patch(this, srcPath, srcPath, patchesPath);
 				})
