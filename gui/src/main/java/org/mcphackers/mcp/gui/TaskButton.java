@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.main.MainGUI;
+import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 
 public class TaskButton extends JButton {
@@ -32,7 +33,18 @@ public class TaskButton extends JButton {
 	}
 
 	public static ActionListener performTask(MCP mcp, TaskMode mode) {
-		return event -> enqueueRunnable(() -> mcp.performTask(mode, mcp.getOptions().side));
+		return event -> enqueueRunnable(() -> {
+			if (mode.equals(TaskMode.CLEANUP) || mode.equals(TaskMode.UPDATE_MD5)) {
+				String confirmMessage = mode.equals(TaskMode.CLEANUP) ? MCP.TRANSLATOR.translateKey("mcp.confirmCleanup") : MCP.TRANSLATOR.translateKey("mcp.confirmUpdateMD5");
+
+				// This should never throw...
+				MainGUI main = (MainGUI) mcp;
+				int response = JOptionPane.showConfirmDialog(main.frame, confirmMessage, MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
+				if (response == JOptionPane.YES_OPTION) {
+					mcp.performTask(mode, mcp.getOptions().side);
+				}
+			}
+		});
 	}
 
 	public boolean getEnabled() {

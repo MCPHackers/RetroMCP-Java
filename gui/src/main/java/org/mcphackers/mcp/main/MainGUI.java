@@ -55,7 +55,7 @@ import org.mcphackers.mcp.tools.versions.json.Version;
  * GUI implementation of MCP
  */
 public class MainGUI extends MCP {
-	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.UPDATE_MD5, TaskMode.CREATE_PATCH};
+	public static final TaskMode[] TASKS = {TaskMode.DECOMPILE, TaskMode.RECOMPILE, TaskMode.REOBFUSCATE, TaskMode.BUILD, TaskMode.CREATE_PATCH};
 	public static final String[] TABS = {"task.decompile", "task.recompile", "task.reobfuscate", "task.build", "options.running"};
 	public static final TaskParameter[][] TAB_PARAMETERS = {
 			{TaskParameter.PATCHES, TaskParameter.FERNFLOWER_OPTIONS, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS},
@@ -344,22 +344,6 @@ public class MainGUI extends MCP {
 				}
 				if (response == JOptionPane.YES_OPTION) {
 					performTask(TaskMode.DECOMPILE, getSide());
-				}
-			});
-			button = new TaskButton(this, task, defaultActionListener);
-		} else if (task == TaskMode.CLEANUP) {
-			ActionListener defaultActionListener = event -> Util.enqueueRunnable(() -> {
-				int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmCleanup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-				if (response == JOptionPane.YES_OPTION) {
-					performTask(task, Side.ANY);
-				}
-			});
-			button = new TaskButton(this, task, defaultActionListener);
-		} else if (task == TaskMode.UPDATE_MD5) {
-			ActionListener defaultActionListener = event -> Util.enqueueRunnable(() -> {
-				int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmUpdateMD5"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);
-				if (response == JOptionPane.YES_OPTION) {
-					performTask(task, getSide());
 				}
 			});
 			button = new TaskButton(this, task, defaultActionListener);
