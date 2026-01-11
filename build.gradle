@@ -4,6 +4,9 @@ plugins {
 
 allprojects {
 	apply plugin: "java"
+	apply plugin: "maven-publish"
+
+	def retromcp_version = '1.2'
 
 	repositories {
 		mavenCentral()
@@ -59,6 +62,39 @@ allprojects {
 	java {
 		sourceCompatibility = JavaVersion.VERSION_1_8
 		targetCompatibility = JavaVersion.VERSION_1_8
+	}
+
+	publishing {
+		publications {
+			maven(MavenPublication) {
+				groupId = 'org.mcphackers'
+				// Jank hack to have CLI and GUI be retromcp-cli and retromcp-gui
+				// while still keeping retromcp-java as the main artifact
+				artifactId = project.name.toLowerCase()
+				if (!artifactId.contains('retromcp-')) {
+					artifactId = 'retromcp-' + artifactId
+				}
+				version = retromcp_version
+
+				pom {
+					description = 'A rewrite of MCP to provide support for many versions of Minecraft which were never supported by original MCP.'
+					url = 'https://mcphackers.org'
+					licenses {
+						license {
+							name = 'The MIT License'
+							url = 'https://spdx.org/licenses/MIT.html'
+						}
+					}
+					scm {
+						connection = 'scm:git:git@github.com:MCPHackers/RetroMCP-Java.git'
+						developerConnection = connection
+						url = 'https://github.com/MCPHackers/RetroMCP-Java'
+					}
+				}
+
+				from components.java
+			}
+		}
 	}
 }
 

@@ -9,8 +9,11 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,15 +24,18 @@ public class VersionParser {
 
 	public static final String DEFAULT_JSON = "https://mcphackers.org/versionsV3/versions.json";
 	public static String mappingsJson = DEFAULT_JSON;
-	private static VersionParser INSTANCE;
 
-	private final List<VersionData> versions = new ArrayList<>();
+	private final Map<String, VersionData> versions = new HashMap<>();
 	public Exception failureCause;
 
-	protected VersionParser() {
+	public VersionParser() {
+		this.addVersionsFromURL(mappingsJson);
+	}
+
+	public void addVersionsFromURL(String url) {
 		JSONArray json;
 		try {
-			json = getJson();
+			json = getJson(url);
 		} catch (Exception e) {
 			failureCause = e;
 			return; // Couldn't init json
@@ -40,30 +46,21 @@ public class VersionParser {
 			}
 			try {
 				VersionData data = VersionData.from((JSONObject) j);
-				versions.add(data);
+				versions.put(data.id, data);
 			} catch (Exception e) {
 				// Catching exception will skip to the next version
 				e.printStackTrace();
 			}
 		}
-		versions.sort(new VersionSorter());
-		INSTANCE = this;
 	}
 
-	public static VersionParser getInstance() {
-		if (INSTANCE == null) {
-			return new VersionParser();
-		}
-		return INSTANCE;
-	}
-
-	private static JSONArray getJson() throws Exception {
+	private static JSONArray getJson(String url) throws Exception {
 		InputStream in;
 		Path versions = Paths.get("versions.json");
 		if (Files.exists(versions)) {
 			in = Files.newInputStream(versions);
 		} else {
-			URLConnection connect = new URL(mappingsJson).openConnection();
+			URLConnection connect = new URL(url).openConnection();
 			connect.setConnectTimeout(30000);
 			in = connect.getInputStream();
 		}
@@ -77,19 +74,23 @@ public class VersionParser {
 	 * @return VersionData
 	 */
 	public VersionData getVersion(String id) {
-		for (VersionData data : versions) {
-			if (data.id.equals(id)) {
-				return data;
-			}
-		}
-		return null;
+		return versions.getOrDefault(id, null);
 	}
 
 	/**
-	 * @return All cached VersionData
+	 * @return All sorted VersionData
 	 */
-	public List<VersionData> getVersions() {
-		return versions;
+	public Collection<VersionData> getUnsortedVersions() {
+		return versions.values();
+	}
+
+	/**
+	 * @return All sorted VersionData
+	 */
+	public List<VersionData> getSortedVersions() {
+		List<VersionData> sortedVersions = new ArrayList<>(versions.values());
+		sortedVersions.sort(new VersionSorter());
+		return sortedVersions;
 	}
 
 	public static class VersionData extends VersionMetadata {

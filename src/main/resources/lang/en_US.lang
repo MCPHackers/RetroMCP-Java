@@ -121,6 +121,7 @@ task.param.setup = Setup version
 task.param.source = Set a specific source version
 task.param.target = Set a specific target version
 task.param.javahome = Set JAVA_HOME used for compiling
+task.param.javacargs = Set Java compiler arguments
 task.param.resources = Keep resources
 task.param.generics = Guess generics
 task.param.stripgenerics = Strip generics

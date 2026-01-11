@@ -59,7 +59,7 @@ public class MainGUI extends MCP {
 	public static final String[] TABS = {"task.decompile", "task.recompile", "task.reobfuscate", "task.build", "options.running"};
 	public static final TaskParameter[][] TAB_PARAMETERS = {
 			{TaskParameter.PATCHES, TaskParameter.FERNFLOWER_OPTIONS, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS},
-			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME}, {TaskParameter.OBFUSCATION, TaskParameter.SRG_OBFUSCATION, TaskParameter.EXCLUDED_CLASSES, TaskParameter.STRIP_SOURCE_FILE},
+			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME, TaskParameter.JAVAC_ARGS}, {TaskParameter.OBFUSCATION, TaskParameter.SRG_OBFUSCATION, TaskParameter.EXCLUDED_CLASSES, TaskParameter.STRIP_SOURCE_FILE},
 			{TaskParameter.FULL_BUILD}, {TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
 	};
 	public Theme theme = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -157,7 +157,7 @@ public class MainGUI extends MCP {
 	@Override
 	public void setCurrentVersion(Version version) {
 		currentVersion = version;
-		frame.setCurrentVersion(version == null ? null : VersionParser.getInstance().getVersion(version.id));
+		frame.setCurrentVersion(version == null ? null : this.getVersionParser().getVersion(version.id));
 	}
 
 	@Override
@@ -197,6 +197,7 @@ public class MainGUI extends MCP {
 		return JOptionPane.showInputDialog(frame, msg, title, JOptionPane.PLAIN_MESSAGE);
 	}
 
+	@SuppressWarnings("MagicConstant")
 	@Override
 	public void showMessage(String title, String msg, int type) {
 		frame.setState(Frame.NORMAL);
@@ -283,7 +284,7 @@ public class MainGUI extends MCP {
 				this.options = new Options(this, Paths.get("options.cfg"));
 				this.options.workingDir = p;
 				this.options.save();
-				VersionParser versionParser = VersionParser.getInstance();
+				VersionParser versionParser = this.getVersionParser();
 				Path versionPath = MCPPaths.get(this, MCPPaths.VERSION);
 				if (Files.exists(versionPath)) {
 					try {
@@ -313,7 +314,7 @@ public class MainGUI extends MCP {
 	}
 
 	public void setupVersion(VersionData versionData) {
-		VersionParser versionParser = VersionParser.getInstance();
+		VersionParser versionParser = this.getVersionParser();
 		Version version = getCurrentVersion();
 		if (versionData != null && !versionData.equals(version == null ? null : versionParser.getVersion(version.id))) {
 			int response = JOptionPane.showConfirmDialog(frame, MCP.TRANSLATOR.translateKey("mcp.confirmSetup"), MCP.TRANSLATOR.translateKey("mcp.confirmAction"), JOptionPane.YES_NO_OPTION);

@@ -1,10 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
-import static org.mcphackers.mcp.MCPPaths.CONF;
-import static org.mcphackers.mcp.MCPPaths.JARS;
-import static org.mcphackers.mcp.MCPPaths.LIB;
-import static org.mcphackers.mcp.MCPPaths.NATIVES;
-import static org.mcphackers.mcp.MCPPaths.VERSION;
+import static org.mcphackers.mcp.MCPPaths.*;
 
 import java.io.BufferedWriter;
 import java.io.InputStream;
@@ -14,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.json.JSONObject;
 import org.mcphackers.mcp.MCP;
@@ -38,7 +33,7 @@ public class TaskSetup extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		return new Stage[] {
+		return new Stage[]{
 				stage(getLocalizedStage("setup"), 0, () -> {
 					new TaskCleanup(mcp).cleanup();
 					FileUtil.createDirectories(MCPPaths.get(mcp, JARS));
@@ -46,18 +41,15 @@ public class TaskSetup extends TaskStaged {
 					FileUtil.createDirectories(MCPPaths.get(mcp, NATIVES));
 
 					setProgress(getLocalizedStage("setup"), 1);
-					List<VersionData> versions = VersionParser.getInstance().getVersions();
+					VersionParser versionParser = mcp.getVersionParser();
 					String chosenVersion = mcp.getOptions().getStringParameter(TaskParameter.SETUP_VERSION);
 					VersionData chosenVersionData;
 
 					// Keep asking until chosenVersion equals one of the versionData
-					input:
 					while (true) {
-						for (VersionData data : versions) {
-							if (data.id.equals(chosenVersion)) {
-								chosenVersionData = data;
-								break input;
-							}
+						chosenVersionData = versionParser.getVersion(chosenVersion);
+						if (chosenVersionData != null) {
+							break;
 						}
 						chosenVersion = mcp.inputString(TaskMode.SETUP.getFullName(), MCP.TRANSLATOR.translateKey("task.setup.selectVersion"));
 					}

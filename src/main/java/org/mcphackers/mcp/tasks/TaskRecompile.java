@@ -75,6 +75,12 @@ public class TaskRecompile extends TaskStaged {
 
 							int sourceVersion = mcp.getOptions().getIntParameter(TaskParameter.SOURCE_VERSION);
 							int targetVersion = mcp.getOptions().getIntParameter(TaskParameter.TARGET_VERSION);
+							String javacArgs = mcp.getOptions().getStringParameter(TaskParameter.JAVAC_ARGS);
+							String[] splitJavacArgs = javacArgs != null && !javacArgs.isEmpty() ? javacArgs.split(" ") : null;
+
+							if (splitJavacArgs != null) {
+								options.addAll(Arrays.asList(splitJavacArgs));
+							}
 
 							// Set --release flag for newer Java versions
 							if (Util.getJavaVersion() > 9) {

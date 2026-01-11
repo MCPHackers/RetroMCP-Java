@@ -1,12 +1,12 @@
 package org.mcphackers.mcp.tasks.mode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.fernflower.main.extern.IFernflowerPreferences;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.Options;
 import org.mcphackers.mcp.tasks.Task.Side;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -30,6 +30,7 @@ public enum TaskParameter {
 	SOURCE_VERSION("source", Integer.class, -1),
 	TARGET_VERSION("target", Integer.class, -1),
 	JAVA_HOME("javahome", String.class, ""),
+	JAVAC_ARGS("javacargs", String.class, ""),
 	EXCLUDED_CLASSES("excludedclasses", String.class, ""),
 	DECOMPILE_RESOURCES("resources", Boolean.class, false),
 	GUESS_GENERICS("generics", Boolean.class, false),
@@ -50,14 +51,6 @@ public enum TaskParameter {
 		this.defaultValue = value;
 	}
 
-	public String getDesc() {
-		String s = "task.param." + name;
-		if (MCP.TRANSLATOR.hasKey(s)) {
-			return MCP.TRANSLATOR.translateKey(s);
-		}
-		return MCP.TRANSLATOR.translateKey("task.noDesc");
-	}
-
 	private static String getDefaultFFOptions() {
 		Map<String, Object> ffOptions = new HashMap<>(IFernflowerPreferences.DEFAULTS);
 		ffOptions.put(IFernflowerPreferences.NO_COMMENT_OUTPUT, "1");
@@ -68,5 +61,13 @@ public enum TaskParameter {
 		ffOptions.put(IFernflowerPreferences.INDENT_STRING, "\t");
 		ffOptions.remove(IFernflowerPreferences.BANNER);
 		return ffOptions.toString();
+	}
+
+	public String getDesc() {
+		String s = "task.param." + name;
+		if (MCP.TRANSLATOR.hasKey(s)) {
+			return MCP.TRANSLATOR.translateKey(s);
+		}
+		return MCP.TRANSLATOR.translateKey("task.noDesc");
 	}
 }

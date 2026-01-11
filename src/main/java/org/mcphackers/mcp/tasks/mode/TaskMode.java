@@ -51,6 +51,7 @@ public class TaskMode {
 					TaskParameter.SOURCE_VERSION,
 					TaskParameter.TARGET_VERSION,
 					TaskParameter.JAVA_HOME,
+					TaskParameter.JAVAC_ARGS,
 					TaskParameter.IGNORED_PACKAGES,
 					TaskParameter.FERNFLOWER_OPTIONS,
 					TaskParameter.PATCHES,
@@ -65,6 +66,7 @@ public class TaskMode {
 					TaskParameter.SOURCE_VERSION,
 					TaskParameter.TARGET_VERSION,
 					TaskParameter.JAVA_HOME,
+					TaskParameter.JAVAC_ARGS,
 					TaskParameter.SIDE
 			})
 			.build();
@@ -76,6 +78,7 @@ public class TaskMode {
 					TaskParameter.SOURCE_VERSION,
 					TaskParameter.TARGET_VERSION,
 					TaskParameter.JAVA_HOME,
+					TaskParameter.JAVAC_ARGS,
 					TaskParameter.SIDE,
 					TaskParameter.EXCLUDED_CLASSES
 			})
@@ -88,6 +91,7 @@ public class TaskMode {
 					TaskParameter.SOURCE_VERSION,
 					TaskParameter.TARGET_VERSION,
 					TaskParameter.JAVA_HOME,
+					TaskParameter.JAVAC_ARGS,
 					TaskParameter.SIDE
 			})
 			.build();
@@ -122,6 +126,7 @@ public class TaskMode {
 					TaskParameter.SOURCE_VERSION,
 					TaskParameter.TARGET_VERSION,
 					TaskParameter.JAVA_HOME,
+					TaskParameter.JAVAC_ARGS,
 					TaskParameter.FULL_BUILD,
 					TaskParameter.SIDE
 			})

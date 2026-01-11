@@ -32,57 +32,6 @@ public class TaskRun extends TaskStaged {
 		super(side, instance);
 	}
 
-	@Override
-	protected Stage[] setStages() {
-		return new Stage[] {
-				stage(getLocalizedStage("run"), 0, () -> {
-					Version currentVersion = mcp.getCurrentVersion();
-					Side mcpSide = mcp.getOptions().side;
-					if (mcpSide == Side.ANY) {
-						mcpSide = side;
-					}
-
-					String main = getMain(mcp, currentVersion, side);
-					if (main == null) {
-						mcp.log("Start class not found");
-						return;
-					}
-					mcp.log("Using main class: " + main);
-
-					boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
-					boolean fullBuild = mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD);
-					String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
-					List<Path> cpList = getClasspath(mcp, mcpSide, side, runBuild, fullBuild);
-
-					List<String> classPath = new ArrayList<>();
-					cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));
-
-					Path natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath();
-
-					List<String> args = new ArrayList<>();
-					args.add(Util.getJava());
-					String cpString = String.join(File.pathSeparator, classPath);
-					for(String s : getJvmArgs(mcp, mcpSide)) {
-						args.add(s.replace("${classpath}", cpString)
-						.replace("${natives_directory}", natives.toAbsolutePath().toString())
-						.replace("${launcher_name}", "RetroMCP")
-						.replace("${launcher_version}", MCP.VERSION));
-					}
-					Collections.addAll(args, runArgs);
-					args.add(main);
-					if (side == Side.CLIENT) {
-						List<String> gameArgs = new ArrayList<>(getLaunchArgs(mcp, mcpSide));
-						Collections.addAll(gameArgs, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
-						args.addAll(gameArgs);
-					}
-					mcp.log("Launch arguments: " + String.join(", ", args));
-					// mcp.log("Classpath:\n" + String.join("\n", classPath));
-
-					Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, GAMEDIR, side), true);
-				})
-		};
-	}
-
 	public static String getMain(MCP mcp, Version version, Side side) throws IOException {
 		if (side == Side.CLIENT) {
 			return version.mainClass;
@@ -109,16 +58,14 @@ public class TaskRun extends TaskStaged {
 		for (Object o : objects) {
 			if (o instanceof String) {
 				argsList.add((String) o);
-			}
-			else if (o instanceof Argument) {
-				Argument arg = (Argument)o;
-				if(Rule.apply(arg.rules)) {
-					if(arg.value instanceof String) {
-						argsList.add((String)arg.value);
-					}
-					else if(arg.value instanceof JSONArray) {
-						JSONArray arr = (JSONArray)arg.value;
-						for(int i = 0; i < arr.length(); i++) {
+			} else if (o instanceof Argument) {
+				Argument arg = (Argument) o;
+				if (Rule.apply(arg.rules)) {
+					if (arg.value instanceof String) {
+						argsList.add((String) arg.value);
+					} else if (arg.value instanceof JSONArray) {
+						JSONArray arr = (JSONArray) arg.value;
+						for (int i = 0; i < arr.length(); i++) {
 							argsList.add(arr.getString(i));
 						}
 					}
@@ -131,7 +78,7 @@ public class TaskRun extends TaskStaged {
 	public static List<String> getJvmArgs(MCP mcp, Side side) {
 		List<String> argsList = new ArrayList<>();
 		Version ver = mcp.getCurrentVersion();
-		if(ver.arguments != null) {
+		if (ver.arguments != null) {
 			argsList.addAll(getStringArguments(ver.arguments.jvm));
 		} else {
 			argsList.add("-Djava.library.path=${natives_directory}");
@@ -221,5 +168,56 @@ public class TaskRun extends TaskStaged {
 			}
 		}
 		return cpList;
+	}
+
+	@Override
+	protected Stage[] setStages() {
+		return new Stage[]{
+				stage(getLocalizedStage("run"), 0, () -> {
+					Version currentVersion = mcp.getCurrentVersion();
+					Side mcpSide = mcp.getOptions().side;
+					if (mcpSide == Side.ANY) {
+						mcpSide = side;
+					}
+
+					String main = getMain(mcp, currentVersion, side);
+					if (main == null) {
+						mcp.log("Start class not found");
+						return;
+					}
+					mcp.log("Using main class: " + main);
+
+					boolean runBuild = mcp.getOptions().getBooleanParameter(TaskParameter.RUN_BUILD);
+					boolean fullBuild = mcp.getOptions().getBooleanParameter(TaskParameter.FULL_BUILD);
+					String[] runArgs = mcp.getOptions().getStringArrayParameter(TaskParameter.RUN_ARGS);
+					List<Path> cpList = getClasspath(mcp, mcpSide, side, runBuild, fullBuild);
+
+					List<String> classPath = new ArrayList<>();
+					cpList.forEach(p -> classPath.add(p.toAbsolutePath().toString()));
+
+					Path natives = MCPPaths.get(mcp, NATIVES).toAbsolutePath();
+
+					List<String> args = new ArrayList<>();
+					args.add(Util.getJava());
+					String cpString = String.join(File.pathSeparator, classPath);
+					for (String s : getJvmArgs(mcp, mcpSide)) {
+						args.add(s.replace("${classpath}", cpString)
+								.replace("${natives_directory}", natives.toAbsolutePath().toString())
+								.replace("${launcher_name}", "RetroMCP")
+								.replace("${launcher_version}", MCP.VERSION));
+					}
+					Collections.addAll(args, runArgs);
+					args.add(main);
+					if (side == Side.CLIENT) {
+						List<String> gameArgs = new ArrayList<>(getLaunchArgs(mcp, mcpSide));
+						Collections.addAll(gameArgs, mcp.getOptions().getStringParameter(TaskParameter.GAME_ARGS).split(" "));
+						args.addAll(gameArgs);
+					}
+					mcp.log("Launch arguments: " + String.join(", ", args));
+					// mcp.log("Classpath:\n" + String.join("\n", classPath));
+
+					Util.runCommand(args.toArray(new String[0]), MCPPaths.get(mcp, GAMEDIR, side), true);
+				})
+		};
 	}
 }

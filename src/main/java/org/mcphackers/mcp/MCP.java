@@ -25,6 +25,7 @@ import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.project.LegacyProjectAdapter;
 import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.mcp.tools.versions.DownloadData;
+import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public abstract class MCP {
@@ -37,6 +38,7 @@ public abstract class MCP {
 	protected boolean isGUI = false;
 
 	public static final List<? extends Source> SOURCE_ADAPTERS = new ArrayList<>();
+	private static final VersionParser VERSION_PARSER = new VersionParser();
 
 	protected MCP() {
 		Update.attemptToDeleteUpdateJar();
@@ -136,7 +138,7 @@ public abstract class MCP {
 			} catch (InterruptedException err) {
 				throw new RuntimeException("Main thread was interrupted while performTask was waiting for tasks to finish", err );
 			}
-		};
+		}
 		triggerEvent(MCPEvent.FINISHED_TASKS);
 
 		byte result = result1.byteValue();
@@ -354,13 +356,15 @@ public abstract class MCP {
 		}
 	}
 
+	public VersionParser getVersionParser() {
+		return VERSION_PARSER;
+	}
+
 	public List<Path> getLibraries() {
 		return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
 	}
 
 	public static void reloadPluginTranslations() {
-		pluginManager.getLoadedPlugins().forEach((key, plugin) -> {
-			MCP.TRANSLATOR.readTranslation(plugin.getClass());
-		});
+		pluginManager.getLoadedPlugins().forEach((key, plugin) -> MCP.TRANSLATOR.readTranslation(plugin.getClass()));
 	}
 }

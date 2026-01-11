@@ -139,7 +139,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 		AtomicReference<JButton> reloadVersionListButton = new AtomicReference<>();
 		enqueueRunnable(() -> {
 			loadingVersions = true;
-			VersionParser versionParser = VersionParser.getInstance();
+			VersionParser versionParser = this.mcp.getVersionParser();
 			if (versionParser.failureCause != null) {
 				versionParser.failureCause.printStackTrace();
 				verLabel = new JLabel(MCP.TRANSLATOR.translateKey("mcp.versionList.failure"));
@@ -150,7 +150,7 @@ public class MCPFrame extends JFrame implements WindowListener {
 				reloadButton.addActionListener(e -> this.reloadVersionList());
 				reloadVersionListButton.set(reloadButton);
 			} else {
-				verList = new JComboBox<>(versionParser.getVersions().toArray());
+				verList = new JComboBox<>(versionParser.getSortedVersions().toArray());
 				verList.addPopupMenuListener(new PopupMenuListener() {
 
 					@Override

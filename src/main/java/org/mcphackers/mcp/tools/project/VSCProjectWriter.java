@@ -59,5 +59,5 @@ public class VSCProjectWriter implements ProjectWriter {
 			launchJson.write(writer);
 		}
 	}
-	
+
 }
