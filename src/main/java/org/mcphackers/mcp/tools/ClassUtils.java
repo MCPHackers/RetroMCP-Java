@@ -1,9 +1,13 @@
 package org.mcphackers.mcp.tools;
 
+import org.objectweb.asm.ClassReader;
+
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -57,5 +61,18 @@ public abstract class ClassUtils {
 			return classVersion - 44;
 		}
 		return -1;
+	}
+
+	public static int getClassVersion(Path path) {
+		try {
+			byte[] classBytes = Files.readAllBytes(path);
+			ClassReader cr = new ClassReader(classBytes);
+
+			return cr.readUnsignedShort(6);
+		} catch (IOException ignored) {
+		}
+
+		// Java 8 as a sane default
+		return 52;
 	}
 }

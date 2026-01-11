@@ -8,6 +8,7 @@ import org.mcphackers.mcp.tools.Util;
 
 import javax.tools.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -44,7 +45,8 @@ public class TaskRecompile extends TaskStaged {
 	@Override
 	protected Stage[] setStages() {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		if (compiler == null) {
+		String javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
+		if (javaHome.isEmpty() && compiler == null) {
 			throw new RuntimeException("Could not find compiling API. Please install or use a Java Development Kit to run this program.");
 		}
 		Path binPath = MCPPaths.get(mcp, BIN, side);
@@ -83,9 +85,10 @@ public class TaskRecompile extends TaskStaged {
 							}
 
 							// Set --release flag for newer Java versions
-							if (Util.getJavaVersion() > 9) {
+							int javaVersion = Util.getJavaVersion(this.mcp);
+							if (javaVersion > 9) {
 								if (sourceVersion <= 0) {
-									sourceVersion = Util.getJavaVersion();
+									sourceVersion = javaVersion;
 								}
 								options.addAll(Arrays.asList("--release", Integer.toString(sourceVersion)));
 							} else {
@@ -108,8 +111,12 @@ public class TaskRecompile extends TaskStaged {
 
 							setProgress(3);
 
-							DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
-							recompile(compiler, ds, src, options);
+							if (javaHome.isEmpty()) {
+								DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
+								recompile(compiler, ds, src, options);
+							} else {
+								recompile(mcp, side, javaHome, src, options);
+							}
 						}),
 				stage(getLocalizedStage("copyres"), 50,
 						() -> {
@@ -182,5 +189,42 @@ public class TaskRecompile extends TaskStaged {
 				}
 			}
 		mgr.close();
+	}
+
+	public void recompile(MCP mcp, Side side, String javaHome, Iterable<File> src, Iterable<String> recompileOptions) {
+		Path sourcesTxt = MCPPaths.get(mcp, MCPPaths.PROJECT + "sources.txt", side);
+		try (BufferedWriter writer = Files.newBufferedWriter(sourcesTxt)) {
+			for (File srcFile : src) {
+				writer.write(srcFile.getAbsolutePath() + System.lineSeparator());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Path javac = Paths.get(javaHome).resolve("bin").resolve("javac");
+		if (!Files.exists(javac)) {
+			throw new RuntimeException("Failed to find javac in " + javaHome);
+		}
+
+		Path binDir = MCPPaths.get(mcp, BIN, side);
+
+		List<String> cmd = new ArrayList<>();
+		cmd.add(javac.toString());
+		cmd.add("-d");
+		cmd.add(binDir.toAbsolutePath().toString());
+		cmd.add("@" + sourcesTxt.toAbsolutePath());
+
+		for (String recompileOption : recompileOptions) {
+			cmd.add(recompileOption);
+		}
+
+		try {
+			int exitCode = Util.runCommand(cmd.toArray(new String[] {}), MCPPaths.get(mcp, PROJECT, side), true);
+			if (exitCode != 0) {
+				throw new RuntimeException("Failed to compile!");
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

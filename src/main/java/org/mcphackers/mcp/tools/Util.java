@@ -1,10 +1,14 @@
 package org.mcphackers.mcp.tools;
 
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
+
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +18,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,6 +32,7 @@ import java.util.concurrent.Future;
 
 public abstract class Util {
 	public static final ExecutorService SINGLE_THREAD_EXECUTOR = Executors.newSingleThreadExecutor();
+	public static final Map<String, Integer> javaToJavaVersion = new HashMap<>();
 
 	public static int runCommand(String[] cmd, Path dir, boolean killOnShutdown) throws IOException {
 		ProcessBuilder procBuilder = new ProcessBuilder(cmd);
@@ -204,16 +214,70 @@ public abstract class Util {
 		return System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 	}
 
-	public static int getJavaVersion() {
-		String javaVersion = System.getProperty("java.version");
-		String[] versionParts = javaVersion.split("\\.");
-		int versionNumber = Integer.parseInt(versionParts[0]);
+	public static int getJavaVersion(MCP mcp) {
+		String javaHome = getJava();
+		if (mcp == null) {
+			String javaVersion = System.getProperty("java.version");
+			String[] versionParts = javaVersion.split("\\.");
+			int versionNumber = Integer.parseInt(versionParts[0]);
 
-		if (versionNumber < 9) {
-			versionNumber = Integer.parseInt(versionParts[1]);
+			if (versionNumber < 9) {
+				versionNumber = Integer.parseInt(versionParts[1]);
+			} else {
+				versionNumber = Integer.parseInt(versionParts[0]);
+			}
+			javaToJavaVersion.put(javaHome, versionNumber);
+			return versionNumber;
 		} else {
-			versionNumber = Integer.parseInt(versionParts[0]);
+			// TODO: This is a hack
+			// Please refactor.
+			javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
+			Path javac = Paths.get(javaHome).resolve("bin").resolve("javac");
+			int javaVersion;
+			if (!Files.exists(javac)) {
+				javaVersion = 6;
+				javaToJavaVersion.put(javaHome, javaVersion);
+				return javaVersion;
+			}
+
+			String tempDirPath = System.getProperty("java.io.tmpdir");
+
+			// Write and compile a temporary Java file, then use ASM to read the default class file
+			// version.
+			try {
+				Path tempJavaSrc = Files.createTempFile("retromcp-javac-check-", ".java");
+				Path tempJavaOut = tempJavaSrc.getParent().resolve("Main.class");
+				try (BufferedWriter writer = Files.newBufferedWriter(tempJavaSrc)) {
+					writer.write("class Main { }\n");
+				}
+
+				// Compile tempJavaSrc using the set javaHome
+				List<String> cmd = new ArrayList<>();
+				cmd.add(javac.toAbsolutePath().toString());
+				cmd.add(tempJavaSrc.toAbsolutePath().toString());
+				cmd.add("-d");
+				cmd.add(tempDirPath);
+
+				int exitCode = Util.runCommand(cmd.toArray(new String[] {}), Paths.get(tempDirPath), true);
+				if (exitCode != 0) {
+					throw new RuntimeException("Failed to compile a test program with: " + javaHome);
+				}
+
+				if (!Files.exists(tempJavaOut)) {
+					throw new IllegalStateException("Test program could not be found at the location it was supposed to!");
+				}
+
+				// Read class version from class
+				int classVersion = ClassUtils.getClassVersion(tempJavaOut);
+				return ClassUtils.getSourceFromClassVersion(classVersion);
+			} catch (IOException ignored) {
+			}
+
+			return 6;
 		}
-		return versionNumber;
+	}
+
+	public static int getJavaVersion() {
+		return getJavaVersion(null);
 	}
 }

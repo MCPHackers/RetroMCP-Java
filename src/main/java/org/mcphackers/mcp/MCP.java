@@ -29,7 +29,7 @@ import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.json.Version;
 
 public abstract class MCP {
-	public static final String VERSION = "v1.1";
+	public static final String VERSION = "v1.2";
 	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
 	private static final PluginManager pluginManager = new PluginManager();
