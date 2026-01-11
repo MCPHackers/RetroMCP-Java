@@ -214,8 +214,31 @@ public abstract class Util {
 		return System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 	}
 
+	public static String getJavac(MCP mcp) {
+		String javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
+		String defaultJavaHome = System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		if (!javaHome.isEmpty()) {
+			return javaHome + File.separator + "bin" + File.separator + "javac";
+		}
+		return defaultJavaHome;
+	}
+
 	public static int getJavaVersion(MCP mcp) {
-		String javaHome = getJava();
+		String java = getJava();
+
+		// Get cached value if already ran
+		if (mcp != null) {
+			String javacString = getJavac(mcp);
+
+			if (!javacString.isEmpty() && javaToJavaVersion.containsKey(javacString)) {
+				return javaToJavaVersion.get(javacString);
+			} else {
+				if (javaToJavaVersion.containsKey(java)) {
+					return javaToJavaVersion.get(java);
+				}
+			}
+		}
+
 		if (mcp == null) {
 			String javaVersion = System.getProperty("java.version");
 			String[] versionParts = javaVersion.split("\\.");
@@ -226,17 +249,17 @@ public abstract class Util {
 			} else {
 				versionNumber = Integer.parseInt(versionParts[0]);
 			}
-			javaToJavaVersion.put(javaHome, versionNumber);
+			javaToJavaVersion.put(java, versionNumber);
 			return versionNumber;
 		} else {
 			// TODO: This is a hack
 			// Please refactor.
-			javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
-			Path javac = Paths.get(javaHome).resolve("bin").resolve("javac");
+			java = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
+			Path javac = Paths.get(java).resolve("bin").resolve("javac");
 			int javaVersion;
 			if (!Files.exists(javac)) {
 				javaVersion = 6;
-				javaToJavaVersion.put(javaHome, javaVersion);
+				javaToJavaVersion.put(java, javaVersion);
 				return javaVersion;
 			}
 
@@ -260,7 +283,7 @@ public abstract class Util {
 
 				int exitCode = Util.runCommand(cmd.toArray(new String[] {}), Paths.get(tempDirPath), true);
 				if (exitCode != 0) {
-					throw new RuntimeException("Failed to compile a test program with: " + javaHome);
+					throw new RuntimeException("Failed to compile a test program with: " + java);
 				}
 
 				if (!Files.exists(tempJavaOut)) {
@@ -275,9 +298,5 @@ public abstract class Util {
 
 			return 6;
 		}
-	}
-
-	public static int getJavaVersion() {
-		return getJavaVersion(null);
 	}
 }

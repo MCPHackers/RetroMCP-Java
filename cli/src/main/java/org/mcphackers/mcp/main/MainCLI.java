@@ -83,8 +83,8 @@ public class MainCLI extends MCP {
 				log(new Ansi().fgBrightRed().a("Error: Java Development Kit is required to recompile!").toString());
 				log("Using Java from " + Paths.get(Util.getJava()).toAbsolutePath());
 			}
-			if (Util.getJavaVersion() > 8) {
-				warning("WARNING: JDK " + Util.getJavaVersion() + " is being used! Java 8 is recommended.");
+			if (Util.getJavaVersion(this) > 8) {
+				warning("WARNING: JDK " + Util.getJavaVersion(this) + " is being used! Java 8 is recommended.");
 			}
 			if (version != null) log(version);
 			log(new Ansi().fgDefault().a("Enter a command to execute:").toString());
