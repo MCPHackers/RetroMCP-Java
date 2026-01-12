@@ -1,10 +1,6 @@
 package org.mcphackers.mcp.tools;
 
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.tasks.mode.TaskParameter;
-
-import java.awt.Desktop;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -30,6 +26,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
+
 public abstract class Util {
 	public static final ExecutorService SINGLE_THREAD_EXECUTOR = Executors.newSingleThreadExecutor();
 	public static final Map<String, Integer> javaToJavaVersion = new HashMap<>();
@@ -46,10 +45,10 @@ public abstract class Util {
 		}
 		BufferedReader err = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 		BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-		Thread stderr = new Thread(()-> {
+		Thread stderr = new Thread(() -> {
 			String line;
 			try {
-				while((line = err.readLine()) != null) {
+				while ((line = err.readLine()) != null) {
 					System.out.println("Minecraft STDERR: " + line);
 				}
 			} catch (IOException ignored) {
@@ -57,10 +56,10 @@ public abstract class Util {
 			}
 
 		});
-		Thread stdout = new Thread(()-> {
+		Thread stdout = new Thread(() -> {
 			String line;
 			try {
-				while((line = in.readLine()) != null) {
+				while ((line = in.readLine()) != null) {
 					System.out.println(line);
 				}
 			} catch (IOException ignored) {
@@ -72,7 +71,7 @@ public abstract class Util {
 		try {
 			proc.waitFor();
 		} catch (InterruptedException e) {
-			throw new RuntimeException("thread interrupted while runCommand was waiting for a process to finish", e );
+			throw new RuntimeException("thread interrupted while runCommand was waiting for a process to finish", e);
 		}
 		in.close();
 		err.close();
@@ -184,11 +183,11 @@ public abstract class Util {
 			while ((bytesRead = bs.read(buffer, 0, buffer.length)) != -1) {
 				md.update(buffer, 0, bytesRead);
 			}
-            return md.digest();
+			return md.digest();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		return new byte[] {};
+		return new byte[]{};
 	}
 
 	public static String firstUpperCase(String s) {
@@ -216,30 +215,81 @@ public abstract class Util {
 
 	public static String getJavac(MCP mcp) {
 		String javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
-		String defaultJavaHome = System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		String defaultJavaCompiler = System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "javac";
+
+		// Returns path to custom Java compiler
 		if (!javaHome.isEmpty()) {
 			return javaHome + File.separator + "bin" + File.separator + "javac";
 		}
-		return defaultJavaHome;
+		return defaultJavaCompiler;
 	}
 
 	public static int getJavaVersion(MCP mcp) {
-		String java = getJava();
+		String defaultJavaHome = getJava();
+		String customJavaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
 
-		// Get cached value if already ran
-		if (mcp != null) {
-			String javacString = getJavac(mcp);
+		// Use custom Java compiler
+		if (!customJavaHome.isEmpty()) {
+			if (javaToJavaVersion.containsKey(customJavaHome)) {
+				return javaToJavaVersion.get(customJavaHome);
+			}
 
-			if (!javacString.isEmpty() && javaToJavaVersion.containsKey(javacString)) {
-				return javaToJavaVersion.get(javacString);
-			} else {
-				if (javaToJavaVersion.containsKey(java)) {
-					return javaToJavaVersion.get(java);
+			Path javacPath = Paths.get(mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME)).resolve("bin").resolve("javac");
+			String javac = javacPath.toString();
+
+
+			if (!javac.isEmpty() && javaToJavaVersion.containsKey(javac)) {
+				return javaToJavaVersion.get(javac);
+			}
+
+			if (Files.exists(javacPath)) {
+				// This is a hack...
+				int javaVersion;
+				if (!Files.exists(javacPath)) {
+					javaVersion = 6;
+					javaToJavaVersion.put(customJavaHome, javaVersion);
+					return javaVersion;
+				}
+
+				String tempDirPath = System.getProperty("java.io.tmpdir");
+
+				// Write and compile a temporary Java file, then use ASM to read the default class file
+				// version.
+				try {
+					Path tempJavaSrc = Files.createTempFile("retromcp-javac-check-", ".java");
+					Path tempJavaOut = tempJavaSrc.getParent().resolve("Main.class");
+					try (BufferedWriter writer = Files.newBufferedWriter(tempJavaSrc)) {
+						writer.write("class Main { }\n");
+					}
+
+					// Compile tempJavaSrc using the set javaHome
+					List<String> cmd = new ArrayList<>();
+					cmd.add(javacPath.toString());
+					cmd.add(tempJavaSrc.toAbsolutePath().toString());
+					cmd.add("-d");
+					cmd.add(tempDirPath);
+
+					int exitCode = Util.runCommand(cmd.toArray(new String[]{}), Paths.get(tempDirPath), true);
+					if (exitCode != 0) {
+						throw new RuntimeException("Failed to compile a test program with: " + javac);
+					}
+
+					if (!Files.exists(tempJavaOut)) {
+						throw new IllegalStateException("Test program could not be found at the location it was supposed to!");
+					}
+
+					// Read class version from class
+					int classVersion = ClassUtils.getClassVersion(tempJavaOut);
+					javaToJavaVersion.put(customJavaHome, classVersion);
+					return ClassUtils.getSourceFromClassVersion(classVersion);
+				} catch (IOException ignored) {
 				}
 			}
-		}
+		} else {
+			if (javaToJavaVersion.containsKey(defaultJavaHome)) {
+				return javaToJavaVersion.get(defaultJavaHome);
+			}
 
-		if (mcp == null) {
 			String javaVersion = System.getProperty("java.version");
 			String[] versionParts = javaVersion.split("\\.");
 			int versionNumber = Integer.parseInt(versionParts[0]);
@@ -249,54 +299,9 @@ public abstract class Util {
 			} else {
 				versionNumber = Integer.parseInt(versionParts[0]);
 			}
-			javaToJavaVersion.put(java, versionNumber);
+			javaToJavaVersion.put(defaultJavaHome, versionNumber);
 			return versionNumber;
-		} else {
-			// TODO: This is a hack
-			// Please refactor.
-			java = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
-			Path javac = Paths.get(java).resolve("bin").resolve("javac");
-			int javaVersion;
-			if (!Files.exists(javac)) {
-				javaVersion = 6;
-				javaToJavaVersion.put(java, javaVersion);
-				return javaVersion;
-			}
-
-			String tempDirPath = System.getProperty("java.io.tmpdir");
-
-			// Write and compile a temporary Java file, then use ASM to read the default class file
-			// version.
-			try {
-				Path tempJavaSrc = Files.createTempFile("retromcp-javac-check-", ".java");
-				Path tempJavaOut = tempJavaSrc.getParent().resolve("Main.class");
-				try (BufferedWriter writer = Files.newBufferedWriter(tempJavaSrc)) {
-					writer.write("class Main { }\n");
-				}
-
-				// Compile tempJavaSrc using the set javaHome
-				List<String> cmd = new ArrayList<>();
-				cmd.add(javac.toAbsolutePath().toString());
-				cmd.add(tempJavaSrc.toAbsolutePath().toString());
-				cmd.add("-d");
-				cmd.add(tempDirPath);
-
-				int exitCode = Util.runCommand(cmd.toArray(new String[] {}), Paths.get(tempDirPath), true);
-				if (exitCode != 0) {
-					throw new RuntimeException("Failed to compile a test program with: " + java);
-				}
-
-				if (!Files.exists(tempJavaOut)) {
-					throw new IllegalStateException("Test program could not be found at the location it was supposed to!");
-				}
-
-				// Read class version from class
-				int classVersion = ClassUtils.getClassVersion(tempJavaOut);
-				return ClassUtils.getSourceFromClassVersion(classVersion);
-			} catch (IOException ignored) {
-			}
-
-			return 6;
 		}
+		return 8;
 	}
 }
