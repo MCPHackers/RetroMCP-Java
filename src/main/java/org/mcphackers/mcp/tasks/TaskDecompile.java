@@ -97,6 +97,14 @@ public class TaskDecompile extends TaskStaged {
 				FileUtil.deletePackages(ffOut, mcp.getOptions().getStringArrayParameter(TaskParameter.IGNORED_PACKAGES));
 				FileUtil.copyDirectory(ffOut, srcPath);
 			}
+
+			// Copy asset indexes if client/merged
+			if (side.includesClient()) {
+				Path assets = MCPPaths.get(mcp, JARS).resolve("assets");
+				if (Files.exists(assets)) {
+					FileUtil.copyDirectory(assets, MCPPaths.get(mcp, GAMEDIR, side).resolve("assets"));
+				}
+			}
 		}), stage(getLocalizedStage("recompile"), 95, () -> new TaskUpdateMD5(side, mcp, this).doTask()),};
 	}
 

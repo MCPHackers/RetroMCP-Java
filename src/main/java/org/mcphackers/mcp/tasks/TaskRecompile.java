@@ -205,7 +205,7 @@ public class TaskRecompile extends TaskStaged {
 		boolean isWindows = OS.getOs().equals(OS.windows);
 		Path javac = Paths.get(javaHome).resolve("bin").resolve(isWindows ? "javac.exe" : "javac");
 		if (!Files.exists(javac)) {
-			throw new RuntimeException("Failed to find javac in " + javaHome);
+			throw new RuntimeException("Failed to find javac at " + javac.toAbsolutePath());
 		}
 
 		Path binDir = MCPPaths.get(mcp, BIN, side);
