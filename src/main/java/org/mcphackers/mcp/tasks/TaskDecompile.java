@@ -59,7 +59,7 @@ public class TaskDecompile extends TaskStaged {
 		final Path rdiOut = MCPPaths.get(mcp, REMAPPED, side);
 		final Path ffOut = MCPPaths.get(mcp, SOURCE_UNPATCHED, side);
 		final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
-		final Path patchesPath = MCPPaths.get(mcp, PATCHES, side);
+		final Path patchesPath = MCPPaths.get(mcp, CONF_PATCHES, side);
 
 		return new Stage[]{stage(getLocalizedStage("prepare"), 0, () -> {
 			FileUtil.cleanDirectory(MCPPaths.get(mcp, PROJECT, side));

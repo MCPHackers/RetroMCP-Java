@@ -37,6 +37,7 @@ public class MCPPaths {
 	public static final String MAPPINGS = CONF + "mappings.tiny";
 	public static final String EXC = CONF + "exceptions.exc";
 	public static final String ACCESS = CONF + "%s.access";
+	public static final String CONF_PATCHES = CONF + "%s.patch";
 	public static final String PATCHES = "patches/%s.patch";
 	public static final String VERSION = CONF + "version.json";
 
