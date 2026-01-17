@@ -4,6 +4,7 @@ import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.OS;
 import org.mcphackers.mcp.tools.Util;
 
 import javax.tools.*;
@@ -201,7 +202,8 @@ public class TaskRecompile extends TaskStaged {
 			e.printStackTrace();
 		}
 
-		Path javac = Paths.get(javaHome).resolve("bin").resolve("javac");
+		boolean isWindows = OS.getOs().equals(OS.windows);
+		Path javac = Paths.get(javaHome).resolve("bin").resolve(isWindows ? "javac.exe" : "javac");
 		if (!Files.exists(javac)) {
 			throw new RuntimeException("Failed to find javac in " + javaHome);
 		}
