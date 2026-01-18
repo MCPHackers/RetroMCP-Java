@@ -8,7 +8,7 @@ public class PluginClassLoader extends URLClassLoader {
 	 * @param parent Parent class loader for the plugin class loader
 	 */
 	public PluginClassLoader(ClassLoader parent) {
-		super(new URL[] {}, parent);
+		super(new URL[]{}, parent);
 	}
 
 	/**

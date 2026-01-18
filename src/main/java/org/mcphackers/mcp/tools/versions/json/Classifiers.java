@@ -14,7 +14,7 @@ public class Classifiers {
 		}
 		return new Classifiers() {
 			{
-				for(String key : obj.keySet()) {
+				for (String key : obj.keySet()) {
 					artifacts.put(key, getArtifact(obj, key));
 				}
 			}

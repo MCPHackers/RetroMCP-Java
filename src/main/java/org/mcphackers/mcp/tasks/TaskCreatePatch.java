@@ -17,7 +17,7 @@ public class TaskCreatePatch extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		return new Stage[] {
+		return new Stage[]{
 				stage(getLocalizedStage("createpatch"), 0, () -> {
 					Path srcPathUnpatched = MCPPaths.get(mcp, SOURCE_UNPATCHED, side);
 					Path srcPathPatched = MCPPaths.get(mcp, SOURCE, side);

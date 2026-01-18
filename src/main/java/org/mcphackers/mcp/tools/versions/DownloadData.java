@@ -39,16 +39,16 @@ public class DownloadData {
 			queueDownload(version.downloads.artifacts.get("client"), client);
 		}
 		Artifact serverArtifact = version.downloads.artifacts.get("server");
-		if(mcp.getOptions().getSide().includesServer() && serverArtifact != null) {
+		if (mcp.getOptions().getSide().includesServer() && serverArtifact != null) {
 			Path serverOut = server;
-			if(serverArtifact.url.endsWith(".zip")) {
+			if (serverArtifact.url.endsWith(".zip")) {
 				serverOut = server.getParent().resolve("minecraft_server.zip");
 			}
 			queueDownload(serverArtifact, serverOut);
-			if(serverArtifact.url.endsWith(".zip")) {
+			if (serverArtifact.url.endsWith(".zip")) {
 				try {
 					FileUtil.extractByExtension(serverOut, serverOut.getParent(), ".jar");
-					if(Files.exists(serverOut.getParent().resolve("minecraft-server.jar"))) {
+					if (Files.exists(serverOut.getParent().resolve("minecraft-server.jar"))) {
 						Files.move(serverOut.getParent().resolve("minecraft-server.jar"), server);
 					}
 				} catch (IOException e) {
@@ -94,7 +94,7 @@ public class DownloadData {
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
 				String lib = dependencyDownload.getArtifactPath(null);
-				if(lib == null) {
+				if (lib == null) {
 					continue;
 				}
 				retList.add((libDir.resolve(lib)));
@@ -110,7 +110,7 @@ public class DownloadData {
 				String natives = dependencyDownload.getNatives();
 				if (natives != null) {
 					String lib = dependencyDownload.getArtifactPath(natives);
-					if(lib == null) {
+					if (lib == null) {
 						continue;
 					}
 					retList.add(libDir.resolve(lib));

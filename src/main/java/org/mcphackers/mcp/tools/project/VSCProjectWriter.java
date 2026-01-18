@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.tools.project;
 
-import static org.mcphackers.mcp.MCPPaths.*;
+import static org.mcphackers.mcp.MCPPaths.PROJECT;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class VSCProjectWriter implements ProjectWriter {
 				config.put("projectName", projectName);
 				List<String> args = TaskRun.getLaunchArgs(mcp, launchSide);
 				JSONArray arguments = new JSONArray();
-				for(String arg : args) {
+				for (String arg : args) {
 					arguments.put(arg);
 				}
 				config.put("args", arguments);

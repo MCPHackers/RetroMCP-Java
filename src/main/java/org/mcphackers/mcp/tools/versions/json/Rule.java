@@ -90,7 +90,7 @@ public class Rule {
 			if (this.name != null && this.name != os) {
 				return false;
 			} else {
-				if(this.arch != null && !arch.equals(System.getProperty("os.arch"))) {
+				if (this.arch != null && !arch.equals(System.getProperty("os.arch"))) {
 					return false;
 				}
 				if (this.version != null) {

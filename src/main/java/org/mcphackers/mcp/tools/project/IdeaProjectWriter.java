@@ -1,6 +1,6 @@
 package org.mcphackers.mcp.tools.project;
 
-import static org.mcphackers.mcp.MCPPaths.*;
+import static org.mcphackers.mcp.MCPPaths.PROJECT;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,7 +60,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 			for (DependDownload dependencyDownload : version.libraries) {
 				if (Rule.apply(dependencyDownload.rules)) {
 					String lib = dependencyDownload.getArtifactPath(null);
-					if(lib == null) {
+					if (lib == null) {
 						continue;
 					}
 					String libraryName = lib.substring(lib.lastIndexOf("/") + 1, lib.length() - 4);
@@ -164,7 +164,7 @@ public class IdeaProjectWriter implements ProjectWriter {
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
 				String lib = dependencyDownload.getArtifactPath(null);
-				if(lib == null) {
+				if (lib == null) {
 					continue;
 				}
 				String src = dependencyDownload.getArtifactPath("sources");

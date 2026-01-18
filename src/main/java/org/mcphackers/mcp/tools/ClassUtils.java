@@ -1,7 +1,5 @@
 package org.mcphackers.mcp.tools;
 
-import org.objectweb.asm.ClassReader;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -14,6 +12,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import org.objectweb.asm.ClassReader;
 
 public abstract class ClassUtils {
 	@SuppressWarnings("unchecked")

@@ -1,13 +1,6 @@
 package org.mcphackers.mcp.tasks;
 
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.tasks.mode.TaskParameter;
-import org.mcphackers.mcp.tools.FileUtil;
-import org.mcphackers.mcp.tools.OS;
-import org.mcphackers.mcp.tools.Util;
-
-import javax.tools.*;
+import static org.mcphackers.mcp.MCPPaths.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,7 +15,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.mcphackers.mcp.MCPPaths.*;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tools.FileUtil;
+import org.mcphackers.mcp.tools.OS;
+import org.mcphackers.mcp.tools.Util;
 
 public class TaskRecompile extends TaskStaged {
 
@@ -221,7 +226,7 @@ public class TaskRecompile extends TaskStaged {
 		}
 
 		try {
-			int exitCode = Util.runCommand(cmd.toArray(new String[] {}), MCPPaths.get(mcp, PROJECT, side), true);
+			int exitCode = Util.runCommand(cmd.toArray(new String[]{}), MCPPaths.get(mcp, PROJECT, side), true);
 			if (exitCode != 0) {
 				throw new RuntimeException("Failed to compile!");
 			}

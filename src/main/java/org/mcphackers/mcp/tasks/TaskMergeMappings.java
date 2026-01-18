@@ -1,11 +1,11 @@
 package org.mcphackers.mcp.tasks;
 
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.tools.mappings.MappingUtil;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.tools.mappings.MappingUtil;
 
 public class TaskMergeMappings extends TaskStaged {
 	public TaskMergeMappings(MCP instance) {
@@ -14,7 +14,7 @@ public class TaskMergeMappings extends TaskStaged {
 
 	@Override
 	protected Stage[] setStages() {
-		return new Stage[] {
+		return new Stage[]{
 				stage(getLocalizedStage("mergemappings"), 0, () -> {
 					Path clientMappings = Paths.get("client.tiny");
 					Path serverMappings = Paths.get("server.tiny");

@@ -15,10 +15,10 @@ public class DecompileLogger extends IFernflowerLogger {
 
 	@Override
 	public void writeMessage(String message, Severity severity) {
-		if(severity.ordinal() >= Severity.WARN.ordinal()) {
+		if (severity.ordinal() >= Severity.WARN.ordinal()) {
 //			System.out.println(message);
 		}
-    }
+	}
 
 	@Override
 	public void writeMessage(String message, Throwable t) {

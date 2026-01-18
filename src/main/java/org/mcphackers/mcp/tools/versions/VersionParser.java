@@ -32,6 +32,19 @@ public class VersionParser {
 		this.addVersionsFromURL(mappingsJson);
 	}
 
+	private static JSONArray getJson(String url) throws Exception {
+		InputStream in;
+		Path versions = Paths.get("versions.json");
+		if (Files.exists(versions)) {
+			in = Files.newInputStream(versions);
+		} else {
+			URLConnection connect = new URL(url).openConnection();
+			connect.setConnectTimeout(30000);
+			in = connect.getInputStream();
+		}
+		return JSONUtil.parseJSONArray(in);
+	}
+
 	public void addVersionsFromURL(String url) {
 		JSONArray json;
 		try {
@@ -52,19 +65,6 @@ public class VersionParser {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private static JSONArray getJson(String url) throws Exception {
-		InputStream in;
-		Path versions = Paths.get("versions.json");
-		if (Files.exists(versions)) {
-			in = Files.newInputStream(versions);
-		} else {
-			URLConnection connect = new URL(url).openConnection();
-			connect.setConnectTimeout(30000);
-			in = connect.getInputStream();
-		}
-		return JSONUtil.parseJSONArray(in);
 	}
 
 	/**

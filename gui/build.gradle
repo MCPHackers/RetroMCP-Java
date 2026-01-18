@@ -30,6 +30,6 @@ tasks.named("shadowJar", ShadowJar) {
 	archiveClassifier.set("all")
 	setDestinationDirectory(rootProject.getLayout().getBuildDirectory().dir("libs"))
 	minimize() {
-		 exclude(dependency(libs.flatlaf.get()))
+		exclude(dependency(libs.flatlaf.get()))
 	}
 }

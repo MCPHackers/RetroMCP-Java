@@ -1,14 +1,5 @@
 package org.mcphackers.mcp.tools.fernflower;
 
-import de.fernflower.main.decompiler.BaseDecompiler;
-import de.fernflower.main.decompiler.DirectoryResultSaver;
-import de.fernflower.main.extern.IBytecodeProvider;
-import de.fernflower.main.extern.IFernflowerPreferences;
-import de.fernflower.util.InterpreterUtil;
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.tasks.ProgressListener;
-import org.mcphackers.mcp.tasks.mode.TaskParameter;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import de.fernflower.main.decompiler.BaseDecompiler;
+import de.fernflower.main.decompiler.DirectoryResultSaver;
+import de.fernflower.main.extern.IBytecodeProvider;
+import de.fernflower.main.extern.IFernflowerPreferences;
+import de.fernflower.util.InterpreterUtil;
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.tasks.ProgressListener;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
 
 public class Decompiler implements IBytecodeProvider {
 	public final DecompileLogger log;
@@ -31,7 +31,7 @@ public class Decompiler implements IBytecodeProvider {
 		this.libraries = libs;
 		this.destination = out;
 		this.log = new DecompileLogger(listener);
-        this.mapOptions = mcp.getOptions().getFernflowerOptions();
+		this.mapOptions = mcp.getOptions().getFernflowerOptions();
 		this.mapOptions.put(IFernflowerPreferences.REMOVE_BRIDGE, mcp.getOptions().getBooleanParameter(TaskParameter.GUESS_GENERICS) ? "1" : "0");
 	}
 

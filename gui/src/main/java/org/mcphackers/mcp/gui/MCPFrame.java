@@ -1,20 +1,6 @@
 package org.mcphackers.mcp.gui;
 
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.Theme;
-import org.mcphackers.mcp.main.MainGUI;
-import org.mcphackers.mcp.tasks.Task;
-import org.mcphackers.mcp.tasks.Task.Side;
-import org.mcphackers.mcp.tasks.mode.TaskMode;
-import org.mcphackers.mcp.tools.versions.VersionParser;
-import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
+import static org.mcphackers.mcp.tools.Util.enqueueRunnable;
 
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -27,7 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.mcphackers.mcp.tools.Util.enqueueRunnable;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.Theme;
+import org.mcphackers.mcp.main.MainGUI;
+import org.mcphackers.mcp.tasks.Task;
+import org.mcphackers.mcp.tasks.Task.Side;
+import org.mcphackers.mcp.tasks.mode.TaskMode;
+import org.mcphackers.mcp.tools.versions.VersionParser;
+import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 
 public class MCPFrame extends JFrame implements WindowListener {
 

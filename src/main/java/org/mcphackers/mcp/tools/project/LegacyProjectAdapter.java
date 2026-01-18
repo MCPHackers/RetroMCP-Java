@@ -1,12 +1,12 @@
 package org.mcphackers.mcp.tools.project;
 
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.MCPPaths;
-import org.mcphackers.mcp.tasks.Task;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.Task;
 
 public class LegacyProjectAdapter {
 	public static void updateWorkspaceIfNeeded(MCP mcp) {

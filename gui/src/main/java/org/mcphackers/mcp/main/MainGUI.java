@@ -1,8 +1,6 @@
 package org.mcphackers.mcp.main;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Frame;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
@@ -15,19 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -77,6 +63,18 @@ public class MainGUI extends MCP {
 		this.initialize();
 	}
 
+	public static void main(String[] args) {
+		if (args.length >= 1) {
+			try {
+				Path workingDir = Paths.get(args[0]);
+				new MainGUI(workingDir);
+			} catch (InvalidPathException ignored) {
+			}
+		} else {
+			new MainGUI();
+		}
+	}
+
 	private void initialize() {
 		isGUI = true;
 		if (!theme.themeClass.equals(options.theme) && options.theme != null) {
@@ -114,18 +112,6 @@ public class MainGUI extends MCP {
 		frame = new MCPFrame(this);
 		if (Util.getJavaVersion(this) > 8) {
 			warning("JDK " + Util.getJavaVersion(this) + " is being used! Java 8 is recommended.");
-		}
-	}
-
-	public static void main(String[] args) {
-		if (args.length >= 1) {
-			try {
-				Path workingDir = Paths.get(args[0]);
-				new MainGUI(workingDir);
-			} catch (InvalidPathException ignored) {
-			}
-		} else {
-			new MainGUI();
 		}
 	}
 

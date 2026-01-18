@@ -1,8 +1,8 @@
 package org.mcphackers.mcp.tools.project.eclipse;
 
-import org.mcphackers.mcp.tools.project.PairWriter;
-
 import java.io.IOException;
+
+import org.mcphackers.mcp.tools.project.PairWriter;
 
 public class EclipsePreferences {
 	private String sourceVer;

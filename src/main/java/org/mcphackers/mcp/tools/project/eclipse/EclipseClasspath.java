@@ -1,5 +1,10 @@
 package org.mcphackers.mcp.tools.project.eclipse;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.Task;
@@ -8,35 +13,29 @@ import org.mcphackers.mcp.tools.project.XMLWriter;
 import org.mcphackers.mcp.tools.versions.json.DependDownload;
 import org.mcphackers.mcp.tools.versions.json.Rule;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-
 public class EclipseClasspath {
+	private final static String[] VM_TYPES = {
+			"J2SE-1.5",
+			"JavaSE-1.6",
+			"JavaSE-1.7",
+			"JavaSE-1.8"
+	};
 	private final MCP mcp;
 	private final String projectName;
 	private final int javaVersion;
 	private final List<DependDownload> dependencies = new ArrayList<>();
 
-	private final static String[] VM_TYPES = {
-		"J2SE-1.5",
-		"JavaSE-1.6",
-		"JavaSE-1.7",
-		"JavaSE-1.8"
-	};
-
-	private String getStandardVMType() {
-		if(javaVersion >= 5 && javaVersion <= 8) {
-			return VM_TYPES[javaVersion - 5];
-		}
-		return "JavaSE-" + javaVersion;
-	}
-
 	public EclipseClasspath(MCP mcp, String projectName, int javaVersion) {
 		this.mcp = mcp;
 		this.projectName = projectName;
 		this.javaVersion = javaVersion;
+	}
+
+	private String getStandardVMType() {
+		if (javaVersion >= 5 && javaVersion <= 8) {
+			return VM_TYPES[javaVersion - 5];
+		}
+		return "JavaSE-" + javaVersion;
 	}
 
 	public void addDependency(DependDownload dependency) {
@@ -56,7 +55,7 @@ public class EclipseClasspath {
 			for (DependDownload dependencyDownload : this.dependencies) {
 				if (Rule.apply(dependencyDownload.rules)) {
 					String lib = dependencyDownload.getArtifactPath(null);
-					if(lib == null) {
+					if (lib == null) {
 						continue;
 					}
 					String src = dependencyDownload.getArtifactPath("sources");

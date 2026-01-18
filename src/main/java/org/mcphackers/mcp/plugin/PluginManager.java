@@ -34,9 +34,9 @@ public class PluginManager {
 	 * <p>
 	 * Plugins are loaded via {@link PluginClassLoader} with a {@link ServiceLoader}.
 	 *
+	 * @param mcp MCP instance
 	 * @see PluginClassLoader
 	 * @see MCPPlugin
-	 * @param mcp MCP instance
 	 */
 	public void discoverPlugins(MCP mcp) {
 		ClassLoader classLoader = mcp.getClass().getClassLoader();

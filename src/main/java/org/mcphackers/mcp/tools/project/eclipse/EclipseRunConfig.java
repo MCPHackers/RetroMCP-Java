@@ -1,11 +1,11 @@
 package org.mcphackers.mcp.tools.project.eclipse;
 
+import java.io.IOException;
+
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.TaskRun;
 import org.mcphackers.mcp.tools.project.XMLWriter;
-
-import java.io.IOException;
 
 public class EclipseRunConfig {
 	private final MCP mcp;
@@ -17,28 +17,28 @@ public class EclipseRunConfig {
 		this.mcp = mcp;
 	}
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
-
 	public String getProjectName() {
 		return this.projectName;
 	}
 
-	public void setLaunchSide(Task.Side launchSide) {
-		this.launchSide = launchSide;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 
 	public Task.Side getLaunchSide() {
 		return this.launchSide;
 	}
 
-	public void setClientArgs(String clientArgs) {
-		this.clientArgs = clientArgs;
+	public void setLaunchSide(Task.Side launchSide) {
+		this.launchSide = launchSide;
 	}
 
 	public String getClientArgs() {
 		return this.clientArgs;
+	}
+
+	public void setClientArgs(String clientArgs) {
+		this.clientArgs = clientArgs;
 	}
 
 	public void toXML(XMLWriter writer) throws IOException {

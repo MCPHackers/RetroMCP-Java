@@ -19,17 +19,6 @@ public class TaskApplyPatch extends TaskStaged {
 		super(side, instance);
 	}
 
-	@Override
-	protected Stage[] setStages() {
-		return new Stage[] {
-				stage(getLocalizedStage("patching"), 0, () -> {
-					final Path patchesPath = MCPPaths.get(mcp, PATCHES, side);
-					final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
-					patch(this, srcPath, srcPath, patchesPath);
-				})
-		};
-	}
-
 	public static void patch(Task task, Path base, Path out, Path patches) throws IOException {
 		ByteArrayOutputStream logger = new ByteArrayOutputStream();
 		PatchOperation patchOperation = PatchOperation.builder()
@@ -44,5 +33,16 @@ public class TaskApplyPatch extends TaskStaged {
 			task.addMessage(logger.toString(), Task.INFO);
 			task.addMessage("Patching failed!", Task.ERROR);
 		}
+	}
+
+	@Override
+	protected Stage[] setStages() {
+		return new Stage[]{
+				stage(getLocalizedStage("patching"), 0, () -> {
+					final Path patchesPath = MCPPaths.get(mcp, PATCHES, side);
+					final Path srcPath = MCPPaths.get(mcp, SOURCE, side);
+					patch(this, srcPath, srcPath, patchesPath);
+				})
+		};
 	}
 }

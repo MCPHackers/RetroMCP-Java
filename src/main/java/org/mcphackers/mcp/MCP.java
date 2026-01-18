@@ -32,13 +32,11 @@ public abstract class MCP {
 	public static final String VERSION = "v1.2";
 	public static final String GITHUB_URL = "https://github.com/MCPHackers/RetroMCP-Java";
 	public static final TranslatorUtil TRANSLATOR = new TranslatorUtil();
+	public static final List<? extends Source> SOURCE_ADAPTERS = new ArrayList<>();
 	private static final PluginManager pluginManager = new PluginManager();
-
+	private static final VersionParser VERSION_PARSER = new VersionParser();
 	public Options options = new Options(this, Paths.get("options.cfg"));
 	protected boolean isGUI = false;
-
-	public static final List<? extends Source> SOURCE_ADAPTERS = new ArrayList<>();
-	private static final VersionParser VERSION_PARSER = new VersionParser();
 
 	protected MCP() {
 		Update.attemptToDeleteUpdateJar();
@@ -48,6 +46,10 @@ public abstract class MCP {
 		System.gc();
 
 		LegacyProjectAdapter.updateWorkspaceIfNeeded(this);
+	}
+
+	public static void reloadPluginTranslations() {
+		pluginManager.getLoadedPlugins().forEach((key, plugin) -> MCP.TRANSLATOR.readTranslation(plugin.getClass()));
 	}
 
 	public boolean isGUI() {
@@ -136,7 +138,7 @@ public abstract class MCP {
 			try {
 				if (pool.awaitTermination(500, TimeUnit.MILLISECONDS)) break;
 			} catch (InterruptedException err) {
-				throw new RuntimeException("Main thread was interrupted while performTask was waiting for tasks to finish", err );
+				throw new RuntimeException("Main thread was interrupted while performTask was waiting for tasks to finish", err);
 			}
 		}
 		triggerEvent(MCPEvent.FINISHED_TASKS);
@@ -362,9 +364,5 @@ public abstract class MCP {
 
 	public List<Path> getLibraries() {
 		return DownloadData.getLibraries(MCPPaths.get(this, MCPPaths.LIB), getCurrentVersion());
-	}
-
-	public static void reloadPluginTranslations() {
-		pluginManager.getLoadedPlugins().forEach((key, plugin) -> MCP.TRANSLATOR.readTranslation(plugin.getClass()));
 	}
 }

@@ -25,15 +25,15 @@ public class TaskSourceBackup extends TaskStaged {
 		super(side, instance);
 	}
 
-	@Override
-	protected Stage[] setStages() {
-		return new Stage[] {
-				stage(getLocalizedStage("backupsource"), 0, this::packSourceIntoZip)
-		};
-	}
-
 	public TaskSourceBackup(Side side, MCP instance, ProgressListener listener) {
 		super(side, instance, listener);
+	}
+
+	@Override
+	protected Stage[] setStages() {
+		return new Stage[]{
+				stage(getLocalizedStage("backupsource"), 0, this::packSourceIntoZip)
+		};
 	}
 
 	private void packSourceIntoZip() throws IOException {

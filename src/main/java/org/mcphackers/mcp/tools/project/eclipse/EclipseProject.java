@@ -1,9 +1,9 @@
 package org.mcphackers.mcp.tools.project.eclipse;
 
-import org.mcphackers.mcp.tools.project.XMLWriter;
-
 import java.io.IOException;
 import java.util.Random;
+
+import org.mcphackers.mcp.tools.project.XMLWriter;
 
 public class EclipseProject {
 	private final String projectName;

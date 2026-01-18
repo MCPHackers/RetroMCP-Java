@@ -37,17 +37,17 @@ public class DependDownload {
 		String[] artifact = name.split(":");
 		return artifact[0].replace('.', '/') + "/" + artifact[1] + "/" + artifact[2] + "/" + artifact[1] + "-" + artifact[2] + (classifierSuffix == null ? "" : ("-" + classifierSuffix)) + ".jar";
 	}
-	
+
 	public String getArtifactURL(String artifactName) {
 		Artifact artifact = getArtifact(artifactName);
-		if(artifact == null) {
+		if (artifact == null) {
 			return null;
 		}
-		if(artifact.url != null) {
+		if (artifact.url != null) {
 			return artifact.url;
 		}
 		String urlBase = "https://libraries.minecraft.net/";
-		if(url != null) {
+		if (url != null) {
 			urlBase = url.codePointAt(url.length() - 1) == '/' ? url : url + "/";
 		}
 		return urlBase + getLibPath(name, artifact.name);
@@ -55,7 +55,7 @@ public class DependDownload {
 
 	public IDownload getDownload(String artifactName) {
 		final Artifact artifact = getArtifact(artifactName);
-		if(artifact == null) {
+		if (artifact == null) {
 			return null;
 		}
 		final String url = getArtifactURL(artifactName);
@@ -86,23 +86,23 @@ public class DependDownload {
 			public boolean verify() {
 				return true;
 			}
-			
+
 		};
 	}
-	
+
 	public String getArtifactPath(String artifactName) {
 		Artifact artifact = getArtifact(artifactName);
-		if(artifact == null) {
+		if (artifact == null) {
 			return null;
 		}
-		if(artifact.path != null) {
+		if (artifact.path != null) {
 			return artifact.path;
 		}
 		return getLibPath(name, artifact.name);
 	}
 
 	private Artifact getArtifact(String name) {
-		if(name == null) {
+		if (name == null) {
 			return downloads == null ? null : downloads.artifact;
 		}
 		return (downloads == null || downloads.classifiers == null) ? null : downloads.classifiers.artifacts.get(name);

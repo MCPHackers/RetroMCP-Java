@@ -1,12 +1,12 @@
 package org.mcphackers.mcp.gui;
 
-import org.mcphackers.mcp.MCP;
-import org.mcphackers.mcp.main.MainGUI;
-
 import javax.swing.*;
 import javax.swing.text.Style;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
+
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.main.MainGUI;
 
 public class TextAreaContextMenu extends JPopupMenu {
 	private final MCP mcp;
