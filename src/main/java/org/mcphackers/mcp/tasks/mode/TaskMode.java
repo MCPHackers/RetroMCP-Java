@@ -55,7 +55,8 @@ public class TaskMode {
 					TaskParameter.IGNORED_PACKAGES,
 					TaskParameter.FERNFLOWER_OPTIONS,
 					TaskParameter.PATCHES,
-					TaskParameter.SIDE
+					TaskParameter.SIDE,
+					TaskParameter.STRIP_GENERICS
 			})
 			.build();
 	public static TaskMode RECOMPILE = new TaskModeBuilder()
