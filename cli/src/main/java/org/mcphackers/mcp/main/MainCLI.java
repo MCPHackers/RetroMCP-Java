@@ -306,7 +306,7 @@ public class MainCLI extends MCP {
 	public boolean yesNoInput(String title, String msg) {
 		log(msg);
 		String line = consoleInput.nextLine();
-		return line != null && line.equalsIgnoreCase("yes");
+		return line != null && (line.equalsIgnoreCase("yes") || line.toLowerCase().startsWith("y"));
 	}
 
 	@Override

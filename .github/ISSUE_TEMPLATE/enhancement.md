@@ -17,7 +17,7 @@ A clear and concise description on how RetroMCP-Java currently deals with it.
 If applicable, add screenshots to help explain your problem.
 
 **RetroMCP Version**
-v1.1
+v1.2
 
 **Additional context**
 Add any other context about the problem here.
