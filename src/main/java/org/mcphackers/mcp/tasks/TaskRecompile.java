@@ -214,6 +214,13 @@ public class TaskRecompile extends TaskStaged {
 		}
 
 		Path binDir = MCPPaths.get(mcp, BIN, side);
+		if (!Files.exists(binDir)) {
+			try {
+				Files.createDirectories(binDir);
+			} catch (IOException e) {
+				throw new RuntimeException("[" + side.getName() + "] Failed to create output directory for recompile!");
+			}
+		}
 
 		List<String> cmd = new ArrayList<>();
 		cmd.add(javac.toString());
