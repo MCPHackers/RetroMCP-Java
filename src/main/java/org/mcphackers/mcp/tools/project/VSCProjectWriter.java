@@ -54,6 +54,7 @@ public class VSCProjectWriter implements ProjectWriter {
 				}
 				config.put("args", arguments);
 				configurations.put(config);
+				config.put("cwd", "${workspaceFolder}/game");
 			}
 			launchJson.put("configurations", configurations);
 			launchJson.write(writer);

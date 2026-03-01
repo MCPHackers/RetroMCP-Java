@@ -1,11 +1,15 @@
 package org.mcphackers.mcp.tasks;
 
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.ClassUtils;
+import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.project.EclipseProjectWriter;
 import org.mcphackers.mcp.tools.project.IdeaProjectWriter;
 import org.mcphackers.mcp.tools.project.VSCProjectWriter;
+
+import java.nio.file.Path;
 
 public class TaskGenerateProject extends TaskStaged {
 	public TaskGenerateProject(Side side, MCP instance) {
