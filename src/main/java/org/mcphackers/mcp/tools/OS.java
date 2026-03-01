@@ -29,4 +29,7 @@ public enum OS {
 		return os;
 	}
 
+	public static boolean isMSeries() {
+		return os == osx && System.getProperty("os.arch").equals("aarch64");
+	}
 }

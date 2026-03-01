@@ -116,10 +116,9 @@ public abstract class FileUtil {
 			ZipEntry entry;
 			while ((entry = zipInputStream.getNextEntry()) != null) {
 				Path toPath = destDir.resolve(entry.getName()).normalize();
-				Files.deleteIfExists(toPath);
 				if (match.apply(entry)) {
 					if (!entry.isDirectory()) {
-						createDirectories(toPath.getParent());
+						Files.deleteIfExists(toPath);
 						Files.copy(zipInputStream, toPath);
 					} else {
 						createDirectories(toPath);

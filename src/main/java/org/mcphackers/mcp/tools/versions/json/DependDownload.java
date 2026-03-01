@@ -121,6 +121,10 @@ public class DependDownload {
 				}
 				break;
 			case osx:
+				boolean isARM = OS.isMSeries();
+				if (isARM && getArtifact("natives-osx-arm64") != null) {
+					return "natives-osx-arm64";
+				}
 				if (getArtifact("natives-osx") != null) {
 					return "natives-osx";
 				}
