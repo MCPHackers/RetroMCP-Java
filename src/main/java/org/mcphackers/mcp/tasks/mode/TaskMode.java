@@ -16,6 +16,7 @@ import org.mcphackers.mcp.tasks.TaskCleanup;
 import org.mcphackers.mcp.tasks.TaskCreatePatch;
 import org.mcphackers.mcp.tasks.TaskDecompile;
 import org.mcphackers.mcp.tasks.TaskDownloadUpdate;
+import org.mcphackers.mcp.tasks.TaskGenerateProject;
 import org.mcphackers.mcp.tasks.TaskMergeMappings;
 import org.mcphackers.mcp.tasks.TaskRecompile;
 import org.mcphackers.mcp.tasks.TaskReobfuscate;
@@ -161,6 +162,11 @@ public class TaskMode {
 			.setName("mergemappings")
 			.setTaskClass(TaskMergeMappings.class)
 			.setProgressBars(false)
+			.build();
+	public static TaskMode GENERATE_PROJECT = new TaskModeBuilder()
+			.setName("generateproject")
+			.setTaskClass(TaskGenerateProject.class)
+			.setProgressBars(true)
 			.build();
 	public static TaskMode EXIT = new TaskModeBuilder()
 			.setName("exit")

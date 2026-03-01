@@ -76,10 +76,8 @@ public class TaskDecompile extends TaskStaged {
 			classVersion = Math.max(52, classVersion);
 		}), stage(getLocalizedStage("decompile"), 0, () -> {
 			new Decompiler(this, rdiOut, ffOut, mcp.getLibraries(), mcp).decompile();
-			new EclipseProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
-			new IdeaProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
-			new VSCProjectWriter().createProject(mcp, side, ClassUtils.getSourceFromClassVersion(classVersion));
-		}), stage(getLocalizedStage("patch"), 88, () -> {
+		}), stage(getLocalizedStage("create_ide_projects"), () -> new TaskGenerateProject(side, mcp).doTask()),
+		stage(getLocalizedStage("patch"), 88, () -> {
 			if (mcp.getOptions().getBooleanParameter(TaskParameter.PATCHES) && Files.exists(patchesPath)) {
 				TaskApplyPatch.patch(this, ffOut, ffOut, patchesPath);
 			}
