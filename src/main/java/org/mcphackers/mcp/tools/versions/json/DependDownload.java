@@ -115,11 +115,21 @@ public class DependDownload {
 					return "natives-windows";
 				}
 				break;
-			case linux:
-				if (getArtifact("natives-linux") != null) {
-					return "natives-linux";
-				}
-				break;
+				case linux:
+					boolean isARM32 = OS.isARM32();
+					boolean isARM64 = OS.isARM64();
+					if (isARM32 && getArtifact("natives-linux-arm32") != null) {
+						return "natives-linux-arm32";
+					}
+
+					if (isARM64 && getArtifact("natives-linux-arm64") != null) {
+						return "natives-linux-arm64";
+					}
+
+					if (getArtifact("natives-linux") != null) {
+						return "natives-linux";
+					}
+					break;
 			case osx:
 				boolean isARM = OS.isMSeries();
 				if (isARM && getArtifact("natives-osx-arm64") != null) {

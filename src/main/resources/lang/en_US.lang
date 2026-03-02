@@ -83,6 +83,8 @@ task.mergemappings = Merge mappings
 task.mergemappings.desc = Merges mappings into V2 format
 task.generateproject = Generate IDE projects
 task.generateproject.desc = Creates projects for all supported IDEs
+task.updatelibraries = Update Libraries
+task.updatelibraries.desc = Deletes and re-downloads all libraries
 task.noDesc = No description provided
 
 task.stage.idle = Idle
@@ -109,6 +111,8 @@ task.stage.create_ide_projects = Creating IDE projects
 task.stage.create_eclipse_project = Creating Eclipse project
 task.stage.create_idea_project = Creating IntelliJ Idea project
 task.stage.create_vsc_project = Creating VSCode project
+task.stage.delete_libraries = Deleting old libraries
+task.stage.update_libraries = Updating libraries
 
 task.param.debug = Display additional info
 task.param.side = Set side

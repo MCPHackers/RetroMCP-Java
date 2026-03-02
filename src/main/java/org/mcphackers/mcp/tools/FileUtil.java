@@ -18,6 +18,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,7 +101,7 @@ public abstract class FileUtil {
 				Files.deleteIfExists(toPath);
 				if (!entry.isDirectory()) {
 					createDirectories(toPath.getParent());
-					Files.copy(zipInputStream, toPath);
+					Files.copy(zipInputStream, toPath, StandardCopyOption.REPLACE_EXISTING);
 				} else {
 					createDirectories(toPath);
 				}

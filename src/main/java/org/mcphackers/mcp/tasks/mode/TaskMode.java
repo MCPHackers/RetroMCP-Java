@@ -23,6 +23,7 @@ import org.mcphackers.mcp.tasks.TaskReobfuscate;
 import org.mcphackers.mcp.tasks.TaskRun;
 import org.mcphackers.mcp.tasks.TaskSetup;
 import org.mcphackers.mcp.tasks.TaskSourceBackup;
+import org.mcphackers.mcp.tasks.TaskUpdateLibraries;
 import org.mcphackers.mcp.tasks.TaskUpdateMD5;
 
 /**
@@ -166,6 +167,11 @@ public class TaskMode {
 	public static TaskMode GENERATE_PROJECT = new TaskModeBuilder()
 			.setName("generateproject")
 			.setTaskClass(TaskGenerateProject.class)
+			.setProgressBars(true)
+			.build();
+	public static TaskMode UPDATE_LIBRARIES = new TaskModeBuilder()
+			.setName("updatelibraries")
+			.setTaskClass(TaskUpdateLibraries.class)
 			.setProgressBars(true)
 			.build();
 	public static TaskMode EXIT = new TaskModeBuilder()

@@ -33,6 +33,7 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 import org.mcphackers.mcp.tools.Util;
+import org.mcphackers.mcp.tools.project.LegacyProjectAdapter;
 import org.mcphackers.mcp.tools.versions.VersionParser;
 import org.mcphackers.mcp.tools.versions.VersionParser.VersionData;
 import org.mcphackers.mcp.tools.versions.json.Version;
@@ -279,6 +280,7 @@ public class MainGUI extends MCP {
 						e.printStackTrace();
 					}
 				}
+				LegacyProjectAdapter.updateWorkspaceIfNeeded(this);
 				this.frame.setCurrentVersion(this.currentVersion == null ? null : versionParser.getVersion(this.currentVersion.id));
 				this.frame.reloadText();
 				this.frame.reloadVersionList();
