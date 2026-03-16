@@ -55,7 +55,6 @@ public class MainCLI extends MCP {
 
 	public MainCLI(String[] args) {
 		isGUI = false;
-		options.resetDefaults();
 		changeLanguage(Language.ENGLISH); // Some CLI text is hardcoded in English
 		log("RetroMCP " + MCP.VERSION);
 
@@ -153,7 +152,6 @@ public class MainCLI extends MCP {
 				log("Unknown command. Type 'help' for list of available commands");
 			}
 			args = new String[]{};
-			options.resetDefaults();
 			if (!startedWithNoParams || mode == TaskMode.EXIT)
 				exit = true;
 			mode = null;
