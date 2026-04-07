@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
@@ -55,6 +56,7 @@ public abstract class FileUtil {
 
 	@SuppressWarnings("RedundantCast")
 	public static void packFilesToZip(Path sourceZip, Iterable<Path> files, Path relativeTo) throws IOException {
+		// Do not remove (ClassLoader) cast here!
 		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			for (Path file : files) {
 				Path fileInsideZipPath = fs.getPath("/" + relativeTo.relativize(file));
@@ -68,6 +70,7 @@ public abstract class FileUtil {
 
 	@SuppressWarnings("RedundantCast")
 	public static void deleteFileInAZip(Path sourceZip, String file) throws IOException {
+		// Do not remove (ClassLoader) cast here!
 		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.deleteIfExists(fileInsideZipPath);
@@ -76,9 +79,36 @@ public abstract class FileUtil {
 
 	@SuppressWarnings("RedundantCast")
 	public static void copyFileFromAZip(Path sourceZip, String file, Path out) throws IOException {
+		// Do not remove (ClassLoader) cast here!
 		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null)) {
 			Path fileInsideZipPath = fs.getPath(file);
 			Files.copy(fileInsideZipPath, out);
+		}
+	}
+
+	@SuppressWarnings("RedundantCast")
+	public static void copyZipContentsIntoZip(Path sourceZip, Path outputZip) throws IOException {
+		// Do not remove (ClassLoader) cast here!
+		try (FileSystem fs = FileSystems.newFileSystem(sourceZip, (ClassLoader) null);
+			 FileSystem outputFs = FileSystems.newFileSystem(outputZip, (ClassLoader) null);
+			 Stream<Path> stream = Files.walk(fs.getPath("/"))) {
+
+			Path root = fs.getPath("/");
+
+			stream.filter(Files::isRegularFile).forEach(file -> {
+				try {
+					Path relative = root.relativize(file);
+					Path outputPath = outputFs.getPath(relative.toString());
+
+					if (outputPath.getParent() != null) {
+						Files.createDirectories(outputPath.getParent());
+					}
+
+					Files.copy(file, outputPath, StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException e) {
+					throw new UncheckedIOException(e);
+				}
+			});
 		}
 	}
 

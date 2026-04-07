@@ -18,6 +18,15 @@ import net.fabricmc.mappingio.adapter.MappingNsRenamer;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.MappingFormat;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.Task;
+import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.rdi.injector.data.ClassStorage;
+import org.mcphackers.rdi.injector.data.Mappings;
+import org.mcphackers.rdi.nio.MappingsIO;
+
+import static org.mcphackers.mcp.MCPPaths.MAPPINGS;
 
 public final class MappingUtil {
 
@@ -129,4 +138,70 @@ public final class MappingUtil {
 		MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsRenamer, currentDst);
 		MappingReader.read(client, MappingFormat.TINY_2_FILE, nsSwitch);
 	}
+
+	// Reobfuscation utilities:
+	public static Map<String, String> getPackageMappings(Map<String, String> classMappings) {
+		Map<String, String> packageMappings = new HashMap<>();
+		for (Map.Entry<String, String> entry : classMappings.entrySet()) {
+			int i1 = entry.getKey().lastIndexOf('/');
+			int i2 = entry.getValue().lastIndexOf('/');
+			String name1 = i1 == -1 ? "" : entry.getKey().substring(0, i1 + 1);
+			String name2 = i2 == -1 ? "" : entry.getKey().substring(0, i2 + 1);
+			packageMappings.put(name1, name2);
+		}
+		return packageMappings;
+	}
+
+	public static Mappings getMappings(MCP mcp, ClassStorage storage, Task.Side side) throws IOException {
+		Path mappingsPath = MCPPaths.get(mcp, MAPPINGS);
+		if (!Files.exists(mappingsPath)) {
+			return new Mappings();
+		}
+		final boolean enableObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.OBFUSCATION);
+		final boolean srgObfuscation = mcp.getOptions().getBooleanParameter(TaskParameter.SRG_OBFUSCATION);
+		List<String> nss = MappingUtil.readNamespaces(mappingsPath);
+		boolean joined = srgObfuscation ? nss.contains("searge") : nss.contains("official");
+		Mappings mappings = MappingsIO.read(mappingsPath, "named",
+				joined ? (srgObfuscation ? "searge" : "official") : side.name);
+		modifyClassMappings(mappings, storage.getAllClasses(), enableObfuscation);
+		return mappings;
+	}
+
+	public static void modifyClassMappings(Mappings mappings, List<String> classNames, boolean obf) {
+		Map<String, Integer> obfIndexes = new HashMap<>();
+		Map<String, String> packageMappings = getPackageMappings(mappings.classes);
+		for (String className : classNames) {
+			String reobfName = mappings.classes.get(className);
+			if (className.equals("net/minecraft/src/GuiMainMenu")) {
+				System.out.println();
+			}
+			if (reobfName == null /*&& !hashes.containsKey(className)*/) {
+				int i1 = className.lastIndexOf('/');
+				String packageName = i1 == -1 ? "" : className.substring(0, i1 + 1);
+				String obfPackage = packageMappings.get(packageName);
+				String clsName = i1 == -1 ? className : className.substring(i1 + 1);
+				if (obf) {
+					int obfIndex = obfIndexes.getOrDefault(obfPackage, 0);
+					String obfName = MappingUtil.getObfuscatedName(obfIndex);
+					List<String> obfNames = new ArrayList<>();
+					for (Map.Entry<String, String> entry : mappings.classes.entrySet()) {
+						obfNames.add(entry.getValue());
+					}
+					while (obfNames.contains(obfPackage + obfName)) {
+						obfIndex++;
+						obfName = MappingUtil.getObfuscatedName(obfIndex);
+					}
+					if (obfIndex > obfIndexes.getOrDefault(obfPackage, 0)) {
+						obfIndexes.put(obfPackage, obfIndex);
+					}
+					clsName = obfName;
+				}
+				if (obf || obfPackage != null) {
+					String className2 = (obfPackage == null ? packageName : obfPackage) + clsName;
+					mappings.classes.put(className, className2);
+				}
+			}
+		}
+	}
+
 }

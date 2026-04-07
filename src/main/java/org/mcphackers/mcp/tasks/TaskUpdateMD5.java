@@ -71,7 +71,9 @@ public class TaskUpdateMD5 extends TaskStaged {
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					String md5_hash = Util.getMD5(file);
 					String fileName = binPath.relativize(file).toString().replace("\\", "/").replace(".class", "");
-					writer.append(fileName).append(" ").append(md5_hash).append("\n");
+					if (!fileName.endsWith(".DS_Store")) {
+						writer.append(fileName).append(" ").append(md5_hash).append("\n");
+					}
 					progress++;
 					setProgress(50 + (int) ((double) progress / (double) total * 50));
 					return FileVisitResult.CONTINUE;

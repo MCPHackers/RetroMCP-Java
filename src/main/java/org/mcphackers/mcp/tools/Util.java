@@ -25,8 +25,11 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tasks.Task;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
 
 public abstract class Util {
@@ -237,7 +240,6 @@ public abstract class Util {
 			Path javacPath = Paths.get(mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME)).resolve("bin").resolve("javac");
 			String javac = javacPath.toString();
 
-
 			if (!javac.isEmpty() && javaToJavaVersion.containsKey(javac)) {
 				return javaToJavaVersion.get(javac);
 			}
@@ -303,5 +305,18 @@ public abstract class Util {
 			return versionNumber;
 		}
 		return 8;
+	}
+
+	public static Map<String, String> gatherMD5Hashes(MCP mcp, Task.Side side, boolean reobf) throws IOException {
+		final Path md5 = MCPPaths.get(mcp, reobf ? MCPPaths.MD5_RO : MCPPaths.MD5, side);
+		Map<String, String> hashes = new HashMap<>();
+
+		try (Stream<String> lines = Files.lines(md5)) {
+			lines.forEach((line) -> {
+				String[] tokens = line.split(" ");
+				hashes.put(tokens[0], tokens[1]);
+			});
+		}
+		return hashes;
 	}
 }
