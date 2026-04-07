@@ -39,7 +39,9 @@ public class TaskUpdateLibraries extends TaskStaged {
 					VersionParser versionParser = mcp.getVersionParser();
 					Version version = this.mcp.getCurrentVersion();
 					if (version == null) {
-						throw new RuntimeException("Current version is null!");
+						RuntimeException t = new RuntimeException("Current version is null!");
+						Util.throwExceptionInIDE(t);
+						throw t;
 					}
 					VersionParser.VersionData data = versionParser.getVersion(version.id);
 					InputStream versionStream;

@@ -56,7 +56,9 @@ public class TaskUpdateMD5 extends TaskStaged {
 		final Path md5 = MCPPaths.get(mcp, reobf ? MD5_RO : MD5, side);
 
 		if (!Files.exists(binPath)) {
-			throw new IOException(side.name + " classes not found!");
+			IOException t = new IOException(side.name + " classes not found!");
+			Util.throwExceptionInIDE(t);
+			throw t;
 		}
 		try (BufferedWriter writer = Files.newBufferedWriter(md5)) {
 			progress = 0;

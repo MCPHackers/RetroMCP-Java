@@ -53,7 +53,9 @@ public class TaskRecompile extends TaskStaged {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		String javaHome = mcp.getOptions().getStringParameter(TaskParameter.JAVA_HOME);
 		if (javaHome.isEmpty() && compiler == null) {
-			throw new RuntimeException("Could not find compiling API. Please install or use a Java Development Kit to run this program.");
+			RuntimeException t = new RuntimeException("Could not find compiling API. Please install or use a Java Development Kit to run this program.");
+			Util.throwExceptionInIDE(t);
+			throw t;
 		}
 		Path binPath = MCPPaths.get(mcp, BIN, side);
 		Path srcPath = MCPPaths.get(mcp, SOURCE, side);
@@ -210,7 +212,9 @@ public class TaskRecompile extends TaskStaged {
 		boolean isWindows = OS.getOs().equals(OS.windows);
 		Path javac = Paths.get(javaHome).resolve("bin").resolve(isWindows ? "javac.exe" : "javac");
 		if (!Files.exists(javac)) {
-			throw new RuntimeException("Failed to find javac at " + javac.toAbsolutePath());
+			RuntimeException t = new RuntimeException("Failed to find javac at " + javac.toAbsolutePath());
+			Util.throwExceptionInIDE(t);
+			throw t;
 		}
 
 		Path binDir = MCPPaths.get(mcp, BIN, side);
@@ -218,7 +222,9 @@ public class TaskRecompile extends TaskStaged {
 			try {
 				Files.createDirectories(binDir);
 			} catch (IOException e) {
-				throw new RuntimeException("[" + side.getName() + "] Failed to create output directory for recompile!");
+				RuntimeException t = new RuntimeException("[" + side.getName() + "] Failed to create output directory for recompile!");
+				Util.throwExceptionInIDE(t);
+				throw t;
 			}
 		}
 
@@ -235,10 +241,14 @@ public class TaskRecompile extends TaskStaged {
 		try {
 			int exitCode = Util.runCommand(cmd.toArray(new String[]{}), MCPPaths.get(mcp, PROJECT, side), true);
 			if (exitCode != 0) {
-				throw new RuntimeException("Failed to compile!");
+				RuntimeException t = new RuntimeException("Failed to compile!");
+				Util.throwExceptionInIDE(t);
+				throw t;
 			}
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			RuntimeException t = new RuntimeException(e);
+			Util.throwExceptionInIDE(t);
+			throw t;
 		}
 	}
 }

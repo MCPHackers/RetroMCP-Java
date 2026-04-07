@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import codechicken.diffpatch.DiffOperation;
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
+import org.mcphackers.mcp.tools.Util;
 
 public class TaskCreatePatch extends TaskStaged {
 	public TaskCreatePatch(Side side, MCP instance) {
@@ -24,10 +25,14 @@ public class TaskCreatePatch extends TaskStaged {
 					Path patchesOut = MCPPaths.get(mcp, PATCHES, side);
 					setProgress(getLocalizedStage("createpatch"));
 					if (!Files.exists(srcPathPatched)) {
-						throw new IOException("Patched " + side.name + " sources cannot be found!");
+						IOException t = new IOException("Patched " + side.name + " sources cannot be found!");
+						Util.throwExceptionInIDE(t);
+						throw t;
 					}
 					if (!Files.exists(srcPathUnpatched)) {
-						throw new IOException("Unpatched " + side.name + " sources cannot be found!");
+						IOException t = new IOException("Unpatched " + side.name + " sources cannot be found!");
+						Util.throwExceptionInIDE(t);
+						throw t;
 					}
 					createDiffOperation(srcPathUnpatched, srcPathPatched, patchesOut);
 				})

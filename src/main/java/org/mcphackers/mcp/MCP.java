@@ -22,6 +22,7 @@ import org.mcphackers.mcp.tasks.Task.Side;
 import org.mcphackers.mcp.tasks.TaskStaged;
 import org.mcphackers.mcp.tasks.mode.TaskMode;
 import org.mcphackers.mcp.tasks.mode.TaskParameter;
+import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.project.LegacyProjectAdapter;
 import org.mcphackers.mcp.tools.source.Source;
 import org.mcphackers.mcp.tools.versions.DownloadData;
@@ -37,6 +38,7 @@ public abstract class MCP {
 	private static final VersionParser VERSION_PARSER = new VersionParser();
 	public Options options = new Options(this, Paths.get("options.cfg"));
 	protected boolean isGUI = false;
+	public static final boolean IS_RUNNING_IN_IDE = Boolean.getBoolean("retromcp.runInIDE");
 
 	protected MCP() {
 		Update.attemptToDeleteUpdateJar();
@@ -126,6 +128,7 @@ public abstract class MCP {
 				} catch (Throwable e1) {
 					result1.set(Task.ERROR);
 					e.set(e1);
+					Util.throwExceptionInIDE(e1);
 				}
 				if (enableProgressBars) {
 					setProgress(barIndex, TRANSLATOR.translateKey("task.stage.finished"), 100);

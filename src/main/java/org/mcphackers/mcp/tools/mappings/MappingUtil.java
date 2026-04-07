@@ -18,6 +18,7 @@ import net.fabricmc.mappingio.adapter.MappingNsRenamer;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
 import net.fabricmc.mappingio.format.MappingFormat;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.mcphackers.mcp.tools.Util;
 
 public final class MappingUtil {
 
@@ -89,7 +90,9 @@ public final class MappingUtil {
 			}
 		}
 		if (invalid) {
-			throw new IllegalStateException("No valid tiny header in " + mappings);
+			IllegalStateException t = new IllegalStateException("No valid tiny header in " + mappings);
+			Util.throwExceptionInIDE(t);
+			throw t;
 		}
 		return namespaces;
 	}

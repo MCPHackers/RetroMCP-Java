@@ -304,4 +304,15 @@ public abstract class Util {
 		}
 		return 8;
 	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends Throwable> void sneakyThrow(Throwable t) throws T {
+		throw (T) t;
+	}
+
+	public static void throwExceptionInIDE(Throwable t) {
+		if (MCP.IS_RUNNING_IN_IDE) {
+			sneakyThrow(t);
+		}
+	}
 }

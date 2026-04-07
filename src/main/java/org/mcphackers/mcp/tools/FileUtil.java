@@ -120,6 +120,12 @@ public abstract class FileUtil {
 				if (match.apply(entry)) {
 					if (!entry.isDirectory()) {
 						Files.deleteIfExists(toPath);
+
+						// Create parent directory if it does not exist
+						if (!Files.exists(toPath.getParent())) {
+							Files.createDirectories(toPath.getParent());
+						}
+
 						Files.copy(zipInputStream, toPath);
 					} else {
 						createDirectories(toPath);

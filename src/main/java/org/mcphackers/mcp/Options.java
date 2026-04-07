@@ -136,7 +136,9 @@ public class Options {
 		if (value instanceof Boolean) {
 			return (Boolean) value;
 		}
-		throw new IllegalArgumentException("Type mismatch");
+		IllegalArgumentException t = new IllegalArgumentException("Type mismatch");
+		Util.throwExceptionInIDE(t);
+		throw t;
 	}
 
 	public String[] getStringArrayParameter(TaskParameter param) throws IllegalArgumentException {
@@ -144,7 +146,9 @@ public class Options {
 		if (value == null || value instanceof String[]) {
 			return (String[]) value;
 		}
-		throw new IllegalArgumentException("Type mismatch");
+		IllegalArgumentException t = new IllegalArgumentException("Type mismatch");
+		Util.throwExceptionInIDE(t);
+		throw t;
 	}
 
 	public String getStringParameter(TaskParameter param) throws IllegalArgumentException {
@@ -152,7 +156,9 @@ public class Options {
 		if (value == null || value instanceof String) {
 			return (String) value;
 		}
-		throw new IllegalArgumentException("Type mismatch");
+		IllegalArgumentException t = new IllegalArgumentException("Type mismatch");
+		Util.throwExceptionInIDE(t);
+		throw t;
 	}
 
 	public int getIntParameter(TaskParameter param) throws IllegalArgumentException {
@@ -160,7 +166,9 @@ public class Options {
 		if (value instanceof Integer) {
 			return (Integer) value;
 		}
-		throw new IllegalArgumentException("Type mismatch");
+		IllegalArgumentException t = new IllegalArgumentException("Type mismatch");
+		Util.throwExceptionInIDE(t);
+		throw t;
 	}
 
 	public boolean safeSetParameter(TaskParameter param, String value) {

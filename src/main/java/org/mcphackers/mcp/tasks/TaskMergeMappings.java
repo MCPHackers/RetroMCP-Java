@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.mcphackers.mcp.MCP;
+import org.mcphackers.mcp.tools.Util;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 
 public class TaskMergeMappings extends TaskStaged {
@@ -28,7 +29,9 @@ public class TaskMergeMappings extends TaskStaged {
 							MappingUtil.mergeMappings(clientMappings, mergedMappings);
 						}
 					} else {
-						throw new RuntimeException("client.tiny/server.tiny could not be found in the current directory!");
+						RuntimeException t = new RuntimeException("client.tiny/server.tiny could not be found in the current directory!");
+						Util.throwExceptionInIDE(t);
+						throw t;
 					}
 				})
 		};

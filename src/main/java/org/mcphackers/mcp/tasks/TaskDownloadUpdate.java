@@ -62,7 +62,9 @@ public class TaskDownloadUpdate extends TaskStaged {
 								Util.runCommand(cmd);
 								System.exit(0);
 							} else {
-								throw new IOException("Running from a folder! Aborting");
+								IOException t = new IOException("Running from a folder! Aborting");
+								Util.throwExceptionInIDE(t);
+								throw t;
 							}
 						} else {
 							log("Cancelling update!");
