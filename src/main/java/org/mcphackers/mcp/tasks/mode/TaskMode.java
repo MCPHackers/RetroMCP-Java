@@ -3,6 +3,7 @@ package org.mcphackers.mcp.tasks.mode;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -162,6 +163,7 @@ public class TaskMode {
 	public static TaskMode MERGE_MAPPINGS = new TaskModeBuilder()
 			.setName("mergemappings")
 			.setTaskClass(TaskMergeMappings.class)
+			.addRequirement((mcp, side) -> Files.isReadable(Paths.get("client.tiny")))
 			.setProgressBars(false)
 			.build();
 	public static TaskMode GENERATE_PROJECT = new TaskModeBuilder()
