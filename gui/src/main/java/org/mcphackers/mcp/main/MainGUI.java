@@ -46,7 +46,7 @@ public class MainGUI extends MCP {
 	public static final String[] TABS = {"task.decompile", "task.recompile", "task.reobfuscate", "task.build", "options.running"};
 	public static final TaskParameter[][] TAB_PARAMETERS = {
 			{TaskParameter.PATCHES, TaskParameter.FERNFLOWER_OPTIONS, TaskParameter.IGNORED_PACKAGES, TaskParameter.OUTPUT_SRC, TaskParameter.DECOMPILE_RESOURCES, TaskParameter.GUESS_GENERICS, TaskParameter.STRIP_GENERICS},
-			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME, TaskParameter.JAVAC_ARGS}, {TaskParameter.OBFUSCATION, TaskParameter.SRG_OBFUSCATION, TaskParameter.EXCLUDED_CLASSES, TaskParameter.STRIP_SOURCE_FILE},
+			{TaskParameter.SOURCE_VERSION, TaskParameter.TARGET_VERSION, TaskParameter.JAVA_HOME, TaskParameter.JAVAC_ARGS}, {TaskParameter.OBFUSCATION, TaskParameter.SRG_OBFUSCATION, TaskParameter.EXCLUDED_CLASSES, TaskParameter.STRIP_SOURCE_FILE, TaskParameter.STRING_REMAP_PACKAGES},
 			{TaskParameter.FULL_BUILD}, {TaskParameter.RUN_BUILD, TaskParameter.RUN_ARGS, TaskParameter.GAME_ARGS}
 	};
 	public Theme theme = Theme.THEMES_MAP.get(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -293,10 +293,26 @@ public class MainGUI extends MCP {
 
 	public void inputOptionsValue(TaskParameter param) {
 		String s = MCP.TRANSLATOR.translateKey("options.enterValue");
+		Object initialValue;
 		if (param.type == String[].class) {
 			s = MCP.TRANSLATOR.translateKey("options.enterValues") + "\n" + MCP.TRANSLATOR.translateKey("options.enterValues.info");
+			// Default JOptionPane initial value for an array uses Object.toString
+			// which prints "[Ljava.lang.String;@<hash>" — meaningless to users
+			// and worse than an empty box. Render as the same comma-separated
+			// form the parser accepts so it round-trips cleanly.
+			String[] current = options.getStringArrayParameter(param);
+			StringBuilder b = new StringBuilder();
+			if (current != null) {
+				for (int i = 0; i < current.length; i++) {
+					if (i > 0) b.append(",");
+					b.append(Util.convertToEscapedString(current[i]));
+				}
+			}
+			initialValue = b.toString();
+		} else {
+			initialValue = Util.convertToEscapedString(String.valueOf(options.getParameter(param)));
 		}
-		String value = (String) JOptionPane.showInputDialog(frame, s, param.getDesc(), JOptionPane.PLAIN_MESSAGE, null, null, Util.convertToEscapedString(String.valueOf(options.getParameter(param))));
+		String value = (String) JOptionPane.showInputDialog(frame, s, param.getDesc(), JOptionPane.PLAIN_MESSAGE, null, null, initialValue);
 		safeSetParameter(param, value);
 		options.save();
 	}

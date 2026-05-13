@@ -138,6 +138,7 @@ task.param.generics = Guess generics
 task.param.stripgenerics = Strip generics
 task.param.outputsrc = Output source
 task.param.stripsourcefile = Strip SourceFile attribute
+task.param.stringremap = Obfuscate ASM/Transformers
 
 tasks.success = Finished successfully!
 tasks.warning = Finished with warnings!

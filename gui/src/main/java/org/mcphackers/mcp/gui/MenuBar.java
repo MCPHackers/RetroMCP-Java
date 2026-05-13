@@ -186,7 +186,17 @@ public class MenuBar extends JMenuBar {
 
 	public void reloadOptions() {
 		for (Map.Entry<TaskParameter, JMenuItem> entry : optionItems.entrySet()) {
-			entry.getValue().setSelected(mcp.options.getBooleanParameter(entry.getKey()));
+			TaskParameter param = entry.getKey();
+			JMenuItem item = entry.getValue();
+			if (param.type == String[].class) {
+				// "Active" for an array-valued option = at least one entry. Lets
+				// us render it as a toggle in the menu while still keeping the
+				// underlying value a comma-separated list.
+				String[] arr = mcp.options.getStringArrayParameter(param);
+				item.setSelected(arr != null && arr.length > 0);
+			} else if (param.type == Boolean.class) {
+				item.setSelected(mcp.options.getBooleanParameter(param));
+			}
 		}
 	}
 
@@ -221,6 +231,32 @@ public class MenuBar extends JMenuBar {
 					b.addActionListener(e -> {
 						mcp.options.setParameter(param, b.isSelected());
 						mcp.options.save();
+					});
+				} else if (param.type == String[].class) {
+					// Array-valued option rendered as a checkbox: enabling it
+					// pops up the value editor; an empty/cancelled value reverts
+					// to disabled. Disabling clears the array. Lets the user
+					// toggle expensive opt-in features (like string-literal
+					// remapping for ASM/transformer code) without leaving the
+					// menu.
+					b = new JRadioButtonMenuItem();
+					translatableComponents.put(b, "task.param." + param.name);
+					optionItems.put(param, b);
+					final JRadioButtonMenuItem checkbox = (JRadioButtonMenuItem) b;
+					b.addActionListener(e -> {
+						if (checkbox.isSelected()) {
+							mcp.inputOptionsValue(param);
+							String[] result = mcp.options.getStringArrayParameter(param);
+							if (result == null || result.length == 0) {
+								// User cancelled or supplied an empty value —
+								// revert the checkbox so its visible state stays
+								// in sync with the underlying option.
+								checkbox.setSelected(false);
+							}
+						} else {
+							mcp.options.setParameter(param, new String[0]);
+							mcp.options.save();
+						}
 					});
 				} else {
 					b = new JMenuItem(param.getDesc());

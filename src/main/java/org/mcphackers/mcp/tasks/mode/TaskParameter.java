@@ -36,7 +36,23 @@ public enum TaskParameter {
 	GUESS_GENERICS("generics", Boolean.class, false),
 	STRIP_GENERICS("stripgenerics", Boolean.class, false),
 	OUTPUT_SRC("outputsrc", Boolean.class, true),
-	STRIP_SOURCE_FILE("stripsourcefile", Boolean.class, true);
+	STRIP_SOURCE_FILE("stripsourcefile", Boolean.class, true),
+	/**
+	 * Internal package prefixes (slash form, e.g. {@code me/M41G/nclient/}) whose
+	 * compiled classes should have their string-literal references to vanilla
+	 * MCP names rewritten to the obfuscated equivalents during reobfuscation.
+	 * <p>
+	 * Required for any code that relies on string-keyed access to vanilla
+	 * symbols — ASM transformers (LDC owner/name/desc strings inside
+	 * {@code FieldInsnNode}/{@code MethodInsnNode} construction) and
+	 * reflection ({@code Class.getDeclaredField("name")},
+	 * {@code Class.getDeclaredMethod("name", ...)}). Without this rewrite
+	 * those strings still point at deobf names that no longer exist after
+	 * reobfuscation, and the code becomes a silent no-op at runtime.
+	 * <p>
+	 * Empty by default; standard MCP workflows are unaffected.
+	 */
+	STRING_REMAP_PACKAGES("stringremap", String[].class, new String[0]);
 
 	public static final TaskParameter[] VALUES = TaskParameter.values();
 
