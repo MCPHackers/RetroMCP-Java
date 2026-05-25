@@ -28,6 +28,8 @@ public class DownloadData {
 	public int totalSize;
 	protected List<Download> downloadQueue = new ArrayList<>();
 	protected AssetIndex assets;
+	private Path serverZip;
+	private Path serverJar;
 
 	public DownloadData(MCP mcp, Version version) {
 		this(mcp, MCPPaths.get(mcp, MCPPaths.LIB), MCPPaths.get(mcp, MCPPaths.JARS), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.CLIENT), MCPPaths.get(mcp, MCPPaths.JAR_ORIGINAL, Side.SERVER), version);
@@ -43,18 +45,10 @@ public class DownloadData {
 			Path serverOut = server;
 			if (serverArtifact.url.endsWith(".zip")) {
 				serverOut = server.getParent().resolve("minecraft_server.zip");
+				this.serverZip = serverOut;
+				this.serverJar = server;
 			}
 			queueDownload(serverArtifact, serverOut);
-			if (serverArtifact.url.endsWith(".zip")) {
-				try {
-					FileUtil.extractByExtension(serverOut, serverOut.getParent(), ".jar");
-					if (Files.exists(serverOut.getParent().resolve("minecraft-server.jar"))) {
-						Files.move(serverOut.getParent().resolve("minecraft-server.jar"), server);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		for (DependDownload dependencyDownload : version.libraries) {
 			if (Rule.apply(dependencyDownload.rules)) {
@@ -152,6 +146,18 @@ public class DownloadData {
 				if (parent != null) Files.createDirectories(parent);
 				FileUtil.downloadFile(download.downloadURL(), file);
 			}
+		}
+		extractServerZip();
+	}
+
+	private void extractServerZip() throws IOException {
+		if (serverZip == null || !Files.exists(serverZip)) {
+			return;
+		}
+		FileUtil.extractByExtension(serverZip, serverZip.getParent(), ".jar");
+		Path extracted = serverZip.getParent().resolve("minecraft-server.jar");
+		if (Files.exists(extracted)) {
+			Files.move(extracted, serverJar);
 		}
 	}
 
