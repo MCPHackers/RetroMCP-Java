@@ -5,6 +5,7 @@ import static org.mcphackers.mcp.MCPPaths.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 
 import org.mcphackers.mcp.MCP;
 import org.mcphackers.mcp.MCPPaths;
@@ -13,6 +14,8 @@ import org.mcphackers.mcp.tools.ClassUtils;
 import org.mcphackers.mcp.tools.FileUtil;
 import org.mcphackers.mcp.tools.fernflower.Decompiler;
 import org.mcphackers.mcp.tools.injector.GLConstants;
+import org.mcphackers.mcp.tools.javadoc.JavadocMappings;
+import org.mcphackers.mcp.tools.javadoc.JavadocSource;
 import org.mcphackers.mcp.tools.mappings.MappingUtil;
 import org.mcphackers.mcp.tools.project.EclipseProjectWriter;
 import org.mcphackers.mcp.tools.project.IdeaProjectWriter;
@@ -83,6 +86,7 @@ public class TaskDecompile extends TaskStaged {
 			}
 
 			Source.modify(ffOut, MCP.SOURCE_ADAPTERS);
+			Source.modify(ffOut, Collections.singletonList(new JavadocSource(JavadocMappings.read(MCPPaths.get(mcp, MAPPINGS)))));
 		}), stage(getLocalizedStage("copysrc"), 90, () -> {
 			if (!mcp.getOptions().getBooleanParameter(TaskParameter.DECOMPILE_RESOURCES)) {
 				for (Path p : FileUtil.walkDirectory(ffOut, p -> !Files.isDirectory(p) && !p.getFileName().toString().endsWith(".java"))) {
