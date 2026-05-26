@@ -140,16 +140,44 @@ public abstract class FileUtil {
 	}
 
 	public static void downloadFile(URL url, Path output) throws IOException {
-		ReadableByteChannel channel = Channels.newChannel(openURLStream(url));
-		try (FileOutputStream stream = new FileOutputStream(output.toAbsolutePath().toString())) {
-			FileChannel fileChannel = stream.getChannel();
-			fileChannel.transferFrom(channel, 0, Long.MAX_VALUE);
+		final int maxAttempts = 3;
+		IOException lastError = null;
+		for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+			try (InputStream in = openURLStream(url)) {
+				ReadableByteChannel channel = Channels.newChannel(in);
+				try (FileOutputStream stream = new FileOutputStream(output.toAbsolutePath().toString())) {
+					FileChannel fileChannel = stream.getChannel();
+					fileChannel.transferFrom(channel, 0, Long.MAX_VALUE);
+				}
+				return;
+			} catch (IOException e) {
+				lastError = e;
+				// Don't leave a half-written file behind for the next attempt or
+				// for the SHA1 verification on subsequent runs.
+				try {
+					Files.deleteIfExists(output);
+				} catch (IOException ignored) {
+				}
+				if (attempt < maxAttempts) {
+					try {
+						Thread.sleep(1000L * attempt);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+						throw e;
+					}
+				}
+			}
 		}
+		throw lastError;
 	}
 
 	public static InputStream openURLStream(URL url) throws IOException {
 		URLConnection connection = url.openConnection();
 		connection.setRequestProperty("User-Agent", "RetroMCP/" + MCP.VERSION);
+		// Without explicit timeouts, a stalled remote (slow archive mirror, dropped
+		// packet, blackholed route) hangs the download indefinitely.
+		connection.setConnectTimeout(30_000);
+		connection.setReadTimeout(60_000);
 		return connection.getInputStream();
 	}
 
