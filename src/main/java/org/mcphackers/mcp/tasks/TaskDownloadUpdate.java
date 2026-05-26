@@ -36,7 +36,6 @@ public class TaskDownloadUpdate extends TaskStaged {
 						boolean confirmed = mcp.updateDialogue(notes, latestVersion);
 						if (confirmed) {
 							log("Downloading update...");
-							boolean downloaded = false;
 							for (Object obj : releaseJson.getJSONArray("assets")) {
 								if (obj instanceof JSONObject) {
 									JSONObject assetObj = (JSONObject) obj;
@@ -44,11 +43,10 @@ public class TaskDownloadUpdate extends TaskStaged {
 										continue;
 									}
 									FileUtil.downloadFile(assetObj.getString("browser_download_url"), Paths.get(MCPPaths.UPDATE_JAR));
-									downloaded = true;
 									break;
 								}
 							}
-							if (!downloaded) {
+							if (!Files.exists(Paths.get(MCPPaths.UPDATE_JAR))) {
 								IOException t = new IOException("No matching update asset found in release! Aborting");
 								Util.throwExceptionInIDE(t);
 								throw t;
