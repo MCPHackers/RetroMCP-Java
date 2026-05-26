@@ -46,6 +46,11 @@ public class TaskDownloadUpdate extends TaskStaged {
 									break;
 								}
 							}
+							if (!Files.exists(Paths.get(MCPPaths.UPDATE_JAR))) {
+								IOException t = new IOException("No matching update asset found in release! Aborting");
+								Util.throwExceptionInIDE(t);
+								throw t;
+							}
 							Path jarPath = Paths.get(MCP.class
 									.getProtectionDomain()
 									.getCodeSource()
