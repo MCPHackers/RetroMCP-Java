@@ -94,35 +94,27 @@ public class MainCLI extends MCP {
 			if (version != null) log(version);
 			log(new Ansi().fgDefault().a("Enter a command to execute:").toString());
 		}
-		int executeTimes = 0;
-		while (startedWithNoParams && !exit || !startedWithNoParams && executeTimes < 1) {
-			while (args.length < 1) {
-				System.out.print(new Ansi().fgBrightCyan().a("> ").fgDefault());
-				String str = null;
-				try {
-					if (consoleInput.hasNextLine()) {
-						str = consoleInput.nextLine();
-					} else {
-						// Only seems to occur during EOF, might occur in other cases?
-						System.exit(0);
-					}
-				} catch (NoSuchElementException ignored) {
+		List<String[]> pendingCommands = splitCommands(args);
+		while (true) {
+			if (pendingCommands.isEmpty()) {
+				if (!startedWithNoParams || exit) {
+					break;
 				}
-				if (str == null) {
-					mode = TaskMode.EXIT;
-				} else {
-					str = str.trim();
-					if (str.isEmpty()) {
-						continue;
-					}
-					System.out.print(new Ansi().fgDefault());
-					args = str.split(" ");
+				List<String[]> read = readInteractiveCommands();
+				if (read == null) {
+					break;
 				}
+				pendingCommands.addAll(read);
+				continue;
 			}
-			boolean taskMode = setMode(args[0]);
+			String[] cmdArgs = pendingCommands.remove(0);
+			if (cmdArgs.length == 0) {
+				continue;
+			}
+			boolean taskMode = setMode(cmdArgs[0]);
 			Map<String, Object> parsedArgs = new HashMap<>();
-			for (int index = 1; index < args.length; index++) {
-				parseArg(args[index], parsedArgs);
+			for (int index = 1; index < cmdArgs.length; index++) {
+				parseArg(cmdArgs[index], parsedArgs);
 			}
 			setParams(parsedArgs, mode);
 			if (mode == TaskMode.SETUP && versions != null) {
@@ -132,8 +124,9 @@ public class MainCLI extends MCP {
 					log(new Ansi().fgMagenta().a("==================================================").fgDefault().toString());
 				}
 			}
+			boolean commandOk = true;
 			if (taskMode) {
-				performTask(mode, side);
+				commandOk = performTask(mode, side);
 			} else if (mode == TaskMode.HELP) {
 				if (helpCommand == null) {
 					for (TaskMode mode : TaskMode.registeredTasks) {
@@ -150,19 +143,90 @@ public class MainCLI extends MCP {
 				}
 			} else if (mode != TaskMode.EXIT) {
 				log("Unknown command. Type 'help' for list of available commands");
+				commandOk = false;
 			}
-			args = new String[]{};
-			if (!startedWithNoParams || mode == TaskMode.EXIT)
+			if (mode == TaskMode.EXIT) {
 				exit = true;
+				break;
+			}
+			if (!commandOk && !pendingCommands.isEmpty()) {
+				warning("Aborting remaining queued commands.");
+				pendingCommands.clear();
+			}
 			mode = null;
 			helpCommand = null;
-			executeTimes++;
 		}
 	}
 
 	public static void main(String[] args) {
 		AnsiConsole.systemInstall();
 		new MainCLI(args);
+	}
+
+	/**
+	 * Splits a flat argument array into a list of commands separated by `;` tokens.
+	 * Supports both standalone separators ("setup", "1.2.5", ";", "decompile") and
+	 * trailing/leading separators on tokens ("setup", "1.2.5;", "decompile").
+	 */
+	private static List<String[]> splitCommands(String[] args) {
+		List<String[]> commands = new ArrayList<>();
+		List<String> current = new ArrayList<>();
+		for (String raw : args) {
+			if (raw == null || raw.isEmpty()) {
+				continue;
+			}
+			int start = 0;
+			for (int i = 0; i < raw.length(); i++) {
+				if (raw.charAt(i) == ';') {
+					if (i > start) {
+						current.add(raw.substring(start, i));
+					}
+					if (!current.isEmpty()) {
+						commands.add(current.toArray(new String[0]));
+						current = new ArrayList<>();
+					}
+					start = i + 1;
+				}
+			}
+			if (start < raw.length()) {
+				current.add(raw.substring(start));
+			}
+		}
+		if (!current.isEmpty()) {
+			commands.add(current.toArray(new String[0]));
+		}
+		return commands;
+	}
+
+	private List<String[]> readInteractiveCommands() {
+		while (true) {
+			System.out.print(new Ansi().fgBrightCyan().a("> ").fgDefault());
+			String str = null;
+			try {
+				if (consoleInput.hasNextLine()) {
+					str = consoleInput.nextLine();
+				} else {
+					// EOF
+					return null;
+				}
+			} catch (NoSuchElementException ignored) {
+			}
+			if (str == null) {
+				List<String[]> exitCmd = new ArrayList<>();
+				exitCmd.add(new String[]{TaskMode.EXIT.getName()});
+				return exitCmd;
+			}
+			str = str.trim();
+			if (str.isEmpty()) {
+				continue;
+			}
+			System.out.print(new Ansi().fgDefault());
+			List<String[]> parsed = splitCommands(str.split(" "));
+			if (parsed.isEmpty()) {
+				continue;
+			}
+			return parsed;
+		}
 	}
 
 	private static void parseArg(String arg, Map<String, Object> map) {
