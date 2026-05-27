@@ -106,15 +106,22 @@ public class TaskReobfuscate extends TaskStaged {
 					return false;
 				}
 				String obfClassName = entry.getName().replace(".class", "");
-				// Force inner classes to compare outer class hash
-				String className = obfClassName;
-				int index = className.indexOf('$');
-				if (index != -1) {
-					className = className.substring(0, index);
-				}
-				String deobfName = reversedNames.get(className);
+				// Try to resolve the deobfuscated name. If the inner-class entry
+				// has no direct mapping, fall back to the outer class.
+				String deobfName = reversedNames.get(obfClassName);
 				if (deobfName == null) {
-					deobfName = className;
+					int dollar = obfClassName.indexOf('$');
+					if (dollar != -1) {
+						deobfName = reversedNames.get(obfClassName.substring(0, dollar));
+					}
+					if (deobfName == null) {
+						deobfName = obfClassName;
+					}
+				}
+				// MD5 hashes are recorded per outer class, so strip any inner-class suffix.
+				int innerIdx = deobfName.indexOf('$');
+				if (innerIdx != -1) {
+					deobfName = deobfName.substring(0, innerIdx);
 				}
 				String hash = originalHashes.get(deobfName);
 				String hashModified = recompHashes.get(deobfName);
