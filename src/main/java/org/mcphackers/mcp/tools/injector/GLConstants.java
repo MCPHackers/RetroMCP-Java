@@ -104,41 +104,39 @@ public final class GLConstants extends ClassVisitor {
 	}
 
 	public static InsnList getGLInsn(MethodInsnNode invoke, int constant) {
-		String pkg = invoke.owner.substring(17); //invoke.owner.replace("org/lwjgl/opengl/", "");
+		String pkg = invoke.owner.substring(17); // invoke.owner.replace("org/lwjgl/opengl/", "");
 		for (Pair<Map<String, List<String>>, Map<String, Map<Integer, String>>> group : CONSTANTS) {
-			Map<String, List<String>> methodKeys = group.getLeft();
-			List<String> methodList = methodKeys.get(pkg);
-			if (methodList != null && methodList.contains(invoke.name)) {
-				Map<String, Map<Integer, String>> methodValues = group.getRight();
-				for (Entry<String, Map<Integer, String>> entry : methodValues.entrySet()) {
-					String key = entry.getKey();
-					Map<Integer, String> value = entry.getValue();
-					String constantValue = value.get(constant);
-					if (constantValue == null) continue;
+			List<String> methodList = group.getLeft().get(pkg);
+			if (methodList == null || !methodList.contains(invoke.name))
+				continue;
 
-					InsnList instructions = new InsnList();
-					int i = -1;
-					do {
-						char operator = i == -1 ? 0 : constantValue.charAt(i);
-						int index1 = i + 1;
-						i = indexOf(OPERATORS, index1, constantValue);
-						int index2 = i == -1 ? constantValue.length() : i;
-						String name = constantValue.substring(index1, index2).trim();
-						instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/opengl/" + key, name, "I"));
-						switch (operator) {
-							case '|':
-								instructions.add(new InsnNode(Opcodes.IOR));
-								break;
-							case '&':
-								instructions.add(new InsnNode(Opcodes.IAND));
-								break;
-							case '^':
-								instructions.add(new InsnNode(Opcodes.IXOR));
-								break;
-						}
-					} while (i != -1);
-					return instructions;
-				}
+			for (Entry<String, Map<Integer, String>> entry : group.getRight().entrySet()) {
+				final String constantValue = entry.getValue().get(constant);
+				if (constantValue == null)
+					continue;
+
+				final InsnList instructions = new InsnList();
+				int i = -1;
+				do {
+					char operator = i == -1 ? 0 : constantValue.charAt(i);
+					int index1 = i + 1;
+					i = indexOf(OPERATORS, index1, constantValue);
+					int index2 = i == -1 ? constantValue.length() : i;
+					String name = constantValue.substring(index1, index2).trim();
+					instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/opengl/" + entry.getKey(), name, "I"));
+					switch (operator) {
+					case '|':
+						instructions.add(new InsnNode(Opcodes.IOR));
+						break;
+					case '&':
+						instructions.add(new InsnNode(Opcodes.IAND));
+						break;
+					case '^':
+						instructions.add(new InsnNode(Opcodes.IXOR));
+						break;
+					}
+				} while (i != -1);
+				return instructions;
 			}
 		}
 		return null;
@@ -146,12 +144,9 @@ public final class GLConstants extends ClassVisitor {
 
 	public static int indexOf(char[] ch, int fromIndex, String string) {
 		final int max = string.length();
-		if (fromIndex < 0) {
-			fromIndex = 0;
-		} else if (fromIndex >= max) {
-			return -1;
-		}
-
+		fromIndex = Math.max(0, fromIndex); // fromIndex will be clamped to [0, +∞)
+		if (fromIndex >= max) return -1;
+		
 		final char[] value = string.toCharArray();
 		for (int i = fromIndex; i < max; i++) {
 			for (char c : ch) {
@@ -216,80 +211,78 @@ public final class GLConstants extends ClassVisitor {
 	@Override
 	protected void visitMethod(MethodNode node) {
 		if (!INIT) return;
-		InsnList instructions = node.instructions;
-		List<MethodInsnNode> glCalls = new ArrayList<>();
-		List<Pair<AbstractInsnNode, FieldInsnNode>> keyboardConstants = new ArrayList<>();
-		for (AbstractInsnNode insn : instructions) {
-			if (insn instanceof MethodInsnNode) {
-				MethodInsnNode invoke = (MethodInsnNode) insn;
-				if (PACKAGES != null && PACKAGES.contains(invoke.owner)) {
-					glCalls.add(invoke);
+		
+		final List<MethodInsnNode> glCalls = new ArrayList<>();
+		final List<Pair<AbstractInsnNode, FieldInsnNode>> keyboardConstants = new ArrayList<>();
+		for (AbstractInsnNode insn : node.instructions) {
+			if (!(insn instanceof MethodInsnNode)) continue;
+			
+			MethodInsnNode invoke = (MethodInsnNode) insn;
+			if (PACKAGES != null && PACKAGES.contains(invoke.owner))
+				glCalls.add(invoke);
+			
+			if (!invoke.owner.equals("org/lwjgl/input/Keyboard")) continue;
+			
+			if (invoke.name.equals("isKeyDown") || invoke.name.equals("getKeyName")) {
+				AbstractInsnNode iconst = invoke.getPrevious();
+				if (iconst == null) {
+					continue;
 				}
-				if (invoke.owner.equals("org/lwjgl/input/Keyboard")) {
-					if (invoke.name.equals("isKeyDown") || invoke.name.equals("getKeyName")) {
-						AbstractInsnNode iconst = invoke.getPrevious();
-						if (iconst == null) {
-							continue;
-						}
-						Integer value = intValue(iconst);
-						if (value != null) {
-							FieldInsnNode getField = getKeyboardInsn(value);
-							if (getField != null) {
-								keyboardConstants.add(Pair.of(iconst, getField));
-							}
-						}
-					} else if (invoke.name.equals("getEventKey")) {
-						AbstractInsnNode iconst = invoke.getNext();
-						if (iconst == null) {
-							continue;
-						}
-						AbstractInsnNode insn2 = iconst.getNext();
-						// INVOKE, ICONST, (ANY INSTRUCTION), IADD, ICMP
-						// or
-						// INVOKE, ICONST, ICMP
-						boolean hasCompare = false;
-						int count = 0;
-						while (insn2 != null && count < 3 && !hasCompare) {
-							if (count == 1 && insn2.getOpcode() != Opcodes.IADD)
-								break;
-							if (isICmp(insn2.getOpcode()))
-								hasCompare = true;
-							count++;
-							insn2 = insn2.getNext();
-						}
-						if (hasCompare) {
-							Integer value = intValue(iconst);
-							if (value != null) {
-								FieldInsnNode getField = getKeyboardInsn(value);
-								if (getField != null) {
-									keyboardConstants.add(Pair.of(iconst, getField));
-								}
-							}
-						}
-					}
-				}
+				Integer value = intValue(iconst);
+				if (value == null) continue;
+				FieldInsnNode getField = getKeyboardInsn(value);
+				if (getField != null)
+					keyboardConstants.add(Pair.of(iconst, getField));
+				
+				continue;
+			}
+			
+			if (!invoke.name.equals("getEventKey")) continue;
+			AbstractInsnNode iconst = invoke.getNext();
+			if (iconst == null) continue;
+			AbstractInsnNode insn2 = iconst.getNext();
+			// INVOKE, ICONST, (ANY INSTRUCTION), IADD, ICMP
+			// or
+			// INVOKE, ICONST, ICMP
+			boolean hasCompare = false;
+			int count = 0;
+			while (insn2 != null && count < 3 && !hasCompare) {
+				if (count == 1 && insn2.getOpcode() != Opcodes.IADD)
+					break;
+				if (isICmp(insn2.getOpcode()))
+					hasCompare = true;
+				count++;
+				insn2 = insn2.getNext();
+			}
+			
+			if (!hasCompare) continue;
+			Integer value = intValue(iconst);
+			if (value == null) continue;
+			
+			FieldInsnNode getField = getKeyboardInsn(value);
+			if (getField != null) {
+				keyboardConstants.add(Pair.of(iconst, getField));
 			}
 		}
 
 		for (Pair<AbstractInsnNode, FieldInsnNode> pair : keyboardConstants) {
-			instructions.set(pair.getLeft(), pair.getRight());
+			node.instructions.set(pair.getLeft(), pair.getRight());
 		}
 
 		for (MethodInsnNode invoke : glCalls) {
 			IdentifyCall identifiedCall = new IdentifyCall(invoke);
 			for (AbstractInsnNode[] insns : identifiedCall.getArguments()) {
 				for (AbstractInsnNode insn : insns) {
-					if (insn == null) {
-						continue;
-					}
+					if (insn == null) continue;
+
 					Integer intValue = intValue(insn);
-					if (intValue != null) {
-						InsnList newinsns = getGLInsn(invoke, intValue);
-						if (newinsns != null) {
-							instructions.insert(insn, newinsns);
-							instructions.remove(insn);
-						}
-					}
+					if (intValue == null) continue;
+					
+					InsnList newinsns = getGLInsn(invoke, intValue);
+					if (newinsns == null) continue;
+					
+					node.instructions.insert(insn, newinsns);
+					node.instructions.remove(insn);
 				}
 			}
 		}
