@@ -51,51 +51,28 @@ public final class GLConstants extends ClassVisitor {
 		super(classVisitor);
 	}
 
-	private static boolean isICmp(int opcode) {
-		switch (opcode) {
-			case Opcodes.IF_ICMPEQ:
-			case Opcodes.IF_ICMPGE:
-			case Opcodes.IF_ICMPGT:
-			case Opcodes.IF_ICMPLE:
-			case Opcodes.IF_ICMPLT:
-			case Opcodes.IF_ICMPNE:
-				return true;
-		}
-		return false;
+	private static boolean isICmp(final int opcode) {
+		return opcode >= Opcodes.IF_ICMPEQ
+			&& opcode <= Opcodes.IF_ICMPLE;
 	}
 
-	public static Integer intValue(AbstractInsnNode insn) {
-		if (insn.getOpcode() == Opcodes.ICONST_0) {
-			return 0;
+	public static Integer intValue(final AbstractInsnNode insn) {
+		final int cnst = insn.getOpcode() - Opcodes.ICONST_0;
+		if (cnst >= 0 && cnst <= 5) return cnst;
+
+		switch (insn.getOpcode()) {
+			case Opcodes.ICONST_M1:
+				return -1;
+			case Opcodes.SIPUSH:
+			case Opcodes.BIPUSH:
+				return ((IntInsnNode) insn).operand;
+			case Opcodes.LDC:
+				final LdcInsnNode ldc = (LdcInsnNode) insn;
+				if (ldc.cst instanceof Integer)
+					return (Integer) ldc.cst;
+			default:
+				return null;
 		}
-		if (insn.getOpcode() == Opcodes.ICONST_1) {
-			return 1;
-		}
-		if (insn.getOpcode() == Opcodes.ICONST_2) {
-			return 2;
-		}
-		if (insn.getOpcode() == Opcodes.ICONST_3) {
-			return 3;
-		}
-		if (insn.getOpcode() == Opcodes.ICONST_4) {
-			return 4;
-		}
-		if (insn.getOpcode() == Opcodes.ICONST_5) {
-			return 5;
-		}
-		if (insn.getOpcode() == Opcodes.ICONST_M1) {
-			return -1;
-		}
-		if (insn.getOpcode() == Opcodes.SIPUSH || insn.getOpcode() == Opcodes.BIPUSH) {
-			return ((IntInsnNode) insn).operand;
-		}
-		if (insn.getOpcode() == Opcodes.LDC) {
-			LdcInsnNode ldc = (LdcInsnNode) insn;
-			if (ldc.cst instanceof Integer) {
-				return (Integer) ldc.cst;
-			}
-		}
-		return null;
 	}
 
 	public static FieldInsnNode getKeyboardInsn(int constant) {
