@@ -279,7 +279,7 @@ public abstract class Util {
 					}
 
 					// Read class version from class
-					int classVersion = ClassUtils.getClassVersion(tempJavaOut);
+					int classVersion = ClassUtils.getClassVersion(tempJavaOut) - 45;
 					javaToJavaVersion.put(customJavaHome, classVersion);
 					return ClassUtils.getSourceFromClassVersion(classVersion);
 				} catch (IOException ignored) {
