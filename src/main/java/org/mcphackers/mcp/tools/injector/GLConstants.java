@@ -1,11 +1,7 @@
 package org.mcphackers.mcp.tools.injector;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.json.JSONArray;
@@ -15,14 +11,7 @@ import org.mcphackers.rdi.injector.visitors.ClassVisitor;
 import org.mcphackers.rdi.util.IdentifyCall;
 import org.mcphackers.rdi.util.Pair;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
 
 public final class GLConstants extends ClassVisitor {
 
@@ -33,18 +22,14 @@ public final class GLConstants extends ClassVisitor {
 	private static final char[] OPERATORS = {'|', '&', '^'};
 
 	static {
-		JSONObject json = JSONUtil.getJSON(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
-		if (json != null) {
-			CONSTANTS = getConstants(json.optJSONArray("CONSTANTS"));
-			CONSTANTS_KEYBOARD = JSONUtil.toMap(json.optJSONObject("CONSTANTS_KEYBOARD"));
-			PACKAGES = getPackages(CONSTANTS);
-			INIT = true;
-		} else {
-			CONSTANTS = null;
-			CONSTANTS_KEYBOARD = null;
-			PACKAGES = null;
-			INIT = false;
-		}
+		final Optional<InputStream> jsonStream = Optional
+				.ofNullable(GLConstants.class.getClassLoader().getResourceAsStream("gl_constants.json"));
+		
+		final Optional<JSONObject> json = Optional.ofNullable(JSONUtil.getJSON(jsonStream.get()));
+		CONSTANTS          = json.map(js -> getConstants(js.optJSONArray("CONSTANTS"))).orElse(null);
+		CONSTANTS_KEYBOARD = json.map(js -> JSONUtil.toMap(js.optJSONObject("CONSTANTS_KEYBOARD"))).orElse(null);
+		PACKAGES           = json.map(js -> getPackages(CONSTANTS)).orElse(null);
+		INIT               = json.isPresent();
 	}
 
 	public GLConstants(ClassVisitor classVisitor) {
@@ -99,8 +84,10 @@ public final class GLConstants extends ClassVisitor {
 	}
 
 	public static FieldInsnNode getKeyboardInsn(int constant) {
-		String constantString = CONSTANTS_KEYBOARD.get(constant);
-		return constantString == null ? null : new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/input/Keyboard", constantString, "I");
+		final Optional<String> constantString = Optional.ofNullable(CONSTANTS_KEYBOARD.get(constant));
+		return constantString
+				.map(str -> new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/input/Keyboard", str, "I"))
+				.orElse(null);
 	}
 
 	public static InsnList getGLInsn(MethodInsnNode invoke, int constant) {
