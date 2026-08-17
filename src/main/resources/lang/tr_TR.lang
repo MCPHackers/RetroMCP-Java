@@ -1,0 +1,152 @@
+language = Türkçe
+mcp.needJDK = Yeniden derleme için Java Geliştirme Kiti gereklidir!
+mcp.error = Hata
+mcp.newVersion = Yeni sürüm bulundu:
+mcp.confirmExit = Çıkmak istediğinizden emin misiniz? Bazı görevlerin yürütülmesi henüz tamamlanmadı!
+mcp.confirmUpdate = Güncellemek istediğinizden emin misiniz?
+mcp.confirmUpdateMD5 = Orijinal hash'leri yeniden oluşturmak istediğinizden emin misiniz?
+mcp.confirmAction = İşlemi Onayla
+mcp.confirmDecompile = Kaynakları silip yeniden decompile etmek istediğinizden emin misiniz?
+mcp.confirmSetup = Seçili sürüm için kurulumu çalıştırmak istediğinizden emin misiniz?
+mcp.confirmCleanup = Tüm kaynakları silmek ve şu anda etkin olan sürümü temizlemek istediğinizden emin misiniz?
+mcp.askSourceBackup = Kaynak dosyaların yedeği oluşturulsun mu?
+mcp.incompatiblePlugin = Uyumsuz eklenti bulundu:
+mcp.versionList.currentVersion = Mevcut sürüm:
+mcp.versionList.failure = Sürüm listesi alınamadı!
+mcp.versionList.loading = Yükleniyor...
+mcp.versionList.reload = Sürüm listesini yeniden yükle
+mcp.checkUpdate = Güncellemeleri kontrol et
+mcp.upToDate = Güncel!
+mcp.viewDir = Çalışma dizinini görüntüle
+mcp.changeDir = Çalışma dizinini değiştir
+mcp.enterDir = Bir dizin yolu girin
+mcp.selectDir = Klasör seç
+mcp.moreTasks = Daha fazla görev...
+mcp.github = GitHub Sayfası
+mcp.wiki = Wiki
+mcp.side = Taraf
+mcp.startClient = İstemciyi başlat
+mcp.startServer = Sunucuyu başlat
+mcp.console = Konsol çıktısı
+mcp.clearConsole = Konsolu temizle
+mcp.copyConsole = Metni kopyala
+
+
+side.client = İstemci
+side.server = Sunucu
+side.merged = Birleştirilmiş
+side.any = Herhangi
+
+
+options = Seçenekler
+options.language = Dil
+options.theme = Tema
+options.enterValue = Bir değer girin
+options.enterValues = Bir değer kümesi girin
+options.enterValues.info = (Değerleri virgülle ayırın)
+options.running = Çalışıyor
+options.resetDefaults = Varsayılanlara sıfırla
+options.invalidValue = Geçersiz değer!
+
+
+options.theme.swing = Swing
+options.theme.flatlightlaf = FlatLightLaf
+options.theme.flatdarklaf = FlatDarkLaf
+options.theme.flatdarculalaf = FlatDarculaLaf
+
+
+task.help = Yardım
+task.help.desc = Komut kullanımını görüntüler
+task.setup = Kurulum
+task.setup.desc = Bir sürüm için başlangıç çalışma alanını ayarlar
+task.setup.selectVersion = Sürüm seç:
+task.decompile = Decompile
+task.decompile.desc = Minecraft'ın decompile işlemini başlatır
+task.recompile = Yeniden Derle
+task.recompile.desc = Minecraft kaynaklarını yeniden derler
+task.reobfuscate = Yeniden Obfuscate Et
+task.reobfuscate.desc = Minecraft sınıflarını yeniden obfuscate eder
+task.build = Derle
+task.build.desc = Değiştirilmiş sınıflarla jar veya zip oluşturur
+task.start = Başlat
+task.start.desc = İstemciyi veya sunucuyu derlenmiş sınıflardan çalıştırır
+task.cleanup = Temizle
+task.cleanup.desc = Tüm kaynak ve sınıf klasörlerini siler
+task.exit = Çıkış
+task.exit.desc = Programdan çıkar
+task.updatemd5 = MD5'yi Güncelle
+task.updatemd5.desc = Yeniden obfuscation için kullanılan MD5 hash tablolarını günceller
+task.createpatch = Patch Oluştur
+task.createpatch.desc = Kaynak kodunuzdaki değişikliklere dayalı bir patch oluşturur
+task.backupsrc = Kaynağı Yedekle
+task.backupsrc.desc = Kaynak dosyalarını bir zip dosyasına paketler
+task.applypatch = Patch Uygula
+task.applypatch.desc = Patches dizinindeki patch'i uygular
+task.updatemcp = RetroMCP'yi Güncelle
+task.updatemcp.desc = Güncellemeleri kontrol eder
+task.mergemappings = Mapping'leri Birleştir
+task.mergemappings.desc = Mapping'leri V2 formatında birleştirir
+task.generateproject = IDE Projeleri Oluştur
+task.generateproject.desc = Desteklenen tüm IDE'ler için projeler oluşturur
+task.updatelibraries = Kütüphaneleri Güncelle
+task.updatelibraries.desc = Tüm kütüphaneleri siler ve yeniden indirir
+task.noDesc = Açıklama mevcut değil
+
+
+task.stage.idle = Boşta
+task.stage.finished = Tamamlandı!
+task.stage.recompile = Yeniden Derleniyor
+task.stage.decompile = Decompile Ediliyor
+task.stage.backupsrc = Yedekleniyor
+task.stage.reobf = Yeniden Obfuscate Ediliyor
+task.stage.build = Derleniyor
+task.stage.setup = Kuruluyor
+task.stage.createpatch = Patch oluşturuluyor
+task.stage.prepare = Hazırlanıyor
+task.stage.patch = Patch'ler uygulanıyor
+task.stage.copysrc = Kaynaklar kopyalanıyor
+task.stage.remap = JAR yeniden eşleniyor
+task.stage.rdi = RDInjector uygulanıyor
+task.stage.constants = Sabitler değiştiriliyor
+task.stage.copyres = Kaynaklar kopyalanıyor
+task.stage.gathermd5 = MD5 hash'leri toplanıyor
+task.stage.updatemd5 = MD5 güncelleniyor
+task.stage.download = İndiriliyor: %s
+task.stage.workspace = Çalışma alanı kuruluyor
+task.stage.create_ide_projects = IDE projeleri oluşturuluyor
+task.stage.create_eclipse_project = Eclipse projesi oluşturuluyor
+task.stage.create_idea_project = IntelliJ Idea projesi oluşturuluyor
+task.stage.create_vsc_project = VSCode projesi oluşturuluyor
+task.stage.delete_libraries = Eski kütüphaneler siliniyor
+task.stage.update_libraries = Kütüphaneler güncelleniyor
+
+
+task.param.debug = Ek bilgileri görüntüle
+task.param.side = Tarafı ayarla
+task.param.src = Kaynak temizleme
+task.param.patch = Patch'leri uygula
+task.param.ignore = Yok sayılan paketleri ayarla
+task.param.ff_options = Fernflower seçeneklerini ayarla
+task.param.obf = Mod sınıflarını obfuscate et
+task.param.srgobf = Searge adlarını kullanarak obfuscate et
+task.param.excludedclasses = Hariç tutulan sınıflar
+task.param.fullbuild = Tam derleme
+task.param.runbuild = Derlemeyi çalıştır
+task.param.runargs = JVM bağımsız değişkenleri
+task.param.gameargs = Oyun bağımsız değişkenleri
+task.param.setup = Sürümü kur
+task.param.source = Belirli bir kaynak sürümü ayarla
+task.param.target = Belirli bir hedef sürümü ayarla
+task.param.javahome = Derleme için kullanılacak JAVA_HOME'u ayarla
+task.param.javacargs = Java derleyici bağımsız değişkenlerini ayarla
+task.param.resources = Kaynakları koru
+task.param.generics = Generic türlerini tahmin et
+task.param.stripgenerics = Generic türlerini kaldır
+task.param.outputsrc = Kaynak çıktısı
+task.param.stripsourcefile = SourceFile niteliğini kaldır
+task.param.stringremap = ASM/Transformer'ları obfuscate et
+
+
+tasks.success = Başarıyla tamamlandı!
+tasks.warning = Uyarılarla tamamlandı!
+tasks.error = Hatalarla tamamlandı!
