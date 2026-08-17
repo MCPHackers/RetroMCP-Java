@@ -14,7 +14,8 @@ public enum Language {
 	FRENCH(new Locale("fr", "FR")),
 	CHINESE(new Locale("zh", "CN")),
 	CZECH(new Locale("cs", "CZ")),
-	NORSK_BOKMAL(new Locale("nb", "NO"));
+	NORSK_BOKMAL(new Locale("nb", "NO")),
+	TURKISH(new Locale("tr", "TR"));
 
 	/**
 	 * Internal locale
